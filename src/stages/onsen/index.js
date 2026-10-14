@@ -582,7 +582,13 @@ export class OnsenStage {
     this.g.audio.play('ribbit');
     const f = this.g.flags;
     if (f.thawed) return this.say([{ who: 'frog', text: 'トンネルが開いたケロ！ いつでも出発できるケロ！' }]);
-    await this.say([{ who: 'frog', text: 'さ、さむいケロ……トンネルの氷がとけないと、先へは進めないケロ〜。' }]);
+    if (f.springFlow) {
+      await this.say([{ who: 'frog', text: 'お湯が出たケロ〜！ ……ねえねえ、ちょっとだけ、ひと風呂いってもいいケロ？' }]);
+      const c = await this.g.ui.choose('カエルの機関士と、露天風呂でひと休みする？', ['ひと休みする', 'あとで']);
+      if (c === 0) return this.frogSoak();
+      return this.say([{ who: 'frog', text: 'うう〜、お湯がまってるケロ……。' }]);
+    }
+    await this.say([{ who: 'frog', text: 'さ、さむいケロ……。温泉でのんびりするはずだったのにケロ〜。トンネルの氷がとけないと、先へも進めないケロ。' }]);
   }
 
   async talkFox() {
@@ -977,16 +983,16 @@ export class OnsenStage {
     await g.ui.banner('寂れた温泉街', `STAGE ${stageNo('onsen')}`, 2400);
     await g.say([
       'ほしまわり号は、雪のちらつく山あいの駅に着いた。',
-      '魔王城では、ドキドキの連続だった。……ちょっと、くたびれた。',
-      'ここは湯けむりの里——『ゆげのさと』。あったかいお湯につかって、のんびりしたい……。',
-      '……のはずが、湯けむりはひとすじも見えない。',
+      '湯けむりの里——『ゆげのさと』。……のはずが、湯けむりはひとすじも見えない。',
       '町は暗く、しんと静まりかえっている。',
     ]);
     await g.moveCamera(new V(5.5, 3.5, -1.2), new V(1.0, 1.0, -4.0), 1.6);
     g.audio.play('ribbit');
     await g.say([
-      { who: 'frog', text: 'さ、さむいケロ……！ ひと風呂あびて、のんびりするつもりだったのにケロ〜。' },
-      { who: 'frog', text: 'しかも線路の先のトンネルが、凍りついてるケロ！' },
+      { who: 'frog', text: 'ふぃ〜……魔王城は、ドキドキしっぱなしだったケロ。ぼく、もうくたくたケロ〜。' },
+      { who: 'frog', text: 'ここは温泉の町ケロ！ あったかいお湯に肩までつかって、ゆ〜っくりのんびりするケロ♪' },
+      { who: 'frog', text: '……あれ？ 湯けむりがないケロ。さ、さむいケロ……！ これじゃ、お湯につかれないケロ〜。' },
+      { who: 'frog', text: 'しかも線路の先のトンネルまで、凍りついてるケロ！' },
       { who: 'frog', text: '共同浴場のカピバラさんなら、何か知ってるかもケロ。' },
     ]);
     const portrait = innerWidth < innerHeight;
@@ -1032,10 +1038,53 @@ export class OnsenStage {
     await this.departure();
   }
 
+  /** カエルの頭の手ぬぐい */
+  _towel(on) {
+    if (!this.towel) {
+      this.towel = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.07, 0.3), new THREE.MeshStandardMaterial({ color: '#f8f8f4', roughness: 1 }));
+      this.towel.position.set(0, 0.62, -0.05);
+      this.towel.rotation.set(0.15, 0.3, 0.05);
+      this.frog.head.add(this.towel);
+    }
+    this.towel.visible = on;
+  }
+
+  /** カエルの機関士と、ひと休み（お湯が出たあと、いつでも） */
+  async frogSoak() {
+    const g = this.g;
+    const into = [[this.frog, new V(5.1, -0.3, 1.45), 0.2]];
+    const from = into.map(([c]) => ({ p: c.root.position.clone(), r: c.root.rotation.y }));
+    g.cinematic = true;
+    await g.moveCamera(new V(3.6, 4.6, 6.6), new V(5.6, 0.3, 1.0), 1.8);
+    await g.tweens.add({ duration: 1.6, ease: Ease.inOut, onUpdate: (k) => into.forEach(([c, to, ry], i) => {
+      c.root.position.lerpVectors(from[i].p, to, k);
+      c.root.position.y += Math.sin(k * Math.PI) * 0.9;
+      c.root.rotation.y = lerp(from[i].r, ry, k);
+    }) });
+    g.audio.play('splash');
+    this._towel(true);
+    g.cinematic = false;
+    await this.say([
+      { who: 'frog', text: 'ちゃぽ〜ん……。' },
+      { who: 'frog', text: 'ふぃ〜〜……ごくらく、ごくらくケロ〜……。' },
+      { who: 'frog', text: '機関車のボイラーのそばより、ず〜っとあったかいケロ。' },
+      { who: 'frog', text: 'ケ〜ロ〜ケ〜ロ〜♪ ……はっ、ついうたっちゃったケロ。' },
+      '頭に手ぬぐいをのせたカエルの機関士が、とろけそうな顔でお湯につかっている。',
+      { who: 'frog', text: '……よし、元気が出たケロ！ もうひとがんばりするケロ！' },
+    ]);
+    this._towel(false);
+    g.audio.play('splash');
+    await g.tweens.add({ duration: 1.4, ease: Ease.inOut, onUpdate: (k) => into.forEach(([c, to, ry], i) => {
+      c.root.position.lerpVectors(to, from[i].p, k);
+      c.root.position.y += Math.sin(k * Math.PI) * 0.9;
+      c.root.rotation.y = lerp(ry, from[i].r, k);
+    }) });
+  }
+
   /** 出発の前に、みんなでひと風呂（魔王城のあとの、ひと休み） */
   async soak() {
     const g = this.g;
-    await this.say([{ who: 'capy', text: 'そうだ、出発の前に……ひと風呂、いかがです？ 町いちばんのお湯ですよ。' }]);
+    await this.say([{ who: 'capy', text: 'そうだ、出発の前に……ひと風呂、いかがです？ 町いちばんのお湯ですよ。' }, { who: 'frog', text: 'まってましたケロ〜！' }]);
     const into = [[this.frog, new V(5.1, -0.3, 1.45), 0.2], [this.capy, new V(6.5, -0.28, 1.0), -0.4], [this.monkey, new V(5.3, -0.2, -0.1), 0.1]];
     const from = into.map(([c]) => ({ p: c.root.position.clone(), r: c.root.rotation.y }));
     g.audio.play('splash');
@@ -1046,9 +1095,11 @@ export class OnsenStage {
       c.root.rotation.y = lerp(from[i].r, ry, k);
     }) });
     g.audio.play('water');
+    this._towel(true);
     await this.say([
       'せっかくなので、出発の前に、露天風呂でひと休みすることにした。',
-      { who: 'frog', text: 'ふぃ〜……ごくらく、ごくらくケロ〜。魔王城では、ずっとドキドキしっぱなしだったケロ。' },
+      { who: 'frog', text: 'ふぃ〜〜……ごくらく、ごくらくケロ〜。魔王城では、ずっとドキドキしっぱなしだったケロ。' },
+      { who: 'frog', text: 'ケ〜ロ〜ケ〜ロ〜♪ ……いいお湯ケロ〜。' },
       { who: 'capy', text: 'カピバラも、お湯がいちばん好きでして……ふう。' },
     ]);
     // ゆっくり、湯けむりごしに雪を見あげる
@@ -1058,8 +1109,10 @@ export class OnsenStage {
       'はざま駅のふしぎな夕暮れ、雲の上の風車、夜明けの宿場町、霧の港、ドット絵の城下町……そして、さみしがりの魔王。',
       'これまでの旅を思いだしながら、肩までゆっくり、お湯につかった。',
       { who: 'monkey', text: 'キキッ……あったかいね〜。' },
+      { who: 'frog', text: '……また、みんなでこの温泉にくるケロ。約束ケロ。' },
       '……ふう。からだの芯まで、ぽかぽかになった。',
     ]);
+    this._towel(false);
     // 湯からあがる
     await g.tweens.add({ duration: 1.4, ease: Ease.inOut, onUpdate: (k) => into.forEach(([c, to], i) => {
       c.root.position.lerpVectors(to, from[i].p, k);
