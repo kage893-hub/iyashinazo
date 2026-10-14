@@ -86,6 +86,7 @@ export class Game {
     c.panSpeed = this.mobile ? 1.6 : 1.0;
     c.screenSpacePanning = false;
     c.target.set(0, 1, 0);
+    c.addEventListener('start', () => { this.lookUntil = 0; if (!this.ui?.dialogueActive) this.lookSubject = null; });
     this.bounds = { minX: -14, maxX: 14, minZ: -10, maxZ: 10 };
 
     // ポストプロセス（MSAA 付きのレンダーターゲット）
@@ -286,19 +287,36 @@ export class Game {
   // カメラ演出
   // =========================================================
   /** 注視点をなめらかに移動 */
-  focusOn(target, { dist, duration = 1.0, polar, theta, thetaClamp, subject } = {}) {
+  focusOn(target, { dist, duration = 1.0, polar, theta, thetaClamp, subject, frameHigh = !!subject } = {}) {
     const c = this.controls;
     const fromT = c.target.clone();
-    const toT = target.clone();
+    let toT = target.clone();
     const off = this.camera.position.clone().sub(fromT);
     const sph = new THREE.Spherical().setFromVector3(off);
     const fromR = sph.radius;
     const toR = dist ?? fromR;
     const fromPhi = sph.phi;
-    const toPhi = polar ?? fromPhi;
+    let toPhi = polar ?? fromPhi;
+    // 建物の中の相手は、上からのぞきこむ角度に
+    const inside = this.stage?.interiorAt?.(toT);
+    if (inside && polar === undefined) toPhi = Math.min(toPhi, inside.polar + 0.15);
     const fromTh = sph.theta;
     let toTh = theta ?? (thetaClamp ? clamp(fromTh, -thetaClamp, thetaClamp) : fromTh);
-    if (subject) toTh = this._clearTheta(toT, toR, toPhi, toTh, subject, thetaClamp);
+    if (subject) {
+      const best = this._clearView(toT, toR, toPhi, toTh, subject, thetaClamp);
+      toTh = best.theta;
+      toPhi = best.phi;
+      this.lookSubject = subject;
+      this.lookUntil = this.time + duration + 2.5;
+    }
+    // 会話の窓に隠れないよう、相手を画面の少し上に置く（注視点を相手より下へずらす）
+    if (frameHigh) {
+      const camPos = new THREE.Vector3().setFromSpherical(new THREE.Spherical(toR, toPhi, toTh)).add(toT);
+      const fwd = toT.clone().sub(camPos).normalize();
+      const up = new THREE.Vector3(0, 1, 0).addScaledVector(fwd, -fwd.y).normalize();
+      const shift = toR * Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2)) * 0.26;
+      toT = toT.clone().addScaledVector(up, -shift);
+    }
     return this.tweens.add({
       duration, ease: Ease.inOut,
       onUpdate: (k) => {
@@ -309,30 +327,90 @@ export class Game {
     });
   }
 
-  /** 対象が木や建物に隠れない向き（方位角）を探す */
-  _clearTheta(target, r, phi, theta, subject, limit) {
+  /** 対象の前にある物（木・壁など）を数える */
+  _blockersBetween(from, subject, own) {
+    const box = new THREE.Box3().setFromObject(subject);
+    const pts = [box.getCenter(new THREE.Vector3()), new THREE.Vector3((box.min.x + box.max.x) / 2, box.max.y - 0.05, (box.min.z + box.max.z) / 2)];
+    const ray = new THREE.Raycaster();
+    const hits = new Set();
+    for (const p of pts) {
+      const dir = p.clone().sub(from);
+      const len = dir.length();
+      ray.set(from, dir.normalize());
+      ray.far = len - 0.25;
+      for (const h of ray.intersectObjects(this.pickList, false)) {
+        const o = h.object;
+        if (own.has(o) || !o.visible || o.userData.noPick) continue;
+        if (o.userData.roof && this.stage?.roofLifted) continue;
+        let vis = true;
+        for (let q = o.parent; q; q = q.parent) if (!q.visible) { vis = false; break; }
+        if (vis) hits.add(o);
+      }
+    }
+    return hits;
+  }
+
+  /** 対象が木や建物に隠れない向き（方位角と高さ）を探す */
+  _clearView(target, r, phi, theta, subject, limit) {
     const own = new Set();
     subject.traverse((m) => own.add(m));
-    const ray = new THREE.Raycaster();
-    const dir = new THREE.Vector3();
-    for (const d of [0, -0.35, 0.35, -0.7, 0.7, -1.05, 1.05]) {
-      let th = theta + d;
-      if (limit) th = clamp(th, -limit, limit);
-      const pos = new THREE.Vector3().setFromSpherical(new THREE.Spherical(r, phi, th)).add(target);
-      dir.copy(pos).sub(target);
-      const len = dir.length();
-      ray.set(target, dir.normalize());
-      ray.far = len;
-      const hit = ray.intersectObjects(this.pickList, false).find((h) => {
-        const o = h.object;
-        if (own.has(o) || !o.visible || o.userData.noPick) return false;
-        if (o.userData.roof && this.stage?.roofLifted) return false;
-        for (let p = o.parent; p; p = p.parent) if (!p.visible) return false;
-        return h.distance > 0.6;
-      });
-      if (!hit) return th;
+    let best = { theta, phi, n: Infinity };
+    for (const dp of [0, -0.2, -0.4]) {
+      const ph = Math.max(0.35, phi + dp);
+      for (const d of [0, -0.35, 0.35, -0.7, 0.7, -1.05, 1.05]) {
+        let th = theta + d;
+        if (limit) th = clamp(th, -limit, limit);
+        const pos = new THREE.Vector3().setFromSpherical(new THREE.Spherical(r, ph, th)).add(target);
+        const n = this._blockersBetween(pos, subject, own).size;
+        if (n === 0) return { theta: th, phi: ph };
+        if (n < best.n) best = { theta: th, phi: ph, n };
+      }
     }
-    return theta;
+    return best;
+  }
+
+  /** 会話中、相手の手前にある物を半透明にする */
+  _updateFade(dt) {
+    this._fadeT = (this._fadeT || 0) - dt;
+    if (this._fadeT > 0) return;
+    this._fadeT = 0.12;
+    const active = this.lookSubject && this.lookSubject.visible !== false && (this.ui.dialogueActive || this.busy || this.time < this.lookUntil) && !this.cinematic;
+    const want = new Set();
+    if (active) {
+      const own = new Set();
+      this.lookSubject.traverse((m) => own.add(m));
+      for (const o of this._blockersBetween(this.camera.position, this.lookSubject, own)) {
+        // 地面や島の土台のような大きな物は消さない
+        if (!o.geometry.boundingSphere) o.geometry.computeBoundingSphere();
+        if (o.geometry.boundingSphere.radius * o.matrixWorld.getMaxScaleOnAxis() > 12) continue;
+        want.add(o);
+      }
+    } else {
+      this.lookSubject = null;
+    }
+    this._faded = this._faded || new Set();
+    for (const m of this._faded) {
+      if (want.has(m)) continue;
+      if (m.userData._fadeOrig) {
+        const faded = m.userData._orig || m.material;
+        if (m.userData._orig) m.userData._orig = m.userData._fadeOrig; // ホバー中なら、戻し先だけ差しかえる
+        else m.material = m.userData._fadeOrig;
+        faded.dispose();
+        delete m.userData._fadeOrig;
+      }
+      this._faded.delete(m);
+    }
+    for (const m of want) {
+      if (this._faded.has(m) || m.userData._orig || Array.isArray(m.material)) continue;
+      const src = m.material;
+      const f = src.clone();
+      f.transparent = true;
+      f.opacity = Math.min(src.opacity ?? 1, 0.22);
+      f.depthWrite = false;
+      m.userData._fadeOrig = src;
+      m.material = f;
+      this._faded.add(m);
+    }
   }
 
   // ---------------- カメラの補助操作（ボタン・キー・ダブルタップ） ----------------
@@ -706,6 +784,7 @@ export class Game {
     this.time += dt;
     this._adapt(raw);
     this._updateLabels(raw);
+    this._updateFade(raw);
     if (this.playing && !this.cinematic) this.state.elapsed += dt;
     liveTime.value = this.time;
     this.tweens.update(dt);

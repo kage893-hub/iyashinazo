@@ -561,7 +561,7 @@ export class StationStage {
     // 駅舎の中は、正面の梁ごしにのぞけるよう上から見下ろす
     const isInside = inside || (p.x > -11 && p.x < -3 && p.z > -1.4 && p.z < 4);
     const ty = isInside ? Math.min(2.2, Math.max(0.9, p.y)) : Math.max(0.8, p.y + 0.6);
-    const polar = isInside ? Math.min(0.82, new THREE.Spherical().setFromVector3(this.g.camera.position.clone().sub(this.g.controls.target)).phi) : undefined;
+    const polar = isInside ? Math.min(0.66, new THREE.Spherical().setFromVector3(this.g.camera.position.clone().sub(this.g.controls.target)).phi) : undefined;
     return this.g.focusOn(new V(p.x, ty, p.z + (isInside ? 0.6 : 0)), { dist: Math.min(cur, dist ?? 22), duration: 0.8, polar, thetaClamp: isInside ? 0.7 : undefined, subject: obj.isObject3D ? obj : undefined });
   }
 
