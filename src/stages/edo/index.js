@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { Motes } from '../../lib/livefx.js';
 import { showStageClear } from '../clear.js';
 import { stageNo } from '../../data/route.js';
 import { makeSky, makeIslandBase, makeSmallIsland, makeClouds, Puffs, Birds } from '../../lib/environment.js';
@@ -113,6 +114,9 @@ export class EdoStage {
     this.smoke = new Puffs(scene, { count: 70, color: '#e8e8f4', opacity: 0.7 });
     this.birds = new Birds(scene, 4, 37);
     this.sparkles = this._makeSparkles(scene);
+    // 夜明け前は川べりのほたる、朝は光の中のほこり
+    this.fireflies = new Motes(scene, { count: 40, color: '#d8ff9a', size: 0.12, area: { x: 28, z: 4, y0: 0.3, y1: 2.2 }, center: [0, 7.4], kind: 'firefly', opacity: 0.9 });
+    this.dust = new Motes(scene, { count: 60, color: '#ffe6c0', size: 0.07, area: { x: 26, z: 16, y0: 0.4, y1: 5 }, kind: 'dust', opacity: 0 });
     this.glint = this._makeGlint(scene);
 
     await this.g.loadingStep(0.6, '住人たちを呼んでいます…');
@@ -284,6 +288,12 @@ export class EdoStage {
     R.joyaLight.intensity = 1.8 * off;
     R.andonLight.intensity = 2.2 * off;
     R.andonMat.emissiveIntensity = 1.6 * off;
+    for (const p of R.nightPools) p.material.opacity = 0.5 * off;
+    if (this.fireflies) {
+      this.fireflies.baseOpacity = 0.9 * off;
+      this.fireflies.visible = off > 0.02;
+      this.dust.mat.opacity = 0.55 * smooth(0.4, 1, k);
+    }
     R.waterMat.color.set('#2a3a6a').lerp(new THREE.Color('#5a9ac8'), k);
     // 店が開く
     const open = k > 0.5;
@@ -304,6 +314,8 @@ export class EdoStage {
     const g = this.g, R = this.R, f = g.flags;
     for (const c of this.creatures) { c.camPos = g.camera.position; c.update(dt, t); }
     this.birds.update(dt, t);
+    this.fireflies.update(dt, t);
+    this.dust.update(dt, t);
     this.sky.uniforms.time.value = t;
     this.clouds.rotation.y = t * 0.004;
     for (const s of this.smallIslands) s.o.position.y = s.y + Math.sin(t * 0.3 + s.ph) * 0.8;

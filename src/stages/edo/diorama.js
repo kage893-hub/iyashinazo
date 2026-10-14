@@ -1,6 +1,7 @@
 import * as THREE from 'three';
+import { sway, waterize, lightPool } from '../../lib/livefx.js';
 import { add, mat, glow, G, group, rng, signTex, canvasTex, roundRectShape, FONT } from '../../lib/util.js';
-import { bench } from '../station/diorama.js';
+import { bench, leafMat } from '../station/diorama.js';
 import { grassTex, boardsTex, planksTex, shinglesTex, stoneTex } from '../station/textures.js';
 import { chochin } from '../onsen/diorama.js';
 
@@ -133,7 +134,7 @@ function willow(parent, x, z, s = 1, seed = 1) {
   const bark = mat('#5a4a3a');
   add(g, G.cyl(0.12, 0.18, 2.2, 8), bark, 0, 1.1, 0, { rot: [0, 0, 0.08] });
   add(g, G.sphere(0.7, 10, 8), mat('#7aa85a', { flatShading: true }), 0.1, 2.4, 0, { scale: [1.3, 0.6, 1.3] });
-  const leaf = mat('#8ab86a', { flatShading: true });
+  const leaf = leafMat('#8ab86a', 0.08);
   for (let i = 0; i < 12; i++) {
     const a = (i / 12) * Math.PI * 2 + r();
     const rr = 0.6 + r() * 0.5;
@@ -400,7 +401,7 @@ export function buildEdoDiorama(scene) {
   add(hino, G.cyl(0.12, 0.16, 0.32, 12), mat('#7a6a3a', { metalness: 0.6 }), 0, 5.35, 0);
 
   // ---------------- 川・石垣・太鼓橋・渡し場 ----------------
-  const water = (R.waterMat = new THREE.MeshStandardMaterial({ color: '#3a5a8a', emissive: '#1a2a4a', emissiveIntensity: 0.3, roughness: 0.08, metalness: 0.1, transparent: true, opacity: 0.92 }));
+  const water = (R.waterMat = waterize(new THREE.MeshStandardMaterial({ color: '#3a5a8a', emissive: '#1a2a4a', emissiveIntensity: 0.3, roughness: 0.08, metalness: 0.1, transparent: true, opacity: 0.92 }), { strength: 0.3 }));
   add(root, G.box(29.4, 0.05, RIVER_Z1 - RIVER_Z0), water, 0, 0.03, (RIVER_Z0 + RIVER_Z1) / 2, { cast: false });
   const ishigaki = new THREE.MeshStandardMaterial({ map: stoneTex('#8a8478', [12, 1]), roughness: 1 });
   for (const z of [RIVER_Z0 - 0.12, RIVER_Z1 + 0.12]) add(root, G.box(29.4, 0.32, 0.24), ishigaki, 0, 0.12, z);
@@ -476,5 +477,16 @@ export function buildEdoDiorama(scene) {
     add(pg, G.sphere(0.28, 10, 8), mat('#4a7a3a', { flatShading: true }), 0, 0.48, 0);
     add(pg, G.sphere(0.06, 6, 4), mat('#e86a8a'), 0.12, 0.62, 0.12);
   }
+  // 夜の灯りが地面に落ちる光だまり（夜明けとともに消える）
+  R.nightPools = [
+    lightPool(root, -0.6, 0.03, -0.3, 3.0, 1.6, '#ffb860'),
+    lightPool(root, -2.1, 0.03, -0.4, 1.4, 1.4, '#ffc070'),
+    lightPool(root, 1.4, 0.03, -0.4, 1.4, 1.4, '#ffc070'),
+    lightPool(root, 4.9, 0.03, -0.4, 1.4, 1.4, '#ffc070'),
+    lightPool(root, 8.0, 0.03, -0.4, 1.4, 1.4, '#ffc070'),
+    lightPool(root, 0.4, 0.03, 5.5, 2.0, 2.0, '#ffb860'),
+    lightPool(root, 12.3, 0.03, -1.1, 1.6, 1.4, '#ffc070'),
+    lightPool(root, -10.6, 0.03, 4.4, 3.4, 1.6, '#ffb860'),
+  ];
   return R;
 }

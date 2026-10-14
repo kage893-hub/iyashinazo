@@ -61,13 +61,24 @@ function cached(key, fn) {
  * 角をほんの少し丸めた箱（模型のように角に光がのる）。
  * 各面を 3×3 に分け、外側の帯を角へ寄せて、角の頂点を丸めた位置と向きにする。
  */
+// 面ごとの UV の向き（BoxGeometry と同じ並び：px nx py ny pz nz）
+const FACE_UV = [
+  { n: [1, 0, 0], u: 2, v: 1, ud: -1, vd: -1 },
+  { n: [-1, 0, 0], u: 2, v: 1, ud: 1, vd: -1 },
+  { n: [0, 1, 0], u: 0, v: 2, ud: 1, vd: 1 },
+  { n: [0, -1, 0], u: 0, v: 2, ud: 1, vd: -1 },
+  { n: [0, 0, 1], u: 0, v: 1, ud: 1, vd: -1 },
+  { n: [0, 0, -1], u: 0, v: 1, ud: -1, vd: -1 },
+];
+
 function roundedBox(w, h, d) {
   const m = Math.min(w, h, d);
   const r = Math.min(0.035, m * 0.2);
   if (m < 0.08) return new THREE.BoxGeometry(w, h, d); // 小さな部品はそのまま
   const g = new THREE.BoxGeometry(w, h, d, 3, 3, 3);
-  const pos = g.attributes.position, nor = g.attributes.normal;
+  const pos = g.attributes.position, nor = g.attributes.normal, uv = g.attributes.uv;
   const half = [w / 2, h / 2, d / 2];
+  const size = [w, h, d];
   const p = new THREE.Vector3(), inner = new THREE.Vector3(), dir = new THREE.Vector3();
   for (let i = 0; i < pos.count; i++) {
     p.fromBufferAttribute(pos, i);
@@ -77,6 +88,10 @@ function roundedBox(w, h, d) {
       const hk = half[k];
       if (Math.abs(Math.abs(a[k]) - hk / 3) < 1e-6) a[k] = Math.sign(a[k]) * (hk - r);
     }
+    // UV も動かした位置にあわせる（看板の文字が伸びないように）
+    const n0 = [nor.getX(i), nor.getY(i), nor.getZ(i)];
+    const f = FACE_UV.find((F) => F.n[0] === Math.round(n0[0]) && F.n[1] === Math.round(n0[1]) && F.n[2] === Math.round(n0[2]));
+    if (f) uv.setXY(i, (a[f.u] * f.ud) / size[f.u] + 0.5, 0.5 - (a[f.v] * f.vd) / size[f.v]);
     p.fromArray(a);
     inner.set(
       THREE.MathUtils.clamp(p.x, -half[0] + r, half[0] - r),

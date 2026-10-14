@@ -283,10 +283,12 @@ export class OnsenStage {
     R.iroriFireMat.opacity = on ? 0.9 : 0;
     R.iroriFireMat.emissiveIntensity = on ? 2.5 : 0;
     R.iroriLight.intensity = on ? 3 : 0;
+    R.poolRyokan.material.opacity = on ? 0.45 : 0;
   }
 
   _setShop(on) {
     for (const m of this.R.shopLanterns) m.emissiveIntensity = on ? 1.6 : 0;
+    this.R.poolShop.material.opacity = on ? 0.45 : 0;
     this.fox.handLantern.children.forEach((c) => { if (c.material?.emissive) c.material.emissiveIntensity = on ? 2 : 0.3; });
   }
 
@@ -299,6 +301,7 @@ export class OnsenStage {
     for (const m of this.R.streetLanterns) m.emissiveIntensity = on ? 1.7 : 0;
     for (const m of this.R.toroMats) m.emissiveIntensity = on ? 2.0 : 0;
     for (const L of this.R.streetLight) L.intensity = on ? 3 : 0;
+    for (const p of this.R.poolStreet) p.material.opacity = on ? 0.45 : 0;
   }
 
   _gateVisual(k) {

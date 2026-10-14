@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { waterize, lightPool } from '../../lib/livefx.js';
 import { add, mat, glow, G, group, rng, signTex, canvasTex, roundRectShape, FONT } from '../../lib/util.js';
 import { bench, flowerPatch, tree, bush } from '../station/diorama.js';
 import { grassTex, boardsTex, planksTex, shinglesTex, stoneTex } from '../station/textures.js';
@@ -354,7 +355,7 @@ export function buildOnsenDiorama(scene) {
     add(roten, G.dodeca(0.32 + rr() * 0.15), stone, Math.cos(a) * 1.6, 0.15, Math.sin(a) * 1.1, { rot: [rr(), rr(), rr()] });
   }
   add(roten, G.circle(1.5, 24), mat('#7a7064'), 0, 0.03, 0, { rot: [-Math.PI / 2, 0, 0], scale: [1, 0.72, 1], cast: false });
-  R.rotenWaterMat = new THREE.MeshStandardMaterial({ color: '#8fd0e0', emissive: '#4aa8c8', emissiveIntensity: 0.2, roughness: 0.05, transparent: true, opacity: 0 });
+  R.rotenWaterMat = waterize(new THREE.MeshStandardMaterial({ color: '#8fd0e0', emissive: '#4aa8c8', emissiveIntensity: 0.2, roughness: 0.05, transparent: true, opacity: 0 }), { strength: 0.25, scale: 2 });
   R.rotenWater = add(roten, G.circle(1.5, 24), R.rotenWaterMat, 0, 0.2, 0, { rot: [-Math.PI / 2, 0, 0], scale: [1, 0.72, 1], cast: false });
   R.rotenWater.userData.keep = true;
   R.rotenWater.userData.noPick = true;
@@ -462,7 +463,7 @@ export function buildOnsenDiorama(scene) {
   }
 
   // ---------------- 小川と太鼓橋 ----------------
-  const water = new THREE.MeshStandardMaterial({ color: '#6aa8c0', emissive: '#2a6a8a', emissiveIntensity: 0.2, roughness: 0.05, transparent: true, opacity: 0.9 });
+  const water = waterize(new THREE.MeshStandardMaterial({ color: '#6aa8c0', emissive: '#2a6a8a', emissiveIntensity: 0.2, roughness: 0.05, transparent: true, opacity: 0.9 }), { strength: 0.3 });
   add(root, new THREE.ShapeGeometry(roundRectShape(1.4, 13, 0.6), 6), water, 12.6, 0.02, 3.4, { rot: [-Math.PI / 2, 0, 0.12], cast: false });
   const br = group(root, 12.4, 0, 3.6);
   add(br, new THREE.TorusGeometry(1.6, 0.12, 6, 20, Math.PI), mat('#c8382e'), 0, -0.85, -0.55, { rot: [0, Math.PI / 2, 0] });
@@ -498,5 +499,11 @@ export function buildOnsenDiorama(scene) {
   flowerPatch(root, -12.4, 1.6, 0.8, 10, 81, ['#ff8fa8', '#ffffff', '#f4c8d8']);
 
   R.lampMats = [...R.streetLanterns, ...R.shopLanterns];
+  // 灯りがともると地面に落ちる光だまり
+  R.poolStreet = [[-7.4, 2.25], [-1.6, 2.25], [4.0, 2.25], [-7.4, 5.0], [2.6, 5.0], [6.4, 2.25]].map(([x, z]) => lightPool(root, x + 0.4, 0.035, z + 0.4, 1.8, 1.8, '#ffb860'));
+  R.poolStreet.push(lightPool(root, -4.2, 0.035, 7.4, 3.2, 1.8, '#ffb860'));
+  R.poolRyokan = lightPool(root, -10.2, 0.035, 6.0, 4.4, 1.8, '#ff9a50');
+  R.poolShop = lightPool(root, 9.0, 0.035, 6.9, 3.4, 1.6, '#ffb860');
+  for (const p of [...R.poolStreet, R.poolRyokan, R.poolShop]) p.material.opacity = 0;
   return R;
 }

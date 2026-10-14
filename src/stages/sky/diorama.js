@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { waterize } from '../../lib/livefx.js';
 import { add, mat, glow, G, group, rng, signTex, roundRectShape } from '../../lib/util.js';
 import { lampPost, bench, flowerPatch, tree, bush, windowFrame } from '../station/diorama.js';
 import { grassTex, boardsTex, planksTex, shinglesTex, stoneTex } from '../station/textures.js';
@@ -147,7 +148,7 @@ export function buildSkyDiorama(scene) {
   add(ft, new THREE.CylinderGeometry(1.7, 1.8, 0.55, 32, 1, true), fStone, 0, 0.275, 0);
   add(ft, new THREE.CylinderGeometry(1.5, 1.5, 0.55, 32, 1, true), mat('#d8d4cc', { side: THREE.BackSide }), 0, 0.275, 0, { cast: false });
   add(ft, G.torus(1.6, 0.13, 8, 36), mat('#ffffff'), 0, 0.56, 0, { rot: [Math.PI / 2, 0, 0] });
-  const water = new THREE.MeshStandardMaterial({ color: '#8fd0f0', emissive: '#3a90c8', emissiveIntensity: 0.35, roughness: 0.05, metalness: 0.1, transparent: true, opacity: 0.85 });
+  const water = waterize(new THREE.MeshStandardMaterial({ color: '#8fd0f0', emissive: '#3a90c8', emissiveIntensity: 0.35, roughness: 0.05, metalness: 0.1, transparent: true, opacity: 0.85 }), { strength: 0.3, scale: 2 });
   add(ft, G.circle(1.52, 32), water, 0, 0.42, 0, { rot: [-Math.PI / 2, 0, 0], cast: false });
   add(ft, G.cyl(0.25, 0.35, 1.3, 16), fStone, 0, 0.9, 0);
   add(ft, G.cyl(0.8, 0.5, 0.2, 24), fStone, 0, 1.6, 0);

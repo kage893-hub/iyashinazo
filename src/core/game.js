@@ -11,6 +11,7 @@ import { UI } from './ui.js';
 import { AudioSys } from './audio.js';
 import { ITEMS } from '../data/items.js';
 import { clamp } from '../lib/util.js';
+import { liveTime } from '../lib/livefx.js';
 
 const SAVE_KEY = 'hoshimawari-save-v1';
 
@@ -705,6 +706,7 @@ export class Game {
     this._adapt(raw);
     this._updateLabels(raw);
     if (this.playing && !this.cinematic) this.state.elapsed += dt;
+    liveTime.value = this.time;
     this.tweens.update(dt);
     if (this.stage) this.stage.update(dt, this.time);
 

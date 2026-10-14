@@ -7,6 +7,7 @@ import { add, mat, glow, G, group, lerp, damp, softCircleTexture } from '../../l
 import { Ease } from '../../core/tween.js';
 import { el } from '../../core/ui.js';
 import { buildStationDiorama } from './diorama.js';
+import { Motes } from '../../lib/livefx.js';
 import { mergeStatic } from '../../lib/merge.js';
 import { Train, makeTrainPath, buildTracks } from './train.js';
 import { timetableHTML, stationSignHTML, clockPanel, lockPanel, leverPanel } from './panels.js';
@@ -110,6 +111,8 @@ export class StationStage {
     this.splash = new Puffs(scene, { count: 24, color: '#bfe8ff', opacity: 0.8 });
     this.fireflies = makeFireflies(80, { x: 27, z: 19, y0: 0.4, y1: 4 });
     scene.add(this.fireflies);
+    // 夕日の中をただよう光のほこり
+    this.motes = new Motes(scene, { count: 70, color: '#ffe2b0', size: 0.07, area: { x: 26, z: 18, y0: 0.4, y1: 5 }, kind: 'dust', opacity: 0.55 });
     this.leaves = new Leaves(scene, { center: new V(12.4, 0, 7.6), radius: 2.6, top: 5.5 });
     this.sparkles = this._makeSparkles(scene);
     this.butterflies = new Butterflies(scene, [new V(-7, 0.3, 5.6), new V(7.0, 0.2, 8.6), new V(-12.6, 0.2, 1.8), new V(2.6, 0.9, -1.6)]);
@@ -342,6 +345,7 @@ export class StationStage {
     g.audio.night = this.night;
     this.sky.uniforms.time.value = t;
     this.fireflies.material.uniforms.time.value = t;
+    this.motes.update(dt, t);
     this.clouds.rotation.y = t * 0.004;
     for (const s of this.smallIslands) s.o.position.y = s.y + Math.sin(t * 0.3 + s.ph) * 0.8;
     this.city.position.y = 36 + Math.sin(t * 0.25) * 0.8;
@@ -446,6 +450,8 @@ export class StationStage {
     for (const L of R.lights) L.intensity = L.userData.base * lerp(0.6, 2.2, k);
     this.train.coach.winMat.emissiveIntensity = lerp(1.1, 2.2, k);
     this.fireflies.material.uniforms.intensity.value = lerp(0.3, 1.2, k);
+    this.motes.mat.opacity = 0.55 * (1 - k);
+    for (const p of R.nightPools) p.material.opacity = 0.12 + k * 0.5;
     const cm = this.clouds.userData.mat;
     cm.color.set('#fff4ee').lerp(new THREE.Color('#6a6f9a'), k);
     cm.emissive.set('#ffb8a0').lerp(new THREE.Color('#1c2050'), k);

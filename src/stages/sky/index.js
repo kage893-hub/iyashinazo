@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { Motes } from '../../lib/livefx.js';
 import { showStageClear } from '../clear.js';
 import { stageNo } from '../../data/route.js';
 import { makeSky, makeIslandBase, makeSmallIsland, makeClouds, Puffs, Butterflies, Birds } from '../../lib/environment.js';
@@ -123,6 +124,8 @@ export class SkyStage {
     this.smoke = new Puffs(scene, { count: 70, color: '#f8f8ff', opacity: 0.75 });
     this.spray = new Puffs(scene, { count: 40, color: '#d8f0ff', opacity: 0.55 });
     this.wind = new Puffs(scene, { count: 60, color: '#ffffff', opacity: 0.5 });
+    // 風にのってただよう花びら
+    this.petals = new Motes(scene, { count: 45, color: '#ffd8e8', size: 0.11, area: { x: 30, z: 22, y0: 0.2, y1: 7 }, kind: 'petal', opacity: 0.8 });
     this.butterflies = new Butterflies(scene, [new V(-2.2, 0.2, 7.3), new V(12.8, 0.2, 9.0), new V(-12.6, 0.2, -3.2), new V(6.8, 0.2, 1.6)]);
     this.birds = new Birds(scene, 6, 9);
     this.sparkles = this._makeSparkles(scene);
@@ -280,6 +283,7 @@ export class SkyStage {
     const g = this.g, R = this.R, f = g.flags;
     for (const c of this.creatures) { c.camPos = g.camera.position; c.update(dt, t); }
     this.butterflies.update(dt, t, 0);
+    this.petals.update(dt, t);
     this.birds.update(dt, t);
     this.sky.uniforms.time.value = t;
     this.clouds.rotation.y = t * 0.005;

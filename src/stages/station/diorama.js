@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { sway, waterize, lightPool } from '../../lib/livefx.js';
 import { add, mat, glow, G, group, rng, signTex, roundRectShape, softCircleTexture } from '../../lib/util.js';
 import {
   planksTex, boardsTex, shinglesTex, stoneTex, gravelTex, grassTex,
@@ -102,6 +103,14 @@ export function flowerPatch(parent, x, z, r, count, seed, colors = ['#ff8fa8', '
   }
 }
 
+// 葉・茂みは風でそよぐ専用のマテリアル（色ごとに共有）
+const _leafMats = new Map();
+export function leafMat(color, amp = 0.06) {
+  const k = color + amp;
+  if (!_leafMats.has(k)) _leafMats.set(k, sway(new THREE.MeshStandardMaterial({ color, flatShading: true, roughness: 0.9 }), { amp }));
+  return _leafMats.get(k);
+}
+
 export function tree(parent, x, z, { scale = 1, colors = ['#e2763a', '#f0a24a', '#d24f32', '#f4c15a'], seed = 1, hollow = false } = {}) {
   const r = rng(seed);
   const g = group(parent, x, 0, z);
@@ -121,7 +130,7 @@ export function tree(parent, x, z, { scale = 1, colors = ['#e2763a', '#f0a24a', 
   const leaves = group(g, 0, 0, 0);
   const clusters = [[0, 4.0, 0, 1.7], [1.2, 3.6, 0.3, 1.2], [-1.1, 3.5, -0.2, 1.25], [0.2, 3.3, 1.1, 1.1], [-0.3, 3.4, -1.0, 1.15], [0.5, 4.7, -0.3, 1.0], [-0.6, 4.5, 0.5, 0.95]];
   for (const [cx, cy, cz, cr] of clusters) {
-    add(leaves, G.ico(cr, 1), mat(colors[Math.floor(r() * colors.length)], { flatShading: true, roughness: 0.9 }), cx, cy, cz, { rot: [r(), r(), r()] });
+    add(leaves, G.ico(cr, 1), leafMat(colors[Math.floor(r() * colors.length)]), cx, cy, cz, { rot: [r(), r(), r()] });
   }
   let hollowMesh = null;
   if (hollow) {
@@ -135,7 +144,7 @@ export function bush(parent, x, z, s = 1, seed = 1, color = '#5f9a4a') {
   const r = rng(seed);
   const g = group(parent, x, 0, z);
   for (let i = 0; i < 4; i++) {
-    add(g, G.ico(0.45 * s * (0.7 + r() * 0.5), 1), mat(color, { flatShading: true }), (r() - 0.5) * s, 0.3 * s, (r() - 0.5) * s * 0.7);
+    add(g, G.ico(0.45 * s * (0.7 + r() * 0.5), 1), leafMat(color, 0.035), (r() - 0.5) * s, 0.3 * s, (r() - 0.5) * s * 0.7);
   }
   return g;
 }
@@ -452,7 +461,7 @@ export function buildStationDiorama(scene) {
   add(well, new THREE.CylinderGeometry(0.85, 0.9, 0.85, 20, 1, true), wellStone, 0, 0.425, 0);
   add(well, new THREE.CylinderGeometry(0.68, 0.68, 0.85, 20, 1, true), mat('#5a5048', { side: THREE.BackSide }), 0, 0.425, 0, { cast: false });
   add(well, G.torus(0.77, 0.1, 8, 24), mat('#9a9286'), 0, 0.86, 0, { rot: [Math.PI / 2, 0, 0] });
-  add(well, G.circle(0.68, 20), new THREE.MeshStandardMaterial({ map: waterTex(), roughness: 0.1, emissive: '#1a3a5a', emissiveIntensity: 0.3 }), 0, 0.35, 0, { rot: [-Math.PI / 2, 0, 0], cast: false });
+  add(well, G.circle(0.68, 20), waterize(new THREE.MeshStandardMaterial({ map: waterTex(), roughness: 0.1, emissive: '#1a3a5a', emissiveIntensity: 0.3 }), { strength: 0.25, scale: 2 }), 0, 0.35, 0, { rot: [-Math.PI / 2, 0, 0], cast: false });
   for (const s of [-1, 1]) add(well, G.box(0.14, 2.1, 0.14), wood, s * 0.85, 1.05, 0);
   for (const s of [-1, 1]) add(well, G.box(1.1, 0.06, 1.4), mat('#8a4a3a'), s * 0.48, 2.25, 0, { rot: [0, 0, -s * 0.55] });
   R.wellAxle = group(well, 0, 1.7, 0);
@@ -563,7 +572,7 @@ export function buildStationDiorama(scene) {
 
   // 池（カエルのふるさと）
   const pond = (R.pond = group(root, -7.6, 0, -8.3));
-  add(pond, new THREE.ShapeGeometry(roundRectShape(4.6, 2.6, 1.2), 10), new THREE.MeshStandardMaterial({ map: waterTex(), roughness: 0.08, metalness: 0.1, emissive: '#1a3a5a', emissiveIntensity: 0.25 }), 0, 0.03, 0, { rot: [-Math.PI / 2, 0, 0], cast: false });
+  add(pond, new THREE.ShapeGeometry(roundRectShape(4.6, 2.6, 1.2), 10), waterize(new THREE.MeshStandardMaterial({ map: waterTex(), roughness: 0.08, metalness: 0.1, emissive: '#1a3a5a', emissiveIntensity: 0.25 })), 0, 0.03, 0, { rot: [-Math.PI / 2, 0, 0], cast: false });
   const pr = rng(77);
   for (let i = 0; i < 16; i++) {
     const a = (i / 16) * Math.PI * 2;
@@ -676,7 +685,7 @@ export function buildStationDiorama(scene) {
   // 草むら（インスタンス）
   const tuftGeo = new THREE.ConeGeometry(0.06, 0.35, 4);
   tuftGeo.translate(0, 0.17, 0);
-  const tuftMat = mat('#6fa04a', { flatShading: true });
+  const tuftMat = sway(new THREE.MeshStandardMaterial({ color: '#6fa04a', flatShading: true, roughness: 0.8 }), { amp: 0.09, speed: 1.2 });
   const blocked = [
     [-11.4, -2.6, -1.6, 5.2], [-14, 10, -4.2, -1.2], [-14.5, 15, -6.6, -3.8], [-10, -5, 4.0, 9.2],
     [-2.5, 10.5, 5.0, 8.0], [7.4, 11.2, 2.4, 5.8], [0.2, 2.2, -1.4, 5.5], [-10.2, -5, -9.8, -6.8],
@@ -723,6 +732,13 @@ export function buildStationDiorama(scene) {
   for (const o of [R.roof, R.vane, R.hourHand, R.minuteHand, R.pendulum, R.tongs, R.luggageLid, R.wellAxle, R.bucket,
     R.handleTrophy, R.shedDoor, R.lock, R.spout, R.valveWheel, R.sigBoxDoor, ...R.levers]) o.userData.dynamic = true;
   for (const o of [R.rope, R.marble, R.broochInBucket, R.fireStoneInStove, R.waterStream]) o.userData.keep = true;
+  // 夜の窓明かりが地面に落ちる光だまり（強さは夜の深さで変える）
+  R.nightPools = [
+    lightPool(root, -7, 0.03, 5.5, 6.5, 2.6, '#ffb860'),
+    lightPool(root, -2.2, 0.03, 1.5, 1.8, 1.8, '#ffc070'),
+    lightPool(root, -11.8, 0.03, 0.7, 1.6, 1.6, '#ffc070'),
+  ];
+  for (const p of R.nightPools) p.material.opacity = 0;
   return R;
 }
 
