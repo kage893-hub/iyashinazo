@@ -624,3 +624,46 @@ body.rpg .clear-stats span { color: #c8d0f0; }
 .pb-title { text-align: center; font-size: 18px; color: #6a2a8a; margin-bottom: 8px; }
 .pb-page { line-height: 1.8; padding: 6px 0; border-top: 1px dashed #c8a070; }
 .gtable.stele { grid-template-columns: repeat(5, 1fr); background: linear-gradient(135deg, #8a849a, #6a6478); }
+
+/* ---------- キノコの森：虫のものさし・宝の地図 ---------- */
+.units { background: #f4ead2; border: 3px solid #6a4a2e; border-radius: 10px; padding: 12px 14px; color: #3a2a1e; text-align: center; }
+.un-t { font-weight: 900; font-size: 18px; margin-bottom: 6px; letter-spacing: 0.1em; }
+.un-r { font-weight: 700; font-size: 16px; line-height: 1.9; }
+.tmap { display: flex; justify-content: center; }
+.tm-paper { background: radial-gradient(circle at 30% 20%, #fbf2d8, #e8d4a4); border: 2px solid #a8844a; border-radius: 6px; padding: 14px 18px; color: #3a2a1e; max-width: 420px; box-shadow: 0 3px 0 #c8a870; line-height: 1.8; }
+.tm-t { font-weight: 900; font-size: 20px; text-align: center; margin-bottom: 6px; }
+.tm-paper b { color: #b0401e; }
+.tm-sign { text-align: right; font-size: 13px; color: #6a5030; }
+.digp { text-align: center; }
+.digp .plaque small { font-weight: 500; }
+.digp .plaque b { color: #b0401e; }
+.dg-wrap { position: relative; margin: 14px auto 4px; width: min(360px, 82vw); }
+.dg-n { font-weight: 900; color: #6a4a2e; font-size: 13px; margin-bottom: 2px; }
+.dg-e { position: absolute; right: -30px; top: 50%; font-weight: 900; color: #6a4a2e; font-size: 13px; }
+.dg-grid { display: grid; gap: 2px; padding: 6px; background: #4a3220; border-radius: 10px; }
+.dg-c { aspect-ratio: 1; border: none; border-radius: 3px; background: #8a6440; cursor: pointer; padding: 0; font-size: 15px; line-height: 1; }
+.dg-c:hover { background: #a07a50; }
+.dg-c.mark { background: #6a8a4a; cursor: default; }
+.dg-c.sel { background: #f0c040; box-shadow: 0 0 0 2px #fff8d0 inset; }
+.dg-c.dug { background: #2a1a10; }
+.dg-c.dug.sel { background: #5a3a20; }
+.dg-c.hit { background: #c8e0f0; }
+.dg-legend { font-size: 13px; font-weight: 700; color: #6a4a2e; margin-bottom: 8px; }
+
+/* ---------- キノコの森：影絵 ---------- */
+.shadowp { text-align: center; }
+.shadowp .plaque small { font-weight: 500; }
+.sh-screen { width: min(280px, 72vw); height: auto; display: block; margin: 10px auto 6px; }
+.sh-row { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-bottom: 6px; }
+.sh-row .btn.on { background: var(--navy); color: #fff8e6; }
+.sh-rail { position: relative; height: 26px; margin: 4px auto; width: min(320px, 80vw); background: linear-gradient(90deg, #d8ccb0 0 10%, #ede4cc 10%); border-radius: 13px; font-size: 12px; font-weight: 700; color: #6a4a2e; text-align: left; padding-left: 6px; line-height: 26px; }
+.sh-rail i { position: absolute; top: 0; font-style: normal; transform: translateX(-50%); transition: left 0.1s; }
+.sh-obj { color: #6a4a2e; }
+.sh-sl { display: flex; align-items: center; justify-content: center; gap: 6px; font-weight: 700; font-size: 14px; margin: 6px 0; flex-wrap: wrap; }
+.sh-sl input { width: min(200px, 50vw); }
+.shadowp.solved .sh-screen circle:first-child { fill: #fff4c8; }
+@media (max-width: 520px), (max-height: 700px) {
+  .sh-screen { width: min(210px, 60vw); margin: 4px auto; }
+  .shadowp .plaque, .digp .plaque { padding: 8px 10px; font-size: 14px; }
+  .dg-wrap { width: min(300px, 76vw); }
+}

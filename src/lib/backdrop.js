@@ -152,6 +152,36 @@ function sail(group, mats, { a, r = 250, y = -34, s = 1, color, color2 = color, 
   group.add(mesh);
 }
 
+/** 虹（set(k) で、うっすら浮かびあがる） */
+function rainbow(group, mats, { a = BACK, r = 236, y0 = -20, R0 = 120, w = 14, op = 0, op2 = 0.55 }) {
+  const cols = ['#ff5a5a', '#ffa040', '#ffe060', '#70d870', '#58a8f0', '#6a6ae0', '#b070e0'].map((c) => new THREE.Color(c));
+  const pos = [], col = [], idx = [];
+  const cx = Math.cos(a) * r, cz = Math.sin(a) * r;
+  const tx = -Math.sin(a), tz = Math.cos(a);
+  const seg = 60, bands = cols.length;
+  for (let b = 0; b <= bands; b++) {
+    const rad = R0 + w * (b / bands - 0.5);
+    for (let i = 0; i <= seg; i++) {
+      const t = Math.PI * (i / seg);
+      const u = Math.cos(t) * rad, v = Math.sin(t) * rad;
+      pos.push(cx + tx * u, y0 + v, cz + tz * u);
+      const c = cols[Math.min(bands - 1, b)];
+      const edge = b === 0 || b === bands ? 0 : 1;
+      col.push(c.r, c.g, c.b, edge * Math.min(1, Math.sin(t) * 3));
+    }
+  }
+  for (let b = 0; b < bands; b++) for (let i = 0; i < seg; i++) {
+    const k = b * (seg + 1) + i;
+    idx.push(k, k + seg + 1, k + 1, k + 1, k + seg + 1, k + seg + 2);
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute('color', new THREE.Float32BufferAttribute(col, 4));
+  g.setIndex(idx);
+  const m = silMat(mats, '#ffffff', '#ffffff', op, op2);
+  group.add(new THREE.Mesh(g, m));
+}
+
 // 方向の目安：カメラはふだん +z 側から見ているので、奥は a ≈ -π/2（z が負）
 const BACK = -Math.PI / 2;
 
@@ -196,6 +226,15 @@ const KINDS = {
     ridge(g, M, { r: 254, y0: -30, h: [14, 46], seed: 71, freq: 9, color: '#24162e', color2: '#2e1a3e', op: 0.82, op2: 0.85 });
     ridge(g, M, { r: 236, y0: -34, h: [6, 24], seed: 72, freq: 13, color: '#1a1022', color2: '#22142e', op: 0.86, op2: 0.88 });
     lights(g, M, { n: 26, r: 262, y: [-20, 40], a0: BACK + 0.3, a1: BACK + 0.6, seed: 73, color: '#ff6a2a', op: 0.6, op2: 0.75, size: 3.0 });
+  },
+  // キノコの森：雨上がりの、巨大な草と木のシルエット。晴れると虹がかかる
+  kinoko(g, M) {
+    ridge(g, M, { r: 256, y0: -30, h: [20, 60], seed: 81, freq: 14, color: '#5a7a6a', color2: '#6a9a6a', op: 0.6, op2: 0.55 });
+    ridge(g, M, { r: 238, y0: -34, h: [10, 34], seed: 82, freq: 22, color: '#3a5a42', color2: '#4a7a4a', op: 0.72, op2: 0.68 });
+    for (const [a, s] of [[BACK - 0.7, 1.2], [BACK + 0.25, 1.5], [BACK + 1.1, 1.0], [BACK - 1.5, 1.3], [0.6, 1.1], [2.4, 1.2]]) {
+      peak(g, M, { a, r: 246, y0: -24, h: 34 * s, w: 30 * s, color: '#4a6a52', color2: '#5a8a5a', op: 0.55, op2: 0.5, snowLine: 2 });
+    }
+    rainbow(g, M, { a: BACK + 0.12, r: 232, y0: -28, R0: 42, w: 8, op: 0, op2: 0.65 });
   },
   // 温泉：雪をかぶった山なみと、遠くの湯の里の灯り
   onsen(g, M) {

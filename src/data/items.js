@@ -407,4 +407,44 @@ export const ITEMS = {
     desc: '『ふたりの ちいさな ドラゴン』。魔王が小さいころ、毎晩弟に読んであげていた絵本。もう一度押すと読める。',
     icon: svg(`<rect x="10" y="12" width="44" height="40" rx="3" fill="#f0c840" stroke="#8a6416" stroke-width="2.5"/><rect x="14" y="16" width="36" height="32" fill="#4a2a6a"/><circle cx="26" cy="34" r="7" fill="#8a5ac8"/><circle cx="39" cy="36" r="5" fill="#e8603a"/><circle cx="24" cy="33" r="1.2" fill="#fff"/><circle cx="38" cy="35" r="1" fill="#fff"/>`),
   },
+  goen: {
+    name: '5円玉',
+    desc: 'ぬかるみからひっぱり出した、金色の遺物。まんなかに、まるい穴がひとつあいている。森の住人いわく「ごえん」。',
+    icon: svg(`<circle cx="32" cy="32" r="24" fill="#e2b54a" stroke="#8a6416" stroke-width="2.5"/><circle cx="32" cy="32" r="7" fill="#f8f0d8" stroke="#8a6416" stroke-width="2.5"/><path d="M18 44 q6 -6 12 -2 M34 42 q6 -6 12 0" stroke="#a8782a" stroke-width="2.5" fill="none" stroke-linecap="round"/>`),
+  },
+  button: {
+    name: 'ボタン',
+    desc: 'テントウムシの子どもたちに借りた、水色の遺物。穴が4つあいている。いつもはテーブルにしているらしい。',
+    icon: svg(`<circle cx="32" cy="32" r="22" fill="#7ab8e8" stroke="#2a5a8a" stroke-width="2.5"/><circle cx="32" cy="32" r="16" fill="none" stroke="#5a98c8" stroke-width="2"/><circle cx="26" cy="26" r="3.2" fill="#1a2a3a"/><circle cx="38" cy="26" r="3.2" fill="#1a2a3a"/><circle cx="26" cy="38" r="3.2" fill="#1a2a3a"/><circle cx="38" cy="38" r="3.2" fill="#1a2a3a"/>`),
+  },
+  oldLetter: {
+    name: '百年前の手紙',
+    desc: 'カタツムリの郵便屋さんが、百年かけて運んできた手紙。あて先は「キノコの長老さま」。',
+    icon: svg(`<rect x="8" y="16" width="48" height="34" rx="3" fill="#e8d8b0" stroke="#7a5a32" stroke-width="2.5"/><path d="M8 18 l24 18 l24 -18" fill="none" stroke="#7a5a32" stroke-width="2.5"/><circle cx="32" cy="36" r="5" fill="#c83a2a"/><path d="M14 46 q4 -3 8 0" stroke="#a89070" stroke-width="2" fill="none"/>`),
+  },
+  antMap: {
+    name: '宝の地図',
+    desc: '長老のひいひいじいさまが書いた、ゆびぬきのありか。もう一度押すと読める。',
+    icon: svg(`<path d="M8 14 l16 -4 l16 4 l16 -4 v40 l-16 4 l-16 -4 l-16 4 z" fill="#f0dcae" stroke="#7a5a32" stroke-width="2.5" stroke-linejoin="round"/><path d="M24 10 v40 M40 14 v40" stroke="#c8a870" stroke-width="2"/><path d="M14 40 q8 -4 12 -12 t14 -8" stroke="#b0401e" stroke-width="2.5" fill="none" stroke-dasharray="3 3"/><path d="M42 16 l6 6 M48 16 l-6 6" stroke="#c83a2a" stroke-width="3"/>`),
+  },
+  thimble: {
+    name: 'ゆびぬき',
+    desc: '銀色の、ぶつぶつもようの遺物。むかしの森では、水くみのおけに使っていたらしい。',
+    icon: svg(`<path d="M18 52 V26 Q18 10 32 10 Q46 10 46 26 V52 Z" fill="#d8dce4" stroke="#5a6070" stroke-width="2.5"/><g fill="#8a90a0"><circle cx="26" cy="22" r="2"/><circle cx="32" cy="18" r="2"/><circle cx="38" cy="22" r="2"/><circle cx="26" cy="32" r="2"/><circle cx="32" cy="28" r="2"/><circle cx="38" cy="32" r="2"/><circle cx="26" cy="42" r="2"/><circle cx="32" cy="38" r="2"/><circle cx="38" cy="42" r="2"/></g><rect x="16" y="50" width="32" height="5" rx="2" fill="#a8acb8"/>`),
+  },
+  thimbleWater: {
+    name: 'しずく入りのゆびぬき',
+    desc: '高い葉っぱから落ちてきた、すきとおった雨のしずくがたっぷり。',
+    icon: svg(`<path d="M18 52 V26 Q18 10 32 10 Q46 10 46 26 V52 Z" fill="#d8dce4" stroke="#5a6070" stroke-width="2.5"/><ellipse cx="32" cy="13" rx="12" ry="4" fill="#7ac8f0"/><path d="M32 2 q5 7 0 10 q-5 -3 0 -10z" fill="#bfe8ff" stroke="#3a8ac8" stroke-width="1.5"/><g fill="#8a90a0"><circle cx="26" cy="30" r="2"/><circle cx="38" cy="30" r="2"/><circle cx="32" cy="38" r="2"/></g>`),
+  },
+  nectar: {
+    name: 'あまつゆ草の蜜',
+    desc: '雨上がりにだけ咲く花の、金色の蜜。とろりと甘い、いいにおい。',
+    icon: svg(`<path d="M20 22 h24 v26 a12 10 0 0 1 -24 0 z" fill="#ffd84a" stroke="#a87a1a" stroke-width="2.5"/><rect x="18" y="14" width="28" height="9" rx="3" fill="#ff9ab8" stroke="#a84a6a" stroke-width="2"/><path d="M26 30 q2 8 0 14" stroke="#fff4c0" stroke-width="3" fill="none" stroke-linecap="round"/>`),
+  },
+  silkRope: {
+    name: 'クモの糸の綱',
+    desc: 'クモの機織り職人が編んだ、細くて、とても丈夫な綱。',
+    icon: svg(`<g fill="none" stroke="#f4f0ff" stroke-width="5" stroke-linecap="round"><path d="M14 46 c8 -20 28 -20 36 -4"/><path d="M14 38 c8 -20 28 -20 36 -4"/></g><g fill="none" stroke="#a898c8" stroke-width="1.5"><path d="M14 46 c8 -20 28 -20 36 -4"/><path d="M14 38 c8 -20 28 -20 36 -4"/></g><circle cx="50" cy="42" r="4" fill="#e8e0f8" stroke="#8a7ab0" stroke-width="2"/>`),
+  },
 };

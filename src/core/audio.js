@@ -116,6 +116,22 @@ const MAOU_CHORDS = [
   [45, 52, 57], [40, 47, 52], [41, 48, 53], [44, 52, 56],
 ];
 
+// キノコの森：雨上がりの、ぽつぽつはねる木琴のようなワルツ（ヘ長調）
+const KINOKO_MELODY = [
+  [0, 72, 0.5], [0.5, 74, 0.5], [1, 77, 1], [2, 76, 0.5], [2.5, 74, 0.5], [3, 72, 1],
+  [4, 69, 1], [5, 72, 1], [6, 70, 2],
+  [8, 69, 0.5], [8.5, 70, 0.5], [9, 72, 1], [10, 74, 1], [11, 77, 1],
+  [12, 76, 3],
+  [16, 77, 0.5], [16.5, 79, 0.5], [17, 81, 1], [18, 79, 0.5], [18.5, 77, 0.5], [19, 76, 1],
+  [20, 74, 1], [21, 76, 0.5], [21.5, 77, 0.5], [22, 74, 2],
+  [24, 72, 1], [25, 70, 1], [26, 69, 1], [27, 67, 1],
+  [28, 65, 3],
+];
+const KINOKO_CHORDS = [
+  [53, 57, 60], [46, 53, 58], [48, 55, 60], [53, 57, 60],
+  [50, 57, 62], [46, 53, 58], [48, 55, 60], [53, 57, 60],
+];
+
 /** 0.5 秒の無音 WAV（data URI） */
 function silentWav() {
   const rate = 8000, n = 4000;
@@ -141,6 +157,7 @@ export const SONGS = {
   port: { melody: PORT_MELODY, chords: PORT_CHORDS, tempo: 82 },
   hero: { melody: HERO_MELODY, chords: HERO_CHORDS, tempo: 96, chip: true },
   maou: { melody: MAOU_MELODY, chords: MAOU_CHORDS, tempo: 76, chip: true },
+  kinoko: { melody: KINOKO_MELODY, chords: KINOKO_CHORDS, tempo: 84 },
 };
 
 export class AudioSys {

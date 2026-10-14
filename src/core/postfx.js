@@ -106,6 +106,9 @@ export const GRADES = {
   // 魔王城：夕やけの紫と溶岩の赤 → ランタンを灯すと、紫の光につつまれる
   maou: { lift: [0.02, 0.0, 0.04], gain: [1.06, 0.97, 0.98], sat: 1.12, contrast: 1.06, warmth: 0.01, vignette: 0.48 },
   maouLantern: { lift: [0.035, 0.0, 0.08], gain: [0.98, 0.92, 1.08], sat: 1.05, contrast: 1.05, warmth: -0.01, vignette: 0.55 },
+  // キノコの森：雨上がりのしっとりした緑 → 虹が出ると、あたたかく澄んだ色に
+  kinoko: { lift: [0.0, 0.016, 0.03], gain: [1.0, 1.02, 0.98], sat: 1.02, contrast: 1.03, warmth: 0.0, vignette: 0.4 },
+  kinokoRainbow: { lift: [0.0, 0.008, 0.02], gain: [1.05, 1.02, 0.95], sat: 1.14, contrast: 1.05, warmth: 0.02, vignette: 0.34 },
   portFog: { lift: [0.035, 0.04, 0.05], gain: [0.98, 1.0, 1.02], sat: 0.88, contrast: 0.93, warmth: 0.0, vignette: 0.3 },
   port: { lift: [0.0, 0.006, 0.025], gain: [0.99, 1.01, 1.04], sat: 1.12, contrast: 1.05, warmth: -0.005, vignette: 0.28 },
 };
