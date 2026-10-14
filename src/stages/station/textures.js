@@ -152,11 +152,15 @@ export function timetableTex() {
     rows.forEach(([t, d], i) => {
       const y = 120 + i * 58;
       ctx.fillStyle = i === 2 ? '#ffd27a' : '#f5e6c0';
-      ctx.fillText(t, 50, y);
+      ctx.fillText(i === 2 ? '  :00' : t, 50, y);
       ctx.fillText(d, 180, y);
     });
-    ctx.fillStyle = 'rgba(255,255,255,0.12)';
-    ctx.beginPath(); ctx.ellipse(80, 223, 60, 26, 0.2, 0, 7); ctx.fill();
+    // 数字がにじんで読めない（インクのしみ）
+    const r = rng(5);
+    for (let k = 0; k < 7; k++) {
+      ctx.fillStyle = `rgba(${k % 2 ? '120,140,190' : '60,80,130'},0.85)`;
+      ctx.beginPath(); ctx.ellipse(62 + (r() - 0.5) * 18, 226 + (r() - 0.5) * 14, 10 + r() * 12, 8 + r() * 9, r() * 3, 0, 7); ctx.fill();
+    }
     // 貼り紙
     ctx.save();
     ctx.translate(370, 300); ctx.rotate(-0.08);

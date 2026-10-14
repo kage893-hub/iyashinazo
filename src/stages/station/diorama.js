@@ -296,20 +296,23 @@ export function buildStationDiorama(scene) {
   // ---- 内装 ----
   // 切符売り場のブース
   const booth = group(bld);
-  const boothWall = wall(booth, 2.2, WALL_H, 0.16, [{ a: 0.5, b: 1.7, y0: 0.95, y1: 1.85 }], mat('#e9d6b0'), wood, 0.95);
+  const BOOTH_H = 2.25;
+  const boothWall = wall(booth, 2.2, BOOTH_H, 0.16, [{ a: 0.5, b: 1.7, y0: 0.95, y1: 1.85 }], mat('#e9d6b0'), wood, 0.95);
   boothWall.position.set(-10.8, FLOOR, 0.95);
-  const boothSide = wall(booth, 2.2, WALL_H, 0.16, [], mat('#e9d6b0'), wood, 0.95);
+  const boothSide = wall(booth, 2.2, BOOTH_H, 0.16, [], mat('#e9d6b0'), wood, 0.95);
   boothSide.position.set(-8.6, FLOOR, 0.95);
   boothSide.rotation.y = Math.PI / 2;
+  add(booth, G.box(2.3, 0.08, 0.24), darkWood, -9.7, FLOOR + BOOTH_H + 0.04, 0.95);
   add(booth, G.box(1.5, 0.08, 0.5), darkWood, -9.65, FLOOR + 0.95, 1.15);
   add(booth, G.box(1.24, 0.06, 0.06), darkWood, -9.65, FLOOR + 1.88, 1.03);
   const kippu = new THREE.MeshStandardMaterial({ map: signTex('きっぷ', { w: 256, h: 96, bg: '#3f7d5a', fg: '#fff6dc', border: '#e2bf62', size: 60 }), roughness: 0.6 });
-  add(booth, G.box(1.1, 0.42, 0.05), kippu, -9.65, FLOOR + 2.3, 1.06);
+  add(booth, G.box(1.1, 0.42, 0.05), kippu, -9.65, FLOOR + BOOTH_H + 0.3, 0.95);
+  for (const s of [-1, 1]) add(booth, G.box(0.04, 0.3, 0.04), darkWood, -9.65 + s * 0.4, FLOOR + BOOTH_H + 0.1, 0.95);
   // 棚と切符
   add(booth, G.box(1.8, 0.06, 0.4), darkWood, -9.8, FLOOR + 1.9, -1.0);
   for (let i = 0; i < 8; i++) add(booth, G.box(0.08, 0.2, 0.06), mat(['#f5e6c0', '#cfe8ff', '#ffd6d6'][i % 3]), -10.5 + i * 0.18, FLOOR + 2.03, -1.0, { cast: false });
   // スツール
-  add(booth, G.cyl(0.3, 0.25, 0.75, 14), darkWood, -9.7, FLOOR + 0.375, 0.2);
+  add(booth, G.cyl(0.3, 0.25, 0.75, 14), darkWood, -9.7, FLOOR + 0.375, 0.35);
   // 呼び鈴
   const bell = (R.bell = group(bld, -9.2, FLOOR + 0.99, 1.25));
   add(bell, G.cyl(0.11, 0.13, 0.03, 16), mat('#3a2a20'), 0, 0.015, 0);
@@ -347,7 +350,7 @@ export function buildStationDiorama(scene) {
   R.bench2 = bench(bld, -4.9, FLOOR, 1.95, 0, 1.7);
 
   // ウサギのトランク
-  const suitcase = (R.suitcase = group(bld, -3.85, FLOOR, 2.25, -0.3));
+  const suitcase = (R.suitcase = group(bld, -5.95, FLOOR, 2.75, 0.4));
   add(suitcase, G.box(0.6, 0.42, 0.22), mat('#c86a4a'), 0, 0.21, 0);
   add(suitcase, G.box(0.62, 0.04, 0.24), mat('#7a3a2a'), 0, 0.3, 0, { cast: false });
   add(suitcase, G.torus(0.08, 0.02, 6, 12, Math.PI), mat('#3a2a20'), 0, 0.42, 0, { cast: false });

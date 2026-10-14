@@ -184,11 +184,12 @@ export class StationStage {
     this.frog.root.position.set(4.25, F, -2.75);
     this.frog.root.rotation.y = -0.25;
     this.owl = makeOwl();
-    this.owl.root.position.set(-9.7, F + 0.75, 0.2);
+    this.owl.root.position.set(-9.7, F + 0.75, 0.35);
     this.rabbit = makeRabbit();
     this.rabbit.root.position.set(-4.65, F + 0.47, 1.85);
     this.crow = makeCrow();
-    this.crow.root.position.copy(this.R.crowSpot);
+    this.crow.root.position.copy(this.R.crowSpot).add(new V(0, 0.12, 0));
+    this.crow.root.scale.setScalar(1.25);
     this.crow.root.rotation.y = -0.6;
     this.mouseLeader = makeMouse('#4ab06a', true);
     this.mouseLeader.root.position.set(3.9, 0, 7.3);
@@ -354,7 +355,7 @@ export class StationStage {
     this.zzz.forEach((z, i) => {
       z.visible = sleeping && g.playing;
       const k = ((t * 0.45 + i / 3) % 1);
-      z.position.set(-9.45 + k * 0.5, 2.65 + k * 0.9, 0.55 + Math.sin(k * 6) * 0.1);
+      z.position.set(-9.45 + k * 0.5, 2.75 + k * 0.9, 0.7 + Math.sin(k * 6) * 0.1);
       z.material.opacity = Math.sin(k * Math.PI);
       z.scale.setScalar(0.15 + k * 0.25);
     });
@@ -529,7 +530,7 @@ export class StationStage {
     const isInside = inside || (p.x > -11 && p.x < -3 && p.z > -1.4 && p.z < 4);
     const ty = isInside ? Math.min(2.2, Math.max(0.9, p.y)) : Math.max(0.8, p.y + 0.6);
     const polar = isInside ? Math.min(0.82, new THREE.Spherical().setFromVector3(this.g.camera.position.clone().sub(this.g.controls.target)).phi) : undefined;
-    return this.g.focusOn(new V(p.x, ty, p.z + (isInside ? 0.6 : 0)), { dist: Math.min(cur, dist ?? 22), duration: 0.8, polar, thetaClamp: isInside ? 0.7 : undefined });
+    return this.g.focusOn(new V(p.x, ty, p.z + (isInside ? 0.6 : 0)), { dist: Math.min(cur, dist ?? 22), duration: 0.8, polar, thetaClamp: isInside ? 0.7 : undefined, subject: obj.isObject3D ? obj : undefined });
   }
 
   questDone(text) {
@@ -1238,6 +1239,8 @@ export class StationStage {
   // =========================================================
   async useItem(item, target) {
     const g = this.g, f = g.flags;
+    // 信号機のてっぺんのカラスは小さいので、信号機に使っても渡せるようにする
+    if (target === 'signal' && item === 'marble') target = 'crow';
     const npc = { cat: 1, frog: 1, owl: 1, rabbit: 1, crow: 1, mouse: 1, stump: 1 };
     // 正解の組み合わせ
     if (item === 'marble' && target === 'crow') { this.focus(this.crow.root, 22); return this.crowTrade(); }
@@ -1293,7 +1296,8 @@ export class StationStage {
       '夕暮れの空に浮かぶ、小さな駅。',
       'ホームには、星のような光をまとった列車が停まっている……',
     ]);
-    await g.moveCamera(new V(4, 9, 14), new V(-1.2, 1.5, -2.4), 2.6);
+    const portrait = innerWidth < innerHeight;
+    await g.moveCamera(portrait ? new V(5, 12, 19) : new V(4, 9, 14), new V(-1.2, 1.5, -2.4), 2.6);
     g.cinematic = false;
     await this.talkCat();
   }

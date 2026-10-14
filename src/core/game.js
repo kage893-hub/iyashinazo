@@ -70,7 +70,7 @@ export class Game {
     c.enableDamping = true;
     c.dampingFactor = 0.08;
     c.minDistance = 9;
-    c.maxDistance = 60;
+    c.maxDistance = 72;
     c.minPolarAngle = 0.35;
     c.maxPolarAngle = 1.28;
     c.rotateSpeed = 0.6;
@@ -257,7 +257,7 @@ export class Game {
   // カメラ演出
   // =========================================================
   /** 注視点をなめらかに移動 */
-  focusOn(target, { dist, duration = 1.0, polar, thetaClamp } = {}) {
+  focusOn(target, { dist, duration = 1.0, polar, thetaClamp, subject } = {}) {
     const c = this.controls;
     const fromT = c.target.clone();
     const toT = target.clone();
@@ -268,7 +268,8 @@ export class Game {
     const fromPhi = sph.phi;
     const toPhi = polar ?? fromPhi;
     const fromTh = sph.theta;
-    const toTh = thetaClamp ? clamp(fromTh, -thetaClamp, thetaClamp) : fromTh;
+    let toTh = thetaClamp ? clamp(fromTh, -thetaClamp, thetaClamp) : fromTh;
+    if (subject) toTh = this._clearTheta(toT, toR, toPhi, toTh, subject, thetaClamp);
     return this.tweens.add({
       duration, ease: Ease.inOut,
       onUpdate: (k) => {
@@ -277,6 +278,32 @@ export class Game {
         this.camera.position.copy(c.target).add(new THREE.Vector3().setFromSpherical(s));
       },
     });
+  }
+
+  /** 対象が木や建物に隠れない向き（方位角）を探す */
+  _clearTheta(target, r, phi, theta, subject, limit) {
+    const own = new Set();
+    subject.traverse((m) => own.add(m));
+    const ray = new THREE.Raycaster();
+    const dir = new THREE.Vector3();
+    for (const d of [0, -0.35, 0.35, -0.7, 0.7, -1.05, 1.05]) {
+      let th = theta + d;
+      if (limit) th = clamp(th, -limit, limit);
+      const pos = new THREE.Vector3().setFromSpherical(new THREE.Spherical(r, phi, th)).add(target);
+      dir.copy(pos).sub(target);
+      const len = dir.length();
+      ray.set(target, dir.normalize());
+      ray.far = len;
+      const hit = ray.intersectObjects(this.pickList, false).find((h) => {
+        const o = h.object;
+        if (own.has(o) || !o.visible || o.userData.noPick) return false;
+        if (o.userData.roof && this.stage?.roofLifted) return false;
+        for (let p = o.parent; p; p = p.parent) if (!p.visible) return false;
+        return h.distance > 0.6;
+      });
+      if (!hit) return th;
+    }
+    return theta;
   }
 
   /** カメラ位置と注視点を指定して移動 */

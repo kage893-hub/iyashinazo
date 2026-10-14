@@ -31,7 +31,8 @@ async function main() {
 
   // タイトル画面：箱庭をゆっくり回す
   const c = game.controls;
-  game.camera.position.set(24, 20, 36);
+  if (innerWidth < innerHeight) game.camera.position.set(34, 30, 52);
+  else game.camera.position.set(24, 20, 36);
   c.target.set(0, 0.5, 0);
   c.autoRotate = true;
   c.autoRotateSpeed = 0.35;
@@ -80,7 +81,8 @@ async function main() {
     game.state = s;
     game.stage.applyState(true);
     await game.ui.fade(1, 0.5);
-    game.camera.position.set(10, 16, 26);
+    const portrait = innerWidth < innerHeight;
+    game.camera.position.set(portrait ? 16 : 10, portrait ? 26 : 16, portrait ? 40 : 26);
     c.target.set(-1, 1, -0.5);
     enterGame();
     await game.ui.fade(0, 0.8);
@@ -133,7 +135,8 @@ async function main() {
     mk('あそびかた', () => { panel.close(); showHowTo(game); });
     mk('カメラを全体にもどす', () => {
       panel.close();
-      game.moveCamera(new THREE.Vector3(12, 20, 32), new THREE.Vector3(0, 0.5, 0), 1.2);
+      const portrait = innerWidth < innerHeight;
+      game.moveCamera(portrait ? new THREE.Vector3(18, 32, 48) : new THREE.Vector3(12, 20, 32), new THREE.Vector3(0, 0.5, 0), 1.2);
     });
     mk('タイトルにもどる', () => { game.save(); location.reload(); });
     mk('最初からやりなおす', async () => {

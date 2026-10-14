@@ -77,7 +77,13 @@ body.cinematic #hud { opacity: 0; transition: opacity 0.6s; }
   padding: 10px 14px 10px 12px; min-width: 220px; box-shadow: var(--shadow);
   font-size: 14px;
 }
-.q-title { font-weight: 900; color: var(--navy); margin-bottom: 6px; font-size: 14px; }
+.q-title { font-weight: 900; color: var(--navy); margin-bottom: 6px; font-size: 14px; display: flex; align-items: center; gap: 6px; cursor: pointer; }
+.q-count { margin-left: auto; font-size: 12px; background: var(--navy); color: #fff; border-radius: 999px; padding: 1px 8px; }
+.q-toggle { font-size: 12px; color: var(--ink-soft); transition: transform 0.2s; }
+#quests.collapsed .q-item { display: none; }
+#quests.collapsed .q-title { margin-bottom: 0; }
+#quests.collapsed .q-toggle { transform: rotate(-90deg); }
+.q-item.sub { font-size: 12px; padding-left: 8px; }
 .q-item { display: flex; align-items: center; gap: 8px; padding: 3px 0; transition: opacity 0.4s; }
 .q-item.done { color: #8a7a6a; text-decoration: line-through; opacity: 0.75; }
 .q-box { width: 18px; height: 18px; border-radius: 5px; border: 2px solid var(--line); display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; color: #fff; background: #fff; flex-shrink: 0; }

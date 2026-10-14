@@ -28,6 +28,12 @@ export class UI {
     this.toastsEl = $('#toasts');
     this.fadeEl = $('#fade');
     this.panels = [];
+    this.questsCollapsed = window.innerWidth < 700;
+    this.questsEl.addEventListener('pointerdown', (e) => {
+      e.stopPropagation();
+      this.questsCollapsed = !this.questsCollapsed;
+      this.questsEl.classList.toggle('collapsed', this.questsCollapsed);
+    });
 
     this.dlg.addEventListener('pointerdown', (e) => {
       e.stopPropagation();
@@ -207,8 +213,11 @@ export class UI {
       return;
     }
     this.questsEl.classList.remove('hidden');
-    this.questsEl.innerHTML = `<div class="q-title">${title}</div>` +
-      quests.map((q) => `<div class="q-item ${q.done ? 'done' : ''}"><span class="q-box">${q.done ? '✓' : ''}</span>${q.text}</div>`).join('');
+    this.questsEl.classList.toggle('collapsed', this.questsCollapsed);
+    const main = quests.filter((q) => !q.sub);
+    const done = main.filter((q) => q.done).length;
+    this.questsEl.innerHTML = `<div class="q-title">${title}<span class="q-count">${done}/${main.length}</span><span class="q-toggle">▾</span></div>` +
+      quests.map((q) => `<div class="q-item ${q.done ? 'done' : ''} ${q.sub ? 'sub' : ''}"><span class="q-box">${q.done ? '✓' : ''}</span>${q.text}</div>`).join('');
   }
 
   // ---------------- パネル ----------------
