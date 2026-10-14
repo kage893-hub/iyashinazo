@@ -101,7 +101,12 @@ export function ukiyoePanel(ui, audio, { onSolved }) {
       done = true;
       body.classList.add('solved');
       audio.play('solve');
-      setTimeout(() => onSolved(panel), 1000);
+      // 完成した絵をゆっくり見てから、自分で「刷る」
+      const foot = body.querySelector('.uk-foot');
+      foot.innerHTML = '<span class="uk-count">一枚の絵にもどった！『江戸名所』</span>';
+      const go = el('button', 'btn primary uk-go', 'ぺったん、刷る！');
+      go.onclick = () => { go.disabled = true; onSolved(panel); };
+      foot.appendChild(go);
     }
   };
   const panel = ui.openPanel({ title: '版木合わせ', body });

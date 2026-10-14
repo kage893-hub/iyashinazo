@@ -328,7 +328,7 @@ export class EdoStage {
     // 舟のゆれ、のれん、鐘
     R.boat.position.y = 0.08 + Math.sin(t * 1.2) * 0.03;
     R.boat.rotation.z = Math.sin(t * 0.9) * 0.02;
-    this.kappa.root.position.y = R.boat.position.y + 0.22;
+    if (!this.kappaDiving) this.kappa.root.position.y = R.boat.position.y + 0.22;
     for (const s of R.shops) s.noren.rotation.x = Math.sin(t * 0.9 + s.g.position.x) * 0.06;
     if (this.bellSwing > 0) {
       this.bellSwing -= dt;
@@ -695,18 +695,50 @@ export class EdoStage {
   async giveDango() {
     const g = this.g, R = this.R;
     g.take('dango');
-    await this.say([{ who: 'kappa', text: 'みたらし団子！ もぐもぐ……よっしゃ、力がわいてきた。ひと潜りしてくるぜ！' }]);
+    await this.say([{ who: 'kappa', text: 'みたらし団子！ もぐもぐ……よっしゃ、力がわいてきた。舟で橋の下まで行って、ひと潜りしてくるぜ！' }]);
     g.cinematic = true;
     const k0 = this.kappa.root.position.clone();
-    await this.g.moveCamera(new V(5, 4.5, 13), new V(3, 0.5, 7.6), 1.2);
+    const bx0 = R.boat.position.x, bxA = 4.4;
+    // 舟をこいで、ゆったり橋のほうへ
+    await g.moveCamera(new V(0.5, 6, 14), new V(5, 0.4, 7.8), 1.4);
+    let lastRow = 0;
+    const row = (from, to, dur) => g.tweens.add({ duration: dur, ease: Ease.inOut, onUpdate: (k) => {
+      R.boat.position.x = lerp(from, to, k);
+      this.kappa.root.position.x = R.boat.position.x + (k0.x - bx0);
+      if (k - lastRow > 0.22) { lastRow = k; g.audio.play('water'); }
+    } });
+    await row(bx0, bxA, 5.5);
+    await this.say([{ who: 'kappa', text: 'このへんだな。……それっ！' }]);
+    // 舟から飛びこむ
+    this.kappaDiving = true;
+    const kOn = this.kappa.root.position.clone();
+    const under = new V(2.6, -0.7, 7.7);
+    await g.moveCamera(new V(4.5, 3.6, 12.5), new V(3.2, 0.3, 7.7), 1.0);
+    await g.tweens.add({ duration: 0.9, onUpdate: (k) => {
+      this.kappa.root.position.lerpVectors(kOn, under, k);
+      this.kappa.root.position.y += Math.sin(k * Math.PI) * 0.9;
+    } });
     g.audio.play('splash');
-    await g.tweens.add({ duration: 0.8, onUpdate: (k) => { this.kappa.root.position.lerpVectors(k0, new V(2.6, -0.6, 7.7), k); } });
+    await g.wait(1.4);
+    g.audio.play('water');
     await g.wait(0.8);
     R.jitteInRiver.visible = false;
     g.audio.play('splash');
-    await g.tweens.add({ duration: 0.8, onUpdate: (k) => { this.kappa.root.position.lerpVectors(new V(2.6, -0.6, 7.7), k0, k); } });
-    g.cinematic = false;
+    const onBoat = new V(R.boat.position.x + (k0.x - bx0), R.boat.position.y + 0.22, k0.z);
+    await g.tweens.add({ duration: 0.9, onUpdate: (k) => {
+      this.kappa.root.position.lerpVectors(under, onBoat, k);
+      this.kappa.root.position.y += Math.sin(k * Math.PI) * 0.9;
+    } });
+    this.kappaDiving = false;
     this.kappa.hop();
+    g.audio.play('twinkle');
+    await this.say([{ who: 'kappa', text: 'あったぜ、十手！ ……さて、帰りもゆっくりこいでくか。' }]);
+    // こいで、渡し場へもどる
+    await g.moveCamera(new V(0.5, 6, 14), new V(5, 0.4, 7.8), 1.0);
+    lastRow = 0;
+    await row(bxA, bx0, 5.0);
+    this.kappa.root.position.x = k0.x;
+    g.cinematic = false;
     g.flag('jitteGot');
     await this.say([{ who: 'kappa', text: 'ほらよ、十手だ。親分に返してやんな。' }]);
     g.give('jitte');

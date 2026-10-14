@@ -232,6 +232,8 @@ export class PortStage {
 
   applyState() {
     const f = this.g.flags, R = this.R;
+    // 古いセーブ：アイテム名の変更（'gear' → 'moonGear'）
+    if (this.g.has('gear')) { this.g.state.inventory = this.g.state.inventory.map((i) => (i === 'gear' ? 'moonGear' : i)); this.g.save(); }
     this.waterY = TIDE_Y[this.tide];
     this._applyWater();
     this._clockHand(this.tide);
@@ -368,7 +370,7 @@ export class PortStage {
       return H('final', '準備はそろった！ ホームのカエルの機関士に知らせよう。');
     }
     if (!f.clockFixed) {
-      if (has('gear')) return H('fixClock', '持ち物の『月の歯車』を選んで、広場の『潮時計』に使おう。');
+      if (has('moonGear')) return H('fixClock', '持ち物の『月の歯車』を選んで、広場の『潮時計』に使おう。');
       if (!f.octoTalked) return H('octo', '月の歯車は、けさの郵便でとどくはず。通りの『郵便局』のタコに話しかけよう。');
       return H('mail', 'にじんだ宛名のかわりに、中身の手がかりを読もう。', '二十八の歯（月のひとめぐり）→潮見やぐら、冷たいの三箱→魚市場、すすの出ない品→灯台、糸でつくろう→網小屋。');
     }
@@ -450,7 +452,7 @@ export class PortStage {
     const g = this.g, f = g.flags;
     this.focus(this.R.tideClock, 14);
     if (!f.clockFixed) {
-      if (g.has('gear')) return this.fixClock();
+      if (g.has('moonGear')) return this.fixClock();
       g.note('pt-clock', '潮時計', '広場の潮時計。針は<b>満潮</b>で止まっている。<br>文字盤の下の<b>月の歯車</b>の穴が、からっぽ。');
       return this.say(['広場の潮時計。文字盤には『満』『中』『干』の文字と、三日月の絵。', '針は『満』をさしたまま、ぴくりとも動かない。', '下のほうに『月の歯車』と書かれた丸い穴がある。……中は、からっぽだ。']);
     }
@@ -460,7 +462,7 @@ export class PortStage {
   async fixClock() {
     const g = this.g;
     this.focus(this.R.tideClock, 14);
-    g.take('gear');
+    g.take('moonGear');
     g.audio.play('crank');
     this.R.clockGear.visible = true;
     this.gearSpin = true;
@@ -691,7 +693,7 @@ export class PortStage {
       { who: 'octo', text: 'でも、潮見やぐらは番をしてる人がいないし……灯台は海の向こうで、ぼく行けないんだ。かわかしたら干からびちゃう。' },
       { who: 'octo', text: 'だから、この2つはきみにたのめるかな？' },
     ]);
-    g.give('gear');
+    g.give('moonGear');
     await g.wait(0.3);
     g.give('parcel');
     g.note('pt-mail', '仕分けた郵便', '<b>月の歯車</b>（二十八の歯）→ 潮見やぐら（潮時計）<br><b>灯台あての小包</b>（すすの出にくい芯）→ 灯台<br>氷のはがき → 魚市場　／　つくろい糸 → 網小屋');
@@ -886,7 +888,7 @@ export class PortStage {
     if (target === 'market') target = 'pelican';
     if (target === 'postOffice') target = 'octo';
     if (target === 'lighthouse' || target === 'sandbar' || target === 'stairs') target = f.sealGone ? 'seal' : target;
-    if (item === 'gear' && target === 'tideClock') return this.fixClock();
+    if (item === 'moonGear' && target === 'tideClock') return this.fixClock();
     if (item === 'net' && target === 'crab') { this.focus(this.crab.root, 13); return this.giveNet(); }
     if (item === 'fish' && target === 'pelican') { this.focus(this.pelican.root, 13); return this.giveFish(); }
     if ((item === 'parcel' || item === 'oil') && target === 'seal') {
@@ -894,7 +896,7 @@ export class PortStage {
       if (this.tide !== 0) return this.clickLighthouse();
       return this.atLighthouse();
     }
-    if (item === 'gear') return this.say(['月の歯車。広場の潮時計の穴に、ぴったり合いそうだ。']);
+    if (item === 'moonGear') return this.say(['月の歯車。広場の潮時計の穴に、ぴったり合いそうだ。']);
     if (item === 'net' && target === 'cave') return this.say(['網はもう拾った。']);
     if (item === 'fish' && target === 'crab') return this.say([{ who: 'crab', text: 'そいつはペリカンにとどけてやんな。' }]);
     if (item === 'fish' && target === 'octo') return this.say([{ who: 'octo', text: 'ぼくに？ うーん、魚はペリカンさんのところがいいよ〜。' }]);

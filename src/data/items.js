@@ -277,7 +277,7 @@ export const ITEMS = {
       <rect x="25" y="42" width="14" height="10" rx="2" fill="#c8382e"/>`),
   },
   // ---- 潮の港町 ----
-  gear: {
+  moonGear: {
     name: '月の歯車',
     desc: '金色の歯車。歯の数は二十八。まん中に三日月の穴があいている。潮時計の部品らしい。',
     icon: svg(`
@@ -322,7 +322,7 @@ export const ITEMS = {
       <path d="M28 26 q4 -6 8 0 q-4 6 -8 0" fill="#fff4c0"/>`),
   },
   // ---- 勇者の城下町 ----
-  letter: {
+  maletter: {
     name: '魔界の手紙',
     desc: '「魔」の封ろうのむらさきの手紙。星をつないだような文字で書かれている。もう一度押すと読める。',
     icon: svg(`

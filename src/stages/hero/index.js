@@ -263,6 +263,8 @@ export class HeroStage {
 
   applyState() {
     const f = this.g.flags, R = this.R;
+    // 古いセーブ：アイテム名の変更（'letter' → 'maletter'）
+    if (this.g.has('letter')) { this.g.state.inventory = this.g.state.inventory.map((i) => (i === 'letter' ? 'maletter' : i)); this.g.save(); }
     this.nightK = this.night ? 1 : 0;
     this._applyNight(this.nightK);
     R.stableLetter.visible = !f.letterGot;
@@ -457,7 +459,7 @@ export class HeroStage {
 
   inspectItem(id) {
     const f = this.g.flags;
-    if (id !== 'letter') return false;
+    if (id !== 'maletter') return false;
     this.g.audio.play('paper');
     if (f.owlTalked && f.glassSeen && !f.dragonHappy) { this.openDecode(); return true; }
     this.g.ui.openPanel({ title: '魔界の手紙', body: letterHTML(!!f.dragonHappy), cls: 'wide' });
@@ -644,7 +646,7 @@ export class HeroStage {
     if (!g.flags.dragonTalked) await this.talkDragon();
     this.R.stableLetter.visible = false;
     g.flag('letterGot');
-    g.give('letter');
+    g.give('maletter');
     await this.say(['むらさきの封筒。赤い封ろうに「魔」の字。', '中の手紙は、星をつないだような、見たことのない文字で書かれている……。', '（持ち物を2回押すと読める）']);
   }
 
@@ -653,7 +655,7 @@ export class HeroStage {
     this.focus(this.owl.root, 12);
     g.audio.play('hoot');
     if (f.dragonHappy) return this.say([{ who: 'owl', text: 'ホッホウ。星が言うておる。この旅は、だれかのさびしさを終わらせる旅じゃと。' }]);
-    if (g.has('letter')) {
+    if (g.has('maletter')) {
       g.flag('owlTalked');
       g.note('hr-owl', '占い師のことば', '手紙の文字は<b>魔界文字</b>。星座の形をしている。<br>読みかたの対応表は、<b>教会のステンドグラス</b>にある。<br>ステンドグラスの絵は、<b>日の光</b>が通るときしか見えない。');
       return this.say([
@@ -679,7 +681,7 @@ export class HeroStage {
     }
     g.ui.openPanel({ title: 'ステンドグラス', body: `<div class="plaque">日の光が、ステンドグラスの星座と文字を床にうつしている。</div>${glassTableHTML()}`, cls: 'wide' });
     await this.waitPanel();
-    if (f.owlTalked && this.g.has('letter') && !f.dragonHappy) await this.say(['（これで手紙が読めそうだ。持ち物の手紙を2回押そう）']);
+    if (f.owlTalked && this.g.has('maletter') && !f.dragonHappy) await this.say(['（これで手紙が読めそうだ。持ち物の手紙を2回押そう）']);
   }
 
   async clickGarden() {
@@ -894,9 +896,9 @@ export class HeroStage {
     if (target === 'keep') target = 'king';
     if (item === 'sword' && target === 'hero') return this.giveSword();
     if (item === 'potions' && target === 'hero') return this.givePotions();
-    if (item === 'letter' && (target === 'owl')) return this.talkOwl();
-    if (item === 'letter' && target === 'dragon') return this.say([{ who: 'dragon', text: '兄ちゃんの手紙……読めた？' }]);
-    if (item === 'letter' && target === 'church') return this.clickChurch();
+    if (item === 'maletter' && (target === 'owl')) return this.talkOwl();
+    if (item === 'maletter' && target === 'dragon') return this.say([{ who: 'dragon', text: '兄ちゃんの手紙……読めた？' }]);
+    if (item === 'maletter' && target === 'church') return this.clickChurch();
     if ((item === 'moonflower' || item === 'gold') && target === 'slime') return this.talkSlime();
     if (item === 'gold' && target === 'inn') return this.say([{ who: 'inn', text: '勇者のお友だちからは、お代はいらないよ！' }]);
     const talkers = { hero: 'それは……ぼくにはまだ早いかな。', slime: 'それは売りものじゃないよ〜。', goblin: 'そいつは打てねえな。', dragon: '……たべもの？ ちがうの？', king: 'うむ、それはそなたが持っておれ。', guard: '門の前では、それは使えませぬ！', owl: 'ホッホウ。それは占えんのう。', frog: 'それはボイラーには入れられないケロ。' };

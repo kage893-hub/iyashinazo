@@ -287,7 +287,7 @@ export class Game {
   // カメラ演出
   // =========================================================
   /** 注視点をなめらかに移動 */
-  focusOn(target, { dist, duration = 1.0, polar, theta, thetaClamp, subject, frameHigh = !!subject } = {}) {
+  focusOn(target, { dist, duration = 1.0, polar, theta, thetaClamp, subject, frameHigh = !!subject, keepAngle = false } = {}) {
     const c = this.controls;
     const fromT = c.target.clone();
     let toT = target.clone();
@@ -303,9 +303,11 @@ export class Game {
     const fromTh = sph.theta;
     let toTh = theta ?? (thetaClamp ? clamp(fromTh, -thetaClamp, thetaClamp) : fromTh);
     if (subject) {
-      const best = this._clearView(toT, toR, toPhi, toTh, subject, thetaClamp);
-      toTh = best.theta;
-      toPhi = best.phi;
+      if (!keepAngle) {
+        const best = this._clearView(toT, toR, toPhi, toTh, subject, thetaClamp);
+        toTh = best.theta;
+        toPhi = best.phi;
+      }
       this.lookSubject = subject;
       this.lookUntil = this.time + duration + 2.5;
     }

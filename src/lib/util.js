@@ -191,8 +191,11 @@ export function signTex(text, { w = 512, h = 128, bg = '#f4ead2', fg = '#3b2a1e'
     ctx.fillStyle = fg;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.font = `${weight} ${size}px ${FONT}`;
-    ctx.fillText(text, w / 2, sub ? h * 0.42 : h / 2 + size * 0.04);
+    // 長い文字は、板からはみ出さないように小さくする
+    let fs = size;
+    ctx.font = `${weight} ${fs}px ${FONT}`;
+    while (fs > 12 && ctx.measureText(text).width > w * 0.88) { fs -= 2; ctx.font = `${weight} ${fs}px ${FONT}`; }
+    ctx.fillText(text, w / 2, sub ? h * 0.42 : h / 2 + fs * 0.04);
     if (sub) {
       ctx.font = `500 ${Math.round(size * 0.38)}px ${FONT}`;
       ctx.fillText(sub, w / 2, h * 0.8);

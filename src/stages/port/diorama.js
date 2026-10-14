@@ -413,7 +413,8 @@ export function buildPortDiorama(scene) {
   const deck = new THREE.MeshStandardMaterial({ map: planksTex('#a8845a', '#6e4a2e', 10), roughness: 0.9 });
   const pier = (R.pier = group(root, -3.0, 0, 0));
   add(pier, G.box(1.4, 0.14, 5.6), deck, 0, Q - 0.07, 4.0);
-  for (let z = 1.8; z <= 6.6; z += 1.2) for (const s of [-1, 1]) add(pier, G.cyl(0.08, 0.09, Q, 8), darkWood, s * 0.6, Q / 2, z);
+  // 杭は床板の下でとめる（てっぺんが床とかさなるとチカチカする）
+  for (let z = 1.8; z <= 6.6; z += 1.2) for (const s of [-1, 1]) add(pier, G.cyl(0.08, 0.09, Q - 0.16, 8), darkWood, s * 0.6, (Q - 0.16) / 2, z);
   for (const s of [-1, 1]) add(pier, G.cyl(0.06, 0.06, 0.6, 6), darkWood, s * 0.62, Q + 0.3, 6.7);
   // はしご
   for (const s of [-1, 1]) add(pier, G.box(0.05, Q, 0.05), wood, 0.72, Q / 2, 5.6 + s * 0.18);

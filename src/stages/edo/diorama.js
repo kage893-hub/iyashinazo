@@ -126,19 +126,32 @@ function machiya(parent, x, z, { w = 3, d = 2.2, ch = '店', noren = '#2b3a6a', 
   return { g, shutter, openG, noren: nor, roof };
 }
 
-/** 柳 */
+/** 柳：かたむいた幹、まるい樹冠、そこから長くしだれる枝 */
 function willow(parent, x, z, s = 1, seed = 1) {
   const r = rng(seed);
   const g = group(parent, x, 0, z);
   g.scale.setScalar(s);
-  const bark = mat('#5a4a3a');
-  add(g, G.cyl(0.12, 0.18, 2.2, 8), bark, 0, 1.1, 0, { rot: [0, 0, 0.08] });
-  add(g, G.sphere(0.7, 10, 8), mat('#7aa85a', { flatShading: true }), 0.1, 2.4, 0, { scale: [1.3, 0.6, 1.3] });
-  const leaf = leafMat('#8ab86a', 0.08);
-  for (let i = 0; i < 12; i++) {
-    const a = (i / 12) * Math.PI * 2 + r();
-    const rr = 0.6 + r() * 0.5;
-    add(g, G.cone(0.14, 1.4 + r() * 0.5, 5), leaf, Math.cos(a) * rr + 0.1, 1.6 - r() * 0.2, Math.sin(a) * rr, { rot: [Math.PI, 0, 0] });
+  const bark = mat('#5a4a3a', { flatShading: true });
+  // 幹（少しかたむき、上で二またに）
+  add(g, G.cyl(0.13, 0.2, 1.7, 7), bark, 0.08, 0.85, 0, { rot: [0, 0, -0.1] });
+  add(g, G.cyl(0.07, 0.11, 1.0, 6), bark, -0.15, 2.0, 0.05, { rot: [0.1, 0, 0.45] });
+  add(g, G.cyl(0.07, 0.11, 1.0, 6), bark, 0.4, 2.05, -0.05, { rot: [-0.1, 0, -0.5] });
+  // 樹冠（小さな葉のかたまりをいくつか）
+  const crown = mat('#7aa85a', { flatShading: true });
+  for (let i = 0; i < 6; i++) {
+    const a = (i / 6) * Math.PI * 2 + r();
+    add(g, G.ico(0.42 + r() * 0.15, 1), crown, 0.12 + Math.cos(a) * 0.45, 2.55 + r() * 0.25, Math.sin(a) * 0.4, { scale: [1.2, 0.6, 1.1] });
+  }
+  add(g, G.ico(0.5, 1), crown, 0.12, 2.8, 0, { scale: [1.3, 0.55, 1.2] });
+  // しだれる枝（細長い葉のすだれ。風でゆれる）
+  const leaves = [leafMat('#8ab86a', 0.12), leafMat('#9cc878', 0.12), leafMat('#76a456', 0.12)];
+  const n = 34;
+  for (let i = 0; i < n; i++) {
+    const a = (i / n) * Math.PI * 2 + r() * 0.3;
+    const rr = 0.55 + r() * 0.5;
+    const len = 1.1 + r() * 0.9;
+    const top = 2.65 + r() * 0.2 - rr * 0.25;
+    add(g, G.box(0.07, len, 0.035), leaves[i % 3], 0.12 + Math.cos(a) * rr, top - len / 2, Math.sin(a) * rr, { rot: [Math.sin(a) * 0.12, -a, -Math.cos(a) * 0.12], cast: i % 2 === 0 });
   }
   return g;
 }

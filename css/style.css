@@ -604,3 +604,4 @@ body.rpg .clear-panel { background: var(--rpg-bg); }
 body.rpg .clear-main { color: #ffd84a; }
 body.rpg .clear-stats b, body.rpg .clear-msg { color: #ffffff; }
 body.rpg .clear-stats span { color: #c8d0f0; }
+.uk-foot { display: flex; flex-direction: column; align-items: center; gap: 8px; }

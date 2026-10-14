@@ -241,7 +241,7 @@ export class StationStage {
 
   /** 駅舎の中を見ているときは、真上寄りから見下ろす（壁で隠れないように） */
   interiorAt(p) {
-    if (p.x > -11.4 && p.x < -2.6 && p.z > -1.6 && p.z < 4.4) return { polar: 0.5, maxDist: 26 };
+    if (p.x > -11.4 && p.x < -2.6 && p.z > -1.6 && p.z < 4.4) return { polar: 1.0, maxDist: 26 };
     return null;
   }
 
@@ -371,7 +371,8 @@ export class StationStage {
     // 屋根を外して上からのぞいているときは、手前の梁（丸窓の帯）と中の梁を消す
     const look = g.camera.position.clone().sub(tgt);
     const topDown = this.roofT > 0.5 && look.y / look.length() > 0.62;
-    R.frontCut.visible = !(topDown && g.camera.position.z > 1.3);
+    if (this.talkInside && !g.ui.dialogueActive && !g.ui.panelOpen && g.time > (this.talkInsideT || 0)) this.talkInside = false;
+    R.frontCut.visible = !((topDown || this.talkInside) && g.camera.position.z > 1.3);
     R.innerBeam.visible = !topDown;
     R.stovePipeTop.visible = this.roofT < 0.3;
     R.vane.rotation.y = Math.sin(t * 0.4) * 0.6;
@@ -564,11 +565,11 @@ export class StationStage {
   focus(obj, dist, { inside = false } = {}) {
     const p = obj.getWorldPosition ? obj.getWorldPosition(new V()) : obj.clone();
     const cur = this.g.camera.position.distanceTo(this.g.controls.target);
-    // 駅舎の中は、正面の梁ごしにのぞけるよう上から見下ろす
+    // 駅舎の中は、開いた正面から少し見下ろすくらいの角度で（手前の梁は会話中だけ消す）
     const isInside = inside || (p.x > -11 && p.x < -3 && p.z > -1.4 && p.z < 4);
-    const ty = isInside ? Math.min(2.2, Math.max(0.9, p.y)) : Math.max(0.8, p.y + 0.6);
-    const polar = isInside ? Math.min(0.66, new THREE.Spherical().setFromVector3(this.g.camera.position.clone().sub(this.g.controls.target)).phi) : undefined;
-    return this.g.focusOn(new V(p.x, ty, p.z + (isInside ? 0.6 : 0)), { dist: Math.min(cur, dist ?? 22), duration: 0.8, polar, thetaClamp: isInside ? 0.7 : undefined, subject: obj.isObject3D ? obj : undefined });
+    const ty = isInside ? Math.min(2.2, Math.max(0.9, p.y + 0.4)) : Math.max(0.8, p.y + 0.6);
+    if (isInside) { this.talkInside = true; this.talkInsideT = this.g.time + 1.5; this.R.frontCut.visible = false; }
+    return this.g.focusOn(new V(p.x, ty, p.z), { dist: isInside ? Math.min(cur, 13) : Math.min(cur, dist ?? 22), duration: 0.8, polar: isInside ? 0.98 : undefined, theta: isInside ? 0 : undefined, keepAngle: isInside, subject: obj.isObject3D ? obj : undefined });
   }
 
   questDone(text) {
