@@ -748,7 +748,7 @@ export class HeroStage {
     g.cinematic = true;
     const home = this.dragon.root.position.clone();
     await g.moveCamera(new V(16, 8, 14), new V(9, 1.5, 4), 1.4);
-    const pts = [home, new V(6, 4.5, 10), new V(8.0, 3.6, 6.0), new V(8.8, 1.2, 4.6)];
+    const pts = [home, new V(5.5, 4.5, 10.5), new V(6.8, 3.2, 7.8), new V(7.4, 0.2, 6.6)]; // 鍛冶屋の前の地面に降りる
     const curve = new THREE.CatmullRomCurve3(pts);
     g.audio.play('whoosh');
     await g.tweens.add({ duration: 2.0, ease: Ease.inOut, onUpdate: (k) => curve.getPointAt(k, this.dragon.root.position) });
@@ -756,7 +756,7 @@ export class HeroStage {
     const f = this.fire;
     f.visible = true;
     await g.tweens.add({ duration: 0.9, onUpdate: (k) => {
-      f.position.lerpVectors(new V(8.8, 1.6, 4.6), new V(10.1, 1.3, 1.4), k);
+      f.position.lerpVectors(new V(8.0, 1.9, 6.3), new V(10.1, 1.3, 1.4), k);
       f.scale.setScalar(0.6 + k * 1.4);
       f.material.opacity = Math.sin(k * Math.PI) * 0.9 + 0.1;
     } });
