@@ -100,6 +100,22 @@ const HERO_CHORDS = [
   [53, 57, 60], [48, 52, 55], [50, 53, 57], [55, 59, 62],
 ];
 
+// 魔王城：ちょっとこわくて、さみしい舟歌のようなワルツ（イ短調）
+const MAOU_MELODY = [
+  [0, 69, 1.5], [1.5, 72, 0.5], [2, 71, 1], [3, 69, 1],
+  [4, 68, 2], [6, 64, 2],
+  [8, 65, 1.5], [9.5, 69, 0.5], [10, 68, 1], [11, 64, 1],
+  [12, 69, 3],
+  [16, 72, 1.5], [17.5, 74, 0.5], [18, 76, 1], [19, 72, 1],
+  [20, 71, 2], [22, 68, 2],
+  [24, 69, 1], [25, 71, 1], [26, 68, 1], [27, 64, 1],
+  [28, 69, 3],
+];
+const MAOU_CHORDS = [
+  [45, 52, 57], [41, 48, 53], [44, 52, 56], [45, 52, 57],
+  [45, 52, 57], [40, 47, 52], [41, 48, 53], [44, 52, 56],
+];
+
 /** 0.5 秒の無音 WAV（data URI） */
 function silentWav() {
   const rate = 8000, n = 4000;
@@ -124,6 +140,7 @@ export const SONGS = {
   edo: { melody: EDO_MELODY, chords: EDO_CHORDS, tempo: 70 },
   port: { melody: PORT_MELODY, chords: PORT_CHORDS, tempo: 82 },
   hero: { melody: HERO_MELODY, chords: HERO_CHORDS, tempo: 96, chip: true },
+  maou: { melody: MAOU_MELODY, chords: MAOU_CHORDS, tempo: 76, chip: true },
 };
 
 export class AudioSys {

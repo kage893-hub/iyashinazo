@@ -663,3 +663,6 @@ export function buildHeroDiorama(scene) {
   R.nightPools.push(lightPool(root, -14.6, 0.03, 12.0, 1.8, 3.6, '#ffb860'), lightPool(root, -14.6, 0.03, 5.6, 1.8, 3.6, '#ffb860'));
   return R;
 }
+
+// 魔王城でも使う部品
+export { T, M, mats, box, plane, roof, tower, wall, tree, barrel, pot, chest, hangSign, crestTex, wboxGeo };

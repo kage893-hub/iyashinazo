@@ -370,4 +370,41 @@ export const ITEMS = {
         <path d="M27 18 h10 v8 l4 6 v20 a4 4 0 0 1 -4 4 h-10 a4 4 0 0 1 -4 -4 v-20 l4 -6 z" fill="#a85ad8"/>
         <path d="M42 26 h10 v6 l4 6 v14 a4 4 0 0 1 -4 4 h-10 a4 4 0 0 1 -4 -4 v-14 l4 -6 z" fill="#f07a3a"/></g>`),
   },
+  // ---- 魔王城 ----
+  purpleLantern: {
+    name: '紫の炎のランタン',
+    desc: '執事から借りたランタン。もう一度押すと、灯したり消したりできる。灯すと見える物、消すと見える物がある。',
+    icon: svg(`
+      <path d="M24 10 h16 l4 8 h-24 z" fill="#3a2a4a" stroke="#1a1020" stroke-width="2"/>
+      <rect x="20" y="18" width="24" height="30" rx="4" fill="#2a1a3a" stroke="#1a1020" stroke-width="2.5"/>
+      <path d="M32 24 c6 8 6 14 0 18 c-6 -4 -6 -10 0 -18 z" fill="#b878ff"/>
+      <path d="M32 30 c3 4 3 7 0 9 c-3 -2 -3 -5 0 -9 z" fill="#f0d8ff"/>
+      <path d="M24 6 q8 -6 16 0" stroke="#3a2a4a" stroke-width="3" fill="none"/>
+      <rect x="18" y="48" width="28" height="6" rx="2" fill="#3a2a4a"/>`),
+  },
+  tomato: {
+    name: '溶岩トマト',
+    desc: '溶岩の谷のふちになる、あつあつのトマト。',
+    icon: svg(`<circle cx="32" cy="36" r="18" fill="#f04a1a" stroke="#7a1a0a" stroke-width="2.5"/><path d="M22 20 l10 6 l10 -6 l-4 8 h-12 z" fill="#4a8a3a"/><ellipse cx="25" cy="30" rx="4" ry="3" fill="#ffb080"/>`),
+  },
+  mushroom: {
+    name: 'かげキノコ',
+    desc: '光をきらう、暗がりのキノコ。ほんのり紫に光る。',
+    icon: svg(`<path d="M10 32 q22 -26 44 0 z" fill="#3a2a5a" stroke="#1a1020" stroke-width="2.5"/><rect x="26" y="32" width="12" height="20" rx="4" fill="#d8d0e8" stroke="#6a6080" stroke-width="2"/><circle cx="24" cy="24" r="3" fill="#a88ae8"/><circle cx="38" cy="22" r="2.5" fill="#a88ae8"/>`),
+  },
+  salt: {
+    name: '星くず塩',
+    desc: '星くずのようにきらきら光る塩。図書室の本棚の上にあった。',
+    icon: svg(`<rect x="20" y="16" width="24" height="36" rx="5" fill="#c8d8ff" stroke="#4a5a8a" stroke-width="2.5"/><rect x="20" y="10" width="24" height="8" rx="2" fill="#8a5a3a"/><path d="M28 30 l2 4 4 1 -3 3 1 4 -4 -2 -4 2 1 -4 -3 -3 4 -1z" fill="#ffffff"/>`),
+  },
+  stew: {
+    name: 'ほのおのシチュー',
+    desc: '魔王の好物。あまくて、ぴりっと辛い。小さいころから大好きな味。',
+    icon: svg(`<path d="M10 30 h44 a22 18 0 0 1 -44 0 z" fill="#2a2a30" stroke="#0a0a10" stroke-width="2.5"/><ellipse cx="32" cy="30" rx="22" ry="5" fill="#e85a2a"/><path d="M24 22 q2 -8 0 -12 M32 22 q2 -8 0 -14 M40 22 q2 -8 0 -12" stroke="#f0d8c8" stroke-width="2.5" fill="none" stroke-linecap="round"/>`),
+  },
+  picturebook: {
+    name: '兄弟の絵本',
+    desc: '『ふたりの ちいさな ドラゴン』。魔王が小さいころ、毎晩弟に読んであげていた絵本。もう一度押すと読める。',
+    icon: svg(`<rect x="10" y="12" width="44" height="40" rx="3" fill="#f0c840" stroke="#8a6416" stroke-width="2.5"/><rect x="14" y="16" width="36" height="32" fill="#4a2a6a"/><circle cx="26" cy="34" r="7" fill="#8a5ac8"/><circle cx="39" cy="36" r="5" fill="#e8603a"/><circle cx="24" cy="33" r="1.2" fill="#fff"/><circle cx="38" cy="35" r="1" fill="#fff"/>`),
+  },
 };

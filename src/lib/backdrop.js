@@ -190,6 +190,13 @@ const KINDS = {
     ridge(g, M, { r: 238, y0: -34, h: [6, 20], seed: 62, freq: 7, color: '#5a9a6a', color2: '#1a2a40', op: 0.7, op2: 0.8 });
     lights(g, M, { n: 30, r: 232, y: [-26, -14], a0: BACK - 1.4, a1: BACK + 1.4, seed: 63, color: '#ffc070', op: 0, op2: 0.9, size: 1.8 });
   },
+  // 魔王城：とがった黒い山なみと、遠くの火山の赤い光
+  maou(g, M) {
+    peak(g, M, { a: BACK + 0.45, r: 266, y0: -40, h: 96, w: 60, color: '#2a1838', color2: '#3a1a4a', op: 0.8, op2: 0.85, snowLine: 2 });
+    ridge(g, M, { r: 254, y0: -30, h: [14, 46], seed: 71, freq: 9, color: '#24162e', color2: '#2e1a3e', op: 0.82, op2: 0.85 });
+    ridge(g, M, { r: 236, y0: -34, h: [6, 24], seed: 72, freq: 13, color: '#1a1022', color2: '#22142e', op: 0.86, op2: 0.88 });
+    lights(g, M, { n: 26, r: 262, y: [-20, 40], a0: BACK + 0.3, a1: BACK + 0.6, seed: 73, color: '#ff6a2a', op: 0.6, op2: 0.75, size: 3.0 });
+  },
   // 温泉：雪をかぶった山なみと、遠くの湯の里の灯り
   onsen(g, M) {
     ridge(g, M, { r: 254, y0: -30, h: [18, 54], seed: 51, freq: 6, color: '#283058', color2: '#36406e', op: 0.8, op2: 0.8, snow: 1.4 });
