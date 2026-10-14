@@ -220,7 +220,7 @@ function roof(parent, x, y, z, w, d, material, { pitch = 0.6, over = 0.3 } = {})
 /** 木組みの家（正面 +z）。窓は夜に灯る */
 function house(R, parent, x, z, { w = 5, d = 4, floors = 2, roof: rm = 'roofRed', ry = 0, door = true, chimney = true, base = true } = {}) {
   const g = group(parent, x, 0, z, ry);
-  const fh = 1.9;
+  const fh = 1.75;
   const H = floors * fh;
   if (base) box(g, w + 0.15, 0.45, d + 0.15, M.brick, 0, 0.225, 0);
   box(g, w, H, d, M.plaster, 0, 0.45 + H / 2, 0);
@@ -255,7 +255,7 @@ function house(R, parent, x, z, { w = 5, d = 4, floors = 2, roof: rm = 'roofRed'
     add(g, new THREE.PlaneGeometry(0.85, 1.42), M.door, 0, 0.45 + 0.71, d / 2 + 0.02, { cast: false });
     box(g, 1.2, 0.12, 0.5, M.wood, 0, 0.45 + 1.62, d / 2 + 0.2);
   }
-  const rf = roof(g, 0, 0.45 + H, 0, w, d, M[rm], { pitch: 0.62, over: 0.35 });
+  const rf = roof(g, 0, 0.45 + H, 0, w, d, M[rm], { pitch: 0.5, over: 0.35 });
   if (chimney) box(g, 0.5, 1.4, 0.5, M.brick, w / 2 - 0.9, 0.45 + H + 1.1, -d / 4);
   return { g, roof: rf, H: 0.45 + H };
 }
@@ -475,16 +475,16 @@ export function buildHeroDiorama(scene) {
   }
 
   // ---------------- 宿屋・ギルド・教会（左） ----------------
-  const inn = house(R, root, -17.2, 2.3, { w: 7, d: 4.6, floors: 2, roof: 'roofRed' });
+  const inn = house(R, root, -17.6, 5.8, { w: 6.6, d: 4.4, floors: 2, roof: 'roofRed' });
   R.inn = inn.g;
-  hangSign(inn.g, 3.6, 2.6, 2.4, 'inn');
-  add(inn.g, new THREE.PlaneGeometry(1.6, 0.4), new THREE.MeshStandardMaterial({ map: pixText('INN', { w: 32, h: 8, size: 8, bg: '#3a2418', fg: '#f4dc8a' }), roughness: 1 }), 0, 2.45, 2.35, { cast: false });
-  const guild = house(R, root, -17.2, 10.4, { w: 7, d: 5.0, floors: 2, roof: 'roofBlue' });
+  hangSign(inn.g, 3.4, 2.6, 2.3, 'inn');
+  add(inn.g, new THREE.PlaneGeometry(1.6, 0.4), new THREE.MeshStandardMaterial({ map: pixText('INN', { w: 32, h: 8, size: 8, bg: '#3a2418', fg: '#f4dc8a' }), roughness: 1 }), 0, 2.3, 2.25, { cast: false });
+  const guild = house(R, root, -17.6, 12.0, { w: 6.6, d: 4.4, floors: 2, roof: 'roofBlue' });
   R.guild = guild.g;
-  hangSign(guild.g, 3.6, 2.6, 2.6, 'mug');
-  add(guild.g, new THREE.PlaneGeometry(2.2, 0.4), new THREE.MeshStandardMaterial({ map: pixText('GUILD', { w: 44, h: 8, size: 8, bg: '#3a2418', fg: '#f4dc8a' }), roughness: 1 }), 0, 2.45, 2.55, { cast: false });
+  hangSign(guild.g, 3.4, 2.6, 2.3, 'mug');
+  add(guild.g, new THREE.PlaneGeometry(2.2, 0.4), new THREE.MeshStandardMaterial({ map: pixText('GUILD', { w: 44, h: 8, size: 8, bg: '#3a2418', fg: '#f4dc8a' }), roughness: 1 }), 0, 2.3, 2.25, { cast: false });
   // 掲示板
-  const board = (R.board = group(root, -12.6, 0, 13.4, -0.4));
+  const board = (R.board = group(root, -12.9, 0, 14.6, -0.4));
   for (const s of [-1, 1]) box(board, 0.12, 1.8, 0.12, M.wood, s * 0.7, 0.9, 0);
   box(board, 1.6, 1.0, 0.08, M.planks, 0, 1.35, 0.02);
   for (let i = 0; i < 4; i++) add(board, new THREE.PlaneGeometry(0.34, 0.4), new THREE.MeshStandardMaterial({ color: ['#f4ecd8', '#f8e8a8', '#e8f0f8', '#f8d8d8'][i] }), -0.52 + i * 0.35, 1.35 + (i % 2) * 0.08, 0.07, { rot: [0, 0, (i - 1.5) * 0.08], cast: false });
@@ -587,13 +587,21 @@ export function buildHeroDiorama(scene) {
   box(R.stableLetter, 0.36, 0.03, 0.26, new THREE.MeshStandardMaterial({ color: '#6a3a8a' }), 0, 0, 0, { rot: [0, 0.4, 0], cast: false });
   box(R.stableLetter, 0.1, 0.035, 0.1, new THREE.MeshStandardMaterial({ color: '#c8303a' }), 0, 0.01, 0, { cast: false });
 
+  // 建物は一回り小さく（すき間を広く、見通しよく）
+  for (const [o, k] of [[R.inn, 0.86], [R.guild, 0.86], [R.smithy, 0.86], [R.itemShop, 0.86], [R.church, 0.88], [R.stable, 0.82]]) o.scale.setScalar(k);
+
   // ---------------- 家なみ ----------------
-  house(R, root, -9.6, -0.3, { w: 4.2, d: 3.4, floors: 2, roof: 'roofGreen' });
-  house(R, root, 4.2, -0.4, { w: 4.0, d: 3.4, floors: 2, roof: 'roofRed' });
-  house(R, root, -2.6, 14.4, { w: 3.6, d: 3.0, floors: 1, roof: 'roofRed' });
-  house(R, root, -21.0, -0.2 + 6.4, { w: 2.0, d: 3.0, floors: 1, roof: 'roofBrown', chimney: false, door: false, base: true }).g.rotation.y = Math.PI / 2;
-  house(R, root, 20.9, 10.0, { w: 3.0, d: 2.4, floors: 1, roof: 'roofGreen', door: false, chimney: false });
-  house(R, root, 20.9, -12.0, { w: 3.0, d: 2.4, floors: 1, roof: 'roofRed', door: false, chimney: false });
+  // 駅前の広場：背の低い花だんだけにして、ホームと列車がよく見えるように
+  const flowerBed = (x, z, w, d) => {
+    const fb = group(root, x, 0, z);
+    box(fb, w, 0.3, d, M.planks, 0, 0.15, 0);
+    box(fb, w - 0.2, 0.06, d - 0.2, new THREE.MeshStandardMaterial({ color: '#6a4a2e', roughness: 1 }), 0, 0.31, 0, { cast: false });
+    const cols = ['#e83a5a', '#f8d040', '#ffffff', '#b85ae8', '#f89a3a'];
+    for (let i = 0; i < Math.round(w * d * 2.2); i++) add(fb, new THREE.IcosahedronGeometry(0.11, 0), new THREE.MeshStandardMaterial({ color: cols[i % 5], flatShading: true }), (((i * 37) % 100) / 100 - 0.5) * (w - 0.4), 0.42, (((i * 61) % 100) / 100 - 0.5) * (d - 0.4), { cast: false });
+  };
+  flowerBed(-16.5, 0.2, 4.0, 1.2);
+  flowerBed(-9.8, 0.2, 3.0, 1.2);
+  flowerBed(4.2, 0.0, 3.2, 1.2);
   house(R, root, -18.8, -12.0, { w: 5.0, d: 3.4, floors: 2, roof: 'roofBlue' });
 
   // ---------------- 広場：噴水と屋台 ----------------
@@ -607,7 +615,6 @@ export function buildHeroDiorama(scene) {
   R.spray.userData.keep = true;
   stall(root, -4.6, 3.2, '#c83a3a', ['#e83a3a', '#e83a3a', '#f8d040', '#5ac86a', '#f89a3a', '#e83a3a', '#f8d040', '#5ac86a']);
   stall(root, 5.6, 3.4, '#3a6ac8', ['#a85ae8', '#a85ae8', '#5ac86a', '#5ac86a', '#f8f0d0', '#f89a3a']);
-  stall(root, -4.6, 9.2, '#4a9a5a', ['#f8a8c8', '#f8f0a0', '#ffffff', '#f8a8c8', '#e83a5a', '#f8f0a0']);
   // ベンチ
   for (const [x, z, ry] of [[3.6, 9.4, 0], [-2.6, 9.6, 0]]) {
     const b = group(root, x, 0, z, ry);
@@ -617,16 +624,16 @@ export function buildHeroDiorama(scene) {
   }
 
   // ---------------- 木・街灯・小物 ----------------
-  [[-20.5, 13.8, 1.1], [-13.3, 6.4, 0.9], [7.5, -1.5, 0.8], [-6.8, -1.6, 0.8], [15.0, 13.0, 1.0], [1.5, 14.6, 0.9], [-21.0, -8.0, 1.0], [20.8, 4.5, 1.0], [20.8, 15.0, 0.9], [-21.2, 3.6, 0.8], [14.3, -1.2, 0.8]].forEach(([x, z, s], i) => tree(root, x, z, s, 30 + i));
+  [[-20.5, 13.8, 1.1], [-13.0, 3.0, 0.8], [-13.6, -1.0, 0.7], [-21.0, -8.0, 1.0], [20.8, 4.5, 1.0], [20.8, 15.0, 0.9], [-21.2, 1.0, 0.8], [-0.5, 14.2, 0.8]].forEach(([x, z, s], i) => tree(root, x, z, s, 30 + i));
   for (const [x, z] of [[-5.8, 1.6], [6.8, 1.6], [-5.8, 10.4], [6.8, 10.4], [-12.6, 4.8], [8.4, 5.4], [-12.0, -1.6], [2.0, -1.6], [14.4, 7.0]]) lamp(R, root, x, z);
   // ゴールドが出るかもしれない、たる・つぼ・宝箱
-  R.goldSpots.innPot = pot(root, -13.3, 5.2, '#c8783a');
+  R.goldSpots.innPot = pot(root, -13.6, 8.6, '#c8783a');
   R.goldSpots.smithBarrel = barrel(root, 14.6, 4.6);
   R.goldSpots.stableChest = chest(root, 7.6, 13.6, -0.3);
   R.goldSpots.churchCrate = group(root, -11.2, 0, 15.4);
   box(R.goldSpots.churchCrate, 0.7, 0.6, 0.7, M.planks, 0, 0.3, 0);
   R.goldSpots.stallPot = pot(root, -6.1, 2.6, '#8a6aa8');
-  pot(root, -12.9, 5.6, '#a86a4a');
+  pot(root, -13.2, 9.0, '#a86a4a');
   barrel(root, 14.6, 5.4, 0.9);
   barrel(root, -13.6, 12.6, 1);
   barrel(root, -13.1, 13.0, 0.85);
@@ -642,6 +649,6 @@ export function buildHeroDiorama(scene) {
 
   // 夜の光だまり
   R.nightPools = R.lampSpots.map(([x, z]) => lightPool(root, x, 0.03, z, 2.6, 2.6, '#ffc070'));
-  R.nightPools.push(lightPool(root, -17.2, 0.03, 13.6, 3.6, 2.0, '#ffb860'), lightPool(root, -17.2, 0.03, 5.4, 3.6, 2.0, '#ffb860'));
+  R.nightPools.push(lightPool(root, -17.6, 0.03, 15.0, 3.6, 1.8, '#ffb860'), lightPool(root, -17.6, 0.03, 8.8, 3.6, 1.8, '#ffb860'));
   return R;
 }

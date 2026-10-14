@@ -127,7 +127,7 @@ export class HeroStage {
     // 看板のドット文字に使うフォントを先に読みこむ
     try { await Promise.race([document.fonts.load('12px "DotGothic16"'), new Promise((r) => setTimeout(r, 2500))]); } catch (e) { /* なくても描ける */ }
     this.R = buildHeroDiorama(scene);
-    this.nightLights = [[0.5, 3.2, 6.0, 6], [-15.2, 2.4, 6.0, 5], [-15.2, 2.4, 14.0, 5], [10, 2.4, 11.8, 5]].map(([x, y, z, r]) => {
+    this.nightLights = [[0.5, 3.2, 6.0, 6], [-15.6, 2.4, 9.0, 5], [-15.6, 2.4, 15.2, 5], [10, 2.4, 11.8, 5]].map(([x, y, z, r]) => {
       const L = new THREE.PointLight('#ffb860', 0, r * 2, 1.4);
       L.position.set(x, y, z);
       scene.add(L);
@@ -194,9 +194,9 @@ export class HeroStage {
     this.hero = makeHero({ sword: !!this.g.flags.swordGiven });
     this.hero.root.position.copy(HERO_POS);
     this.slime = makeSlime({});
-    this.slime.root.position.set(10.2, 0, 12.2);
+    this.slime.root.position.set(10.4, 0, 11.6);
     this.goblin = makeGoblin();
-    this.goblin.root.position.set(9.4, 0.35, 3.6);
+    this.goblin.root.position.set(9.65, 0.3, 3.4);
     this.dragon = makeDragon({ happy: !!this.g.flags.dragonHappy });
     this.dragon.root.position.set(4.8, 0.2, 14.4);
     this.king = makeKing();
@@ -204,7 +204,7 @@ export class HeroStage {
     this.guard = makeGuard({});
     this.guard.root.position.set(14.6, 0, -1.5);
     this.owl = makeOwl();
-    this.owl.root.position.set(-15.0, 0, 13.7);
+    this.owl.root.position.set(-15.6, 0, 15.0);
     this.frog = makePixelFrog();
     this.frog.root.position.set(-8.6, 0.75, -3.4);
     this.chickens = [[7.0, 11.4], [2.6, 11.2], [-14.2, 6.8]].map(([x, z]) => { const c = makeChicken(); c.root.position.set(x, 0, z); c.wander = { x, z, ph: Math.random() * 9 }; return c; });
@@ -738,7 +738,7 @@ export class HeroStage {
     const f = this.fire;
     f.visible = true;
     await g.tweens.add({ duration: 0.9, onUpdate: (k) => {
-      f.position.lerpVectors(new V(9.6, 1.6, 4.2), new V(9.9, 1.4, 1.1), k);
+      f.position.lerpVectors(new V(9.6, 1.6, 4.2), new V(10.1, 1.3, 1.4), k);
       f.scale.setScalar(0.6 + k * 1.4);
       f.material.opacity = Math.sin(k * Math.PI) * 0.9 + 0.1;
     } });
@@ -943,7 +943,7 @@ export class HeroStage {
       { who: 'frog', text: 'たいへんケロ！ 線路の先の跳ね橋が上がってて、進めないケロ！' },
       { who: 'frog', text: '広場の噴水のところに、勇者っぽい子がいるケロ。聞いてみるケロ！' },
     ]);
-    await g.moveCamera(innerWidth < innerHeight ? new V(3, 9, 20) : new V(4, 6.5, 17), new V(0.5, 1.6, 7.5), 2.0);
+    await g.moveCamera(innerWidth < innerHeight ? new V(0.5, 12, 21.5) : new V(0.5, 9, 18), new V(0.5, 1.4, 8.2), 2.0);
     g.cinematic = false;
     await this.talkHero();
   }
