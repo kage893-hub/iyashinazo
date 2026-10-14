@@ -84,6 +84,22 @@ const PORT_CHORDS = [
   [48, 55, 60], [43, 50, 55], [45, 52, 57], [50, 57, 62],
 ];
 
+// 勇者の城下町：ピコピコ音の、元気な行進曲（ハ長調）
+const HERO_MELODY = [
+  [0, 72, 0.5], [0.5, 72, 0.5], [1, 72, 0.5], [1.5, 72, 0.5], [2, 76, 1], [3, 79, 1],
+  [4, 77, 1], [5, 76, 0.5], [5.5, 74, 0.5], [6, 72, 2],
+  [8, 74, 0.5], [8.5, 74, 0.5], [9, 76, 1], [10, 77, 1], [11, 79, 1],
+  [12, 81, 2], [14, 79, 2],
+  [16, 77, 1], [17, 76, 1], [18, 74, 1], [19, 76, 1],
+  [20, 77, 1.5], [21.5, 79, 0.5], [22, 81, 2],
+  [24, 79, 1], [25, 77, 0.5], [25.5, 76, 0.5], [26, 74, 1], [27, 71, 1],
+  [28, 72, 3],
+];
+const HERO_CHORDS = [
+  [48, 52, 55], [53, 57, 60], [55, 59, 62], [48, 52, 55],
+  [53, 57, 60], [48, 52, 55], [50, 53, 57], [55, 59, 62],
+];
+
 /** 0.5 秒の無音 WAV（data URI） */
 function silentWav() {
   const rate = 8000, n = 4000;
@@ -107,6 +123,7 @@ export const SONGS = {
   onsen: { melody: ONSEN_MELODY, chords: ONSEN_CHORDS, tempo: 64 },
   edo: { melody: EDO_MELODY, chords: EDO_CHORDS, tempo: 70 },
   port: { melody: PORT_MELODY, chords: PORT_CHORDS, tempo: 82 },
+  hero: { melody: HERO_MELODY, chords: HERO_CHORDS, tempo: 96, chip: true },
 };
 
 export class AudioSys {
@@ -440,6 +457,38 @@ export class AudioSys {
         this.tone(98, { dur: 2.2, gain: 0.16, type: 'sawtooth', attack: 0.2 });
         this.tone(147, { dur: 2.2, gain: 0.06, type: 'triangle', attack: 0.25 });
         break;
+      case 'hero':
+        this.tone(880, { dur: 0.06, gain: 0.05, type: 'square' }); this.tone(1175, { dur: 0.08, gain: 0.05, type: 'square', when: 0.07 });
+        break;
+      case 'puyo': // スライム（ぷるん）
+        this.tone(300, { dur: 0.18, gain: 0.08, type: 'sine', slide: 700, vib: [30, 60] });
+        break;
+      case 'goblin':
+        this.tone(160, { dur: 0.2, gain: 0.08, type: 'sawtooth', slide: 120, vib: [20, 15] });
+        break;
+      case 'roar': // 子ドラゴン（がおー、小さめ）
+        this.tone(260, { dur: 0.4, gain: 0.08, type: 'sawtooth', slide: 420, vib: [14, 30], attack: 0.04 });
+        this.noise({ dur: 0.35, freq: 900, q: 0.8, gain: 0.04 });
+        break;
+      case 'lion':
+        this.tone(110, { dur: 0.6, gain: 0.1, type: 'sawtooth', slide: 85, vib: [9, 10], attack: 0.06 });
+        break;
+      case 'coin':
+        this.tone(988, { dur: 0.08, gain: 0.06, type: 'square' }); this.tone(1319, { dur: 0.3, gain: 0.06, type: 'square', when: 0.08 });
+        break;
+      case 'chest':
+        this.noise({ dur: 0.3, freq: 600, q: 1, gain: 0.08, type: 'lowpass' }); this.tone(220, { dur: 0.25, gain: 0.06, type: 'square', slide: 330 });
+        break;
+      case 'clang': // カーン（金床）
+        this.bellTone(1320, { dur: 0.6, gain: 0.12, partials: [1, 2.7, 4.1] });
+        this.noise({ dur: 0.05, freq: 4000, q: 2, gain: 0.08 });
+        break;
+      case 'inn': // 宿屋の音楽（ちゃらららっちゃっちゃ〜ん）
+        [[72, 0], [76, 0.18], [79, 0.36], [84, 0.54], [79, 0.9], [84, 1.08]].forEach(([m, w]) => this.tone(midiHz(m), { dur: 0.3, gain: 0.05, type: 'square', when: w }));
+        break;
+      case 'fanfare': // レベルアップ
+        [[72, 0], [72, 0.12], [72, 0.24], [79, 0.4], [76, 0.62], [84, 0.82]].forEach(([m, w], i) => this.tone(midiHz(m), { dur: i === 5 ? 0.6 : 0.12, gain: 0.05, type: 'square', when: w }));
+        break;
       case 'twinkle':
         [1568, 2093, 2637].forEach((f, i) => this.tone(f, { dur: 0.6, gain: 0.04, when: i * 0.06 }));
         break;
@@ -480,14 +529,18 @@ export class AudioSys {
       const chord = this.song.chords[bar];
       // メロディ
       for (const [b, m, d] of this.song.melody) {
-        if (Math.abs(b - beat) < 0.01) this._musicBox(midiHz(m), when, 0.11, 1.6 + d * 0.4);
+        if (Math.abs(b - beat) < 0.01) {
+          if (this.song.chip) this.tone(midiHz(m), { dur: spb * d * 0.85, gain: 0.045, type: 'square', when, attack: 0.005, out: this.bgm });
+          else this._musicBox(midiHz(m), when, 0.11, 1.6 + d * 0.4);
+        }
       }
       // アルペジオ
       const inBar = beat % 4;
       const arp = [0, 1, 2, 1, 2, 0, 1, 2];
       const idx = Math.round(inBar * 2);
       if (idx % 2 === 0 || Math.random() < 0.5) {
-        this._musicBox(midiHz(chord[arp[idx]] + 12), when, 0.035, 1.2);
+        if (this.song.chip) this.tone(midiHz(chord[arp[idx]] + 12), { dur: half * 0.6, gain: 0.018, type: 'square', when, out: this.bgm });
+        else this._musicBox(midiHz(chord[arp[idx]] + 12), when, 0.035, 1.2);
       }
       // ベースとパッド（小節頭）
       if (inBar === 0) {

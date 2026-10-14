@@ -321,4 +321,53 @@ export const ITEMS = {
       <path d="M22 34 h20 v16 h-20 z" fill="#e8b840" opacity=".7"/>
       <path d="M28 26 q4 -6 8 0 q-4 6 -8 0" fill="#fff4c0"/>`),
   },
+  // ---- 勇者の城下町 ----
+  letter: {
+    name: '魔界の手紙',
+    desc: '「魔」の封ろうのむらさきの手紙。星をつないだような文字で書かれている。もう一度押すと読める。',
+    icon: svg(`
+      <rect x="8" y="16" width="48" height="34" rx="3" fill="#6a3a8a" stroke="#2a1a3a" stroke-width="2.5"/>
+      <path d="M8 18 L32 36 L56 18" fill="none" stroke="#2a1a3a" stroke-width="2.5"/>
+      <circle cx="32" cy="36" r="7" fill="#c8303a" stroke="#6a1a1a" stroke-width="2"/>
+      <text x="32" y="40" font-size="9" text-anchor="middle" fill="#f8e0a0" font-weight="900">魔</text>`),
+  },
+  moonflower: {
+    name: '月光草',
+    desc: '月の光でひらく、白く光る花。薬の材料になる。',
+    icon: svg(`
+      <path d="M32 58 V30" stroke="#3a7a3a" stroke-width="4"/>
+      <path d="M32 46 q-12 -2 -14 -10 q10 0 14 8" fill="#5aa85a"/>
+      <g fill="#eef4ff" stroke="#8ab0e8" stroke-width="2">
+        <ellipse cx="32" cy="14" rx="6" ry="9"/><ellipse cx="22" cy="24" rx="9" ry="6"/><ellipse cx="42" cy="24" rx="9" ry="6"/></g>
+      <circle cx="32" cy="24" r="5" fill="#f8f0a0"/>`),
+  },
+  gold: {
+    name: 'ゴールド袋',
+    desc: 'ゴールドの入った小さな袋。町のつぼやたるの中で見つけた。',
+    stack: true,
+    stackMax: 5,
+    icon: svg(`
+      <path d="M20 22 q12 -8 24 0 l6 24 a6 6 0 0 1 -6 8 H20 a6 6 0 0 1 -6 -8 z" fill="#c89a5a" stroke="#6a4a1a" stroke-width="2.5"/>
+      <path d="M22 22 q10 4 20 0" stroke="#6a4a1a" stroke-width="3" fill="none"/>
+      <circle cx="32" cy="38" r="8" fill="#f0c840" stroke="#8a6416" stroke-width="2"/>
+      <text x="32" y="42" font-size="10" text-anchor="middle" fill="#8a6416" font-weight="900">G</text>`),
+  },
+  sword: {
+    name: '勇者の剣',
+    desc: 'ドラゴンの火で鍛えた、青白く光る剣。勇者にとどけよう。',
+    icon: svg(`
+      <path d="M44 6 L52 12 L24 44 L18 40 Z" fill="#e8f0fc" stroke="#5a6a8a" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M12 36 L28 52" stroke="#f0c840" stroke-width="6" stroke-linecap="round"/>
+      <path d="M14 50 L8 56" stroke="#6a4428" stroke-width="6" stroke-linecap="round"/>
+      <path d="M46 10 L28 32" stroke="#a8d8ff" stroke-width="2"/>`),
+  },
+  potions: {
+    name: '薬のセット',
+    desc: '回復薬・毒消し・元気の素。スライムといっしょにつくった。勇者にとどけよう。',
+    icon: svg(`
+      <g stroke="#3a2a2a" stroke-width="2.5">
+        <path d="M12 26 h10 v6 l4 6 v14 a4 4 0 0 1 -4 4 h-10 a4 4 0 0 1 -4 -4 v-14 l4 -6 z" fill="#b8d860"/>
+        <path d="M27 18 h10 v8 l4 6 v20 a4 4 0 0 1 -4 4 h-10 a4 4 0 0 1 -4 -4 v-20 l4 -6 z" fill="#a85ad8"/>
+        <path d="M42 26 h10 v6 l4 6 v14 a4 4 0 0 1 -4 4 h-10 a4 4 0 0 1 -4 -4 v-14 l4 -6 z" fill="#f07a3a"/></g>`),
+  },
 };

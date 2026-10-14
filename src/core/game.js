@@ -441,6 +441,8 @@ export class Game {
   cameraHome() {
     if (this.cinematic) return;
     const portrait = innerWidth < innerHeight;
+    const hv = this.stage?.homeView?.(portrait);
+    if (hv) return this.moveCamera(hv[0], hv[1], 1.0);
     return this.moveCamera(portrait ? new THREE.Vector3(10, 37, 29) : new THREE.Vector3(12, 20, 32), new THREE.Vector3(0, 0.5, 0), 1.0);
   }
 

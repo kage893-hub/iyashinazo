@@ -184,6 +184,12 @@ const KINDS = {
     sail(g, M, { a: BACK + 0.4, r: 255, y: -33, s: 1.0, color: '#d8e0e8', color2: '#f8f8f4', op: 0.25, op2: 0.7 });
     sail(g, M, { a: 0.4, r: 235, y: -33, s: 1.1, color: '#d8e0e8', color2: '#f8f8f4', op: 0.25, op2: 0.7 });
   },
+  // 城下町：みどりの丘と青い山なみ、遠くの町の灯り（夜）
+  hero(g, M) {
+    ridge(g, M, { r: 258, y0: -30, h: [14, 40], seed: 61, freq: 4, color: '#7a9ac8', color2: '#222a5a', op: 0.6, op2: 0.75, snow: 0.6 });
+    ridge(g, M, { r: 238, y0: -34, h: [6, 20], seed: 62, freq: 7, color: '#5a9a6a', color2: '#1a2a40', op: 0.7, op2: 0.8 });
+    lights(g, M, { n: 30, r: 232, y: [-26, -14], a0: BACK - 1.4, a1: BACK + 1.4, seed: 63, color: '#ffc070', op: 0, op2: 0.9, size: 1.8 });
+  },
   // 温泉：雪をかぶった山なみと、遠くの湯の里の灯り
   onsen(g, M) {
     ridge(g, M, { r: 254, y0: -30, h: [18, 54], seed: 51, freq: 6, color: '#283058', color2: '#36406e', op: 0.8, op2: 0.8, snow: 1.4 });

@@ -78,13 +78,15 @@ function pine(parent, x, y, z, s = 1, seed = 1) {
 }
 
 /** 海の中の線路（枕木・バラスト・レール）。島の外は光るレール */
-export function buildPortRails(parent, path, x0, x1) {
+export function buildPortRails(parent, path, x0, x1, gaps = []) {
   const root = group(parent);
   const L = path.getLength();
   const dummy = new THREE.Object3D();
   const land = [], sky = [];
+  const inGap = (p) => gaps.some(([a, b]) => p.x > a && p.x < b);
   for (let s = 0.3; s < L - 0.3; s += 0.6) {
     const p = path.getPointAt(s / L);
+    if (inGap(p)) continue;
     (p.x > x0 && p.x < x1 ? land : sky).push(s);
   }
   const inst = (geo, material, list, dy, cast = true) => {
@@ -103,12 +105,12 @@ export function buildPortRails(parent, path, x0, x1) {
   let cur = null, curLand = null;
   for (let s = 0; s <= L; s += 0.5) {
     const p = path.getPointAt(Math.min(1, s / L));
-    const isLand = p.x > x0 && p.x < x1;
+    const isLand = inGap(p) ? 'gap' : p.x > x0 && p.x < x1;
     if (cur && curLand === isLand) cur.push(s);
-    else { if (cur) cur.push(s); cur = [s]; curLand = isLand; runs.push({ list: cur, land: isLand }); }
+    else { if (cur && isLand !== 'gap' && curLand !== 'gap') cur.push(s); cur = [s]; curLand = isLand; runs.push({ list: cur, land: isLand }); }
   }
   for (const run of runs) {
-    if (run.list.length < 2) continue;
+    if (run.list.length < 2 || run.land === 'gap') continue;
     for (const side of [-1, 1]) {
       const pts = run.list.map((s) => {
         placeOnPath(path, dummy, s);

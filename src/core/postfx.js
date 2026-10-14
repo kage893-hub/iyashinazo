@@ -100,6 +100,9 @@ export const GRADES = {
   onsenDark: { lift: [0.0, 0.012, 0.06], gain: [1.02, 0.98, 0.98], sat: 0.95, contrast: 1.04, warmth: 0.0, vignette: 0.46 },
   onsen: { lift: [0.0, 0.014, 0.065], gain: [1.1, 0.98, 0.86], sat: 1.05, contrast: 1.07, warmth: 0.01, vignette: 0.44 },
   // 港：朝霧のミルク色 → 晴れた青と白
+  // 勇者の城下町（HD-2D）：あざやかな昼 → 青い夜と灯り
+  hero: { lift: [0.0, 0.006, 0.02], gain: [1.03, 1.01, 0.98], sat: 1.16, contrast: 1.06, warmth: 0.015, vignette: 0.42 },
+  heroNight: { lift: [0.0, 0.01, 0.06], gain: [1.08, 0.98, 0.88], sat: 1.05, contrast: 1.07, warmth: 0.0, vignette: 0.5 },
   portFog: { lift: [0.035, 0.04, 0.05], gain: [0.98, 1.0, 1.02], sat: 0.88, contrast: 0.93, warmth: 0.0, vignette: 0.3 },
   port: { lift: [0.0, 0.006, 0.025], gain: [0.99, 1.01, 1.04], sat: 1.12, contrast: 1.05, warmth: -0.005, vignette: 0.28 },
 };
