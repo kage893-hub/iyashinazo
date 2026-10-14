@@ -105,34 +105,44 @@ export function makeIslandBase({ w = 30, d = 22, seed = 3, grass = '#86b35c' } =
     else { z = (r() - 0.5) * (d - 4); x = (side === 2 ? 1 : -1) * (w / 2 - 0.45); }
     add(root, G.dodeca(0.15 + r() * 0.25), mat(r() > 0.5 ? '#9a948a' : '#7d766c', { flatShading: true }), x, yy, z, { rot: [r() * 3, r() * 3, 0] });
   }
-  // 下の岩（逆さ円錐）
-  const cone = new THREE.ConeGeometry(Math.min(w, d) * 0.55, 11, 9, 5);
+  // 下の岩（逆さ円錐）。大きな島ほど深く
+  const k = Math.max(1, Math.min(w, d) / 22);
+  const cone = new THREE.ConeGeometry(Math.min(w, d) * 0.55, 11 * k, 9, 5);
   const pos = cone.attributes.position;
   for (let i = 0; i < pos.count; i++) {
     const vy = pos.getY(i);
-    if (vy > 5.4) continue;
+    if (vy > 5.4 * k) continue;
     pos.setX(i, pos.getX(i) * (1 + (r() - 0.5) * 0.25));
     pos.setZ(i, pos.getZ(i) * (1 + (r() - 0.5) * 0.25));
     pos.setY(i, vy + (r() - 0.5) * 0.8);
   }
   cone.computeVertexNormals();
-  const rock = add(root, cone, mat('#5d4a3e', { flatShading: true, roughness: 1 }), 0, y - 5.4, 0, { rot: [Math.PI, 0, 0], scale: [w / d * 0.95, 1, 0.95] });
+  // 上（島の地層側）は土色、先へいくほど暗い岩の色に
+  const vc = new Float32Array(pos.count * 3);
+  const top = new THREE.Color('#7a5e48'), tip = new THREE.Color('#2e2420'), c = new THREE.Color();
+  for (let i = 0; i < pos.count; i++) {
+    const t = THREE.MathUtils.clamp((pos.getY(i) + 5.5 * k) / (11 * k), 0, 1); // 0=先 1=上
+    c.copy(tip).lerp(top, Math.pow(t, 0.8));
+    vc[i * 3] = c.r; vc[i * 3 + 1] = c.g; vc[i * 3 + 2] = c.b;
+  }
+  cone.setAttribute('color', new THREE.BufferAttribute(vc, 3));
+  const rock = add(root, cone, new THREE.MeshStandardMaterial({ vertexColors: true, flatShading: true, roughness: 1 }), 0, y - 5.4 * k, 0, { rot: [Math.PI, 0, 0], scale: [w / d * 0.95, 1, 0.95] });
   rock.receiveShadow = false;
   // 光る結晶
   const crystalCols = ['#8fe3ff', '#c59bff', '#7fffd4'];
-  for (let i = 0; i < 14; i++) {
+  for (let i = 0; i < Math.round(14 * k); i++) {
     const a = r() * Math.PI * 2;
-    const yy = y - 1 - r() * 6;
-    const rad = (Math.min(w, d) * 0.5) * (1 - (y - yy) / 12) * 0.9;
+    const yy = y - 1 - r() * 6 * k;
+    const rad = (Math.min(w, d) * 0.5) * (1 - (y - yy) / (12 * k)) * 0.9;
     const col = crystalCols[i % 3];
     add(root, G.oct(0.3 + r() * 0.4), new THREE.MeshStandardMaterial({ color: col, emissive: col, emissiveIntensity: 1.6, roughness: 0.2 }),
       Math.cos(a) * rad * (w / d), yy, Math.sin(a) * rad, { rot: [r(), r(), r()], scale: [0.6, 1.6, 0.6], cast: false });
   }
   // 垂れ下がる根っこ
-  for (let i = 0; i < 18; i++) {
+  for (let i = 0; i < Math.round(18 * k); i++) {
     const a = r() * Math.PI * 2;
     const px = Math.cos(a) * (w / 2 - 1.5), pz = Math.sin(a) * (d / 2 - 1.5);
-    const len = 1.5 + r() * 3;
+    const len = (1.5 + r() * 3) * k;
     const pts = [];
     for (let k = 0; k <= 4; k++) pts.push(new THREE.Vector3(px + (r() - 0.5) * 0.6 * k, y + 0.3 - (len * k) / 4, pz + (r() - 0.5) * 0.6 * k));
     add(root, new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 10, 0.05 * (1 + r()), 5), mat('#4e3a2a'), 0, 0, 0, { cast: false });

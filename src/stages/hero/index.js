@@ -446,6 +446,10 @@ export class HeroStage {
     }
     if (!f.potionsDone) {
       if (!f.slimeTalked) return H('slime', '道具屋のスライムに話しかけよう。', night ? 'スライムは夜は寝ている。' : '');
+      if (f.slimePaid || (f.flowerGot && !has('moonflower'))) {
+        if (night) return H('slimeDay', 'スライムの店は昼だけ。宿屋に泊まって朝にしよう。');
+        return H('mix', '材料もお代もわたしてある。道具屋のスライムに話しかけて、薬づくりのつづきをしよう。', '回復薬＝黄2・青1、毒消し＝赤1・青2、元気の素＝赤2・黄1。');
+      }
       if (!f.flowerGot) return H('flower', '月光草は、夜に教会の庭でさく。', '宿屋に泊まって夜にし、『教会の庭』を調べよう。');
       if (this.g.count('gold') < 3 || !has('gold')) return H('gold', 'ゴールド袋が3つ必要。町のつぼやたる、宝箱を調べよう。', '昼：宿屋の前のつぼ、鍛冶屋の横のたる、竜舎の宝箱。夜：教会の裏の木箱、市場のむらさきのつぼ。');
       if (night) return H('slimeDay', 'スライムの店は昼だけ。宿屋に泊まって朝にしよう。');
@@ -822,12 +826,22 @@ export class HeroStage {
         { who: 'slime', text: 'それと、ごめんね、びん代に【ゴールド袋3つ】もらえるかな？ うちも商売だから〜。' },
       ]);
     }
+    // 一度はらったら、途中でやめても次からはすぐ薬づくりへ（前の版で受けとり済みのセーブも救う）
+    if (!f.slimePaid && f.flowerGot && !g.has('moonflower')) g.flag('slimePaid');
+    if (f.slimePaid) {
+      await this.say([{ who: 'slime', text: '材料もお代も、もうもらってるよ〜。さあ、つづきをつくろう！' }]);
+      return this.openMix();
+    }
     const lack = [];
     if (!g.has('moonflower')) lack.push('月光草');
     if (g.count('gold') < 3 || !g.has('gold')) lack.push(`ゴールド袋（あと${3 - (g.has('gold') ? g.count('gold') : 0)}つ）`);
     if (lack.length) return this.say([{ who: 'slime', text: `あとは【${lack.join('】と【')}】があればつくれるよ〜。` }]);
     g.take('moonflower');
+    // ゴールド袋は3つだけはらう（あまりは手もとに残す）
+    const left = g.count('gold') - 3;
     g.take('gold');
+    for (let i = 0; i < left; i++) g.give('gold', { silent: true });
+    g.flag('slimePaid');
     g.audio.play('coin');
     await this.say([{ who: 'slime', text: 'わあ、月光草！ ゴールドもたしかに〜。それじゃ、いっしょに薬をつくろう！ 見本と同じ色にしてね〜。' }]);
     return this.openMix();
