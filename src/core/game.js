@@ -5,7 +5,7 @@ import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
-import { TiltShiftShader, GradeShader } from './postfx.js';
+import { DofShader, GradeShader, AoPass } from './postfx.js';
 import { Tweens, Ease } from './tween.js';
 import { UI } from './ui.js';
 import { AudioSys } from './audio.js';
@@ -89,14 +89,24 @@ export class Game {
     // ポストプロセス（MSAA 付きのレンダーターゲット）
     const size = r.getDrawingBufferSize(new THREE.Vector2());
     const rt = new THREE.WebGLRenderTarget(size.x, size.y, { type: THREE.HalfFloatType, samples: this.low ? 0 : this.mobile ? 2 : 4 });
+    // 深度も取り出す（すき間の影・ピント合わせに使う）
+    rt.depthTexture = new THREE.DepthTexture(size.x, size.y);
+    rt.depthTexture.type = THREE.UnsignedIntType;
     const comp = (this.composer = new EffectComposer(r, rt));
     comp.addPass(new RenderPass(this.scene, this.camera));
+    this.fx = { lin: null, hasDepth: false };
+    this.ao = new AoPass(this.camera, this.fx, { samples: this.mobile ? 6 : 10, scale: 0.5 });
+    this.ao.aoOn = !this.low && !new URLSearchParams(location.search).has('noao');
+    comp.addPass(this.ao);
+    if (new URLSearchParams(location.search).has('aodebug')) this.ao.compMat.uniforms.debug.value = 1;
     this.bloom = new UnrealBloomPass(new THREE.Vector2(size.x / 2, size.y / 2), 0.42, 0.7, 0.9);
     comp.addPass(this.bloom);
-    this.tiltH = new ShaderPass(TiltShiftShader);
-    this.tiltV = new ShaderPass(TiltShiftShader);
+    // ピント合わせ（見ている場所はくっきり、前後はぼける）
+    this.tiltH = new ShaderPass(DofShader);
+    this.tiltV = new ShaderPass(DofShader);
     comp.addPass(this.tiltH);
     comp.addPass(this.tiltV);
+    this.focusDist = 30;
     comp.addPass(new OutputPass());
     this.grade = new ShaderPass(GradeShader);
     comp.addPass(this.grade);
@@ -678,6 +688,7 @@ export class Game {
         }
       });
       this.bloom.enabled = false;
+      this.ao.aoOn = false;
     }
   }
 
@@ -741,6 +752,15 @@ export class Game {
     sm.autoUpdate = false;
     this._frameNo = (this._frameNo || 0) + 1;
     if (this.cinematic || this._frameNo % 2 === 0) sm.needsUpdate = true;
+    // ピント：注視点（クリックした物・話している相手）までの距離
+    const camDir = this.camera.getWorldDirection(new THREE.Vector3());
+    const fd = Math.max(4, this.controls.target.clone().sub(this.camera.position).dot(camDir));
+    this.focusDist += (fd - this.focusDist) * Math.min(1, raw * 6);
+    for (const p of [this.tiltH, this.tiltV]) {
+      p.uniforms.tLin.value = this.fx.lin;
+      p.uniforms.focusDist.value = this.focusDist;
+      p.uniforms.depthOn.value = this.fx.hasDepth ? 1 : 0;
+    }
     this.composer.render();
   }
 }

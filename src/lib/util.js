@@ -57,8 +57,47 @@ function cached(key, fn) {
   return geoCache.get(key);
 }
 
+/**
+ * 角をほんの少し丸めた箱（模型のように角に光がのる）。
+ * 各面を 3×3 に分け、外側の帯を角へ寄せて、角の頂点を丸めた位置と向きにする。
+ */
+function roundedBox(w, h, d) {
+  const m = Math.min(w, h, d);
+  const r = Math.min(0.035, m * 0.2);
+  if (m < 0.08) return new THREE.BoxGeometry(w, h, d); // 小さな部品はそのまま
+  const g = new THREE.BoxGeometry(w, h, d, 3, 3, 3);
+  const pos = g.attributes.position, nor = g.attributes.normal;
+  const half = [w / 2, h / 2, d / 2];
+  const p = new THREE.Vector3(), inner = new THREE.Vector3(), dir = new THREE.Vector3();
+  for (let i = 0; i < pos.count; i++) {
+    p.fromBufferAttribute(pos, i);
+    const a = p.toArray();
+    // 1/3 の位置にある頂点を、角から r の位置へ
+    for (let k = 0; k < 3; k++) {
+      const hk = half[k];
+      if (Math.abs(Math.abs(a[k]) - hk / 3) < 1e-6) a[k] = Math.sign(a[k]) * (hk - r);
+    }
+    p.fromArray(a);
+    inner.set(
+      THREE.MathUtils.clamp(p.x, -half[0] + r, half[0] - r),
+      THREE.MathUtils.clamp(p.y, -half[1] + r, half[1] - r),
+      THREE.MathUtils.clamp(p.z, -half[2] + r, half[2] - r),
+    );
+    dir.subVectors(p, inner);
+    const len = dir.length();
+    if (len > 1e-6) {
+      dir.divideScalar(len);
+      p.copy(inner).addScaledVector(dir, r);
+      nor.setXYZ(i, dir.x, dir.y, dir.z);
+    }
+    pos.setXYZ(i, p.x, p.y, p.z);
+  }
+  return g;
+}
+
 export const G = {
-  box: (w, h, d) => cached(`b${w},${h},${d}`, () => new THREE.BoxGeometry(w, h, d)),
+  box: (w, h, d) => cached(`b${w},${h},${d}`, () => roundedBox(w, h, d)),
+  sharpBox: (w, h, d) => cached(`B${w},${h},${d}`, () => new THREE.BoxGeometry(w, h, d)),
   sphere: (r, ws, hs) => {
     // 小さな球は分割数を減らして軽くする
     if (ws === undefined) { ws = r < 0.08 ? 8 : r < 0.2 ? 12 : 18; hs = r < 0.08 ? 6 : r < 0.2 ? 9 : 12; }
