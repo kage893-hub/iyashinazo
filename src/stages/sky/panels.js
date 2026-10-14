@@ -14,6 +14,11 @@ export const SONG = [3, 2, 1, 0, 1, 2];
 
 const hz = (m) => 440 * Math.pow(2, (m - 69) / 12);
 
+/** そらのうた（メモ用） */
+export function songHTML() {
+  return `<div class="letter-song">${SONG.map((i) => `<span class="ln" style="--c:${BELLS[i].color}">${BELLS[i].sym}</span>`).join('')}</div>`;
+}
+
 export function letterHTML() {
   const notes = SONG.map((i) => `<span class="ln" style="--c:${BELLS[i].color}">${BELLS[i].sym}</span>`).join('');
   return `

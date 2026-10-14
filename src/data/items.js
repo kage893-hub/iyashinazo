@@ -222,4 +222,58 @@ export const ITEMS = {
       <path d="M52 22 v20 l-20 10 v-22 z" fill="#c89a5a" stroke="#8a6a3a" stroke-width="2.5" stroke-linejoin="round"/>
       <text x="22" y="44" font-size="10" font-weight="900" fill="#5a3a1a">三</text>`),
   },
+  // ---- 江戸の宿場町 ----
+  kawaraban: {
+    name: '瓦版',
+    desc: 'ネコの瓦版屋が刷った、けさの瓦版。もう一度押すと読める。',
+    icon: svg(`
+      <path d="M12 10 h40 v44 h-40 z" fill="#f4ead2" stroke="#6a4a2a" stroke-width="2.5"/>
+      <path d="M18 18 h28 M18 24 h28 M18 30 h16" stroke="#3a2418" stroke-width="2.5"/>
+      <circle cx="40" cy="40" r="8" fill="none" stroke="#c8382e" stroke-width="3"/>
+      <path d="M18 38 h14 M18 44 h14" stroke="#3a2418" stroke-width="2"/>`),
+  },
+  cucumber: {
+    name: 'キュウリ',
+    desc: '井戸の桶で冷やしてあった、みずみずしいキュウリ。',
+    icon: svg(`
+      <path d="M14 46 C20 26 36 12 52 14 C50 30 34 46 14 46 Z" fill="#4a9a3a" stroke="#2a5a1a" stroke-width="2.5"/>
+      <path d="M22 38 l2 2 M30 30 l2 2 M38 22 l2 2 M28 38 l2 2 M36 30 l2 2" stroke="#9ad87a" stroke-width="2" stroke-linecap="round"/>
+      <path d="M52 14 l5 -4" stroke="#e8c84a" stroke-width="3" stroke-linecap="round"/>`),
+  },
+  rope: {
+    name: '舫い綱',
+    desc: 'カッパの渡し舟の、予備のじょうぶな綱。',
+    icon: svg(`
+      <ellipse cx="32" cy="34" rx="20" ry="14" fill="none" stroke="#c8a060" stroke-width="7"/>
+      <ellipse cx="32" cy="34" rx="20" ry="14" fill="none" stroke="#8a6a3a" stroke-width="2" stroke-dasharray="4 4"/>
+      <path d="M46 44 q8 6 10 14" stroke="#c8a060" stroke-width="6" stroke-linecap="round" fill="none"/>`),
+  },
+  dango: {
+    name: 'みたらし団子',
+    desc: 'リスの団子屋の、焼きたてのみたらし団子。',
+    icon: svg(`
+      <path d="M14 54 L50 12" stroke="#c8a070" stroke-width="3.5" stroke-linecap="round"/>
+      <circle cx="22" cy="44" r="8" fill="#e8b860" stroke="#8a5a2a" stroke-width="2.5"/>
+      <circle cx="32" cy="32" r="8" fill="#e8b860" stroke="#8a5a2a" stroke-width="2.5"/>
+      <circle cx="42" cy="20" r="8" fill="#e8b860" stroke="#8a5a2a" stroke-width="2.5"/>
+      <path d="M16 40 q6 -4 12 2 M26 28 q6 -4 12 2 M36 16 q6 -4 12 2" stroke="#a8641e" stroke-width="3" fill="none"/>`),
+  },
+  jitte: {
+    name: '十手',
+    desc: '岡っ引きの親分の十手。川の底から見つかった。',
+    icon: svg(`
+      <path d="M20 56 L44 10" stroke="#9aa4b0" stroke-width="6" stroke-linecap="round"/>
+      <path d="M34 30 l10 2 l2 -8" stroke="#9aa4b0" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M17 54 L23 44" stroke="#3a2418" stroke-width="8" stroke-linecap="round"/>
+      <path d="M18 58 q-6 2 -8 -4" stroke="#c8382e" stroke-width="3" fill="none"/>`),
+  },
+  tegata: {
+    name: '通行手形',
+    desc: '「ほしまわり号　通行をゆるす」と書かれた手形。岡っ引きの判がおしてある。',
+    icon: svg(`
+      <path d="M18 8 h28 v48 h-28 z" fill="#f4e6c4" stroke="#6a4a2a" stroke-width="2.5"/>
+      <path d="M32 14 v26" stroke="#2a1a14" stroke-width="3"/>
+      <path d="M26 18 h12 M26 26 h12" stroke="#2a1a14" stroke-width="2"/>
+      <rect x="25" y="42" width="14" height="10" rx="2" fill="#c8382e"/>`),
+  },
 };

@@ -166,6 +166,7 @@ async function main() {
       else game.cameraHome();
     };
   });
+  $('#btn-notes').onclick = () => { game.audio.play('click'); showNotes(game); };
   $('#btn-reveal').onclick = () => {
     if (game.cinematic) return;
     game.stage.revealHotspots();
@@ -201,8 +202,37 @@ async function main() {
       if (game.ui.panelOpen) game.ui.panels[game.ui.panels.length - 1].close();
       else if (game.selectedItem) game.selectItem(null);
     }
+    if ((e.key === 'm' || e.key === 'M') && !game.ui.dialogueActive && !game.ui.panelOpen) showNotes(game);
     if ((e.key === 'h' || e.key === 'H') && !game.ui.dialogueActive && !game.ui.panelOpen) game.hint();
   });
+}
+
+/** 旅のメモ帳：手がかり と 会話のきろく */
+function showNotes(game) {
+  if (game.cinematic || game.ui.panelOpen) return;
+  $('#btn-notes').classList.remove('new');
+  const esc = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  const fmt = (t) => esc(t).replace(/【([^】]*)】?/g, '<em>$1</em>').replace(/\n/g, '<br>');
+  const notes = (game.state.notes || []).filter((n) => n.stage === game.state.stage).slice().reverse();
+  const body = el('div', 'notes');
+  body.innerHTML = `
+    <div class="nt-tabs"><button class="nt-tab on" data-t="clue">手がかり</button><button class="nt-tab" data-t="log">会話のきろく</button></div>
+    <div class="nt-page" data-p="clue">${notes.length
+      ? notes.map((n) => `<div class="nt-card"><div class="nt-title">${n.title}</div><div class="nt-body">${n.html}</div></div>`).join('')
+      : '<p class="panel-note">まだ何も書きとめていない。<br>手がかりを見つけると、ここに自動で書きとめられます。</p>'}</div>
+    <div class="nt-page hidden" data-p="log">${game.ui.log.length
+      ? game.ui.log.map((l) => `<div class="nt-line ${l.name ? '' : 'narr'}">${l.name ? `<b style="--c:${l.color || '#6b4a2e'}">${l.icon} ${l.name}</b>` : ''}<span>${fmt(l.text)}</span></div>`).join('')
+      : '<p class="panel-note">まだ会話のきろくはありません。</p>'}</div>`;
+  body.querySelectorAll('.nt-tab').forEach((b) => {
+    b.onclick = () => {
+      game.audio.play('click');
+      body.querySelectorAll('.nt-tab').forEach((x) => x.classList.toggle('on', x === b));
+      body.querySelectorAll('.nt-page').forEach((p) => p.classList.toggle('hidden', p.dataset.p !== b.dataset.t));
+      const log = body.querySelector('[data-p="log"]');
+      if (b.dataset.t === 'log') log.scrollTop = log.scrollHeight;
+    };
+  });
+  game.ui.openPanel({ title: '📖 旅のメモ', body, cls: 'wide notes-panel' });
 }
 
 function showHowTo(game) {
@@ -220,6 +250,7 @@ function showHowTo(game) {
         <div><b>👆 クリック / タップ</b>：調べる・話しかける</div>
         <div><b>🎒 持ち物</b>：アイテムを選んでから、使いたい場所をクリック（もう一度押すと説明）</div>
         <div><b>✨</b>：調べられる場所を光らせて、名前を出す</div>
+        <div><b>📖</b>：旅のメモ（見つけた手がかりと、会話のきろく）</div>
         <div><b>💡</b>：ヒント（押すたびに少しずつ詳しく）</div>
       </div>
       <p class="panel-note">進行は自動でセーブされます。</p>`,

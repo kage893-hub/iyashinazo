@@ -361,8 +361,17 @@ export function buildSkyDiorama(scene) {
   R.millGear.visible = false;
 
   // ---------------- 風穴 ----------------
-  const cave = (R.cave = group(root, -11.4, 0, -9.9));
+  // 列車のうしろに隠れないよう、高い岩がけの上にある
+  const CAVE_Y = 3.2;
   const rock = mat('#9a948a', { flatShading: true, roughness: 1 });
+  const cliff = group(root, -11.4, 0, -10.0);
+  const cl = rng(8);
+  for (let i = 0; i < 14; i++) {
+    const yy = (i / 13) * (CAVE_Y - 0.2);
+    add(cliff, G.dodeca(1.0 + cl() * 0.5 - yy * 0.08), rock, (cl() - 0.5) * 2.8, yy + 0.3, (cl() - 0.5) * 1.0 - 0.2, { rot: [cl(), cl(), cl()] });
+  }
+  for (let i = 0; i < 5; i++) add(cliff, G.sphere(0.5 + cl() * 0.3, 8, 6), mat('#8ab86a', { flatShading: true }), (cl() - 0.5) * 3, 0.6 + cl() * 2.2, 0.6, { scale: [1.2, 0.5, 0.8] });
+  const cave = (R.cave = group(root, -11.4, CAVE_Y, -9.9));
   const cr = rng(5);
   for (let i = 0; i < 16; i++) {
     const a = (i / 15) * Math.PI;
@@ -372,7 +381,7 @@ export function buildSkyDiorama(scene) {
   add(cave, G.circle(1.25, 20, 0), mat('#2a2a3a'), 0, 0.6, 0.15, { scale: [1, 0.9, 1], cast: false });
   add(cave, G.box(0.9, 0.35, 0.05), new THREE.MeshStandardMaterial({ map: signTex('風穴', { w: 192, h: 72, bg: '#f4ead2', size: 46 }) }), 1.7, 0.45, 0.8, { rot: [0, -0.4, 0] });
   for (const x of [1.7]) add(cave, G.cyl(0.04, 0.04, 0.5, 6), wood, x, 0.2, 0.75);
-  R.caveMouth = new THREE.Vector3(-11.4, 0.8, -9.6);
+  R.caveMouth = new THREE.Vector3(-11.4, CAVE_Y + 0.8, -9.6);
 
   // ---------------- 風の配管 ----------------
   R.pipeMat = new THREE.MeshStandardMaterial({ color: '#c8a050', metalness: 0.7, roughness: 0.35, emissive: '#5ad8ff', emissiveIntensity: 0 });
@@ -386,6 +395,7 @@ export function buildSkyDiorama(scene) {
       add(pipes, G.sphere(0.16, 10, 8), R.pipeMat, b.x, b.y, b.z);
     }
   };
+  pipeRun([[-10.2, 3.3, -10.3], [-10.0, 0.35, -10.3]]);
   pipeRun([[-10.0, 0.35, -10.3], [4.6, 0.35, -10.3], [4.6, 0.35, -9.6]]);
   pipeRun([[5.9, 0.35, -9.6], [7.3, 0.35, -9.6]]);
   for (let x = -9; x < 4.6; x += 2.2) add(pipes, G.box(0.12, 0.3, 0.3), mat('#7a6a5a'), x, 0.15, -10.3);

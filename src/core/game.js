@@ -80,7 +80,8 @@ export class Game {
     c.zoomSpeed = 0.9;
     // ホイール／ピンチは、指している場所に向かって寄る
     c.zoomToCursor = true;
-    c.panSpeed = 0.8;
+    // 2本指／右ドラッグでの移動量（スマホは何度もスライドしなくてすむよう大きめ）
+    c.panSpeed = this.mobile ? 2.4 : 1.2;
     c.screenSpacePanning = false;
     c.target.set(0, 1, 0);
     this.bounds = { minX: -14, maxX: 14, minZ: -10, maxZ: 10 };
@@ -474,6 +475,8 @@ export class Game {
       this.selectedItem = null;
       this.ui.setUseBanner(null);
       this.refreshInventory();
+      // 読めるもの（瓦版など）はステージ側で中身を見せる
+      if (this.stage?.inspectItem?.(id)) return;
       this.ui.toast(`<b>${ITEMS[id].name}</b>：${ITEMS[id].desc}`, 3200);
       return;
     }
@@ -510,6 +513,16 @@ export class Game {
       if (s && s.flags) return s;
     } catch (e) { /* ignore */ }
     return null;
+  }
+
+  /** 旅のメモ帳に手がかりを書きとめる（同じものは一度だけ） */
+  note(id, title, html) {
+    const notes = (this.state.notes = this.state.notes || []);
+    if (notes.some((n) => n.id === id)) return;
+    notes.push({ id, stage: this.state.stage, title, html });
+    this.save();
+    this.ui.toast(`📖 旅のメモに書きとめた：<b>${title}</b>`, 2600);
+    document.querySelector('#btn-notes')?.classList.add('new');
   }
 
   /** 調べられる場所の名前を、しばらく画面に出す（✨ボタン） */

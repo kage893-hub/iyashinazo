@@ -419,3 +419,52 @@ body.cinematic #camctl { opacity: 0; pointer-events: none; }
   #camctl { right: 8px; gap: 5px; }
   .cam-btn { width: 34px; height: 34px; font-size: 16px; }
 }
+
+/* ---------- 江戸：版木合わせ ---------- */
+.ukiyop { text-align: center; }
+.uk-grid { display: grid; grid-template-columns: repeat(3, 92px); gap: 4px; justify-content: center; margin: 14px auto 10px; padding: 8px; background: #2a1a14; border-radius: 8px; width: max-content; }
+.uk-cell { width: 92px; height: 92px; border: 3px solid transparent; border-radius: 3px; background-size: 300% 300%; cursor: pointer; padding: 0; transition: transform 0.12s, border-color 0.15s; }
+.uk-cell.picked { border-color: #ffd36a; transform: scale(0.93); }
+.ukiyop.solved .uk-grid { gap: 0; }
+.ukiyop.solved .uk-cell { border-color: transparent; border-radius: 0; }
+.uk-foot { font-weight: 700; }
+@media (max-width: 520px), (max-height: 700px) {
+  .uk-grid { grid-template-columns: repeat(3, 76px); }
+  .uk-cell { width: 76px; height: 76px; }
+}
+
+/* ---------- 江戸：時の鐘 ---------- */
+.tokip { text-align: center; }
+.tk-seq { min-height: 44px; margin: 14px 0; padding: 8px; background: #2a2a3a; border-radius: 10px; display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; align-items: center; }
+.tk-g { color: #ffd36a; font-size: 22px; }
+.tk-p { color: #c8c8d8; font-size: 22px; font-weight: 900; }
+.tk-empty { color: #a8a8b8; font-size: 13px; }
+.tk-btns { display: flex; gap: 10px; justify-content: center; margin-bottom: 10px; flex-wrap: wrap; }
+.tokip.solved .tk-seq { background: #3a4a2a; }
+
+/* ---------- 江戸：瓦版 ---------- */
+.kawaraban { background: #f4ead2; border: 3px solid #4a3424; padding: 12px 14px; color: #2a1a14; }
+.kb-head { font-weight: 900; font-size: 26px; letter-spacing: 0.3em; border-bottom: 3px double #4a3424; padding-bottom: 6px; margin-bottom: 10px; text-align: center; }
+.kb-head small { display: block; font-size: 12px; letter-spacing: 0.1em; font-weight: 700; }
+.kb-cols { display: flex; gap: 10px; flex-wrap: wrap; }
+.kb-art { flex: 1 1 150px; font-size: 14px; line-height: 1.7; border-left: 2px solid #c8a070; padding-left: 8px; text-align: left; }
+.kb-art b { color: #b0301e; }
+.kb-t { font-weight: 900; font-size: 15px; margin-bottom: 4px; }
+.kb-small { font-size: 13px; }
+
+/* ---------- 旅のメモ ---------- */
+.hud-btn.new { position: relative; }
+.hud-btn.new::after { content: ""; position: absolute; top: 3px; right: 3px; width: 10px; height: 10px; border-radius: 50%; background: #e8553a; box-shadow: 0 0 0 2px #fff8e6; }
+.nt-tabs { display: flex; gap: 6px; justify-content: center; margin-bottom: 12px; }
+.nt-tab { border: 2px solid var(--line); background: #fff8e6; color: var(--ink-soft); border-radius: 999px; padding: 6px 16px; font: inherit; font-weight: 700; cursor: pointer; }
+.nt-tab.on { background: var(--navy); color: #fff8e6; border-color: var(--navy); }
+.nt-page { max-height: min(56vh, 460px); overflow: auto; padding: 2px; }
+.nt-card { background: #fffdf4; border: 2px dashed #d9c39a; border-radius: 12px; padding: 10px 14px; margin-bottom: 10px; text-align: left; }
+.nt-title { font-weight: 900; color: var(--navy); margin-bottom: 4px; }
+.nt-body { line-height: 1.7; font-size: 14px; }
+.nt-body b, .nt-body em { color: #c8541e; font-style: normal; font-weight: 900; }
+.nt-line { text-align: left; padding: 6px 4px; border-bottom: 1px dotted #e0cfae; font-size: 14px; line-height: 1.6; display: flex; flex-direction: column; gap: 2px; }
+.nt-line b { color: var(--c); font-size: 12px; }
+.nt-line.narr span { color: var(--ink-soft); }
+.nt-line em { color: #c8541e; font-style: normal; font-weight: 700; }
+

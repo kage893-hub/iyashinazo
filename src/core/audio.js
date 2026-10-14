@@ -52,10 +52,27 @@ const ONSEN_CHORDS = [
   [50, 57, 62], [55, 62, 67], [57, 64, 69], [50, 57, 62],
 ];
 
+// 江戸の宿場町：琴のような都節（みやこぶし）風の旋律（ホ調）
+const EDO_MELODY = [
+  [0, 76, 1], [1, 77, 0.5], [1.5, 76, 0.5], [2, 72, 1], [3, 71, 1],
+  [4, 69, 2], [6, 71, 1], [7, 72, 1],
+  [8, 76, 1.5], [9.5, 77, 0.5], [10, 81, 1], [11, 77, 1],
+  [12, 76, 3],
+  [16, 72, 1], [17, 71, 1], [18, 69, 0.5], [18.5, 71, 0.5], [19, 72, 1],
+  [20, 71, 1.5], [21.5, 69, 0.5], [22, 65, 2],
+  [24, 64, 1], [25, 65, 1], [26, 69, 1], [27, 71, 1],
+  [28, 69, 3],
+];
+const EDO_CHORDS = [
+  [52, 59, 64], [57, 64, 69], [52, 59, 64], [53, 57, 64],
+  [57, 64, 69], [52, 59, 64], [53, 60, 65], [45, 52, 57],
+];
+
 export const SONGS = {
   station: { melody: MELODY, chords: CHORDS, tempo: 74 },
   sky: { melody: SKY_MELODY, chords: SKY_CHORDS, tempo: 88 },
   onsen: { melody: ONSEN_MELODY, chords: ONSEN_CHORDS, tempo: 64 },
+  edo: { melody: EDO_MELODY, chords: EDO_CHORDS, tempo: 70 },
 };
 
 export class AudioSys {
@@ -300,6 +317,26 @@ export class AudioSys {
       case 'ice':
         for (let i = 0; i < 8; i++) this.tone(2000 + Math.random() * 3000, { dur: 0.15, gain: 0.03, when: i * 0.1 });
         this.noise({ dur: 1.5, freq: 3000, q: 1, gain: 0.05, attack: 0.2 });
+        break;
+      case 'gong': // 時の鐘（ゴーン……）
+        this.bellTone(98, { dur: 4.5, gain: 0.32, partials: [1, 2.0, 2.76, 4.1, 5.4] });
+        this.noise({ dur: 0.15, freq: 300, q: 1, gain: 0.08 });
+        break;
+      case 'hyoshigi': // 拍子木（カン、カン）
+        for (let i = 0; i < 2; i++) { this.tone(1900, { dur: 0.08, gain: 0.1, type: 'triangle', when: i * 0.22 }); this.noise({ dur: 0.05, freq: 3000, q: 4, gain: 0.08, when: i * 0.22 }); }
+        break;
+      case 'wan':
+        this.tone(520, { dur: 0.12, gain: 0.09, type: 'sawtooth', slide: 380 });
+        this.tone(560, { dur: 0.12, gain: 0.08, type: 'sawtooth', slide: 400, when: 0.2 });
+        break;
+      case 'kappa':
+        this.tone(700, { dur: 0.2, gain: 0.06, type: 'triangle', slide: 1100, vib: [18, 40] });
+        break;
+      case 'crane':
+        this.tone(1300, { dur: 0.35, gain: 0.05, type: 'triangle', slide: 1700 });
+        break;
+      case 'paper':
+        this.noise({ dur: 0.18, freq: 3500, q: 0.8, gain: 0.06, sweep: 2000 });
         break;
       case 'twinkle':
         [1568, 2093, 2637].forEach((f, i) => this.tone(f, { dur: 0.6, gain: 0.04, when: i * 0.06 }));

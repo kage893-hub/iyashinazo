@@ -66,7 +66,7 @@ export function skySignTex() {
     ctx.fillStyle = '#5a8ad8'; ctx.fillRect(8, 140, w - 16, 52);
     ctx.fillStyle = '#fff'; ctx.font = `700 24px ${FONT}`;
     ctx.textAlign = 'left'; ctx.fillText('← はざま', 22, 167);
-    ctx.textAlign = 'right'; ctx.fillText('おんせんがい →', w - 22, 167);
+    ctx.textAlign = 'right'; ctx.fillText('えどのしゅく →', w - 22, 167);
   });
 }
 

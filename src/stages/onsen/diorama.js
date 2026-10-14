@@ -142,8 +142,8 @@ export function buildOnsenDiorama(scene) {
     ctx.font = `500 22px ${FONT}`; ctx.fillText('YUGE-NO-SATO', w / 2, 120);
     ctx.fillStyle = '#8a3a2e'; ctx.fillRect(8, 140, w - 16, 52);
     ctx.fillStyle = '#fff'; ctx.font = `700 24px ${FONT}`;
-    ctx.textAlign = 'left'; ctx.fillText('← てんくうのまち', 22, 167);
-    ctx.textAlign = 'right'; ctx.fillText('じょうかまち →', w - 22, 167);
+    ctx.textAlign = 'left'; ctx.fillText('← まおうじょう', 22, 167);
+    ctx.textAlign = 'right'; ctx.fillText('きのこのもり →', w - 22, 167);
   }), roughness: 0.7 }), 0, 1.5, 0.02);
 
   // ---------------- 山・トンネル・氷 ----------------
