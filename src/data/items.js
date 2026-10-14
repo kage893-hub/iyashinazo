@@ -162,4 +162,64 @@ export const ITEMS = {
       </g>
       <circle cx="32" cy="32" r="9" fill="#fff3c8" stroke="#7a5414" stroke-width="2.5"/>`),
   },
+
+  // ---------------- STAGE 3：寂れた温泉街 ----------------
+  lantern: {
+    name: '手さげ提灯',
+    desc: 'キツネの提灯屋の手さげ提灯。中のろうそくに火はついていない。',
+    icon: svg(`
+      <path d="M32 6v8" stroke="#3a2418" stroke-width="3"/>
+      <rect x="20" y="13" width="24" height="6" rx="2" fill="#2a1a14"/>
+      <rect x="20" y="49" width="24" height="6" rx="2" fill="#2a1a14"/>
+      <ellipse cx="32" cy="34" rx="16" ry="17" fill="#e8dcc4" stroke="#8a5a3a" stroke-width="2"/>
+      <path d="M17 28h30M16 34h32M17 40h30" stroke="#b89a7a" stroke-width="1.5"/>`),
+  },
+  lanternLit: {
+    name: '灯った提灯',
+    desc: '釜場の残り火をうつした提灯。あたたかい光がゆれている。',
+    icon: svg(`
+      <circle cx="32" cy="34" r="26" fill="#ffd27a" opacity=".35"/>
+      <path d="M32 6v8" stroke="#3a2418" stroke-width="3"/>
+      <rect x="20" y="13" width="24" height="6" rx="2" fill="#2a1a14"/>
+      <rect x="20" y="49" width="24" height="6" rx="2" fill="#2a1a14"/>
+      <ellipse cx="32" cy="34" rx="16" ry="17" fill="#ffb050" stroke="#c8582e" stroke-width="2"/>
+      <path d="M17 28h30M16 34h32M17 40h30" stroke="#e8823a" stroke-width="1.5"/>
+      <path d="M32 26c3 4 4 7 0 11-4-4-3-7 0-11z" fill="#fff4b0"/>`),
+  },
+  poker: {
+    name: '火かき棒',
+    desc: '囲炉裏の灰をかく鉄の棒。奥のほうの残り火も、かき出せそう。',
+    icon: svg(`
+      <path d="M12 54 L50 12" stroke="#3d3d48" stroke-width="5" stroke-linecap="round"/>
+      <path d="M50 12 l6 4" stroke="#3d3d48" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="11" cy="55" r="6" fill="none" stroke="#3d3d48" stroke-width="4"/>`),
+  },
+  amazake: {
+    name: 'あったか甘酒',
+    desc: 'タヌキの番頭が温めてくれた甘酒。湯気がほわほわ立っている。',
+    icon: svg(`
+      <path d="M22 18c-2-5 2-8 0-12M32 18c-2-5 2-8 0-12M42 18c-2-5 2-8 0-12" stroke="#c8c8d8" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M14 24h36l-4 26a6 6 0 0 1-6 5H24a6 6 0 0 1-6-5z" fill="#f4f0e6" stroke="#5a7ab8" stroke-width="3"/>
+      <path d="M17 30h30" stroke="#5a7ab8" stroke-width="2"/>
+      <ellipse cx="32" cy="25" rx="16" ry="3" fill="#fbf6ea"/>`),
+  },
+  gateKey: {
+    name: '源泉の門の鍵',
+    desc: 'サルの顔の形をした古い鍵。持ち手に「源泉」と彫ってある。',
+    icon: svg(`
+      <circle cx="20" cy="22" r="13" fill="#d8b04a" stroke="#7a5a14" stroke-width="3"/>
+      <circle cx="20" cy="22" r="8" fill="#e88a8a"/>
+      <circle cx="17" cy="20" r="1.6" fill="#2a1a14"/><circle cx="23" cy="20" r="1.6" fill="#2a1a14"/>
+      <path d="M30 30 L54 54" stroke="#d8b04a" stroke-width="6" stroke-linecap="round"/>
+      <path d="M46 46l-5 6M52 52l-4 5" stroke="#d8b04a" stroke-width="5" stroke-linecap="round"/>`),
+  },
+  masu: {
+    name: '三合升',
+    desc: '湯を量るための木の升。三合入る。',
+    icon: svg(`
+      <path d="M12 22 L32 14 L52 22 L32 30 Z" fill="#e8c890" stroke="#8a6a3a" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M12 22 v20 l20 10 v-22 z" fill="#d8b070" stroke="#8a6a3a" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M52 22 v20 l-20 10 v-22 z" fill="#c89a5a" stroke="#8a6a3a" stroke-width="2.5" stroke-linejoin="round"/>
+      <text x="22" y="44" font-size="10" font-weight="900" fill="#5a3a1a">三</text>`),
+  },
 };

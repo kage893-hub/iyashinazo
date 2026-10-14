@@ -36,9 +36,26 @@ const SKY_CHORDS = [
   [57, 60, 64], [53, 57, 60], [55, 59, 65], [48, 52, 55],
 ];
 
+// 寂れた温泉街：ヨナ抜き風のゆったりした旋律（ニ調）
+const ONSEN_MELODY = [
+  [0, 74, 1], [1, 71, 1], [2, 69, 2],
+  [4, 67, 1], [5, 69, 0.5], [5.5, 71, 0.5], [6, 69, 2],
+  [8, 74, 1], [9, 76, 1], [10, 74, 1], [11, 71, 1],
+  [12, 69, 3],
+  [16, 67, 1], [17, 69, 1], [18, 71, 1.5], [19.5, 69, 0.5],
+  [20, 67, 1], [21, 64, 1], [22, 62, 2],
+  [24, 64, 1], [25, 67, 1], [26, 69, 1], [27, 71, 1],
+  [28, 69, 3],
+];
+const ONSEN_CHORDS = [
+  [50, 57, 62], [55, 62, 67], [52, 59, 64], [57, 64, 69],
+  [50, 57, 62], [55, 62, 67], [57, 64, 69], [50, 57, 62],
+];
+
 export const SONGS = {
   station: { melody: MELODY, chords: CHORDS, tempo: 74 },
   sky: { melody: SKY_MELODY, chords: SKY_CHORDS, tempo: 88 },
+  onsen: { melody: ONSEN_MELODY, chords: ONSEN_CHORDS, tempo: 64 },
 };
 
 export class AudioSys {
@@ -264,6 +281,25 @@ export class AudioSys {
         break;
       case 'loom':
         for (let i = 0; i < 6; i++) this.noise({ dur: 0.08, freq: 1200, q: 2, gain: 0.08, when: i * 0.18 });
+        break;
+      case 'knock': // ししおどし
+        this.tone(320, { dur: 0.25, gain: 0.14, type: 'triangle', slide: 260 });
+        this.noise({ dur: 0.08, freq: 1500, q: 3, gain: 0.08 });
+        break;
+      case 'ponpoko':
+        for (let i = 0; i < 3; i++) this.tone(200, { dur: 0.12, gain: 0.12, type: 'triangle', when: i * 0.16, slide: 160 });
+        break;
+      case 'kon':
+        this.tone(900, { dur: 0.3, gain: 0.06, type: 'triangle', slide: 1300 });
+        this.tone(1300, { dur: 0.3, gain: 0.05, type: 'triangle', slide: 900, when: 0.3 });
+        break;
+      case 'kii':
+        this.tone(1500, { dur: 0.15, gain: 0.05, type: 'square', slide: 2200 });
+        this.tone(1600, { dur: 0.15, gain: 0.05, type: 'square', slide: 2400, when: 0.18 });
+        break;
+      case 'ice':
+        for (let i = 0; i < 8; i++) this.tone(2000 + Math.random() * 3000, { dur: 0.15, gain: 0.03, when: i * 0.1 });
+        this.noise({ dur: 1.5, freq: 3000, q: 1, gain: 0.05, attack: 0.2 });
         break;
       case 'twinkle':
         [1568, 2093, 2637].forEach((f, i) => this.tone(f, { dur: 0.6, gain: 0.04, when: i * 0.06 }));

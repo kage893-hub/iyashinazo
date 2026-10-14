@@ -1057,10 +1057,11 @@ export class SkyStage {
         <div class="route-stop"><i></i>勇者の城下町</div>
         <div class="route-stop"><i></i>現代日本</div>
       </div>
-      <p class="clear-msg">虹のふもとをくぐりぬけて、ほしまわり号は走っていく。<br>次の停車駅は<em>寂れた温泉街</em>。……つづきは準備中です。</p>
-      <div class="clear-btns"><button class="btn primary" data-a="title">タイトルへ</button></div>`;
+      <p class="clear-msg">虹のふもとをくぐりぬけて、ほしまわり号は走っていく。<br>次の停車駅は<em>寂れた温泉街</em>。</p>
+      <div class="clear-btns"><button class="btn primary" data-a="next">次の世界へ ▶</button><button class="btn" data-a="title">タイトルへ</button></div>`;
     g.ui.openPanel({ title: '', body, closable: false, cls: 'clear-panel' });
-    body.querySelector('[data-a="title"]').onclick = () => g.goToStage('sky', { autostart: false });
+    body.querySelector('[data-a="next"]').onclick = () => g.goToStage('onsen');
+    body.querySelector('[data-a="title"]').onclick = () => g.goToStage('onsen', { autostart: false });
     g.ui.fade(0, 1.2, '#fff8ec');
   }
 }
