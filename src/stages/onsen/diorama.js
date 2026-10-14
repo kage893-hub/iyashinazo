@@ -347,20 +347,25 @@ export function buildOnsenDiorama(scene) {
   // 薪の山
   for (let i = 0; i < 6; i++) add(kama, G.cyl(0.08, 0.08, 0.8, 8), mat('#8a6a4a'), -1.05, 0.1 + Math.floor(i / 3) * 0.16, -0.3 + (i % 3) * 0.17, { rot: [Math.PI / 2, 0, 0] });
 
-  // 露天風呂（からっぽ）
-  const roten = (R.roten = group(root, 5.6, 0, 0.6));
+  // 露天風呂（からっぽ）。みんなで入れる、大きな岩風呂。地面より高い石の湯船にして、湯は腰の高さ
+  const roten = (R.roten = group(root, 6.3, 0, 0.0));
   const rr = rng(44);
-  for (let i = 0; i < 18; i++) {
-    const a = (i / 18) * Math.PI * 2;
-    add(roten, G.dodeca(0.32 + rr() * 0.15), stone, Math.cos(a) * 1.6, 0.15, Math.sin(a) * 1.1, { rot: [rr(), rr(), rr()] });
+  const RX = 2.5, RZ = 1.75;
+  for (let i = 0; i < 30; i++) {
+    const a = (i / 30) * Math.PI * 2;
+    const s2 = 0.36 + rr() * 0.16;
+    add(roten, G.dodeca(s2), stone, Math.cos(a) * (RX + 0.2), 0.32 + rr() * 0.1, Math.sin(a) * (RZ + 0.2), { rot: [rr(), rr(), rr()], scale: [1.1, 1.25, 1.1] });
   }
-  add(roten, G.circle(1.5, 24), mat('#7a7064'), 0, 0.03, 0, { rot: [-Math.PI / 2, 0, 0], scale: [1, 0.72, 1], cast: false });
+  // 湯船の底と内側の壁
+  add(roten, G.circle(1, 32), mat('#6a6458'), 0, 0.03, 0, { rot: [-Math.PI / 2, 0, 0], scale: [RX, RZ, 1], cast: false });
+  add(roten, new THREE.CylinderGeometry(1, 1, 0.55, 32, 1, true), mat('#7a7064', { side: THREE.DoubleSide }), 0, 0.28, 0, { scale: [RX + 0.05, 1, RZ + 0.05], cast: false });
   R.rotenWaterMat = waterize(new THREE.MeshStandardMaterial({ color: '#8fd0e0', emissive: '#4aa8c8', emissiveIntensity: 0.2, roughness: 0.05, transparent: true, opacity: 0 }), { strength: 0.25, scale: 2 });
-  R.rotenWater = add(roten, G.circle(1.5, 24), R.rotenWaterMat, 0, 0.2, 0, { rot: [-Math.PI / 2, 0, 0], scale: [1, 0.72, 1], cast: false });
+  R.rotenWater = add(roten, G.circle(1, 32), R.rotenWaterMat, 0, 0.1, 0, { rot: [-Math.PI / 2, 0, 0], scale: [RX, RZ, 1], cast: false });
   R.rotenWater.userData.keep = true;
   R.rotenWater.userData.noPick = true;
+  R.rotenWater.userData.full = 0.45;
   // ししおどし
-  const shishi = (R.shishi = group(roten, 1.9, 0, -0.8));
+  const shishi = (R.shishi = group(roten, 2.9, 0, -1.3));
   add(shishi, G.box(0.08, 0.6, 0.08), darkWood, 0, 0.3, 0);
   R.shishiTube = group(shishi, 0, 0.5, 0);
   add(R.shishiTube, G.cyl(0.07, 0.07, 0.9, 10), mat('#8ab05a'), 0.15, 0, 0, { rot: [0, 0, Math.PI / 2 - 0.3] });
@@ -436,14 +441,14 @@ export function buildOnsenDiorama(scene) {
 
   // 通りの提灯（町の灯り）
   R.streetLanterns = [];
-  const posts = [[-7.4, 2.25], [-1.6, 2.25], [4.0, 2.25], [-7.4, 5.0], [2.6, 5.0], [6.4, 2.25]];
+  const posts = [[-7.4, 2.25], [-1.6, 2.25], [3.4, 2.6], [-7.4, 5.0], [2.6, 5.0], [9.3, 2.4]];
   for (const [x, z] of posts) {
     add(root, G.box(0.1, 2.3, 0.1), darkWood, x, 1.15, z);
     add(root, G.box(0.5, 0.06, 0.06), darkWood, x + 0.2, 2.25, z);
     chochin(root, x + 0.38, 1.95, z, { s: 0.75, mats: R.streetLanterns });
   }
   R.streetLight = [];
-  for (const [x, z] of [[-1.6, 2.25], [6.4, 2.25]]) {
+  for (const [x, z] of [[-1.6, 2.25], [9.3, 2.4]]) {
     const L = new THREE.PointLight('#ffb060', 0, 7, 1.6);
     L.position.set(x + 0.4, 1.9, z + 0.3);
     root.add(L);
@@ -500,7 +505,7 @@ export function buildOnsenDiorama(scene) {
 
   R.lampMats = [...R.streetLanterns, ...R.shopLanterns];
   // 灯りがともると地面に落ちる光だまり
-  R.poolStreet = [[-7.4, 2.25], [-1.6, 2.25], [4.0, 2.25], [-7.4, 5.0], [2.6, 5.0], [6.4, 2.25]].map(([x, z]) => lightPool(root, x + 0.4, 0.035, z + 0.4, 1.8, 1.8, '#ffb860'));
+  R.poolStreet = [[-7.4, 2.25], [-1.6, 2.25], [3.4, 2.6], [-7.4, 5.0], [2.6, 5.0], [9.3, 2.4]].map(([x, z]) => lightPool(root, x + 0.4, 0.035, z + 0.4, 1.8, 1.8, '#ffb860'));
   R.poolStreet.push(lightPool(root, -4.2, 0.035, 7.4, 3.2, 1.8, '#ffb860'));
   R.poolRyokan = lightPool(root, -10.2, 0.035, 6.0, 4.4, 1.8, '#ff9a50');
   R.poolShop = lightPool(root, 9.0, 0.035, 6.9, 3.4, 1.6, '#ffb860');

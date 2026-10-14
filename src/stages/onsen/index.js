@@ -198,13 +198,13 @@ export class OnsenStage {
     this.fox = makeFox();
     this.fox.root.position.set(9.0, 0.35, 5.25);
     this.monkey = makeMonkey({ kid: true });
-    this.monkey.root.position.set(5.4, 0.05, 0.7);
+    this.monkey.root.position.set(6.0, 0.06, 0.4);
     this.monkey.root.rotation.y = -0.2;
     // 最後に湯につかるサルたちと、お客さん
     this.bathers = [makeMonkey({ kid: false, bathing: true }), makeMonkey({ kid: false, bathing: true })];
     for (const b of this.bathers) b.noIdleHop = true;
-    this.bathers[0].root.position.set(4.8, -0.2, 1.0);
-    this.bathers[1].root.position.set(6.3, -0.2, 0.3);
+    this.bathers[0].root.position.set(5.0, 0.0, -0.6);
+    this.bathers[1].root.position.set(7.6, 0.0, -0.5);
     this.bathers[1].root.rotation.y = -0.6;
     this.guest = makeRabbit();
     this.guest.root.position.set(-0.8, 0.47, 6.0);
@@ -323,6 +323,7 @@ export class OnsenStage {
     for (const w of R.flows) w.visible = on;
     R.srcWaterMat.emissiveIntensity = on ? 0.5 : 0.15;
     R.rotenWaterMat.opacity = on ? 0.85 : 0;
+    R.rotenWater.position.y = on ? 0.45 : 0.1;
     this.flowing = on;
   }
 
@@ -890,7 +891,7 @@ export class OnsenStage {
     await g.wait(0.6);
     this._setFlow(true);
     R.rotenWaterMat.opacity = 0;
-    await g.tweens.add({ duration: 2.2, onUpdate: (k) => { R.rotenWaterMat.opacity = k * 0.85; R.rotenWater.position.y = 0.05 + k * 0.15; } });
+    await g.tweens.add({ duration: 2.2, onUpdate: (k) => { R.rotenWaterMat.opacity = k * 0.85; R.rotenWater.position.y = 0.1 + k * 0.35; } });
     this.thaw = 0.25;
     this._applyThaw();
     g.cinematic = false;
@@ -1052,10 +1053,10 @@ export class OnsenStage {
   /** カエルの機関士と、ひと休み（お湯が出たあと、いつでも） */
   async frogSoak() {
     const g = this.g;
-    const into = [[this.frog, new V(5.1, -0.3, 1.45), 0.2]];
+    const into = [[this.frog, new V(5.2, 0.0, 0.7), 0.2]];
     const from = into.map(([c]) => ({ p: c.root.position.clone(), r: c.root.rotation.y }));
     g.cinematic = true;
-    await g.moveCamera(new V(3.6, 4.6, 6.6), new V(5.6, 0.3, 1.0), 1.8);
+    await g.moveCamera(new V(4.6, 4.8, 6.6), new V(6.3, 0.5, 0.2), 1.8);
     await g.tweens.add({ duration: 1.6, ease: Ease.inOut, onUpdate: (k) => into.forEach(([c, to, ry], i) => {
       c.root.position.lerpVectors(from[i].p, to, k);
       c.root.position.y += Math.sin(k * Math.PI) * 0.9;
@@ -1085,10 +1086,10 @@ export class OnsenStage {
   async soak() {
     const g = this.g;
     await this.say([{ who: 'capy', text: 'そうだ、出発の前に……ひと風呂、いかがです？ 町いちばんのお湯ですよ。' }, { who: 'frog', text: 'まってましたケロ〜！' }]);
-    const into = [[this.frog, new V(5.1, -0.3, 1.45), 0.2], [this.capy, new V(6.5, -0.28, 1.0), -0.4], [this.monkey, new V(5.3, -0.2, -0.1), 0.1]];
+    const into = [[this.frog, new V(5.2, 0.0, 0.7), 0.2], [this.capy, new V(7.4, 0.0, 0.6), -0.4], [this.monkey, new V(6.3, 0.06, -0.9), 0.1]];
     const from = into.map(([c]) => ({ p: c.root.position.clone(), r: c.root.rotation.y }));
     g.audio.play('splash');
-    await g.moveCamera(new V(3.6, 5.2, 7.2), new V(5.6, 0.3, 0.9), 2.0);
+    await g.moveCamera(new V(4.4, 5.6, 7.6), new V(6.3, 0.5, 0.2), 2.0);
     await g.tweens.add({ duration: 1.6, ease: Ease.inOut, onUpdate: (k) => into.forEach(([c, to, ry], i) => {
       c.root.position.lerpVectors(from[i].p, to, k);
       c.root.position.y += Math.sin(k * Math.PI) * 0.6;
@@ -1103,7 +1104,7 @@ export class OnsenStage {
       { who: 'capy', text: 'カピバラも、お湯がいちばん好きでして……ふう。' },
     ]);
     // ゆっくり、湯けむりごしに雪を見あげる
-    g.tweens.add({ duration: 9, ease: Ease.inOut, onUpdate: (k) => { g.camera.position.set(3.6 - k * 0.8, 5.2 - k * 0.6, 7.2 - k * 0.6); g.controls.target.set(5.6, 0.3 + k * 1.2, 0.9); } });
+    g.tweens.add({ duration: 9, ease: Ease.inOut, onUpdate: (k) => { g.camera.position.set(4.4 - k * 0.8, 5.6 - k * 0.6, 7.6 - k * 0.6); g.controls.target.set(6.3, 0.5 + k * 1.2, 0.2); } });
     await this.say([
       '湯けむりの向こうに、雪がしんしんと降っている。',
       'はざま駅のふしぎな夕暮れ、雲の上の風車、夜明けの宿場町、霧の港、ドット絵の城下町……そして、さみしがりの魔王。',
