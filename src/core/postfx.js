@@ -127,7 +127,7 @@ const AoShader = {
     projScale: { value: 1 },
     resolution: { value: new THREE.Vector2(512, 512) },
     radius: { value: 0.7 },
-    intensity: { value: 2.4 },
+    intensity: { value: 1.7 },
     bias: { value: 0.02 },
   },
   defines: { SAMPLES: 10 },
@@ -167,7 +167,9 @@ const AoShader = {
         float fall = max(0.0, 1.0 - vv / (radius * radius * 4.0));
         occ += max(0.0, vn - bias * -P.z * 0.05) / (vv + 0.02) * fall;
       }
-      float ao = clamp(1.0 - intensity * occ / float(SAMPLES) * radius, 0.0, 1.0);
+      // 引きで見たときは細かい影がざらつくので、遠いほど弱める
+      float fade = 1.0 - smoothstep(16.0, 42.0, -P.z);
+      float ao = clamp(1.0 - intensity * fade * occ / float(SAMPLES) * radius, 0.0, 1.0);
       gl_FragColor = vec4(ao, ao, ao, 1.0);
     }
   `,
@@ -193,7 +195,7 @@ const AoBlurShader = {
       float z0 = lin(vUv);
       float sum = 0.0, ws = 0.0;
       for (int i = -3; i <= 3; i++) {
-        vec2 uv = vUv + dir * float(i);
+        vec2 uv = vUv + dir * float(i) * 1.5;
         float w = exp(-float(i * i) / 6.0) * exp(-abs(lin(uv) - z0) / (z0 * 0.03 + 0.001));
         sum += texture2D(tAO, uv).r * w;
         ws += w;
@@ -222,7 +224,7 @@ const AoCompositeShader = {
   uniforms: {
     tDiffuse: { value: null },
     tAO: { value: null },
-    strength: { value: 0.85 },
+    strength: { value: 0.7 },
     debug: { value: 0 },
   },
   vertexShader: AoShader.vertexShader,
