@@ -519,10 +519,10 @@ export class OnsenStage {
   // =========================================================
   say(lines) { return this.g.say(lines); }
 
-  focus(obj, dist) {
+  focus(obj, dist, opt = {}) {
     const p = obj.getWorldPosition ? obj.getWorldPosition(new V()) : obj.clone();
     const cur = this.g.camera.position.distanceTo(this.g.controls.target);
-    return this.g.focusOn(new V(p.x, Math.min(4, Math.max(0.8, p.y + 0.5)), p.z), { dist: Math.min(cur, dist ?? 20), duration: 0.8, subject: obj.isObject3D ? obj : undefined });
+    return this.g.focusOn(new V(p.x, Math.min(4, Math.max(0.8, p.y + 0.5)), p.z), { dist: Math.min(cur, dist ?? 20), duration: 0.8, subject: obj.isObject3D ? obj : undefined, ...opt });
   }
 
   questDone(text) {
@@ -551,7 +551,7 @@ export class OnsenStage {
   // =========================================================
   async talkCapy() {
     const g = this.g, f = g.flags;
-    this.focus(this.capy.root, 16);
+    this.focus(this.capy.root, 12);
     if (!f.introDone) return this.capyIntro();
     if (f.lightsDone && f.gateOpen && f.springFlow) return this.finale();
     const lines = [];
@@ -658,7 +658,7 @@ export class OnsenStage {
 
   async talkMonkey() {
     const g = this.g, f = g.flags;
-    this.focus(this.monkey.root, 16);
+    this.focus(this.monkey.root, 11, { polar: 0.95, theta: -0.45, keepAngle: true });
     g.audio.play('kii');
     if (f.keyGiven) return this.say([{ who: 'monkey', text: f.springFlow ? 'キキッ！ おゆだー！ あったかーい！' : 'キキッ！ はやくお湯にはいりたいなあ！' }]);
     if (g.has('amazake')) return this.giveAmazake();
@@ -977,13 +977,16 @@ export class OnsenStage {
     await g.ui.banner('寂れた温泉街', `STAGE ${stageNo('onsen')}`, 2400);
     await g.say([
       'ほしまわり号は、雪のちらつく山あいの駅に着いた。',
-      '湯けむりの里——『ゆげのさと』。……のはずが、湯けむりはひとすじも見えない。',
+      '魔王城では、ドキドキの連続だった。……ちょっと、くたびれた。',
+      'ここは湯けむりの里——『ゆげのさと』。あったかいお湯につかって、のんびりしたい……。',
+      '……のはずが、湯けむりはひとすじも見えない。',
       '町は暗く、しんと静まりかえっている。',
     ]);
     await g.moveCamera(new V(5.5, 3.5, -1.2), new V(1.0, 1.0, -4.0), 1.6);
     g.audio.play('ribbit');
     await g.say([
-      { who: 'frog', text: 'さ、さむいケロ……！ 線路の先のトンネルが、凍りついてるケロ！' },
+      { who: 'frog', text: 'さ、さむいケロ……！ ひと風呂あびて、のんびりするつもりだったのにケロ〜。' },
+      { who: 'frog', text: 'しかも線路の先のトンネルが、凍りついてるケロ！' },
       { who: 'frog', text: '共同浴場のカピバラさんなら、何か知ってるかもケロ。' },
     ]);
     const portrait = innerWidth < innerHeight;
@@ -1017,15 +1020,52 @@ export class OnsenStage {
       '雪もとけ、湯けむりの中に、湯につかりにくるお客さんたちの姿が見える。',
       { who: 'rabbit', text: 'あら、あなた！ はざま駅で会ったわね。わたしも湯治に来ちゃった。' },
     ]);
+    await this.soak();
     await g.moveCamera(new V(5.5, 3.5, -1.2), new V(1.0, 1.0, -4.0), 1.8);
     await this.say([
-      { who: 'frog', text: 'トンネルが開いたケロ！ これで出発できるケロ〜！' },
+      { who: 'frog', text: 'ぽっかぽかケロ！ トンネルも開いたし、出発できるケロ〜！' },
       { who: 'capy', text: 'ありがとうございました。またいつでも、湯につかりにおいでください。' },
       'あなたは客車に乗りこみ、窓ぎわの席にすわった。',
     ]);
     g.flag('departed');
     g.refreshQuests();
     await this.departure();
+  }
+
+  /** 出発の前に、みんなでひと風呂（魔王城のあとの、ひと休み） */
+  async soak() {
+    const g = this.g;
+    await this.say([{ who: 'capy', text: 'そうだ、出発の前に……ひと風呂、いかがです？ 町いちばんのお湯ですよ。' }]);
+    const into = [[this.frog, new V(5.1, -0.3, 1.45), 0.2], [this.capy, new V(6.5, -0.28, 1.0), -0.4], [this.monkey, new V(5.3, -0.2, -0.1), 0.1]];
+    const from = into.map(([c]) => ({ p: c.root.position.clone(), r: c.root.rotation.y }));
+    g.audio.play('splash');
+    await g.moveCamera(new V(3.6, 5.2, 7.2), new V(5.6, 0.3, 0.9), 2.0);
+    await g.tweens.add({ duration: 1.6, ease: Ease.inOut, onUpdate: (k) => into.forEach(([c, to, ry], i) => {
+      c.root.position.lerpVectors(from[i].p, to, k);
+      c.root.position.y += Math.sin(k * Math.PI) * 0.6;
+      c.root.rotation.y = lerp(from[i].r, ry, k);
+    }) });
+    g.audio.play('water');
+    await this.say([
+      'せっかくなので、出発の前に、露天風呂でひと休みすることにした。',
+      { who: 'frog', text: 'ふぃ〜……ごくらく、ごくらくケロ〜。魔王城では、ずっとドキドキしっぱなしだったケロ。' },
+      { who: 'capy', text: 'カピバラも、お湯がいちばん好きでして……ふう。' },
+    ]);
+    // ゆっくり、湯けむりごしに雪を見あげる
+    g.tweens.add({ duration: 9, ease: Ease.inOut, onUpdate: (k) => { g.camera.position.set(3.6 - k * 0.8, 5.2 - k * 0.6, 7.2 - k * 0.6); g.controls.target.set(5.6, 0.3 + k * 1.2, 0.9); } });
+    await this.say([
+      '湯けむりの向こうに、雪がしんしんと降っている。',
+      'はざま駅のふしぎな夕暮れ、雲の上の風車、夜明けの宿場町、霧の港、ドット絵の城下町……そして、さみしがりの魔王。',
+      'これまでの旅を思いだしながら、肩までゆっくり、お湯につかった。',
+      { who: 'monkey', text: 'キキッ……あったかいね〜。' },
+      '……ふう。からだの芯まで、ぽかぽかになった。',
+    ]);
+    // 湯からあがる
+    await g.tweens.add({ duration: 1.4, ease: Ease.inOut, onUpdate: (k) => into.forEach(([c, to], i) => {
+      c.root.position.lerpVectors(to, from[i].p, k);
+      c.root.position.y += Math.sin(k * Math.PI) * 0.6;
+      c.root.rotation.y = lerp(into[i][2], from[i].r, k);
+    }) });
   }
 
   async departure() {

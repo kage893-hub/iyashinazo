@@ -483,7 +483,7 @@ export function buildOnsenDiorama(scene) {
     add(j, G.cyl(0.18, 0.18, 0.07, 12), snowM, 0, 0.88, 0, { cast: false });
   }
   const bare = ['#6a5a4a', '#7a6a5a', '#5a4a3a'];
-  [[-13.2, 7.8, 0.85], [13.6, -1.8, 0.7], [-13.6, -0.6, 0.75], [6.0, 9.2, 0.6]].forEach(([x, z, s], i) => tree(root, x, z, { scale: s, seed: 60 + i, colors: ['#e8eef6', '#dfe8f2', '#f4f8ff'] }));
+  [[-13.2, 7.8, 0.85], [13.6, -1.8, 0.7], [-13.6, -0.6, 0.75], [-9.6, 9.8, 0.6]].forEach(([x, z, s], i) => tree(root, x, z, { scale: s, seed: 60 + i, colors: ['#e8eef6', '#dfe8f2', '#f4f8ff'] }));
   void bare;
   bush(root, -2.6, 8.6, 0.8, 71, '#4a7a4a');
   bush(root, 3.2, 8.8, 0.9, 72, '#4a7a4a');
