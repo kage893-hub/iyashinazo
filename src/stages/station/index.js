@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import { showStageClear } from '../clear.js';
+import { stageNo } from '../../data/route.js';
 import { makeSky, makeIslandBase, makeSmallIsland, makeClouds, makeFireflies, Puffs, Leaves, Butterflies, Birds } from '../../lib/environment.js';
 import { makeCat, makeOwl, makeFrog, makeRabbit, makeCrow, makeMouse } from '../../lib/creatures.js';
 import { add, mat, glow, G, group, lerp, damp, softCircleTexture } from '../../lib/util.js';
@@ -1315,7 +1317,7 @@ export class StationStage {
     g.camera.position.set(30, 30, 46);
     g.controls.target.set(2, 1, -2);
     await g.ui.fade(0, 1.6);
-    await g.ui.banner('はざま駅', 'STAGE 1', 2400);
+    await g.ui.banner('はざま駅', `STAGE ${stageNo('station')}`, 2400);
     await g.say([
       '……ガタン、ゴトン。',
       '気がつくと、あなたは見知らぬ駅に立っていた。',
@@ -1370,27 +1372,6 @@ export class StationStage {
   }
 
   showClear() {
-    const g = this.g;
-    const sec = Math.floor(g.state.elapsed);
-    const time = `${Math.floor(sec / 60)}分${String(sec % 60).padStart(2, '0')}秒`;
-    const body = el('div', 'clear');
-    body.innerHTML = `
-      <div class="clear-sub">STAGE 1 CLEAR</div>
-      <div class="clear-main">はざま駅</div>
-      <div class="clear-stats"><div><span>プレイ時間</span><b>${time}</b></div><div><span>ヒント</span><b>${g.state.hints}回</b></div></div>
-      <div class="route">
-        <div class="route-stop done"><i></i>はざま駅</div>
-        <div class="route-stop next"><i></i>天空の街</div>
-        <div class="route-stop"><i></i>？？？</div>
-        <div class="route-stop"><i></i>？？？</div>
-        <div class="route-stop"><i></i>？？？</div>
-      </div>
-      <p class="clear-msg">ほしまわり号は、星の線路をのぼっていく。<br>次の停車駅は【天空の街】。</p>
-      <div class="clear-btns"><button class="btn primary" data-a="next">次の世界へ ▶</button><button class="btn" data-a="title">タイトルへ</button></div>`;
-    body.querySelector('.clear-msg').innerHTML = body.querySelector('.clear-msg').innerHTML.replace(/【([^】]*)】/g, '<em>$1</em>');
-    g.ui.openPanel({ title: '', body, closable: false, cls: 'clear-panel' });
-    body.querySelector('[data-a="next"]').onclick = () => g.goToStage('sky');
-    body.querySelector('[data-a="title"]').onclick = () => g.goToStage('sky', { autostart: false });
-    g.ui.fade(0, 1.2, '#fff8ec');
+    showStageClear(this.g, 'station', 'ほしまわり号は、星の線路をのぼっていく。');
   }
 }

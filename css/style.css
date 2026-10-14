@@ -350,6 +350,13 @@ body.cinematic #hud { opacity: 0; transition: opacity 0.6s; }
 .clear-stats div { display: flex; flex-direction: column; }
 .clear-stats span { font-size: 12px; color: var(--ink-soft); }
 .clear-stats b { font-size: 22px; }
+/* クリア画面の路線（番号つきの駅） */
+.rt { display: flex; align-items: center; justify-content: center; margin: 6px 0 16px; }
+.rt-dot { flex: none; width: 24px; height: 24px; border-radius: 50%; background: #fff; border: 3px solid #c9a77a; font-size: 11px; font-weight: 900; color: #fff; display: flex; align-items: center; justify-content: center; }
+.rt-dot.done { background: #5fae6a; border-color: #4a8a54; }
+.rt-dot.next { background: #ffd36a; border-color: var(--accent); color: #6b4a1a; animation: pulse 1s ease-in-out infinite alternate; }
+.rt-line { flex: 1; max-width: 22px; height: 3px; background: repeating-linear-gradient(90deg, #c9a77a 0 5px, transparent 5px 8px); }
+@media (max-width: 420px) { .rt-dot { width: 20px; height: 20px; font-size: 10px; border-width: 2px; } }
 .route { display: flex; justify-content: space-between; position: relative; margin: 10px 4px 18px; }
 .route::before { content: ""; position: absolute; left: 8%; right: 8%; top: 9px; height: 4px; background: repeating-linear-gradient(90deg, #c9a77a 0 10px, transparent 10px 16px); }
 .route-stop { position: relative; flex: 1; font-size: 12px; font-weight: 700; color: var(--ink-soft); display: flex; flex-direction: column; align-items: center; gap: 6px; }

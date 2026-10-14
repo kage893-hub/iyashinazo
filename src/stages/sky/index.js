@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import { showStageClear } from '../clear.js';
+import { stageNo } from '../../data/route.js';
 import { makeSky, makeIslandBase, makeSmallIsland, makeClouds, Puffs, Butterflies, Birds } from '../../lib/environment.js';
 import { makeFrog } from '../../lib/creatures.js';
 import { makeSheep, makeAlpaca, makeSwallow, makeTortoise, makeMomonga, makeWhale } from '../../lib/creatures-sky.js';
@@ -972,7 +974,7 @@ export class SkyStage {
       g.camera.position.lerpVectors(camFrom, new V(9, 6.5, 9), k);
     } });
     g.audio.play('steam');
-    await g.ui.banner('天空の街', 'STAGE 2', 2400);
+    await g.ui.banner('天空の街', `STAGE ${stageNo('sky')}`, 2400);
     await g.say([
       'ほしまわり号は、雲の上の街に到着した。',
       '白い家と風車がならぶ、空に浮かぶ街——『天空の街』。',
@@ -1045,26 +1047,6 @@ export class SkyStage {
   }
 
   showClear() {
-    const g = this.g;
-    const sec = Math.floor(g.state.elapsed);
-    const time = `${Math.floor(sec / 60)}分${String(sec % 60).padStart(2, '0')}秒`;
-    const body = el('div', 'clear');
-    body.innerHTML = `
-      <div class="clear-sub">STAGE 2 CLEAR</div>
-      <div class="clear-main">天空の街</div>
-      <div class="clear-stats"><div><span>プレイ時間</span><b>${time}</b></div><div><span>ヒント</span><b>${g.state.hints}回</b></div></div>
-      <div class="route">
-        <div class="route-stop done"><i></i>はざま駅</div>
-        <div class="route-stop done"><i></i>天空の街</div>
-        <div class="route-stop next"><i></i>寂れた温泉街</div>
-        <div class="route-stop"><i></i>？？？</div>
-        <div class="route-stop"><i></i>？？？</div>
-      </div>
-      <p class="clear-msg">虹のふもとをくぐりぬけて、ほしまわり号は走っていく。<br>次の停車駅は<em>寂れた温泉街</em>。</p>
-      <div class="clear-btns"><button class="btn primary" data-a="next">次の世界へ ▶</button><button class="btn" data-a="title">タイトルへ</button></div>`;
-    g.ui.openPanel({ title: '', body, closable: false, cls: 'clear-panel' });
-    body.querySelector('[data-a="next"]').onclick = () => g.goToStage('onsen');
-    body.querySelector('[data-a="title"]').onclick = () => g.goToStage('onsen', { autostart: false });
-    g.ui.fade(0, 1.2, '#fff8ec');
+    showStageClear(this.g, 'sky', '虹のふもとをくぐりぬけて、ほしまわり号は走っていく。');
   }
 }

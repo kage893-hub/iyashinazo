@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import { showStageClear } from '../clear.js';
+import { stageNo } from '../../data/route.js';
 import { makeSky, makeIslandBase, makeSmallIsland, makeClouds, Puffs, Birds } from '../../lib/environment.js';
 import { makeFrog, makeRabbit } from '../../lib/creatures.js';
 import { makeCapybara, makeTanuki, makeFox, makeMonkey } from '../../lib/creatures-onsen.js';
@@ -955,7 +957,7 @@ export class OnsenStage {
       g.camera.position.lerpVectors(camFrom, new V(8, 6.5, 9), k);
     } });
     g.audio.play('steam');
-    await g.ui.banner('寂れた温泉街', 'STAGE 3', 2400);
+    await g.ui.banner('寂れた温泉街', `STAGE ${stageNo('onsen')}`, 2400);
     await g.say([
       'ほしまわり号は、雪のちらつく山あいの駅に着いた。',
       '湯けむりの里——『ゆげのさと』。……のはずが、湯けむりはひとすじも見えない。',
@@ -1028,25 +1030,6 @@ export class OnsenStage {
   }
 
   showClear() {
-    const g = this.g;
-    const sec = Math.floor(g.state.elapsed);
-    const time = `${Math.floor(sec / 60)}分${String(sec % 60).padStart(2, '0')}秒`;
-    const body = el('div', 'clear');
-    body.innerHTML = `
-      <div class="clear-sub">STAGE 3 CLEAR</div>
-      <div class="clear-main">寂れた温泉街</div>
-      <div class="clear-stats"><div><span>プレイ時間</span><b>${time}</b></div><div><span>ヒント</span><b>${g.state.hints}回</b></div></div>
-      <div class="route">
-        <div class="route-stop done"><i></i>はざま駅</div>
-        <div class="route-stop done"><i></i>天空の街</div>
-        <div class="route-stop done"><i></i>寂れた温泉街</div>
-        <div class="route-stop next"><i></i>勇者の城下町</div>
-        <div class="route-stop"><i></i>？？？</div>
-      </div>
-      <p class="clear-msg">湯けむりのトンネルをぬけて、ほしまわり号は走っていく。<br>次の停車駅は<em>勇者の城下町</em>。……つづきは準備中です。</p>
-      <div class="clear-btns"><button class="btn primary" data-a="title">タイトルへ</button></div>`;
-    g.ui.openPanel({ title: '', body, closable: false, cls: 'clear-panel' });
-    body.querySelector('[data-a="title"]').onclick = () => g.goToStage('onsen', { autostart: false });
-    g.ui.fade(0, 1.2, '#fff8ec');
+    showStageClear(this.g, 'onsen', '湯けむりのトンネルをぬけて、ほしまわり号は走っていく。');
   }
 }

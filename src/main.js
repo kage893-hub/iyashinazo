@@ -29,13 +29,19 @@ async function main() {
   // クリアした駅のセーブ（出発後）なら、次の駅から再開する
   if (saved0?.flags?.departed && saved0.cleared?.includes(saved0.stage)) {
     const i = STAGES.findIndex((x) => x.id === saved0.stage);
-    const next = STAGES.slice(i + 1).find((x) => x.Stage);
+    const next = STAGES[i + 1];
     game.state = saved0;
-    game.resetState(next ? next.id : saved0.stage);
+    game.resetState(next?.Stage ? next.id : saved0.stage);
     saved0 = game.loadSave();
   }
   let autostart = null;
   try { autostart = sessionStorage.getItem('hoshimawari-autostart'); sessionStorage.removeItem('hoshimawari-autostart'); } catch (e) { /* ignore */ }
+  // ?stage=onsen のように指定すると、そのステージから始められる（動作確認用）
+  const jump = new URLSearchParams(location.search).get('stage');
+  if (jump && STAGES.some((x) => x.id === jump && x.Stage) && saved0?.stage !== jump) {
+    game.resetState(jump);
+    saved0 = game.loadSave();
+  }
   const stageId = autostart || saved0?.stage || 'station';
   const entry = STAGES.find((x) => x.id === stageId && x.Stage) || STAGES[0];
   if (saved0) game.state = saved0;
