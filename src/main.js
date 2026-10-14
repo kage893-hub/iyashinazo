@@ -1,4 +1,3 @@
-import * as THREE from 'three';
 import { Game } from './core/game.js';
 import { el } from './core/ui.js';
 import { STAGES } from './stages/registry.js';
@@ -178,6 +177,18 @@ async function main() {
 
   // HUD
   $('#btn-hint').onclick = () => { game.audio.play('click'); game.hint(); };
+  // カメラの補助ボタン（ドラッグ操作はそのまま）
+  document.querySelectorAll('#camctl .cam-btn').forEach((b) => {
+    b.onclick = () => {
+      game.audio.play('click');
+      const a = b.dataset.cam;
+      if (a === 'in') game.camZoom(0.72);
+      else if (a === 'out') game.camZoom(1.38);
+      else if (a === 'left') game.camRotate(1);
+      else if (a === 'right') game.camRotate(-1);
+      else game.cameraHome();
+    };
+  });
   $('#btn-notes').onclick = () => { game.audio.play('click'); showNotes(game); };
   $('#btn-reveal').onclick = () => {
     if (game.cinematic) return;
@@ -203,11 +214,7 @@ async function main() {
     const mk = (label, fn, cls = '') => { const b = el('button', `btn ${cls}`, label); b.onclick = fn; body.appendChild(b); };
     let panel;
     mk('あそびかた', () => { panel.close(); showHowTo(game); });
-    mk('カメラを全体にもどす', () => {
-      panel.close();
-      const portrait = innerWidth < innerHeight;
-      game.moveCamera(portrait ? new THREE.Vector3(10, 37, 29) : new THREE.Vector3(12, 20, 32), new THREE.Vector3(0, 0.5, 0), 1.2);
-    });
+    mk('カメラを全体にもどす', () => { panel.close(); game.cameraHome(); });
     mk('タイトルにもどる', () => { game.save(); location.reload(); });
     mk('この駅を最初からやりなおす', async () => {
       panel.close();
@@ -262,9 +269,12 @@ function showHowTo(game) {
     cls: 'wide',
     body: `
       <div class="howto">
-        <div><b>🖱 ドラッグ</b>：箱庭をくるりと回す</div>
-        <div><b>🖱 右ドラッグ / 2本指</b>：視点を動かす</div>
-        <div><b>🔍 ホイール / ピンチ</b>：拡大・縮小</div>
+        <div><b>🖱 ドラッグ / 1本指</b>：箱庭をくるりと回す</div>
+        <div><b>🖱 右ドラッグ・Shift+ドラッグ / 2本指</b>：視点を動かす</div>
+        <div><b>🔍 ホイール / ピンチ</b>：指している場所に寄る・引く</div>
+        <div><b>👆 何もない所をダブルクリック・ダブルタップ</b>：そこを画面の中心に</div>
+        <div><b>＋ － ⟲ ⟳ ⌂</b>：画面右のボタンでも 寄る・引く・回る・全体を見る</div>
+        <div><b>⌨ キーボード</b>：WASD・矢印で移動、Q / E で回転、R / F で寄り引き</div>
         <div><b>👆 クリック / タップ</b>：調べる・話しかける</div>
         <div><b>🎒 持ち物</b>：アイテムを選んでから、使いたい場所をクリック（もう一度押すと説明）</div>
         <div><b>🏠</b>：建物の屋根を外す（近づくと自動でも外れます）</div>

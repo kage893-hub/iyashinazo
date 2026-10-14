@@ -72,12 +72,14 @@ export class Game {
     const c = (this.controls = new OrbitControls(this.camera, r.domElement));
     c.enableDamping = true;
     c.dampingFactor = 0.08;
-    c.minDistance = 9;
-    c.maxDistance = 72;
+    c.minDistance = 7;
+    c.maxDistance = 64;
     c.minPolarAngle = 0.35;
     c.maxPolarAngle = 1.28;
-    c.rotateSpeed = 0.6;
+    c.rotateSpeed = this.mobile ? 0.75 : 0.6;
     c.zoomSpeed = 0.9;
+    // ホイール／ピンチは、指している場所に向かって寄る
+    c.zoomToCursor = true;
     c.panSpeed = 0.8;
     c.screenSpacePanning = false;
     c.target.set(0, 1, 0);
@@ -137,6 +139,15 @@ export class Game {
       if (e.pointerType === 'mouse') this._needHover = true;
     });
     dom.addEventListener('pointerleave', () => this._setHover(null));
+    this._keys = new Set();
+    const camKeys = new Set(['w', 'a', 's', 'd', 'q', 'e', 'r', 'f', '+', '-', ';', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright']);
+    window.addEventListener('keydown', (e) => {
+      if (e.ctrlKey || e.metaKey || e.altKey || /INPUT|TEXTAREA/.test(document.activeElement?.tagName)) return;
+      const k = e.key.toLowerCase();
+      if (camKeys.has(k)) { this._keys.add(k); if (k.startsWith('arrow')) e.preventDefault(); }
+    });
+    window.addEventListener('keyup', (e) => this._keys.delete(e.key.toLowerCase()));
+    window.addEventListener('blur', () => this._keys.clear());
     dom.addEventListener('contextmenu', (e) => {
       e.preventDefault();
       if (this.selectedItem) this.selectItem(null);
@@ -201,8 +212,10 @@ export class Game {
     const id = this._pick(e);
     if (!id) {
       if (this.selectedItem) this.selectItem(null);
+      else this._tapFocus(e);
       return;
     }
+    this._lastTap = null;
     const it = this.interactables.get(id);
     if (!it || it.enabled === false) return;
     this.audio.play('click');
@@ -260,7 +273,7 @@ export class Game {
   // カメラ演出
   // =========================================================
   /** 注視点をなめらかに移動 */
-  focusOn(target, { dist, duration = 1.0, polar, thetaClamp, subject } = {}) {
+  focusOn(target, { dist, duration = 1.0, polar, theta, thetaClamp, subject } = {}) {
     const c = this.controls;
     const fromT = c.target.clone();
     const toT = target.clone();
@@ -271,7 +284,7 @@ export class Game {
     const fromPhi = sph.phi;
     const toPhi = polar ?? fromPhi;
     const fromTh = sph.theta;
-    let toTh = thetaClamp ? clamp(fromTh, -thetaClamp, thetaClamp) : fromTh;
+    let toTh = theta ?? (thetaClamp ? clamp(fromTh, -thetaClamp, thetaClamp) : fromTh);
     if (subject) toTh = this._clearTheta(toT, toR, toPhi, toTh, subject, thetaClamp);
     return this.tweens.add({
       duration, ease: Ease.inOut,
@@ -307,6 +320,95 @@ export class Game {
       if (!hit) return th;
     }
     return theta;
+  }
+
+  // ---------------- カメラの補助操作（ボタン・キー・ダブルタップ） ----------------
+  _camFree() { return this.playing && !this.cinematic && !this.busy && !this.ui.panelOpen; }
+
+  /** 注視点のまわりを 45° ずつ回る */
+  camRotate(dir) {
+    if (!this._camFree()) return;
+    const c = this.controls;
+    const sph = new THREE.Spherical().setFromVector3(this.camera.position.clone().sub(c.target));
+    // 続けて押したときは、前の回転の行き先から足していく
+    const now = performance.now();
+    const base = this._rotGoal && now - this._rotGoal.t < 450 ? this._rotGoal.th : sph.theta;
+    const th = base + dir * Math.PI / 4;
+    this._rotGoal = { th, t: now };
+    this.focusOn(c.target.clone(), { theta: th, duration: 0.45 });
+  }
+
+  /** 寄る／引く */
+  camZoom(f) {
+    if (!this._camFree()) return;
+    const c = this.controls;
+    const d = this.camera.position.distanceTo(c.target);
+    this.focusOn(c.target.clone(), { dist: clamp(d * f, c.minDistance, c.maxDistance), duration: 0.35 });
+  }
+
+  /** 箱庭全体が見える位置へ */
+  cameraHome() {
+    if (this.cinematic) return;
+    const portrait = innerWidth < innerHeight;
+    return this.moveCamera(portrait ? new THREE.Vector3(10, 37, 29) : new THREE.Vector3(12, 20, 32), new THREE.Vector3(0, 0.5, 0), 1.0);
+  }
+
+  /** 画面上の点が指す地面（または物）の位置 */
+  _groundPoint(e) {
+    const rect = this.renderer.domElement.getBoundingClientRect();
+    const v = new THREE.Vector2(((e.clientX - rect.left) / rect.width) * 2 - 1, -((e.clientY - rect.top) / rect.height) * 2 + 1);
+    const ray = new THREE.Raycaster();
+    ray.setFromCamera(v, this.camera);
+    const vis = (o) => { for (let p = o; p; p = p.parent) if (!p.visible) return false; return true; };
+    const hit = ray.intersectObjects(this.scene.children, true).find((h) => h.object.isMesh && !h.object.userData.noPick && !(h.object.userData.roof && this.stage?.roofLifted) && vis(h.object) && h.distance < 200);
+    const p = hit ? hit.point.clone() : ray.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0, 1, 0), 0), new THREE.Vector3());
+    if (!p) return null;
+    const b = this.bounds;
+    return new THREE.Vector3(clamp(p.x, b.minX, b.maxX), clamp(p.y, 0, 4), clamp(p.z, b.minZ, b.maxZ));
+  }
+
+  /** 何もない所をダブルクリック／ダブルタップ → そこを中心に */
+  _tapFocus(e) {
+    const now = performance.now();
+    const last = this._lastTap;
+    this._lastTap = { t: now, x: e.clientX, y: e.clientY };
+    if (!last || now - last.t > 420 || Math.hypot(e.clientX - last.x, e.clientY - last.y) > 40) return;
+    this._lastTap = null;
+    const p = this._groundPoint(e);
+    if (!p) return;
+    const d = this.camera.position.distanceTo(this.controls.target);
+    this.focusOn(p, { dist: Math.min(d, 20), duration: 0.6 });
+  }
+
+  /** キーボードでの移動（WASD／矢印・Q/E で回転・R/F か +/- で寄り引き） */
+  _keyCamera(dt) {
+    const k = this._keys;
+    if (!k || !k.size || !this._camFree()) return;
+    const c = this.controls, cam = this.camera;
+    const off = cam.position.clone().sub(c.target);
+    const dist = off.length();
+    const fwd = new THREE.Vector3(-off.x, 0, -off.z).normalize();
+    const right = new THREE.Vector3(fwd.z * -1, 0, fwd.x);
+    const mv = new THREE.Vector3();
+    if (k.has('w') || k.has('arrowup')) mv.add(fwd);
+    if (k.has('s') || k.has('arrowdown')) mv.sub(fwd);
+    if (k.has('d') || k.has('arrowright')) mv.add(right);
+    if (k.has('a') || k.has('arrowleft')) mv.sub(right);
+    if (mv.lengthSq()) {
+      mv.normalize().multiplyScalar(dist * 0.55 * dt);
+      c.target.add(mv);
+      cam.position.add(mv);
+    }
+    const rot = (k.has('q') ? 1 : 0) - (k.has('e') ? 1 : 0);
+    if (rot) {
+      off.applyAxisAngle(new THREE.Vector3(0, 1, 0), rot * 1.4 * dt);
+      cam.position.copy(c.target).add(off);
+    }
+    const zoom = (k.has('f') || k.has('-') ? 1 : 0) - (k.has('r') || k.has('+') || k.has(';') ? 1 : 0);
+    if (zoom) {
+      const nd = clamp(dist * (1 + zoom * 1.2 * dt), c.minDistance, c.maxDistance);
+      cam.position.copy(c.target).add(off.setLength(nd));
+    }
   }
 
   /** カメラ位置と注視点を指定して移動 */
@@ -592,6 +694,7 @@ export class Game {
     this.tweens.update(dt);
     if (this.stage) this.stage.update(dt, this.time);
 
+    this._keyCamera(Math.min(raw, 0.1));
     // パンの範囲制限
     const t = this.controls.target;
     const b = this.bounds;
