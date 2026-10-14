@@ -68,6 +68,23 @@ const EDO_CHORDS = [
   [57, 64, 69], [52, 59, 64], [53, 60, 65], [45, 52, 57],
 ];
 
+/** 0.5 秒の無音 WAV（data URI） */
+function silentWav() {
+  const rate = 8000, n = 4000;
+  const buf = new ArrayBuffer(44 + n);
+  const v = new DataView(buf);
+  const w = (o, str) => { for (let i = 0; i < str.length; i++) v.setUint8(o + i, str.charCodeAt(i)); };
+  w(0, 'RIFF'); v.setUint32(4, 36 + n, true); w(8, 'WAVE'); w(12, 'fmt ');
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, rate, true); v.setUint32(28, rate, true); v.setUint16(32, 1, true); v.setUint16(34, 8, true);
+  w(36, 'data'); v.setUint32(40, n, true);
+  for (let i = 0; i < n; i++) v.setUint8(44 + i, 128);
+  let bin = '';
+  const u8 = new Uint8Array(buf);
+  for (let i = 0; i < u8.length; i++) bin += String.fromCharCode(u8[i]);
+  return 'data:audio/wav;base64,' + btoa(bin);
+}
+
 export const SONGS = {
   station: { melody: MELODY, chords: CHORDS, tempo: 74 },
   sky: { melody: SKY_MELODY, chords: SKY_CHORDS, tempo: 88 },
@@ -90,9 +107,52 @@ export class AudioSys {
   }
 
   /** ユーザー操作後に初期化（自動再生制限のため） */
+  /**
+   * iPhone 対策：
+   *  ・マナーモード（消音スイッチ）でも鳴るよう、音声の種類を「再生」にする
+   *  ・touchend / click のときに、無音を一度鳴らして音を解禁する
+   *  ・アプリを切りかえて戻ったときに再開する
+   */
+  installUnlock() {
+    if (this._unlockInstalled) return;
+    this._unlockInstalled = true;
+    const unlock = () => this.unlock();
+    for (const ev of ['touchend', 'click', 'keydown']) document.addEventListener(ev, unlock, { capture: true, passive: true });
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && this.ctx && this.ctx.state !== 'running') this.ctx.resume().catch(() => {});
+    });
+  }
+
+  unlock() {
+    try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) { /* ignore */ }
+    this.init();
+    const ctx = this.ctx;
+    if (!ctx) return;
+    if (ctx.state !== 'running') ctx.resume().catch(() => {});
+    if (!this._unlocked) {
+      this._unlocked = true;
+      // 無音を一瞬鳴らす（古い iOS で音を解禁する定番の方法）
+      const b = ctx.createBuffer(1, 1, 22050);
+      const src = ctx.createBufferSource();
+      src.buffer = b;
+      src.connect(ctx.destination);
+      src.start(0);
+      // 古い iOS で消音スイッチを無視させるため、無音の <audio> をループ再生
+      try {
+        const el = new Audio(silentWav());
+        el.loop = true;
+        el.setAttribute('playsinline', '');
+        el.volume = 0.01;
+        el.play().catch(() => {});
+        this._silentEl = el;
+      } catch (e) { /* ignore */ }
+    }
+  }
+
   init() {
+    this.installUnlock();
     if (this.ctx) {
-      if (this.ctx.state === 'suspended') this.ctx.resume();
+      if (this.ctx.state !== 'running') this.ctx.resume().catch(() => {});
       return;
     }
     const AC = window.AudioContext || window.webkitAudioContext;

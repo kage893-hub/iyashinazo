@@ -23,6 +23,7 @@ export class Game {
   constructor(container) {
     this.container = container;
     this.audio = new AudioSys();
+    this.audio.installUnlock(); // 最初のタップで音を解禁（iPhone 対策）
     this.ui = new UI(this.audio);
     this.tweens = new Tweens();
     this.clock = new THREE.Clock();
