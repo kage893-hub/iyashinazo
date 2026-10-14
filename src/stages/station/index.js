@@ -125,6 +125,7 @@ export class StationStage {
 
   /** 静的なメッシュを結合して描画を軽くする */
   _optimize() {
+    if (new URLSearchParams(location.search).has('nomerge')) return; // 調査用
     const creatureRoots = new Set(this.creatures.map((c) => c.root));
     const roots = [this.island, this.tracks, this.R.root, this.city, ...this.smallIslands.map((s) => s.o)];
     for (const [, it] of this.g.interactables) if (!creatureRoots.has(it.object)) roots.push(it.object);

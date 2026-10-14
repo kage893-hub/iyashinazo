@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
@@ -9,7 +10,6 @@ import { Tweens, Ease } from './tween.js';
 import { UI } from './ui.js';
 import { AudioSys } from './audio.js';
 import { ITEMS } from '../data/items.js';
-import { CameraRig } from './camera.js';
 import { clamp } from '../lib/util.js';
 
 const SAVE_KEY = 'hoshimawari-save-v1';
@@ -66,8 +66,19 @@ export class Game {
     this.camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 0.5, 600);
     this.camera.position.set(14, 22, 34);
 
-    // 箱庭用のカメラ操作（ドラッグで移動・ひねりやボタンで回転・ピンチで拡大）
-    this.controls = new CameraRig(this.camera, r.domElement);
+    const c = (this.controls = new OrbitControls(this.camera, r.domElement));
+    c.enableDamping = true;
+    c.dampingFactor = 0.08;
+    c.minDistance = 9;
+    c.maxDistance = 72;
+    c.minPolarAngle = 0.35;
+    c.maxPolarAngle = 1.28;
+    c.rotateSpeed = 0.6;
+    c.zoomSpeed = 0.9;
+    c.panSpeed = 0.8;
+    c.screenSpacePanning = false;
+    c.target.set(0, 1, 0);
+    this.bounds = { minX: -14, maxX: 14, minZ: -10, maxZ: 10 };
 
     // ポストプロセス（MSAA 付きのレンダーターゲット）
     const size = r.getDrawingBufferSize(new THREE.Vector2());
@@ -130,12 +141,6 @@ export class Game {
   }
 
   _pick(e) {
-    const h = this._pickHit(e);
-    return h ? h.id : null;
-  }
-
-  /** クリックした物（id）と、当たった位置 */
-  _pickHit(e) {
     const rect = this.renderer.domElement.getBoundingClientRect();
     this.pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
     this.pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
@@ -151,7 +156,7 @@ export class Game {
       if (!vis) continue;
       let id;
       for (let p = o; p; p = p.parent) if (p.userData.interactId) { id = p.userData.interactId; break; }
-      return { id: id || null, point: h.point }; // 最初に当たった不透明物で判定（壁越しクリック防止）
+      return id || null; // 最初に当たった不透明物で判定（壁越しクリック防止）
     }
     return null;
   }
@@ -189,9 +194,8 @@ export class Game {
 
   async _onClick(e) {
     if (this.ui.dialogueActive) { this.ui.advance(); return; }
-    if (!this.playing || this.busy || this.cinematic || this.ui.panelOpen || this.controls.suppressClick) return;
-    const hit = this._pickHit(e);
-    const id = hit?.id;
+    if (!this.playing || this.busy || this.cinematic || this.ui.panelOpen) return;
+    const id = this._pick(e);
     if (!id) {
       if (this.selectedItem) this.selectItem(null);
       return;
@@ -253,21 +257,7 @@ export class Game {
   // カメラ演出
   // =========================================================
   /** 注視点をなめらかに移動 */
-  focusOn(target, opts = {}) {
-    const rig = this.controls;
-    if (!this.cinematic) {
-      const dist = Math.min(rig.distGoal, opts.dist ?? rig.distGoal);
-      let yaw = opts.thetaClamp ? clamp(Math.atan2(Math.sin(rig.yaw), Math.cos(rig.yaw)), -opts.thetaClamp, opts.thetaClamp) : rig.yaw;
-      // 相手が木や壁に隠れるときだけ、見える向きへ回りこむ
-      if (opts.subject) yaw = this._clearTheta(target, dist, rig.polarFor(dist), yaw, opts.subject, opts.thetaClamp);
-      rig.lookAt(target, { dist, yaw });
-      return this.wait(Math.min(0.8, opts.duration ?? 0.8));
-    }
-    return this._focusTween(target, opts);
-  }
-
-  /** 演出中に使う、カメラを直接動かすフォーカス */
-  _focusTween(target, { dist, duration = 1.0, polar, thetaClamp, subject } = {}) {
+  focusOn(target, { dist, duration = 1.0, polar, thetaClamp, subject } = {}) {
     const c = this.controls;
     const fromT = c.target.clone();
     const toT = target.clone();
@@ -461,9 +451,9 @@ export class Game {
   // ステージとメインループ
   // =========================================================
   async loadStage(StageClass) {
+    this.bounds = { minX: -14, maxX: 14, minZ: -10, maxZ: 10 };
     this.stage = new StageClass(this);
     await this.stage.build();
-    this.controls.interior = (p) => (this.stage.interiorAt ? this.stage.interiorAt(p) : null);
     this.buildPickList();
     this.stage.applyState(true);
   }
@@ -498,8 +488,25 @@ export class Game {
     if (this.playing && !this.cinematic) this.state.elapsed += dt;
     this.tweens.update(dt);
     if (this.stage) this.stage.update(dt, this.time);
+
+    // パンの範囲制限
+    const t = this.controls.target;
+    const b = this.bounds;
+    if (!this.cinematic) {
+      const cx = clamp(t.x, b.minX, b.maxX), cz = clamp(t.z, b.minZ, b.maxZ), cy = clamp(t.y, 0, 4);
+      if (cx !== t.x || cz !== t.z || cy !== t.y) {
+        const d = new THREE.Vector3(cx - t.x, cy - t.y, cz - t.z);
+        t.add(d);
+        this.camera.position.add(d);
+      }
+    }
+    // 建物の中を見ているときは、低い角度まで下げられないようにして上から見下ろす
+    const inside = !this.cinematic && this.stage?.interiorAt?.(t);
+    const camDist = this.camera.position.distanceTo(t);
+    const maxPolar = inside && camDist < (inside.maxDist ?? 26) ? inside.polar : 1.28;
+    this.controls.maxPolarAngle += (maxPolar - this.controls.maxPolarAngle) * Math.min(1, dt * 3);
     this.controls.enabled = !this.cinematic;
-    this.controls.update(dt, { cinematic: this.cinematic });
+    this.controls.update();
 
     // ホバー判定（マウス時のみ・間引いて実行）
     this._hoverCool = (this._hoverCool || 0) - raw;

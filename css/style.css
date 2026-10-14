@@ -99,8 +99,6 @@ body.cinematic #hud { opacity: 0; transition: opacity 0.6s; }
 .hud-btn:hover { transform: scale(1.08); }
 .hud-btn.on { background: #ffd9a0; border-color: var(--accent); }
 
-#camctl { position: absolute; right: max(14px, env(safe-area-inset-right, 0px)); bottom: calc(18px + env(safe-area-inset-bottom, 0px)); display: flex; gap: 6px; pointer-events: auto; }
-#camctl .hud-btn { font-size: 22px; font-weight: 900; color: var(--navy); }
 #inventory {
   position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%);
   background: rgba(251, 243, 226, 0.94); border: 2px solid var(--line); border-radius: 18px;
@@ -344,8 +342,6 @@ body.cinematic #hud { opacity: 0; transition: opacity 0.6s; }
   .hud-btn { width: 40px; height: 40px; font-size: 17px; }
   .inv-slot { width: 46px; height: 46px; padding: 4px; }
   #inventory { bottom: 8px; padding: 4px 6px 6px; max-width: calc(100% - 16px); }
-  #camctl { bottom: calc(92px + env(safe-area-inset-bottom, 0px)); right: 8px; }
-  #camctl .hud-btn { width: 40px; height: 40px; font-size: 18px; }
   .inv-row { gap: 4px; }
   #dialogue { bottom: 10px; padding: 18px 16px 16px; }
   .dlg-text { font-size: 15px; }

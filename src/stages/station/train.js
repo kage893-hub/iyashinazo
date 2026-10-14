@@ -47,7 +47,7 @@ export function buildTracks(parent, path) {
   // 車止め
   const stop = group(root, -13.6, 0, TRACK_Z);
   add(stop, G.box(0.3, 0.9, 1.8), mat('#c43a2e'), 0, 0.6, 0);
-  add(stop, G.box(0.12, 0.9, 1.9), mat('#f2f2f2'), 0.16, 0.6, 0);
+  add(stop, G.box(0.12, 0.86, 1.9), mat('#f2f2f2'), 0.16, 0.6, 0);
   add(stop, G.box(0.9, 0.12, 0.12), mat('#3a3a40'), 0.35, 0.45, 0.5, { rot: [0, 0, -0.6] });
   add(stop, G.box(0.9, 0.12, 0.12), mat('#3a3a40'), 0.35, 0.45, -0.5, { rot: [0, 0, -0.6] });
 

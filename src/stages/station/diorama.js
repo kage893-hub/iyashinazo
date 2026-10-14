@@ -244,7 +244,8 @@ export function buildStationDiorama(scene) {
   // 角柱
   for (const [x, z] of [[-11, -1.3], [-3, -1.3], [-11, 4.0], [-3, 4.0]]) add(bld, G.box(0.3, WALL_H + 0.1, 0.3), darkWood, x, FLOOR + (WALL_H + 0.1) / 2, z);
   // 正面の梁と三つの丸窓（黄・青・赤）
-  add(bld, G.box(7.9, 0.95, 0.3), plaster, -7, WALL_TOP - 0.47, 4.0);
+  // 梁は角柱（太さ0.3）より細く・短くして、面が重ならないようにする
+  add(bld, G.box(7.9, 0.95, 0.26), plaster, -7, WALL_TOP - 0.47, 4.0);
   add(bld, G.box(8.4, 0.1, 0.36), darkWood, -7, WALL_TOP - 0.95, 4.0);
   add(bld, G.box(8.4, 0.1, 0.36), darkWood, -7, WALL_TOP + 0.02, 4.0);
   R.roundWindows = group(bld);
@@ -305,7 +306,7 @@ export function buildStationDiorama(scene) {
   boothSide.rotation.y = Math.PI / 2;
   add(booth, G.box(2.3, 0.08, 0.24), darkWood, -9.7, FLOOR + BOOTH_H + 0.04, 0.95);
   add(booth, G.box(1.5, 0.08, 0.5), darkWood, -9.65, FLOOR + 0.95, 1.15);
-  add(booth, G.box(1.24, 0.06, 0.06), darkWood, -9.65, FLOOR + 1.88, 1.03);
+  add(booth, G.box(1.24, 0.06, 0.06), darkWood, -9.65, FLOOR + 1.9, 1.03);
   const kippu = new THREE.MeshStandardMaterial({ map: signTex('きっぷ', { w: 256, h: 96, bg: '#3f7d5a', fg: '#fff6dc', border: '#e2bf62', size: 60 }), roughness: 0.6 });
   add(booth, G.box(1.1, 0.42, 0.05), kippu, -9.65, FLOOR + BOOTH_H + 0.3, 0.95);
   for (const s of [-1, 1]) add(booth, G.box(0.04, 0.3, 0.04), darkWood, -9.65 + s * 0.4, FLOOR + BOOTH_H + 0.1, 0.95);
@@ -492,7 +493,7 @@ export function buildStationDiorama(scene) {
   // 倉庫
   const shed = (R.shed = group(root, 9.3, 0, 4.0));
   const shedWall = new THREE.MeshStandardMaterial({ map: boardsTex('#8a5d3b', [2, 1]), roughness: 0.9 });
-  add(shed, G.box(3.2, 0.15, 2.6), mat('#7a6a5a'), 0, 0.075, 0);
+  add(shed, G.box(3.1, 0.15, 2.5), mat('#7a6a5a'), 0, 0.075, 0);
   add(shed, G.box(3.2, 2.4, 0.15), shedWall, 0, 1.2, -1.25);
   add(shed, G.box(0.15, 2.4, 2.6), shedWall, -1.55, 1.2, 0);
   add(shed, G.box(0.15, 2.4, 2.6), shedWall, 1.55, 1.2, 0);

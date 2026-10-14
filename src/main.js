@@ -42,7 +42,6 @@ async function main() {
   if (innerWidth < innerHeight) game.camera.position.set(34, 30, 52);
   else game.camera.position.set(24, 20, 36);
   c.target.set(0, 0.5, 0);
-  c.sync();
   c.autoRotate = true;
   c.autoRotateSpeed = 0.35;
   game.playing = false;
@@ -122,7 +121,6 @@ async function main() {
     const portrait = innerWidth < innerHeight;
     game.camera.position.set(portrait ? 16 : 10, portrait ? 26 : 16, portrait ? 40 : 26);
     c.target.set(-1, 1, -0.5);
-    c.sync();
     enterGame();
     await game.ui.fade(0, 0.8);
     game.ui.toast('つづきから再開しました', 2000);
@@ -170,10 +168,6 @@ async function main() {
     game.stage.manualRoof = !game.stage.manualRoof;
     $('#btn-roof').classList.toggle('on', game.stage.manualRoof);
   };
-  // カメラのボタン
-  $('#btn-rot-l').onclick = () => { game.audio.play('click'); c.rotateBy(Math.PI / 2); };
-  $('#btn-rot-r').onclick = () => { game.audio.play('click'); c.rotateBy(-Math.PI / 2); };
-  $('#btn-overview').onclick = () => { game.audio.play('click'); c.overview(); };
   $('#btn-sound').onclick = () => {
     game.audio.init();
     const m = !game.audio.muted;
@@ -188,7 +182,11 @@ async function main() {
     const mk = (label, fn, cls = '') => { const b = el('button', `btn ${cls}`, label); b.onclick = fn; body.appendChild(b); };
     let panel;
     mk('あそびかた', () => { panel.close(); showHowTo(game); });
-    mk('カメラを島全体にもどす', () => { panel.close(); c.overview(); });
+    mk('カメラを全体にもどす', () => {
+      panel.close();
+      const portrait = innerWidth < innerHeight;
+      game.moveCamera(portrait ? new THREE.Vector3(18, 32, 48) : new THREE.Vector3(12, 20, 32), new THREE.Vector3(0, 0.5, 0), 1.2);
+    });
     mk('タイトルにもどる', () => { game.save(); location.reload(); });
     mk('この駅を最初からやりなおす', async () => {
       panel.close();
@@ -214,11 +212,9 @@ function showHowTo(game) {
     cls: 'wide',
     body: `
       <div class="howto">
-        <div><b>👉 ドラッグ（指1本）</b>：地図のように視点をすべらせる</div>
-        <div><b>⟲ ⟳ / 2本指でひねる / 右ドラッグ</b>：箱庭を横に回す</div>
-        <div><b>🔍 ピンチ / ホイール</b>：寄る・引く（角度は自動で調整）</div>
-        <div><b>🗺</b>：島全体を見わたす</div>
-        <div><b>⌨ キー</b>：WASD・矢印で移動、Q/E で回転、+/- で拡大縮小</div>
+        <div><b>🖱 ドラッグ</b>：箱庭をくるりと回す</div>
+        <div><b>🖱 右ドラッグ / 2本指</b>：視点を動かす</div>
+        <div><b>🔍 ホイール / ピンチ</b>：拡大・縮小</div>
         <div><b>👆 クリック / タップ</b>：調べる・話しかける</div>
         <div><b>🎒 持ち物</b>：アイテムを選んでから、使いたい場所をクリック（もう一度押すと説明）</div>
         <div><b>🏠</b>：建物の屋根を外す（近づくと自動でも外れます）</div>
