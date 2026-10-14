@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+  <title>ほしまわり列車 〜異世界箱庭謎解き〜</title>
+  <meta name="description" content="異世界を旅する列車に乗って、ミニチュアの箱庭をめぐる謎解きゲーム。" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E🚂%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="css/style.css" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "./vendor/three/build/three.module.min.js",
+        "three/addons/": "./vendor/three/addons/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <div id="app"></div>
+
+  <div id="loading">
+    <div class="loader-train">🚂</div>
+    <p>箱庭を組み立てています…</p>
+  </div>
+
+  <div id="title" class="hidden">
+    <div class="title-card">
+      <div class="logo-sub">異世界箱庭謎解き</div>
+      <h1 class="logo">ほしまわり列車</h1>
+      <div class="logo-en">HOSHIMAWARI EXPRESS</div>
+      <div class="title-badge hidden">★ はざま駅 クリア</div>
+      <div class="title-buttons">
+        <button class="btn primary" data-act="new">はじめから</button>
+        <button class="btn" data-act="continue">つづきから</button>
+        <button class="btn" data-act="stages">路線図</button>
+        <button class="btn" data-act="howto">あそびかた</button>
+      </div>
+    </div>
+    <div class="title-foot">ドラッグで回転・ホイールで拡大・クリックで調べる　🔊 音が出ます</div>
+  </div>
+
+  <div id="hud" class="hidden">
+    <div id="quests" class="hidden"></div>
+    <div id="topbar">
+      <button id="btn-hint" class="hud-btn" title="ヒント (H)">💡</button>
+      <button id="btn-reveal" class="hud-btn" title="調べられる場所を光らせる">✨</button>
+      <button id="btn-roof" class="hud-btn" title="屋根を外す">🏠</button>
+      <button id="btn-sound" class="hud-btn" title="音のオン/オフ">🔊</button>
+      <button id="btn-menu" class="hud-btn" title="メニュー">☰</button>
+    </div>
+    <div id="inventory"></div>
+  </div>
+
+  <div id="tooltip"></div>
+  <div id="cursor-item"></div>
+
+  <div id="dialogue" class="hidden">
+    <div class="dlg-name"></div>
+    <div class="dlg-text"></div>
+    <div class="dlg-next">▼</div>
+  </div>
+
+  <div id="panel-layer"></div>
+  <div id="toasts"></div>
+  <div id="fade"></div>
+
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>

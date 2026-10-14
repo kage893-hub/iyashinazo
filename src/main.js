@@ -1,0 +1,180 @@
+import * as THREE from 'three';
+import { Game } from './core/game.js';
+import { el } from './core/ui.js';
+import { STAGES } from './stages/registry.js';
+
+const $ = (s) => document.querySelector(s);
+
+async function waitFonts() {
+  if (!document.fonts) return;
+  const load = Promise.all([
+    document.fonts.load('700 40px "Zen Maru Gothic"'),
+    document.fonts.load('900 40px "Zen Maru Gothic"'),
+    document.fonts.load('500 20px "Zen Maru Gothic"'),
+  ]).catch(() => {});
+  await Promise.race([load, new Promise((r) => setTimeout(r, 2500))]);
+}
+
+async function main() {
+  await waitFonts();
+  const game = new Game($('#app'));
+  window.__game = game; // デバッグ用
+  try {
+    const saved = localStorage.getItem('hoshimawari-muted') === '1';
+    game.audio.setMuted(saved);
+    $('#btn-sound').textContent = saved ? '🔇' : '🔊';
+  } catch (e) { /* ignore */ }
+
+  const first = STAGES[0];
+  await game.loadStage(first.Stage);
+  game.start();
+
+  // タイトル画面：箱庭をゆっくり回す
+  const c = game.controls;
+  game.camera.position.set(24, 20, 36);
+  c.target.set(0, 0.5, 0);
+  c.autoRotate = true;
+  c.autoRotateSpeed = 0.35;
+  game.playing = false;
+
+  $('#loading').classList.add('hidden');
+  const title = $('#title');
+  title.classList.remove('hidden');
+  game.ui.fade(0, 1.2);
+  const contBtn = title.querySelector('[data-act="continue"]');
+  contBtn.disabled = !game.hasSave();
+
+  const cleared = game.loadSave()?.cleared || [];
+  if (cleared.includes('station')) title.querySelector('.title-badge').classList.remove('hidden');
+
+  const enterGame = () => {
+    game.audio.init();
+    game.audio.startBGM();
+    c.autoRotate = false;
+    title.classList.add('hidden');
+    $('#hud').classList.remove('hidden');
+    game.playing = true;
+    game.refreshInventory();
+    game.refreshQuests();
+  };
+
+  title.querySelector('[data-act="new"]').onclick = async () => {
+    game.audio.init();
+    game.audio.play('click');
+    if (game.hasSave()) {
+      const i = await game.ui.choose('セーブデータがあります。最初からはじめますか？', ['はじめから', 'やめる']);
+      if (i !== 0) return;
+    }
+    game.resetState();
+    game.stage.applyState(true);
+    await game.ui.fade(1, 0.6);
+    enterGame();
+    game.stage.opening();
+  };
+
+  contBtn.onclick = async () => {
+    game.audio.init();
+    game.audio.play('click');
+    const s = game.loadSave();
+    if (!s) return;
+    game.state = s;
+    game.stage.applyState(true);
+    await game.ui.fade(1, 0.5);
+    game.camera.position.set(10, 16, 26);
+    c.target.set(-1, 1, -0.5);
+    enterGame();
+    await game.ui.fade(0, 0.8);
+    game.ui.toast('つづきから再開しました', 2000);
+  };
+
+  title.querySelector('[data-act="stages"]').onclick = () => {
+    game.audio.init();
+    game.audio.play('click');
+    const body = el('div', 'stage-list');
+    STAGES.forEach((s) => {
+      const card = el('div', `stage-card ${s.Stage ? '' : 'locked'} ${cleared.includes(s.id) ? 'cleared' : ''}`, `
+        <div class="sc-no">STAGE ${s.no}</div>
+        <div class="sc-emoji">${s.emoji}</div>
+        <div class="sc-name">${s.name}</div>
+        <div class="sc-sub">${s.Stage ? s.sub : '準備中…'}</div>`);
+      body.appendChild(card);
+    });
+    body.appendChild(el('p', 'panel-note', 'ほしまわり号は、5つの世界をめぐる予定です。'));
+    game.ui.openPanel({ title: '路線図', body, cls: 'wide' });
+  };
+
+  title.querySelector('[data-act="howto"]').onclick = () => {
+    game.audio.init();
+    game.audio.play('click');
+    showHowTo(game);
+  };
+
+  // HUD
+  $('#btn-hint').onclick = () => { game.audio.play('click'); game.hint(); };
+  $('#btn-reveal').onclick = () => { game.stage.revealHotspots(); };
+  $('#btn-roof').onclick = () => {
+    game.audio.play('click');
+    game.stage.manualRoof = !game.stage.manualRoof;
+    $('#btn-roof').classList.toggle('on', game.stage.manualRoof);
+  };
+  $('#btn-sound').onclick = () => {
+    game.audio.init();
+    const m = !game.audio.muted;
+    game.audio.setMuted(m);
+    if (!m) game.audio.startBGM();
+    $('#btn-sound').textContent = m ? '🔇' : '🔊';
+    try { localStorage.setItem('hoshimawari-muted', m ? '1' : '0'); } catch (e) { /* ignore */ }
+  };
+  $('#btn-menu').onclick = () => {
+    game.audio.play('click');
+    const body = el('div', 'menu');
+    const mk = (label, fn, cls = '') => { const b = el('button', `btn ${cls}`, label); b.onclick = fn; body.appendChild(b); };
+    let panel;
+    mk('あそびかた', () => { panel.close(); showHowTo(game); });
+    mk('カメラを全体にもどす', () => {
+      panel.close();
+      game.moveCamera(new THREE.Vector3(12, 20, 32), new THREE.Vector3(0, 0.5, 0), 1.2);
+    });
+    mk('タイトルにもどる', () => { game.save(); location.reload(); });
+    mk('最初からやりなおす', async () => {
+      panel.close();
+      const i = await game.ui.choose('進行状況を消して、最初からやりなおしますか？', ['やりなおす', 'やめる']);
+      if (i === 0) { game.resetState(); location.reload(); }
+    }, 'danger');
+    panel = game.ui.openPanel({ title: 'メニュー', body, cls: 'small' });
+  };
+
+  window.addEventListener('keydown', (e) => {
+    if (!game.playing) return;
+    if (e.key === 'Escape') {
+      if (game.ui.panelOpen) game.ui.panels[game.ui.panels.length - 1].close();
+      else if (game.selectedItem) game.selectItem(null);
+    }
+    if ((e.key === 'h' || e.key === 'H') && !game.ui.dialogueActive && !game.ui.panelOpen) game.hint();
+  });
+}
+
+function showHowTo(game) {
+  game.ui.openPanel({
+    title: 'あそびかた',
+    cls: 'wide',
+    body: `
+      <div class="howto">
+        <div><b>🖱 ドラッグ</b>：箱庭をくるりと回す</div>
+        <div><b>🖱 右ドラッグ / 2本指</b>：視点を動かす</div>
+        <div><b>🔍 ホイール / ピンチ</b>：拡大・縮小</div>
+        <div><b>👆 クリック / タップ</b>：調べる・話しかける</div>
+        <div><b>🎒 持ち物</b>：アイテムを選んでから、使いたい場所をクリック（もう一度押すと説明）</div>
+        <div><b>🏠</b>：駅舎の屋根を外す（近づくと自動でも外れます）</div>
+        <div><b>✨</b>：調べられる場所を光らせる</div>
+        <div><b>💡</b>：ヒント（押すたびに少しずつ詳しく）</div>
+      </div>
+      <p class="panel-note">進行は自動でセーブされます。</p>`,
+  });
+}
+
+main().catch((e) => {
+  console.error(e);
+  const l = document.querySelector('#loading p');
+  if (l) l.textContent = '読み込みに失敗しました：' + e.message;
+});

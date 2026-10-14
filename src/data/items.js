@@ -1,0 +1,90 @@
+// アイテム定義（アイコンはインライン SVG）
+const svg = (inner) => `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">${inner}</svg>`;
+
+export const ITEMS = {
+  marble: {
+    name: 'ビー玉',
+    desc: '透きとおった青いビー玉。中で小さな光がくるくる回っている。',
+    icon: svg(`
+      <defs><radialGradient id="mg" cx="40%" cy="35%" r="70%">
+        <stop offset="0" stop-color="#e6fbff"/><stop offset=".45" stop-color="#5fc6e8"/><stop offset="1" stop-color="#1d5f8f"/></radialGradient></defs>
+      <circle cx="32" cy="34" r="20" fill="url(#mg)" stroke="#164a6e" stroke-width="2"/>
+      <path d="M22 38c6-10 14-2 20-10" stroke="#fff6b0" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <ellipse cx="25" cy="25" rx="6" ry="4" fill="#fff" opacity=".85"/>`),
+  },
+  springKey: {
+    name: 'ゼンマイ鍵',
+    desc: '蝶の羽のような形をした真鍮の鍵。時計のゼンマイを巻くためのもの。',
+    icon: svg(`
+      <g fill="#e2b54a" stroke="#7a5414" stroke-width="2.5" stroke-linejoin="round">
+        <path d="M32 30 C16 14 6 22 10 32 C6 42 16 50 32 34 Z"/>
+        <path d="M32 30 C48 14 58 22 54 32 C58 42 48 50 32 34 Z"/>
+        <rect x="28" y="30" width="8" height="26" rx="3"/>
+      </g>
+      <circle cx="18" cy="32" r="4" fill="#7a5414"/><circle cx="46" cy="32" r="4" fill="#7a5414"/>`),
+  },
+  brooch: {
+    name: '月のブローチ',
+    desc: '三日月の形をした金のブローチ。ほんのり冷たく光っている。',
+    icon: svg(`
+      <path d="M40 8a24 24 0 1 0 16 40A20 20 0 1 1 40 8z" fill="#f2d36b" stroke="#8a6416" stroke-width="2.5"/>
+      <circle cx="30" cy="36" r="5" fill="#7fd0ff" stroke="#2b6c9a" stroke-width="2"/>
+      <circle cx="28.5" cy="34.5" r="1.6" fill="#fff"/>`),
+  },
+  starCoin: {
+    name: '星の硬貨',
+    desc: '星の模様が刻まれた金貨。異世界の旅で使われるお金らしい。',
+    icon: svg(`
+      <circle cx="32" cy="32" r="24" fill="#f4c94a" stroke="#8d6312" stroke-width="3"/>
+      <circle cx="32" cy="32" r="18" fill="none" stroke="#c9952a" stroke-width="2"/>
+      <path d="M32 17l4.4 9.4 10.2 1.2-7.6 7 2 10.1L32 39.6l-9 5.1 2-10.1-7.6-7 10.2-1.2z" fill="#fff3b8" stroke="#a87918" stroke-width="1.5" stroke-linejoin="round"/>`),
+  },
+  ticket: {
+    name: '天空の街ゆき切符',
+    desc: '「はざま → 天空の街」と書かれた硬い紙の切符。改札のパンチ穴は星形。',
+    icon: svg(`
+      <rect x="6" y="16" width="52" height="32" rx="4" fill="#f6ecd2" stroke="#7b5a32" stroke-width="2.5"/>
+      <rect x="11" y="21" width="42" height="22" rx="2" fill="none" stroke="#c8a36a" stroke-width="1.5" stroke-dasharray="3 2"/>
+      <text x="32" y="31" font-size="8" text-anchor="middle" fill="#4a3a2a" font-weight="700">はざま→</text>
+      <text x="32" y="41" font-size="8" text-anchor="middle" fill="#3a5a8a" font-weight="700">天空の街</text>
+      <path d="M50 22l1.3 2.7 3 .4-2.2 2 .6 3-2.7-1.5-2.7 1.5.6-3-2.2-2 3-.4z" fill="#3a5a8a"/>`),
+  },
+  tongs: {
+    name: '火ばさみ',
+    desc: '長い鉄の火ばさみ。熱いものでも平気でつかめる。',
+    icon: svg(`
+      <g stroke="#3d3d48" stroke-width="5" stroke-linecap="round" fill="none">
+        <path d="M14 54 L44 14"/><path d="M22 56 L48 18"/>
+      </g>
+      <circle cx="15" cy="55" r="6" fill="none" stroke="#8a5a3a" stroke-width="4"/>
+      <path d="M44 14 l6 -4 M48 18 l6 -2" stroke="#3d3d48" stroke-width="4" stroke-linecap="round"/>`),
+  },
+  fireStone: {
+    name: 'ほのお石',
+    desc: '内側から赤く燃えている不思議な石。機関車のボイラーに火を入れるのに使う。',
+    icon: svg(`
+      <defs><radialGradient id="fg" cx="50%" cy="60%" r="60%">
+        <stop offset="0" stop-color="#fff2a8"/><stop offset=".4" stop-color="#ff9a3a"/><stop offset="1" stop-color="#b8321e"/></radialGradient></defs>
+      <path d="M32 8c4 8 14 12 14 26a14 14 0 0 1-28 0c0-6 3-10 6-13 0 5 2 8 5 9-1-9 1-16 3-22z" fill="#ffb347" opacity=".55"/>
+      <path d="M18 40l6-14 14-4 10 10-2 14-14 6z" fill="url(#fg)" stroke="#7a2412" stroke-width="2.5" stroke-linejoin="round"/>`),
+  },
+  valveHandle: {
+    name: 'バルブハンドル',
+    desc: '赤く塗られた丸いハンドル。給水塔のバルブのものらしい。',
+    icon: svg(`
+      <circle cx="32" cy="32" r="20" fill="none" stroke="#c43a2e" stroke-width="6"/>
+      <g stroke="#c43a2e" stroke-width="5" stroke-linecap="round">
+        <path d="M32 14v36"/><path d="M14 32h36"/><path d="M19 19l26 26"/><path d="M45 19L19 45"/></g>
+      <circle cx="32" cy="32" r="6" fill="#8a8f99" stroke="#3a3d45" stroke-width="2"/>`),
+  },
+  signalKey: {
+    name: '信号所の鍵',
+    desc: '銀色の大きな鍵。札に「信号所」と書いてある。',
+    icon: svg(`
+      <circle cx="18" cy="24" r="10" fill="none" stroke="#b8c2cc" stroke-width="6"/>
+      <path d="M26 30 L52 50" stroke="#b8c2cc" stroke-width="6" stroke-linecap="round"/>
+      <path d="M44 44l-5 6M50 48l-4 5" stroke="#b8c2cc" stroke-width="5" stroke-linecap="round"/>
+      <rect x="34" y="8" width="22" height="14" rx="2" fill="#e8d8a8" stroke="#7b5a32" stroke-width="2" transform="rotate(12 45 15)"/>
+      <path d="M18 24 L36 14" stroke="#7b5a32" stroke-width="1.5"/>`),
+  },
+};
