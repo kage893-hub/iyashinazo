@@ -46,8 +46,6 @@ export class SkyStage {
     this.title = '天空の街';
     this.questTitle = '🌀 大風車をふたたび回す';
     this.hasRoof = false;
-    // 主人公の出発地点（ホームの階段の上）
-    this.spawn = { pos: new V(-4.3, 0.75, -3.4), yaw: 0 };
     this.roofLifted = false;
     this.millSpeed = 0;
     this.stormT = 1; // 1=雨雲あり
@@ -85,8 +83,9 @@ export class SkyStage {
     sun.shadow.mapSize.set(sm, sm);
     const sc = sun.shadow.camera;
     sc.left = -20; sc.right = 20; sc.top = 17; sc.bottom = -17; sc.near = 5; sc.far = 80;
-    sun.shadow.bias = -0.0004;
-    sun.shadow.normalBias = 0.03;
+    // 影のしましま（シャドウアクネ）が出ないよう、少し大きめにずらす
+    sun.shadow.bias = -0.0006;
+    sun.shadow.normalBias = 0.06;
     scene.add(sun, sun.target);
 
     this.island = makeIslandBase({ w: 30, d: 22, seed: 7, grass: '#9cc96a' });
@@ -197,8 +196,7 @@ export class SkyStage {
 
   _registerInteractables() {
     const g = this.g, R = this.R;
-    const far = new Set(['storm', 'whale_far']);
-    const reg = (id, obj, name, fn) => g.addInteractable(id, obj, { name, onClick: fn, walk: !far.has(id) });
+    const reg = (id, obj, name, fn) => g.addInteractable(id, obj, { name, onClick: fn });
     reg('mayor', this.mayor.root, 'ヒツジの町長', () => this.talkMayor());
     reg('frog', this.frog.root, 'カエルの機関士', () => this.talkFrog());
     reg('alpaca', this.alpaca.root, 'アルパカの仕立て屋', () => this.talkAlpaca());
@@ -707,7 +705,6 @@ export class SkyStage {
     } });
     g.cinematic = false;
     g.flag('balloonDown');
-    g.rebuildNav();
     this.momonga.hop();
     await this.talkMomonga();
   }
@@ -755,7 +752,6 @@ export class SkyStage {
     this.whaleFree = true;
     g.cinematic = false;
     g.flag('whaleMoved');
-    g.rebuildNav();
     g.audio.play('whoosh');
     this.focus(R.cave, 20);
     await this.say(['ひゅううっ……！ 風穴から、すずしい風が吹き出した！']);
@@ -950,7 +946,6 @@ export class SkyStage {
   async opening() {
     const g = this.g;
     g.cinematic = true;
-    g.player.root.visible = false; // まだ列車の中
     // 空から列車がやってくる
     const s0 = this.stopS;
     this.train.s = s0 - 75;
@@ -973,7 +968,6 @@ export class SkyStage {
       g.camera.position.lerpVectors(camFrom, new V(9, 6.5, 9), k);
     } });
     g.audio.play('steam');
-    g.placePlayer();
     await g.ui.banner('天空の街', 'STAGE 2', 2400);
     await g.say([
       'ほしまわり号は、雲の上の街に到着した。',
@@ -1020,7 +1014,6 @@ export class SkyStage {
       { who: 'mayor', text: 'ほんとうに、ありがとうございましたメェ。旅のごぶじを、町じゅうでお祈りしていますメェ。' },
       'あなたは客車に乗りこみ、窓ぎわの席にすわった。',
     ]);
-    g.player.root.visible = false;
     g.flag('departed');
     g.refreshQuests();
     await this.departure();

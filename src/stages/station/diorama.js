@@ -44,10 +44,11 @@ export function wall(parent, len, h, th, openings, matUpper, matLower, wainscot 
 export function windowFrame(parent, x, y, z, w, h, ry, glassMat, frameMat) {
   const g = group(parent, x, y, z, ry);
   const t = 0.07;
-  add(g, G.box(w + t * 2, t, 0.28), frameMat, 0, h / 2 + t / 2, 0);
-  add(g, G.box(w + t * 2, t, 0.34), frameMat, 0, -h / 2 - t / 2, 0.02);
-  add(g, G.box(t, h, 0.28), frameMat, -w / 2 - t / 2, 0, 0);
-  add(g, G.box(t, h, 0.28), frameMat, w / 2 + t / 2, 0, 0);
+  const e = 0.015; // 壁の切り口と面が重なってちらつかないよう、枠を少しだけ内側に
+  add(g, G.box(w + t * 2, t, 0.28), frameMat, 0, h / 2 + t / 2 - e, 0);
+  add(g, G.box(w + t * 2, t, 0.34), frameMat, 0, -h / 2 - t / 2 + e, 0.02);
+  add(g, G.box(t, h, 0.28), frameMat, -w / 2 - t / 2 + e, 0, 0);
+  add(g, G.box(t, h, 0.28), frameMat, w / 2 + t / 2 - e, 0, 0);
   add(g, G.box(0.04, h, 0.06), frameMat, 0, 0, 0);
   add(g, G.box(w, 0.04, 0.06), frameMat, 0, 0, 0);
   add(g, G.box(w, h, 0.02), glassMat, 0, 0, 0, { cast: false });
@@ -238,12 +239,12 @@ export function buildStationDiorama(scene) {
   windowFrame(bld, -10.9, FLOOR + 1.6, 0.7, 1.4, 1.2, Math.PI / 2, winGlass, darkWood);
   windowFrame(bld, -3.1, FLOOR + 1.6, 1.5, 1.8, 1.2, Math.PI / 2, winGlass, darkWood);
   // 扉枠
-  add(bld, G.box(1.4, 0.12, 0.3), darkWood, -6.0, FLOOR + 2.26, -1.3);
-  for (const s of [-1, 1]) add(bld, G.box(0.1, 2.2, 0.3), darkWood, -6.0 + s * 0.65, FLOOR + 1.1, -1.3);
+  add(bld, G.box(1.4, 0.12, 0.3), darkWood, -6.0, FLOOR + 2.245, -1.3);
+  for (const s of [-1, 1]) add(bld, G.box(0.1, 2.2, 0.3), darkWood, -6.0 + s * 0.635, FLOOR + 1.1, -1.3);
   // 角柱
   for (const [x, z] of [[-11, -1.3], [-3, -1.3], [-11, 4.0], [-3, 4.0]]) add(bld, G.box(0.3, WALL_H + 0.1, 0.3), darkWood, x, FLOOR + (WALL_H + 0.1) / 2, z);
   // 正面の梁と三つの丸窓（黄・青・赤）
-  add(bld, G.box(8.3, 0.95, 0.3), plaster, -7, WALL_TOP - 0.47, 4.0);
+  add(bld, G.box(7.9, 0.95, 0.3), plaster, -7, WALL_TOP - 0.47, 4.0);
   add(bld, G.box(8.4, 0.1, 0.36), darkWood, -7, WALL_TOP - 0.95, 4.0);
   add(bld, G.box(8.4, 0.1, 0.36), darkWood, -7, WALL_TOP + 0.02, 4.0);
   R.roundWindows = group(bld);

@@ -38,8 +38,6 @@ export class StationStage {
     this.title = 'はざま駅';
     this.questTitle = '🚂 ほしまわり号の発車準備';
     this.hasRoof = true;
-    // 主人公の出発地点（ホームの駅長のとなり）
-    this.spawn = { pos: new V(0.8, 0.75, -2.9), yaw: -Math.PI / 2 };
     this.night = 0;
     this.nightTarget = 0;
     this.roofT = 0;
@@ -70,8 +68,9 @@ export class StationStage {
     sun.shadow.mapSize.set(sm, sm);
     const sc = sun.shadow.camera;
     sc.left = -19; sc.right = 19; sc.top = 16; sc.bottom = -16; sc.near = 5; sc.far = 70;
-    sun.shadow.bias = -0.0004;
-    sun.shadow.normalBias = 0.03;
+    // 影のしましま（シャドウアクネ）が出ないよう、少し大きめにずらす
+    sun.shadow.bias = -0.0006;
+    sun.shadow.normalBias = 0.06;
     scene.add(sun);
     scene.add(sun.target);
 
@@ -225,6 +224,12 @@ export class StationStage {
       scene.add(s);
       this.zzz.push(s);
     }
+  }
+
+  /** 駅舎の中を見ているときは、真上寄りから見下ろす（壁で隠れないように） */
+  interiorAt(p) {
+    if (p.x > -11.4 && p.x < -2.6 && p.z > -1.6 && p.z < 4.4) return { polar: 0.5, maxDist: 26 };
+    return null;
   }
 
   speakerCreature(who) {
@@ -1294,7 +1299,6 @@ export class StationStage {
   // =========================================================
   async opening() {
     const g = this.g;
-    g.placePlayer();
     g.cinematic = true;
     g.camera.position.set(30, 30, 46);
     g.controls.target.set(2, 1, -2);
@@ -1310,7 +1314,6 @@ export class StationStage {
     await g.moveCamera(portrait ? new V(5, 12, 19) : new V(4, 9, 14), new V(-1.2, 1.5, -2.4), 2.6);
     g.cinematic = false;
     await this.talkCat();
-    g.ui.toast('地面をタップすると、そこへ歩いていきます', 3200);
   }
 
   async departure() {
@@ -1320,7 +1323,6 @@ export class StationStage {
       { who: 'cat', text: 'ほしまわり号、天空の街ゆき。まもなく発車いたしますニャ！' },
       'あなたは客車に乗りこみ、窓ぎわの席にすわった。',
     ]);
-    g.player.root.visible = false;
     g.flag('departed');
     g.refreshQuests();
     g.cinematic = true;
