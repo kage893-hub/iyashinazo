@@ -346,6 +346,19 @@ export class HeroStage {
     R.waterTex.offset.x = (t * 0.03) % 1;
     R.waterTex.offset.y = (t * 0.017) % 1;
     R.spray.rotation.y = t * 0.6;
+    // 手紙がまだあるうちは、ふわっと光る
+    if (R.stableLetter.visible) {
+      if (!this.letterGlow) {
+        this.letterGlow = new THREE.Sprite(new THREE.SpriteMaterial({ map: softCircleTexture(), color: '#e8c8ff', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
+        this.letterGlow.userData.noPick = true;
+        this.g.scene.add(this.letterGlow);
+      }
+      R.stableLetter.getWorldPosition(this.letterGlow.position);
+      this.letterGlow.position.y += 0.35 + Math.sin(t * 2) * 0.08;
+      this.letterGlow.scale.setScalar(0.7 + Math.sin(t * 3) * 0.12);
+      this.letterGlow.material.opacity = 0.55 + Math.sin(t * 3) * 0.25;
+      this.letterGlow.visible = true;
+    } else if (this.letterGlow) this.letterGlow.visible = false;
     R.spray.scale.y = 1 + Math.sin(t * 5) * 0.05;
     for (const f of R.flags) if (f) f.rotation.y = Math.sin(t * 2.6 + f.position.x) * 0.35;
     // 跳ね橋の鎖

@@ -582,10 +582,11 @@ export function buildHeroDiorama(scene) {
   box(stb, 3.0, 0.5, 1.2, M.hay, -1.8, 0.45, -1.0);
   box(stb, 1.2, 0.4, 1.0, M.hay, 2.4, 0.4, -1.1);
   hangSign(stb, -3.9, 2.6, 2.0, 'dragon', Math.PI);
-  R.stableLetter = group(stb, 0.6, 0.25, -0.6);
+  // 手紙：子ドラゴンの横、わらの上（少し光って目立つ）
+  R.stableLetter = group(stb, -2.6, 0.72, -0.8);
   R.stableLetter.userData.dynamic = true;
-  box(R.stableLetter, 0.36, 0.03, 0.26, new THREE.MeshStandardMaterial({ color: '#6a3a8a' }), 0, 0, 0, { rot: [0, 0.4, 0], cast: false });
-  box(R.stableLetter, 0.1, 0.035, 0.1, new THREE.MeshStandardMaterial({ color: '#c8303a' }), 0, 0.01, 0, { cast: false });
+  box(R.stableLetter, 0.62, 0.04, 0.44, new THREE.MeshStandardMaterial({ color: '#7a4a9a', emissive: '#6a3a8a', emissiveIntensity: 0.35 }), 0, 0, 0, { rot: [0.15, 0.35, 0], cast: false });
+  box(R.stableLetter, 0.16, 0.05, 0.16, new THREE.MeshStandardMaterial({ color: '#d8303a', emissive: '#c8303a', emissiveIntensity: 0.4 }), 0, 0.03, 0, { rot: [0.15, 0.35, 0], cast: false });
 
   // 建物は一回り小さく（すき間を広く、見通しよく）
   for (const [o, k] of [[R.inn, 0.86], [R.guild, 0.86], [R.smithy, 0.86], [R.itemShop, 0.86], [R.church, 0.88], [R.stable, 0.82]]) o.scale.setScalar(k);
