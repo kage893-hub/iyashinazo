@@ -581,7 +581,7 @@ export function buildHeroDiorama(scene) {
   box(stb, 7.9, 0.16, 2.6, M.roofBrown, 0, 3.15, -1.0, { rot: [-0.35, 0, 0] });
   box(stb, 3.0, 0.5, 1.2, M.hay, -1.8, 0.45, -1.0);
   box(stb, 1.2, 0.4, 1.0, M.hay, 2.4, 0.4, -1.1);
-  hangSign(stb, 3.9, 2.6, 2.0, 'dragon');
+  hangSign(stb, -3.9, 2.6, 2.0, 'dragon', Math.PI);
   R.stableLetter = group(stb, 0.6, 0.25, -0.6);
   R.stableLetter.userData.dynamic = true;
   box(R.stableLetter, 0.36, 0.03, 0.26, new THREE.MeshStandardMaterial({ color: '#6a3a8a' }), 0, 0, 0, { rot: [0, 0.4, 0], cast: false });
@@ -629,7 +629,8 @@ export function buildHeroDiorama(scene) {
   // ゴールドが出るかもしれない、たる・つぼ・宝箱
   R.goldSpots.innPot = pot(root, -14.9, 7.9, '#c8783a');
   R.goldSpots.smithBarrel = barrel(root, 14.6, 4.6);
-  R.goldSpots.stableChest = chest(root, 7.6, 13.6, -0.3);
+  R.goldSpots.stableChest = chest(root, 6.6, 14.9, -0.25);
+  R.goldSpots.stableChest.position.y = 0.17; // 竜舎の床の上
   R.goldSpots.churchCrate = group(root, -9.6, 0, 15.4);
   box(R.goldSpots.churchCrate, 0.7, 0.6, 0.7, M.planks, 0, 0.3, 0);
   R.goldSpots.stallPot = pot(root, -6.1, 2.6, '#8a6aa8');
