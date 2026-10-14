@@ -127,7 +127,7 @@ export class HeroStage {
     // 看板のドット文字に使うフォントを先に読みこむ
     try { await Promise.race([document.fonts.load('12px "DotGothic16"'), new Promise((r) => setTimeout(r, 2500))]); } catch (e) { /* なくても描ける */ }
     this.R = buildHeroDiorama(scene);
-    this.nightLights = [[0.5, 3.2, 6.0, 6], [-14.4, 2.4, 5.6, 5], [-14.4, 2.4, 12.0, 5], [10, 2.4, 11.8, 5]].map(([x, y, z, r]) => {
+    this.nightLights = [[0.5, 3.2, 6.0, 6], [-14.4, 2.4, 5.6, 5], [-14.4, 2.4, 12.0, 5], [10.8, 2.4, 12.6, 5]].map(([x, y, z, r]) => {
       const L = new THREE.PointLight('#ffb860', 0, r * 2, 1.4);
       L.position.set(x, y, z);
       scene.add(L);
@@ -194,9 +194,9 @@ export class HeroStage {
     this.hero = makeHero({ sword: !!this.g.flags.swordGiven });
     this.hero.root.position.copy(HERO_POS);
     this.slime = makeSlime({});
-    this.slime.root.position.set(10.0, 0, 12.6);
+    this.slime.root.position.set(10.8, 0, 13.2);
     this.goblin = makeGoblin();
-    this.goblin.root.position.set(9.65, 0.3, 3.4);
+    this.goblin.root.position.set(10.5, 0.3, 3.5);
     this.dragon = makeDragon({ happy: !!this.g.flags.dragonHappy });
     this.dragon.root.position.set(4.8, 0.2, 14.4);
     this.king = makeKing();
@@ -730,7 +730,7 @@ export class HeroStage {
     g.cinematic = true;
     const home = this.dragon.root.position.clone();
     await g.moveCamera(new V(16, 8, 14), new V(9, 1.5, 4), 1.4);
-    const pts = [home, new V(6, 4.5, 10), new V(8.5, 3.6, 5.6), new V(9.6, 1.2, 4.2)];
+    const pts = [home, new V(6, 4.5, 10), new V(8.0, 3.6, 6.0), new V(8.8, 1.2, 4.6)];
     const curve = new THREE.CatmullRomCurve3(pts);
     g.audio.play('whoosh');
     await g.tweens.add({ duration: 2.0, ease: Ease.inOut, onUpdate: (k) => curve.getPointAt(k, this.dragon.root.position) });
@@ -738,7 +738,7 @@ export class HeroStage {
     const f = this.fire;
     f.visible = true;
     await g.tweens.add({ duration: 0.9, onUpdate: (k) => {
-      f.position.lerpVectors(new V(9.6, 1.6, 4.2), new V(10.1, 1.3, 1.4), k);
+      f.position.lerpVectors(new V(8.8, 1.6, 4.6), new V(10.1, 1.3, 1.4), k);
       f.scale.setScalar(0.6 + k * 1.4);
       f.material.opacity = Math.sin(k * Math.PI) * 0.9 + 0.1;
     } });

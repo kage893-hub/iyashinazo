@@ -564,7 +564,7 @@ export function buildHeroDiorama(scene) {
   add(sm, new THREE.CircleGeometry(0.45, 12), new THREE.MeshStandardMaterial({ color: '#3a6ad0', metalness: 0.4 }), 2.2, 2.6, -2.08, { cast: false });
 
   // 道具屋（スライム）
-  const shop = house(R, root, 11.4, 9.3, { w: 5.6, d: 4.4, floors: 1, roof: 'roofGreen', door: false, chimney: false });
+  const shop = house(R, root, 12.2, 10.0, { w: 5.6, d: 4.4, floors: 1, roof: 'roofGreen', door: false, chimney: false });
   R.itemShop = shop.g;
   box(shop.g, 3.2, 0.9, 0.5, M.planks, -0.4, 0.9, 2.45);
   R.shutter = box(shop.g, 3.2, 1.3, 0.08, M.wood, -0.4, 2.0, 2.24);
@@ -614,7 +614,7 @@ export function buildHeroDiorama(scene) {
   R.spray = add(ft, new THREE.ConeGeometry(0.85, 0.9, 8, 1, true), new THREE.MeshStandardMaterial({ color: '#c8e8ff', transparent: true, opacity: 0.45, side: THREE.DoubleSide, depthWrite: false }), 0, 1.75, 0, { rot: [Math.PI, 0, 0], cast: false });
   R.spray.userData.keep = true;
   stall(root, -4.6, 3.2, '#c83a3a', ['#e83a3a', '#e83a3a', '#f8d040', '#5ac86a', '#f89a3a', '#e83a3a', '#f8d040', '#5ac86a']);
-  stall(root, 5.6, 3.4, '#3a6ac8', ['#a85ae8', '#a85ae8', '#5ac86a', '#5ac86a', '#f8f0d0', '#f89a3a']);
+  stall(root, -4.6, 9.2, '#3a6ac8', ['#a85ae8', '#a85ae8', '#5ac86a', '#5ac86a', '#f8f0d0', '#f89a3a']);
   // ベンチ
   for (const [x, z, ry] of [[3.6, 9.4, 0], [-2.6, 9.6, 0]]) {
     const b = group(root, x, 0, z, ry);
@@ -625,7 +625,7 @@ export function buildHeroDiorama(scene) {
 
   // ---------------- 木・街灯・小物 ----------------
   [[-20.5, 13.8, 1.1], [-13.0, 3.0, 0.8], [-13.6, -1.0, 0.7], [-21.0, -8.0, 1.0], [20.8, 4.5, 1.0], [20.8, 15.0, 0.9], [-21.2, 1.0, 0.8], [0.8, 15.4, 0.7]].forEach(([x, z, s], i) => tree(root, x, z, s, 30 + i));
-  for (const [x, z] of [[-5.8, 1.6], [6.8, 1.6], [-5.8, 10.4], [6.8, 10.4], [-12.6, 4.8], [8.4, 5.4], [-12.0, -1.6], [2.0, -1.6], [14.4, 7.0]]) lamp(R, root, x, z);
+  for (const [x, z] of [[-5.8, 1.6], [6.8, 1.6], [-5.8, 10.4], [6.8, 10.4], [-12.6, 4.8], [-12.0, -1.6], [2.0, -1.6]]) lamp(R, root, x, z);
   // ゴールドが出るかもしれない、たる・つぼ・宝箱
   R.goldSpots.innPot = pot(root, -14.9, 7.9, '#c8783a');
   R.goldSpots.smithBarrel = barrel(root, 14.6, 4.6);
@@ -639,7 +639,7 @@ export function buildHeroDiorama(scene) {
   barrel(root, -13.1, 13.0, 0.85);
   for (const [x, z] of [[2.0, 12.6], [2.5, 12.2], [-21.2, 9.5]]) box(root, 0.6, 0.55, 0.6, M.planks, x, 0.275, z, { rot: [0, x, 0] });
   // 井戸
-  const well = (R.well = group(root, 8.4, 0, 6.6));
+  const well = (R.well = group(root, -8.6, 0, 7.4));
   add(well, new THREE.CylinderGeometry(0.6, 0.65, 0.7, 10), M.brick, 0, 0.35, 0);
   add(well, new THREE.CircleGeometry(0.5, 10), new THREE.MeshStandardMaterial({ color: '#1a2a3a' }), 0, 0.66, 0, { rot: [-Math.PI / 2, 0, 0], cast: false });
   for (const s of [-1, 1]) box(well, 0.12, 1.5, 0.12, M.wood, s * 0.6, 0.95, 0);
