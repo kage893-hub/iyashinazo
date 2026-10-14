@@ -160,7 +160,7 @@ export class UI {
   hideTooltip() { this.tooltip.classList.remove('show'); }
 
   // ---------------- 持ち物 ----------------
-  renderInventory(items, defs, selected, onClick) {
+  renderInventory(items, defs, selected, onClick, counts = {}) {
     this.inventoryEl.innerHTML = '';
     const label = el('div', 'inv-label', '持ち物');
     this.inventoryEl.appendChild(label);
@@ -171,7 +171,8 @@ export class UI {
       const slot = el('button', 'inv-slot');
       if (id) {
         const d = defs[id];
-        slot.innerHTML = `<span class="inv-icon">${d.icon}</span><span class="inv-name">${d.name}</span>`;
+        const n = d.stack && counts[id] > 1 ? `<span class="inv-count">×${counts[id]}</span>` : '';
+        slot.innerHTML = `<span class="inv-icon">${d.icon}</span><span class="inv-name">${d.name}</span>${n}`;
         if (id === selected) slot.classList.add('selected');
         slot.onclick = (e) => { e.stopPropagation(); onClick(id); };
         slot.title = d.name;
@@ -199,8 +200,9 @@ export class UI {
   }
 
   /** アイテム入手の演出 */
-  showItemGet(def) {
-    const pop = el('div', 'item-get', `<div class="ig-icon">${def.icon}</div><div class="ig-text"><b>${def.name}</b> を手に入れた！</div>`);
+  showItemGet(def, count = 0) {
+    const c = count ? `（${count}${def.stackMax ? '/' + def.stackMax : ''}）` : '';
+    const pop = el('div', 'item-get', `<div class="ig-icon">${def.icon}</div><div class="ig-text"><b>${def.name}</b> を手に入れた！${c}</div>`);
     document.body.appendChild(pop);
     requestAnimationFrame(() => pop.classList.add('show'));
     setTimeout(() => { pop.classList.remove('show'); setTimeout(() => pop.remove(), 500); }, 1900);

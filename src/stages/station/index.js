@@ -37,6 +37,7 @@ export class StationStage {
     this.id = 'station';
     this.title = 'はざま駅';
     this.questTitle = '🚂 ほしまわり号の発車準備';
+    this.hasRoof = true;
     this.night = 0;
     this.nightTarget = 0;
     this.roofT = 0;
@@ -1364,14 +1365,12 @@ export class StationStage {
         <div class="route-stop"><i></i>勇者の城下町</div>
         <div class="route-stop"><i></i>現代日本</div>
       </div>
-      <p class="clear-msg">ほしまわり号は、星の線路をのぼっていく。<br>次の停車駅は【天空の街】。……つづきは準備中です。</p>
-      <div class="clear-btns"><button class="btn primary" data-a="title">タイトルへ</button></div>`;
+      <p class="clear-msg">ほしまわり号は、星の線路をのぼっていく。<br>次の停車駅は【天空の街】。</p>
+      <div class="clear-btns"><button class="btn primary" data-a="next">次の世界へ ▶</button><button class="btn" data-a="title">タイトルへ</button></div>`;
     body.querySelector('.clear-msg').innerHTML = body.querySelector('.clear-msg').innerHTML.replace(/【([^】]*)】/g, '<em>$1</em>');
     g.ui.openPanel({ title: '', body, closable: false, cls: 'clear-panel' });
-    body.querySelector('[data-a="title"]').onclick = () => {
-      g.resetState();
-      location.reload();
-    };
+    body.querySelector('[data-a="next"]').onclick = () => g.goToStage('sky');
+    body.querySelector('[data-a="title"]').onclick = () => g.goToStage('sky', { autostart: false });
     g.ui.fade(0, 1.2, '#fff8ec');
   }
 }

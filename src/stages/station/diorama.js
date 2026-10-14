@@ -16,7 +16,7 @@ const WALL_H = 3.0;
 const WALL_TOP = FLOOR + WALL_H;
 
 /** 開口部つきの壁（ローカル X 方向に len、厚み th） */
-function wall(parent, len, h, th, openings, matUpper, matLower, wainscot = 0.9) {
+export function wall(parent, len, h, th, openings, matUpper, matLower, wainscot = 0.9) {
   const g = group(parent);
   const xs = [0, len];
   for (const o of openings) xs.push(o.a, o.b);
@@ -41,7 +41,7 @@ function wall(parent, len, h, th, openings, matUpper, matLower, wainscot = 0.9) 
 }
 
 /** 窓枠＋ガラス */
-function windowFrame(parent, x, y, z, w, h, ry, glassMat, frameMat) {
+export function windowFrame(parent, x, y, z, w, h, ry, glassMat, frameMat) {
   const g = group(parent, x, y, z, ry);
   const t = 0.07;
   add(g, G.box(w + t * 2, t, 0.28), frameMat, 0, h / 2 + t / 2, 0);
@@ -54,7 +54,7 @@ function windowFrame(parent, x, y, z, w, h, ry, glassMat, frameMat) {
   return g;
 }
 
-function lampPost(parent, x, z, { h = 2.6, lights, y = 0, withLight = true, intensity = 3 } = {}) {
+export function lampPost(parent, x, z, { h = 2.6, lights, y = 0, withLight = true, intensity = 3 } = {}) {
   const g = group(parent, x, y, z);
   const iron = mat('#2f3b36', { metalness: 0.5, roughness: 0.5 });
   add(g, G.cyl(0.14, 0.2, 0.25, 10), iron, 0, 0.12, 0);
@@ -76,7 +76,7 @@ function lampPost(parent, x, z, { h = 2.6, lights, y = 0, withLight = true, inte
   return { g, glass };
 }
 
-function bench(parent, x, y, z, ry = 0, w = 1.6) {
+export function bench(parent, x, y, z, ry = 0, w = 1.6) {
   const g = group(parent, x, y, z, ry);
   const wood = mat('#a8693e');
   const iron = mat('#33363c', { metalness: 0.4, roughness: 0.5 });
@@ -89,7 +89,7 @@ function bench(parent, x, y, z, ry = 0, w = 1.6) {
   return g;
 }
 
-function flowerPatch(parent, x, z, r, count, seed, colors = ['#ff8fa8', '#ffd25a', '#ffffff', '#b58cff', '#ff6a5a']) {
+export function flowerPatch(parent, x, z, r, count, seed, colors = ['#ff8fa8', '#ffd25a', '#ffffff', '#b58cff', '#ff6a5a']) {
   const rr = rng(seed);
   const stem = mat('#4f8a3a');
   for (let i = 0; i < count; i++) {
@@ -101,7 +101,7 @@ function flowerPatch(parent, x, z, r, count, seed, colors = ['#ff8fa8', '#ffd25a
   }
 }
 
-function tree(parent, x, z, { scale = 1, colors = ['#e2763a', '#f0a24a', '#d24f32', '#f4c15a'], seed = 1, hollow = false } = {}) {
+export function tree(parent, x, z, { scale = 1, colors = ['#e2763a', '#f0a24a', '#d24f32', '#f4c15a'], seed = 1, hollow = false } = {}) {
   const r = rng(seed);
   const g = group(parent, x, 0, z);
   g.scale.setScalar(scale);
@@ -130,7 +130,7 @@ function tree(parent, x, z, { scale = 1, colors = ['#e2763a', '#f0a24a', '#d24f3
   return { g, leaves, hollowMesh };
 }
 
-function bush(parent, x, z, s = 1, seed = 1, color = '#5f9a4a') {
+export function bush(parent, x, z, s = 1, seed = 1, color = '#5f9a4a') {
   const r = rng(seed);
   const g = group(parent, x, 0, z);
   for (let i = 0; i < 4; i++) {
@@ -139,7 +139,7 @@ function bush(parent, x, z, s = 1, seed = 1, color = '#5f9a4a') {
   return g;
 }
 
-function fence(parent, x0, z0, x1, z1) {
+export function fence(parent, x0, z0, x1, z1) {
   const wood = mat('#c9a77a');
   const dx = x1 - x0, dz = z1 - z0;
   const len = Math.hypot(dx, dz);

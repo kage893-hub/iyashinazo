@@ -41,8 +41,8 @@ export class Game {
     window.addEventListener('resize', () => this._resize());
   }
 
-  _freshState() {
-    return { stage: 'station', flags: {}, inventory: [], elapsed: 0, hints: 0, cleared: [] };
+  _freshState(stage = 'station') {
+    return { stage, flags: {}, inventory: [], counts: {}, elapsed: 0, hints: 0, cleared: [] };
   }
 
   // =========================================================
@@ -333,18 +333,30 @@ export class Game {
 
   has(item) { return this.state.inventory.includes(item); }
 
+  /** 個数を持つアイテム（ITEMS[id].stack）の数 */
+  count(item) {
+    if (!this.has(item)) return 0;
+    return ITEMS[item]?.stack ? (this.state.counts?.[item] || 1) : 1;
+  }
+
   give(item, { silent = false } = {}) {
-    if (this.has(item)) return;
-    this.state.inventory.push(item);
+    const stack = ITEMS[item]?.stack;
+    if (this.has(item) && !stack) return;
+    if (!this.has(item)) this.state.inventory.push(item);
+    if (stack) {
+      this.state.counts = this.state.counts || {};
+      this.state.counts[item] = (this.state.counts[item] || 0) + 1;
+    }
     this.refreshInventory();
     if (!silent) {
       this.audio.play('item');
-      this.ui.showItemGet(ITEMS[item]);
+      this.ui.showItemGet(ITEMS[item], stack ? this.state.counts[item] : 0);
     }
     this.save();
   }
 
   take(item) {
+    if (this.state.counts) delete this.state.counts[item];
     this.state.inventory = this.state.inventory.filter((i) => i !== item);
     if (this.selectedItem === item) this.selectedItem = null;
     this.refreshInventory();
@@ -371,7 +383,7 @@ export class Game {
     this.ui.renderInventory(this.state.inventory, ITEMS, this.selectedItem, (id) => {
       if (this.busy || this.cinematic || this.ui.dialogueActive) return;
       this.selectItem(id);
-    });
+    }, this.state.counts || {});
   }
 
   refreshQuests() {
@@ -401,11 +413,22 @@ export class Game {
     return !!(s && s.flags && s.flags.introDone);
   }
 
-  resetState() {
-    const cleared = this.loadSave()?.cleared || [];
-    this.state = this._freshState();
+  /** 進行をリセット（クリア済みの記録は残す） */
+  resetState(stage = 'station') {
+    const cleared = this.loadSave()?.cleared || this.state.cleared || [];
+    this.state = this._freshState(stage);
     this.state.cleared = cleared;
     this.save();
+  }
+
+  /** 次のステージへ（ページを読み直して箱庭を作りなおす） */
+  goToStage(stage, { autostart = true } = {}) {
+    const cleared = [...new Set([...(this.state.cleared || []), ...(this.loadSave()?.cleared || [])])];
+    this.state = this._freshState(stage);
+    this.state.cleared = cleared;
+    this.save();
+    try { if (autostart) sessionStorage.setItem('hoshimawari-autostart', stage); } catch (e) { /* ignore */ }
+    location.reload();
   }
 
   // =========================================================
@@ -428,6 +451,7 @@ export class Game {
   // ステージとメインループ
   // =========================================================
   async loadStage(StageClass) {
+    this.bounds = { minX: -14, maxX: 14, minZ: -10, maxZ: 10 };
     this.stage = new StageClass(this);
     await this.stage.build();
     this.buildPickList();

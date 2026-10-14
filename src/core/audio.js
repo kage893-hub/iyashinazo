@@ -20,12 +20,39 @@ const CHORDS = [
   [50, 53, 57], [55, 58, 62], [48, 52, 55], [48, 52, 55],
 ];
 
+// 天空の街：明るく風の吹くような旋律（ハ長調）
+const SKY_MELODY = [
+  [0, 79, 1], [1, 84, 1], [2, 83, 0.5], [2.5, 81, 0.5], [3, 79, 1],
+  [4, 77, 1.5], [5.5, 76, 0.5], [6, 77, 1], [7, 81, 1],
+  [8, 79, 1], [9, 74, 1], [10, 76, 0.5], [10.5, 77, 0.5], [11, 79, 1],
+  [12, 76, 3],
+  [16, 81, 1], [17, 84, 1], [18, 83, 1], [19, 81, 1],
+  [20, 79, 1.5], [21.5, 77, 0.5], [22, 76, 1], [23, 74, 1],
+  [24, 74, 1], [25, 77, 1], [26, 79, 0.5], [26.5, 81, 0.5], [27, 83, 1],
+  [28, 84, 3],
+];
+const SKY_CHORDS = [
+  [48, 52, 55], [53, 57, 60], [55, 59, 62], [48, 52, 55],
+  [57, 60, 64], [53, 57, 60], [55, 59, 65], [48, 52, 55],
+];
+
+export const SONGS = {
+  station: { melody: MELODY, chords: CHORDS, tempo: 74 },
+  sky: { melody: SKY_MELODY, chords: SKY_CHORDS, tempo: 88 },
+};
+
 export class AudioSys {
   constructor() {
     this.ctx = null;
     this.muted = false;
     this.bgmOn = false;
     this.tempo = 74;
+    this.song = SONGS.station;
+  }
+
+  setSong(id) {
+    this.song = SONGS[id] || SONGS.station;
+    this.tempo = this.song.tempo;
   }
 
   /** ユーザー操作後に初期化（自動再生制限のため） */
@@ -221,6 +248,23 @@ export class AudioSys {
         this.tone(2300, { dur: 0.08, gain: 0.05, slide: 3000 });
         this.tone(2500, { dur: 0.09, gain: 0.05, slide: 3200, when: 0.1 });
         break;
+      case 'baa':
+        this.tone(380, { dur: 0.6, gain: 0.08, type: 'sawtooth', slide: 360, vib: [11, 25], attack: 0.04 });
+        break;
+      case 'chirp':
+        for (let i = 0; i < 3; i++) this.tone(2600 + i * 200, { dur: 0.07, gain: 0.05, slide: 3400, when: i * 0.09 });
+        break;
+      case 'whale':
+        this.tone(140, { dur: 2.2, gain: 0.12, type: 'triangle', slide: 220, vib: [3, 8], attack: 0.4 });
+        this.tone(280, { dur: 2.0, gain: 0.04, slide: 420, attack: 0.5 });
+        break;
+      case 'whoosh': this.noise({ dur: 1.6, freq: 300, sweep: 2400, q: 0.7, gain: 0.14, type: 'bandpass', attack: 0.4 }); break;
+      case 'thunder':
+        this.noise({ dur: 2.2, freq: 180, sweep: 60, q: 0.5, gain: 0.25, type: 'lowpass', attack: 0.02 });
+        break;
+      case 'loom':
+        for (let i = 0; i < 6; i++) this.noise({ dur: 0.08, freq: 1200, q: 2, gain: 0.08, when: i * 0.18 });
+        break;
       case 'twinkle':
         [1568, 2093, 2637].forEach((f, i) => this.tone(f, { dur: 0.6, gain: 0.04, when: i * 0.06 }));
         break;
@@ -258,9 +302,9 @@ export class AudioSys {
       const beat = (this.step / 2) % 32; // 0..31.5
       const bar = Math.floor(beat / 4);
       const when = this.nextTime - this.ctx.currentTime;
-      const chord = CHORDS[bar];
+      const chord = this.song.chords[bar];
       // メロディ
-      for (const [b, m, d] of MELODY) {
+      for (const [b, m, d] of this.song.melody) {
         if (Math.abs(b - beat) < 0.01) this._musicBox(midiHz(m), when, 0.11, 1.6 + d * 0.4);
       }
       // アルペジオ

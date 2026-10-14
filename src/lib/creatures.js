@@ -7,18 +7,18 @@ import { add, mat, G, group, canvasTex } from './util.js';
 // ---------------------------------------------------------------
 
 const _v = new THREE.Vector3();
-const black = () => mat('#16161c', { roughness: 0.25 });
-const shine = () => mat('#ffffff', { emissive: '#ffffff', emissiveIntensity: 0.6, roughness: 0.2 });
+export const black = () => mat('#16161c', { roughness: 0.25 });
+export const shine = () => mat('#ffffff', { emissive: '#ffffff', emissiveIntensity: 0.6, roughness: 0.2 });
 
 /** つぶらな黒目 */
-function beadEye(parent, x, y, z, r = 0.06) {
+export function beadEye(parent, x, y, z, r = 0.06) {
   const g = group(parent, x, y, z);
   add(g, G.sphere(r, 14, 10), black(), 0, 0, 0, { scale: [1, 1.15, 0.6], cast: false });
   add(g, G.sphere(r * 0.32, 8, 6), shine(), r * 0.32, r * 0.38, r * 0.45, { cast: false });
   return g;
 }
 
-class Creature {
+export class Creature {
   constructor(kind) {
     this.kind = kind;
     this.root = new THREE.Group();

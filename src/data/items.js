@@ -87,4 +87,79 @@ export const ITEMS = {
       <rect x="34" y="8" width="22" height="14" rx="2" fill="#e8d8a8" stroke="#7b5a32" stroke-width="2" transform="rotate(12 45 15)"/>
       <path d="M18 24 L36 14" stroke="#7b5a32" stroke-width="1.5"/>`),
   },
+
+  // ---------------- STAGE 2：天空の街 ----------------
+  konpeito: {
+    name: '星のこんぺいとう',
+    desc: '天空の街のおみやげ。星のかけらのように甘くて、空の生きものの大好物らしい。',
+    icon: svg(`
+      <path d="M14 30 Q32 58 50 30 Z" fill="#c9e4ff" stroke="#5a7ac8" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M14 30 Q32 22 50 30" fill="none" stroke="#5a7ac8" stroke-width="2.5"/>
+      <path d="M20 16 l12 10 l12 -10" fill="none" stroke="#d84a5a" stroke-width="3" stroke-linecap="round"/>
+      <g stroke="#7a5a2a" stroke-width="1.2">
+        <path d="M24 28l2.5-3 3 2.5-1 3.5-3.5.5z" fill="#ffd36a"/>
+        <path d="M33 26l3-2 2.5 3-2 3-3.5-.5z" fill="#ff9ac0"/>
+        <path d="M40 30l2.5-2.5 2.5 2.5-1.5 3-3-.5z" fill="#9fe0ff"/>
+        <path d="M29 33l3-1.5 2 3-2.5 2.5-3-1.5z" fill="#c8f0a0"/>
+      </g>`),
+  },
+  oilCan: {
+    name: '油さし',
+    desc: 'カエルの機関士の油さし。さびついたものも、これでなめらかに動く。',
+    icon: svg(`
+      <path d="M16 30 h24 v20 a4 4 0 0 1-4 4 H20 a4 4 0 0 1-4-4z" fill="#d8b04a" stroke="#7a5a14" stroke-width="2.5"/>
+      <path d="M22 30 q6-10 12 0" fill="none" stroke="#7a5a14" stroke-width="3"/>
+      <path d="M40 36 L58 18" stroke="#7a5a14" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="59" cy="16" r="2.5" fill="#3a2a1a"/>
+      <path d="M8 34 q-2 8 4 10" fill="none" stroke="#7a5a14" stroke-width="3"/>`),
+  },
+  cotton: {
+    name: '雲のわた',
+    desc: 'ふわふわの雲のかたまり。3つ集めると、アルパカが布に織ってくれる。',
+    stack: true,
+    stackMax: 3,
+    icon: svg(`
+      <g fill="#ffffff" stroke="#9ab0d8" stroke-width="2.5">
+        <circle cx="22" cy="36" r="11"/><circle cx="34" cy="28" r="13"/><circle cx="45" cy="37" r="10"/>
+      </g>
+      <path d="M14 40 h38" stroke="#ffffff" stroke-width="10" stroke-linecap="round"/>
+      <circle cx="30" cy="24" r="3" fill="#eef4ff"/>`),
+  },
+  sail: {
+    name: '雲の帆',
+    desc: 'アルパカが織った、雲の糸の帆布。風車の羽根に張ることができる。',
+    icon: svg(`
+      <path d="M14 10 L50 14 L46 54 L10 50 Z" fill="#f7f2e6" stroke="#8a7a5a" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M13 20 L49 24 M12 30 L48 34 M11 40 L47 44" stroke="#c8d8f0" stroke-width="2"/>
+      <circle cx="14" cy="10" r="3" fill="#8a7a5a"/><circle cx="50" cy="14" r="3" fill="#8a7a5a"/>`),
+  },
+  letter: {
+    name: '風に飛ばされた手紙',
+    desc: '星の切手がはられた封筒。「時計台のカメさんへ」と書いてある。',
+    icon: svg(`
+      <rect x="8" y="16" width="48" height="32" rx="3" fill="#fbf6ea" stroke="#8a6a4a" stroke-width="2.5"/>
+      <path d="M8 18 L32 36 L56 18" fill="none" stroke="#8a6a4a" stroke-width="2.5"/>
+      <circle cx="32" cy="36" r="5" fill="#d84a3a"/>
+      <rect x="44" y="20" width="8" height="9" fill="#9fd0ff" stroke="#5a7ac8" stroke-width="1"/>`),
+  },
+  letterOpen: {
+    name: '孫からの手紙',
+    desc: '「おじいちゃん、宝箱は『そらのうた』の順に鈴を鳴らすとひらくよ。そらのうた：☾ ★ ☁ ☀ ☁ ★」',
+    icon: svg(`
+      <rect x="12" y="8" width="40" height="50" rx="3" fill="#fbf6ea" stroke="#8a6a4a" stroke-width="2.5"/>
+      <g font-size="10" text-anchor="middle" font-weight="700">
+        <text x="22" y="26" fill="#3a6ac8">☾</text><text x="32" y="26" fill="#c9952a">★</text><text x="42" y="26" fill="#8a9ab0">☁</text>
+        <text x="22" y="40" fill="#d84a3a">☀</text><text x="32" y="40" fill="#8a9ab0">☁</text><text x="42" y="40" fill="#c9952a">★</text>
+      </g>
+      <path d="M18 48 h28" stroke="#c8b08a" stroke-width="2"/>`),
+  },
+  gear: {
+    name: '風車の歯車',
+    desc: '大風車の予備の歯車。ずっしり重い金色の歯車だ。',
+    icon: svg(`
+      <g fill="#e2b54a" stroke="#7a5414" stroke-width="2.5" stroke-linejoin="round">
+        <path d="M32 6l4 7 8-2 1 8 8 2-3 7 6 5-6 5 3 7-8 2-1 8-8-2-4 7-4-7-8 2-1-8-8-2 3-7-6-5 6-5-3-7 8-2 1-8 8 2z"/>
+      </g>
+      <circle cx="32" cy="32" r="9" fill="#fff3c8" stroke="#7a5414" stroke-width="2.5"/>`),
+  },
 };
