@@ -53,8 +53,11 @@ export class Game {
     const params = new URLSearchParams(location.search);
     this.low = params.has('low');
     this.timeScale = Number(params.get('ts')) || 1; // テスト用の早送り
-    const r = (this.renderer = new THREE.WebGLRenderer({ antialias: !this.low, powerPreference: 'high-performance' }));
-    r.setPixelRatio(this.low ? 1 : Math.min(window.devicePixelRatio, 2));
+    // スマホ・タブレット（指で操作する端末）は、はじめから少し軽めの設定にする
+    this.mobile = matchMedia('(pointer: coarse)').matches;
+    // 画面への描きこみはポストプロセス側の MSAA で行うので、キャンバス自体のアンチエイリアスは不要
+    const r = (this.renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' }));
+    r.setPixelRatio(this.low ? 1 : Math.min(window.devicePixelRatio, this.mobile ? 1.75 : 2));
     r.setSize(window.innerWidth, window.innerHeight);
     r.shadowMap.enabled = true;
     r.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -82,7 +85,7 @@ export class Game {
 
     // ポストプロセス（MSAA 付きのレンダーターゲット）
     const size = r.getDrawingBufferSize(new THREE.Vector2());
-    const rt = new THREE.WebGLRenderTarget(size.x, size.y, { type: THREE.HalfFloatType, samples: this.low ? 0 : 4 });
+    const rt = new THREE.WebGLRenderTarget(size.x, size.y, { type: THREE.HalfFloatType, samples: this.low ? 0 : this.mobile ? 2 : 4 });
     const comp = (this.composer = new EffectComposer(r, rt));
     comp.addPass(new RenderPass(this.scene, this.camera));
     this.bloom = new UnrealBloomPass(new THREE.Vector2(size.x / 2, size.y / 2), 0.42, 0.7, 0.9);
@@ -367,15 +370,14 @@ export class Game {
     if (id && this.selectedItem === id) {
       // もう一度押したら説明
       this.selectedItem = null;
+      this.ui.setUseBanner(null);
       this.refreshInventory();
       this.ui.toast(`<b>${ITEMS[id].name}</b>：${ITEMS[id].desc}`, 3200);
       return;
     }
     this.selectedItem = id;
-    if (id) {
-      this.audio.play('select');
-      this.ui.toast(`<b>${ITEMS[id].name}</b> を使う場所をクリック（右クリックで取り消し）`, 2400);
-    }
+    if (id) this.audio.play('select');
+    this.ui.setUseBanner(id ? ITEMS[id] : null, () => this.selectItem(null));
     this.refreshInventory();
   }
 
@@ -406,6 +408,70 @@ export class Game {
       if (s && s.flags) return s;
     } catch (e) { /* ignore */ }
     return null;
+  }
+
+  /** 旅のメモ帳に手がかりを書きとめる（同じものは一度だけ） */
+  note(id, title, html) {
+    const notes = (this.state.notes = this.state.notes || []);
+    if (notes.some((n) => n.id === id)) return;
+    notes.push({ id, stage: this.state.stage, title, html });
+    this.save();
+    this.ui.toast(`📖 旅のメモに書きとめた：<b>${title}</b>`, 2600);
+    document.querySelector('#btn-notes')?.classList.add('new');
+  }
+
+  /** 調べられる場所の名前を、しばらく画面に出す（✨ボタン） */
+  showLabels(sec = 4) {
+    this._clearLabels();
+    const box = new THREE.Box3();
+    for (const [id, it] of this.interactables) {
+      if (it.enabled === false || !it.object.visible) continue;
+      let vis = true;
+      for (let p = it.object.parent; p; p = p.parent) if (!p.visible) { vis = false; break; }
+      if (!vis) continue;
+      box.setFromObject(it.object);
+      if (box.isEmpty()) continue;
+      const c = box.getCenter(new THREE.Vector3());
+      const name = typeof it.name === 'function' ? it.name() : it.name;
+      if (!name) continue;
+      const label = document.createElement('div');
+      label.className = 'hs-label';
+      label.textContent = name;
+      document.body.appendChild(label);
+      this._labels.push({ el: label, id, c, top: new THREE.Vector3(c.x, box.max.y + 0.15, c.z), seen: false });
+    }
+    this._labelsT = sec;
+    this._labelsCheck = 0;
+  }
+
+  _clearLabels() {
+    (this._labels || []).forEach((l) => l.el.remove());
+    this._labels = [];
+    this._labelsT = 0;
+  }
+
+  _updateLabels(raw) {
+    if (!this._labels?.length) return;
+    this._labelsT -= raw;
+    if (this._labelsT <= 0 || this.cinematic) { this._clearLabels(); return; }
+    this._labelsCheck -= raw;
+    const check = this._labelsCheck <= 0;
+    if (check) this._labelsCheck = 0.4;
+    const rect = this.renderer.domElement.getBoundingClientRect();
+    const toScreen = (v) => {
+      const p = v.clone().project(this.camera);
+      return { x: rect.left + (p.x + 1) / 2 * rect.width, y: rect.top + (1 - p.y) / 2 * rect.height, ok: p.z < 1 && Math.abs(p.x) < 1.05 && Math.abs(p.y) < 1.05 };
+    };
+    for (const l of this._labels) {
+      const t = toScreen(l.top);
+      if (check) {
+        // 手前の物にかくれていないか（中心か上端が見えていればOK）
+        const c = toScreen(l.c);
+        l.seen = t.ok && (this._pick({ clientX: c.x, clientY: c.y }) === l.id || this._pick({ clientX: t.x, clientY: t.y + 4 }) === l.id);
+      }
+      l.el.style.transform = `translate(${t.x}px, ${t.y}px) translate(-50%, -100%)`;
+      l.el.classList.toggle('show', l.seen && this._labelsT > 0.4);
+    }
   }
 
   hasSave() {
@@ -450,12 +516,29 @@ export class Game {
   // =========================================================
   // ステージとメインループ
   // =========================================================
+  /** 読み込み画面の進み具合（p: 0〜1）。画面を描きかえる時間をつくる */
+  async loadingStep(p, text) {
+    const bar = document.querySelector('#loading .ld-bar i');
+    if (bar) bar.style.width = `${Math.round(p * 100)}%`;
+    const t = document.querySelector('#loading p');
+    if (t && text) t.textContent = text;
+    await new Promise((r) => requestAnimationFrame(() => setTimeout(r, 0)));
+  }
+
   async loadStage(StageClass) {
     this.bounds = { minX: -14, maxX: 14, minZ: -10, maxZ: 10 };
     this.stage = new StageClass(this);
+    await this.loadingStep(0.1, '箱庭を組み立てています…');
     await this.stage.build();
     this.buildPickList();
     this.stage.applyState(true);
+    // 最初の表示で固まらないよう、シェーダーを先に用意しておく
+    await this.loadingStep(0.85, 'もうすぐ出発します…');
+    try {
+      if (this.renderer.extensions.has('KHR_parallel_shader_compile')) await this.renderer.compileAsync(this.scene, this.camera);
+      else this.renderer.compile(this.scene, this.camera);
+    } catch (e) { /* 描画時にコンパイルされる */ }
+    await this.loadingStep(1);
   }
 
   start() {
@@ -464,20 +547,39 @@ export class Game {
 
   /** 重い端末では解像度を自動で下げる */
   _adapt(raw) {
-    if (this._adapted) return;
+    if (this._adaptStep >= 2) return;
     this._perf = this._perf || { t: 0, n: 0 };
     const p = this._perf;
-    if (this.time < 2) return; // 起動直後は無視
+    if (this.time < 2 || this.timeScale !== 1) return; // 起動直後・早送りテスト中は無視
+    if (raw > 0.5 || document.hidden) return; // タブ切りかえなどの止まりは数えない
     p.t += raw; p.n++;
-    if (p.t > 3) {
-      const fps = p.n / p.t;
-      this._adapted = true;
-      if (fps < 28 && this.renderer.getPixelRatio() > 1) {
-        this.renderer.setPixelRatio(1);
-        this.composer.setPixelRatio(1);
-        this._resize();
-      }
+    if (p.t < 3) return;
+    const fps = p.n / p.t;
+    p.t = 0; p.n = 0;
+    this._adaptStep = (this._adaptStep || 0) + 1;
+    if (fps >= 28) { this._adaptStep = 2; return; }
+    if (this._adaptStep === 1 && this.renderer.getPixelRatio() > 1) {
+      // 1段目：解像度を下げる
+      this.renderer.setPixelRatio(1);
+      this.composer.setPixelRatio(1);
+      this._resize();
+    } else {
+      // 2段目：影の解像度を下げて、光のにじみ（ブルーム）を切る
+      this._adaptStep = 2;
+      this.scene.traverse((o) => {
+        if (o.isLight && o.castShadow && o.shadow.mapSize.x > 1024) {
+          o.shadow.mapSize.set(1024, 1024);
+          if (o.shadow.map) { o.shadow.map.dispose(); o.shadow.map = null; }
+        }
+      });
+      this.bloom.enabled = false;
     }
+  }
+
+  /** 影の解像度（端末に合わせる） */
+  shadowSize() {
+    if (this.low) return 1024;
+    return !this.mobile && window.innerWidth > 900 ? 4096 : 2048;
   }
 
   _frame() {
@@ -485,6 +587,7 @@ export class Game {
     const dt = Math.min(raw, 0.1) * this.timeScale;
     this.time += dt;
     this._adapt(raw);
+    this._updateLabels(raw);
     if (this.playing && !this.cinematic) this.state.elapsed += dt;
     this.tweens.update(dt);
     if (this.stage) this.stage.update(dt, this.time);
@@ -527,6 +630,11 @@ export class Game {
     }
 
     this.grade.uniforms.time.value = this.time % 100;
+    // 影は止まっている物がほとんどなので、ふだんは1フレームおきに更新（演出中は毎フレーム）
+    const sm = this.renderer.shadowMap;
+    sm.autoUpdate = false;
+    this._frameNo = (this._frameNo || 0) + 1;
+    if (this.cinematic || this._frameNo % 2 === 0) sm.needsUpdate = true;
     this.composer.render();
   }
 }

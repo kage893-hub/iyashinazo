@@ -9,7 +9,7 @@ import { Ease } from '../../core/tween.js';
 import { el } from '../../core/ui.js';
 import { Train, RAIL_Y } from '../station/train.js';
 import { buildSkyDiorama, TRACK_Z } from './diorama.js';
-import { letterHTML, bellPanel, pipePanel } from './panels.js';
+import { letterHTML, songHTML, bellPanel, pipePanel } from './panels.js';
 
 const V = THREE.Vector3;
 
@@ -79,7 +79,7 @@ export class SkyStage {
     const sun = (this.sun = new THREE.DirectionalLight('#fff0d8', 2.3));
     sun.position.set(-12, 26, 14);
     sun.castShadow = true;
-    const sm = g.low ? 1024 : window.innerWidth > 900 ? 4096 : 2048;
+    const sm = g.shadowSize();
     sun.shadow.mapSize.set(sm, sm);
     const sc = sun.shadow.camera;
     sc.left = -20; sc.right = 20; sc.top = 17; sc.bottom = -17; sc.near = 5; sc.far = 80;
@@ -112,6 +112,7 @@ export class SkyStage {
     this.train.s = this.stopS;
     this.train.place();
 
+    await this.g.loadingStep(0.3, '町並みを組み立てています…');
     const R = (this.R = buildSkyDiorama(scene));
     R.lampGlass = R.lampGlass.map((e) => (e.isMaterial ? { material: e, base: e.emissiveIntensity } : e));
     R.lights.forEach((L2) => { L2.userData.base = L2.intensity; });
@@ -124,8 +125,10 @@ export class SkyStage {
     this.birds = new Birds(scene, 6, 9);
     this.sparkles = this._makeSparkles(scene);
 
+    await this.g.loadingStep(0.6, '住人たちを呼んでいます…');
     this._placeCreatures(scene);
     this._registerInteractables();
+    await this.g.loadingStep(0.75, '仕上げをしています…');
     this._optimize();
 
     g.ui.onLine = (who) => {
@@ -565,6 +568,7 @@ export class SkyStage {
         { who: 'alpaca', text: '空に近いこの街では、雲のわたがあちこちに引っかかっているはずよ。水の上や、空の上や、鳥の巣なんかにね。' },
       ]);
       g.flag('alpacaTalked');
+      g.note('sk-cotton', '雲のわた', 'アルパカが帆を織るには <b>雲のわたが3つ</b> 必要。<br>水の上 ／ 空の上 ／ 鳥の巣 などに引っかかっているらしい。');
       g.refreshQuests();
     }
     const n = this.cottonCount();
@@ -629,6 +633,7 @@ export class SkyStage {
         { who: 'tortoise', text: '孫がいつも手紙で教えてくれるんじゃが……今月の手紙が、まだ届かんのじゃよ。' },
       ]);
       g.flag('tortoiseTalked');
+      g.note('sk-chest', '時計台の宝箱', '予備の歯車が入っている。ふたの鈴を <b>「そらのうた」</b> の順に鳴らすと開く。<br>歌は、カメのおじいさんの孫の手紙に書いてあるらしい。');
       return;
     }
     await this.say([{ who: 'tortoise', text: '孫からの手紙は、まだかのう……郵便屋のツバメに聞いてみてくれんか。' }]);
@@ -645,6 +650,7 @@ export class SkyStage {
     await this.waitPanel();
     g.give('letterOpen');
     g.flag('letterRead');
+    g.note('sk-song', 'そらのうた', `宝箱の鈴を、この順に鳴らす。${songHTML()}`);
     g.flag('tortoiseTalked');
     await this.say([
       { who: 'tortoise', text: 'そうじゃ、そうじゃ、「そらのうた」じゃ！ 鈴の色は、時計台の鐘のリボンと同じじゃよ。' },
@@ -722,6 +728,7 @@ export class SkyStage {
       { who: 'whale', text: 'Zzz……ブォ……Zzz……' },
       '風穴から吹き出す風が、クジラの体でせきとめられているようだ。',
     ];
+    g.note('sk-whale', '空クジラ', '風穴の前で眠っていて、風をせきとめている。<b>甘いにおい</b> がすれば目をさますかも。');
     if (g.has('konpeito')) lines.push('（甘いにおいのするものがあれば、目をさますかも……）');
     await this.say(lines);
   }
@@ -878,6 +885,7 @@ export class SkyStage {
     this.focus(this.R.pipePanel, 16);
     if (f.pipesDone) return this.say(['風の配管盤。緑のランプがともっている。']);
     if (!f.whaleMoved) {
+      g.note('sk-panel', '風の配管盤', 'パイプをつなぎかえて、<b>風穴の風を大風車へ</b> 送るしくみ。いまは風穴から風が来ていない。');
       return this.say(['風の配管盤。パイプをつなぎかえて、風穴の風を大風車へ送るしくみらしい。', '……でも今は、風穴から風が来ていない。先に風穴を調べてみよう。']);
     }
     let pending = false;

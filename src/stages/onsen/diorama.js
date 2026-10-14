@@ -187,10 +187,55 @@ export function buildOnsenDiorama(scene) {
   for (let i = 0; i < 9; i++) add(ice, G.cone(0.1, 0.5 + ir() * 0.6, 6), R.iceMat, -0.2, 3.0, -1.2 + i * 0.3, { rot: [Math.PI, 0, 0] });
 
   // ---------------- 源泉（丘の上） ----------------
-  const hill = group(root, 3.6, 0, -9.0);
-  add(hill, G.sphere(3.2, 20, 10, 0), mat('#7a7468', { flatShading: true, roughness: 1 }), 0, -0.2, 0, { scale: [1.2, 0.85, 0.7] });
-  // 石段（線路の手前から上へ）
-  for (let i = 0; i < 6; i++) add(root, G.box(1.3, 0.3 + i * 0.4, 0.4), stone, 3.6, (0.3 + i * 0.4) / 2, -7.15 - i * 0.32);
+  // 上が平らな台地（手前の斜面に石段を刻む）
+  const HZ = 0.643;
+  const hill = group(root, 3.6, 0, -9.6);
+  add(hill, G.cyl(2.0, 4.2, 2.6, 18), mat('#7a7468', { flatShading: true, roughness: 1 }), 0, 1.1, 0, { scale: [1, 1, HZ] });
+  // 台地の上の雪
+  const topSnow = add(hill, G.cyl(1.85, 1.95, 0.05, 18), snowM, 0, 2.42, 0, { scale: [1, 1, HZ], cast: false });
+  topSnow.userData.noPick = true;
+  R.snow.push(topSnow);
+  // 台地の小さな雪の松と、斜面の岩
+  const pine = mat('#2f4a3a', { flatShading: true });
+  for (const [x, z, sc] of [[5.0, -10.3, 1], [2.3, -10.3, 0.8]]) {
+    const pg = group(root, x, 2.4, z);
+    pg.scale.setScalar(sc);
+    add(pg, G.cyl(0.07, 0.09, 0.5, 6), mat('#5a3a24'), 0, 0.25, 0);
+    for (let k = 0; k < 3; k++) {
+      add(pg, G.cone(0.55 - k * 0.13, 0.6, 7), pine, 0, 0.65 + k * 0.38, 0);
+      const sc2 = add(pg, G.cone(0.42 - k * 0.11, 0.22, 7), snowM, 0, 0.86 + k * 0.38, 0, { cast: false });
+      sc2.userData.noPick = true;
+      R.snow.push(sc2);
+    }
+  }
+  for (const [x, y, z, r] of [[1.5, 0.5, -8.3, 0.5], [5.8, 0.4, -8.6, 0.45], [2.0, 1.4, -8.9, 0.35], [5.3, 1.6, -9.0, 0.3]]) {
+    add(root, G.dodeca(r), stone, x, y, z, { rot: [x, z, y] });
+  }
+  // 石段（斜面に沿って 8 段。各段の奥の縁が斜面とそろう）
+  const frontZ = -9.6 + (4.2 - 2.2 * (0.2 / 2.6)) * HZ; // 地面(y=0)での斜面の手前
+  const run = frontZ - (-9.6 + 2.0 * HZ);
+  const stepD = run / 8;
+  const stepM = new THREE.MeshStandardMaterial({ map: stoneTex('#a09a90', [1, 1]), roughness: 1 });
+  for (let i = 0; i < 8; i++) {
+    const top = i === 7 ? 2.42 : 0.3 * (i + 1) + 0.03;
+    add(root, G.box(1.2, top, stepD + 0.02), stepM, 3.6, top / 2, frontZ - stepD * (i + 0.5));
+    if (i % 2 === 1) { // 段の雪
+      const sn = add(root, G.box(0.5, 0.03, stepD * 0.8), snowM, 3.3 + (i % 4) * 0.15, top + 0.015, frontZ - stepD * (i + 0.5), { cast: false });
+      sn.userData.noPick = true;
+      R.snow.push(sn);
+    }
+  }
+  // 石段の手すり（赤）
+  for (const sx of [-0.68, 0.68]) {
+    const a = new THREE.Vector3(3.6 + sx, 0.75, frontZ), b = new THREE.Vector3(3.6 + sx, 3.15, frontZ - run);
+    const len = a.distanceTo(b);
+    const rail = add(root, G.box(0.06, 0.06, len), mat('#c8382e'), a.x, (a.y + b.y) / 2, (a.z + b.z) / 2);
+    rail.lookAt(b.x, b.y, b.z);
+    for (const k of [0, 0.5, 1]) {
+      const p = a.clone().lerp(b, k);
+      add(root, G.box(0.06, 0.75, 0.06), mat('#c8382e'), p.x, p.y - 0.375, p.z);
+    }
+  }
   // 鳥居
   const torii = group(root, 3.6, 2.4, -9.0);
   const red = mat('#c8382e');

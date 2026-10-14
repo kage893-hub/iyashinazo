@@ -71,13 +71,13 @@ export class OnsenStage {
     u.moonDir.value.set(0.4, 0.55, -0.73).normalize();
     scene.add(this.sky.mesh);
     scene.fog = new THREE.Fog('#4a5078', 60, 220);
-    g.renderer.toneMappingExposure = 1.1;
-    this.hemi = new THREE.HemisphereLight('#a8b4e8', '#4a4038', 0.85);
+    g.renderer.toneMappingExposure = 1.18;
+    this.hemi = new THREE.HemisphereLight('#b0bcf0', '#5a5044', 1.05);
     scene.add(this.hemi);
-    const moon = (this.sun = new THREE.DirectionalLight('#c8d4ff', 1.5));
+    const moon = (this.sun = new THREE.DirectionalLight('#d0dcff', 1.8));
     moon.position.set(-12, 24, 12);
     moon.castShadow = true;
-    const sm = g.low ? 1024 : window.innerWidth > 900 ? 4096 : 2048;
+    const sm = g.shadowSize();
     moon.shadow.mapSize.set(sm, sm);
     const sc = moon.shadow.camera;
     sc.left = -20; sc.right = 20; sc.top = 17; sc.bottom = -17; sc.near = 5; sc.far = 80;
@@ -110,6 +110,7 @@ export class OnsenStage {
     this.train.loco.firebox.material.emissiveIntensity = 2.5;
     this.train.loco.headlight.material.emissiveIntensity = 3;
 
+    await this.g.loadingStep(0.3, '町並みを組み立てています…');
     const R = (this.R = buildOnsenDiorama(scene));
 
     // パーティクル
@@ -119,8 +120,10 @@ export class OnsenStage {
     this._makeSnow(scene);
     this.sparkles = this._makeSparkles(scene);
 
+    await this.g.loadingStep(0.6, '住人たちを呼んでいます…');
     this._placeCreatures(scene);
     this._registerInteractables();
+    await this.g.loadingStep(0.75, '仕上げをしています…');
     this._optimize();
 
     g.ui.onLine = (who) => {
@@ -192,6 +195,7 @@ export class OnsenStage {
     this.monkey.root.rotation.y = -0.2;
     // 最後に湯につかるサルたちと、お客さん
     this.bathers = [makeMonkey({ kid: false, bathing: true }), makeMonkey({ kid: false, bathing: true })];
+    for (const b of this.bathers) b.noIdleHop = true;
     this.bathers[0].root.position.set(4.8, -0.2, 1.0);
     this.bathers[1].root.position.set(6.3, -0.2, 0.3);
     this.bathers[1].root.rotation.y = -0.6;
@@ -578,6 +582,7 @@ export class OnsenStage {
       ]);
       g.give('lantern');
       g.flag('foxTalked');
+      g.note('on-fire', '火種', '提灯やぐらに火を入れるには火種がいる。<b>釜場の残り火</b> を手さげ提灯にうつせれば……');
       return;
     }
     if (g.has('lanternLit') && !f.foxHasFire) return this.foxGetsFire();
@@ -597,6 +602,7 @@ export class OnsenStage {
     g.audio.play('fire');
     this._setShop(true);
     g.flag('foxHasFire');
+    g.note('on-yagura', '提灯やぐら', 'ひとつ灯すと、<b>上下左右のとなりも入れかわる</b>。九つすべてを灯す。<br>キツネのじいちゃんいわく「<b>五つの火で、九つを灯す</b>」。');
     this._lanternDone();
     await g.wait(0.6);
     await this.say([
@@ -618,6 +624,7 @@ export class OnsenStage {
     this.focus(this.tanuki.root, 16);
     if (!f.iroriLit) {
       const lines = ['タヌキの番頭は、帳場でまるくなって眠っている。', { who: 'tanuki', text: 'Zzz……さむい……冬眠しちゃう……ぽん……' }];
+      g.note('on-tanuki', 'タヌキの番頭', '寒くて眠っている。<b>部屋があたたまれば</b> 目をさますかも。');
       lines.push(g.has('lanternLit') ? '（となりの囲炉裏に、提灯の火をうつせそうだ）' : '（部屋があたたまれば、目をさますかもしれない）');
       return this.say(lines);
     }
@@ -645,6 +652,7 @@ export class OnsenStage {
       { who: 'monkey', text: 'さむいさむい……キキ……あったかくなるまで、うごけない……' },
       '（子ザルが、金色の何かを大事そうににぎっている。……鍵？）',
     ]);
+    g.note('on-monkey', '露天風呂の子ザル', '寒くてふるえている。<b>金色の鍵</b> のようなものをにぎっていた。あたたまれば……');
     g.flag('monkeyTalked');
   }
 
@@ -686,6 +694,7 @@ export class OnsenStage {
       return this.say(['釜場の焚き口で、残り火が赤く光っている。']);
     }
     const lines = ['銭湯の釜場。焚き口の奥に、かすかに赤い残り火が見える。', '灰に深く埋もれていて、手が届かない。'];
+    g.note('on-kama', '釜場の残り火', '灰に深く埋もれていて手が届かない。<b>かき出す道具</b> がほしい。');
     if (g.has('poker')) lines.push('（持ち物の『火かき棒』が使えそうだ）');
     await this.say(lines);
   }
@@ -819,6 +828,7 @@ export class OnsenStage {
     if (!f.gateOpen) return this.clickGate();
     if (f.springFlow) return this.say(['源泉から、湯がこんこんとわき出している。']);
     if (!f.masuPlaced) {
+      g.note('on-masu', '湯分けの台', '「湯の神さまへ、<b>ちょうど四合</b>」。五合升と三合升で四合を量って、樋へ流す。');
       const lines = ['源泉の湯口。湯はちょろちょろとしか出ていない。', 'そばの【湯分けの台】に五合升がひとつ。となりに、もうひとつ升を置く場所が空いている。', '台には「湯の神さまへ、ちょうど四合」と彫ってある。'];
       if (g.has('masu')) lines.push('（持ち物の『三合升』を置けそうだ）');
       return this.say(lines);
@@ -839,6 +849,7 @@ export class OnsenStage {
 
   openMasu() {
     const g = this.g;
+    g.note('on-masu', '湯分けの台', '「湯の神さまへ、<b>ちょうど四合</b>」。五合升と三合升で四合を量って、樋へ流す。');
     let pending = false;
     masuPanel(g.ui, g.audio, {
       onSolved: async (panel) => {

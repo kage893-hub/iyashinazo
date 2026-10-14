@@ -117,6 +117,7 @@ export function makeAlpaca() {
 // ---------------------------------------------------------------
 export function makeSwallow() {
   const c = new Creature('swallow');
+  c.noIdleHop = true;
   const b = c.body;
   const navy = mat('#25306a', { roughness: 0.4, metalness: 0.1 });
   const white = mat('#fbfbff');
@@ -212,6 +213,7 @@ export function makeTortoise() {
 // ---------------------------------------------------------------
 export function makeMomonga() {
   const c = new Creature('momonga');
+  c.noIdleHop = true;
   const b = c.body;
   const fur = mat('#9a8a7a');
   const belly = mat('#f2e8d8');
@@ -256,6 +258,7 @@ export function makeMomonga() {
 // ---------------------------------------------------------------
 export function makeWhale() {
   const c = new Creature('whale');
+  c.noIdleHop = true;
   const b = c.body;
   const blue = mat('#5a7ec0', { roughness: 0.6 });
   const belly = mat('#e8f0ff', { roughness: 0.7 });

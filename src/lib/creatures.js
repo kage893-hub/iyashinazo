@@ -31,6 +31,11 @@ export class Creature {
     this.lookTarget = null;
     this.head = null;
     this.sleeping = false;
+    // ちょっとしたしぐさ（ときどき あたりを見回す・首をかしげる・はねる）
+    this.idleT = 4 + Math.random() * 8;
+    this.idle = null; // { kind, t, dur, dir }
+    this.greetCool = 0;
+    this.noIdleHop = false;
   }
 
   talk(sec = 1.4) { this.talkT = sec; }
@@ -52,12 +57,20 @@ export class Creature {
     }
     // おしゃべり・ジャンプ
     let y = 0;
+    this._updateIdle(dt);
+    const idle = this.idle;
+    const idleK = idle ? Math.sin(Math.min(1, idle.t / idle.dur) * Math.PI) : 0; // 0→1→0
     if (this.talkT > 0) {
       this.talkT -= dt;
       y = Math.abs(Math.sin(t * 13)) * 0.05;
       if (this.head) this.head.rotation.z = Math.sin(t * 6.5) * 0.06;
     } else if (this.head) {
-      this.head.rotation.z *= 0.9;
+      const tilt = idle && idle.kind === 'tilt' && !this.sleeping ? 0.28 * idle.dir * Math.min(1, idleK * 2) : 0;
+      this.head.rotation.z += (tilt - this.head.rotation.z) * Math.min(1, dt * 6);
+    }
+    if (idle && idle.kind === 'stretch' && !this.sleeping) {
+      const k = idleK * 0.06;
+      this.body.scale.set(this.body.scale.x * (1 - k * 0.5), this.body.scale.y * (1 + k), this.body.scale.z * (1 - k * 0.5));
     }
     if (this.hopT > 0) {
       this.hopT -= dt;
@@ -68,7 +81,8 @@ export class Creature {
     // 首をかしげるアイドル／話すときはカメラのほうを向く
     if (this.head && !this.sleeping) {
       let yaw = Math.sin(t * 0.5 + p) * 0.18;
-      if (this.talkT > 0 && this.camPos) {
+      if (idle && idle.kind === 'look') yaw = 0.75 * idle.dir * Math.min(1, idleK * 1.6);
+      if ((this.talkT > 0 || (idle && idle.kind === 'greet')) && this.camPos) {
         const w = this.root.getWorldPosition(_v);
         const a = Math.atan2(this.camPos.x - w.x, this.camPos.z - w.z) - this.root.rotation.y;
         yaw = Math.max(-0.7, Math.min(0.7, Math.atan2(Math.sin(a), Math.cos(a))));
@@ -77,6 +91,33 @@ export class Creature {
       if (this.talkT <= 0) this.head.rotation.x = Math.sin(t * 0.37 + p * 2) * 0.04;
     }
     if (this.extra) this.extra(dt, t);
+  }
+
+  /** ときどき しぐさをする。カメラが近づくと こちらを見てあいさつ */
+  _updateIdle(dt) {
+    if (this.idle) {
+      this.idle.t += dt;
+      if (this.idle.t >= this.idle.dur) this.idle = null;
+    }
+    this.greetCool -= dt;
+    if (this.sleeping || this.talkT > 0 || !this.root.visible) return;
+    if (this.camPos && this.greetCool <= 0 && !this.idle) {
+      const w = this.root.getWorldPosition(_v);
+      if (w.distanceTo(this.camPos) < 9) {
+        this.idle = { kind: 'greet', t: 0, dur: 1.6, dir: 1 };
+        if (!this.noIdleHop) this.hop();
+        this.greetCool = 25;
+        return;
+      }
+    }
+    this.idleT -= dt;
+    if (this.idleT > 0 || this.idle) return;
+    this.idleT = 7 + Math.random() * 10;
+    const kinds = ['look', 'look', 'tilt', 'stretch'];
+    if (!this.noIdleHop) kinds.push('hop');
+    const kind = kinds[Math.floor(Math.random() * kinds.length)];
+    if (kind === 'hop') { this.hopT = 0.5; return; }
+    this.idle = { kind, t: 0, dur: kind === 'look' ? 2.2 : 1.4, dir: Math.random() < 0.5 ? -1 : 1 };
   }
 }
 
@@ -178,6 +219,7 @@ export function makeCat() {
 // ---------------------------------------------------------------
 export function makeOwl() {
   const c = new Creature('owl');
+  c.noIdleHop = true;
   const b = c.body;
   const brown = mat('#8b6646');
   const dark = mat('#5e4430');
@@ -360,6 +402,7 @@ export function makeRabbit() {
 // ---------------------------------------------------------------
 export function makeCrow() {
   const c = new Creature('crow');
+  c.noIdleHop = true;
   const b = c.body;
   const black1 = mat('#1d1f2b', { roughness: 0.35, metalness: 0.15 });
   const beak = mat('#3a3a44', { roughness: 0.4 });
@@ -396,6 +439,7 @@ export function makeCrow() {
 // ---------------------------------------------------------------
 export function makeMouse(color = '#d64a4a', leader = false) {
   const c = new Creature('mouse');
+  c.noIdleHop = true;
   const b = c.body;
   const fur = mat('#b9aeb4');
   const pink = mat('#f4a4b2');

@@ -45,6 +45,8 @@ button { font-family: inherit; }
   background: radial-gradient(circle at 50% 40%, #4a3f7a, #1e1a33); color: #f5e6c0; z-index: 50;
 }
 #loading p { letter-spacing: 0.1em; }
+.ld-bar { width: min(240px, 60vw); height: 8px; border-radius: 999px; background: rgba(245, 230, 192, 0.18); overflow: hidden; }
+.ld-bar i { display: block; height: 100%; width: 3%; border-radius: inherit; background: linear-gradient(90deg, #ffd36a, #f29a4a); transition: width 0.4s ease; }
 .loader-train { font-size: 48px; animation: chug 0.6s ease-in-out infinite alternate; }
 @keyframes chug { from { transform: translateY(0) rotate(-2deg); } to { transform: translateY(-6px) rotate(2deg); } }
 
@@ -294,6 +296,19 @@ body.cinematic #hud { opacity: 0; transition: opacity 0.6s; }
 .masu-val { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--navy); }
 .masu-btns { display: flex; gap: 4px; }
 .masu-btns .btn { padding: 5px 9px; font-size: 12px; }
+/* スマホ：升を横並びのまま小さく、ボタンは縦に */
+@media (max-width: 520px), (max-height: 700px) {
+  .masu-row { flex-wrap: nowrap; gap: 14px; margin: 10px 0 8px; }
+  .masu-btns { flex-direction: column; gap: 4px; width: 100%; }
+  .masu-btns .btn { padding: 6px 8px; }
+  .masu-box { width: 72px; height: 84px; }
+  .masu[data-k="b"] .masu-box { width: 60px; height: 54px; margin-top: 30px; }
+  .masup .plaque { padding: 8px 10px; font-size: 14px; }
+  .masup .flow { position: sticky; bottom: 0; }
+  .yg-grid { grid-template-columns: repeat(3, 64px); gap: 6px; margin: 10px 0 8px; padding: 10px; }
+  .yg-cell { width: 64px; height: 72px; }
+  .yg-lamp { width: 50px; height: 62px; font-size: 22px; }
+}
 
 /* 路線図 */
 .stage-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
@@ -360,6 +375,8 @@ body.cinematic #hud { opacity: 0; transition: opacity 0.6s; }
 /* ---------- スマホ ---------- */
 @media (max-width: 700px) {
   #quests { top: 66px; left: 8px; min-width: 0; font-size: 12px; padding: 8px 10px; max-width: 60vw; }
+  /* お知らせは目的パネルと重ならないよう、持ち物の上に出す */
+  #toasts { top: auto; bottom: calc(150px + env(safe-area-inset-bottom, 0px)); }
   .q-title { font-size: 12px; }
   #topbar { top: 8px; right: 8px; gap: 6px; }
   .hud-btn { width: 40px; height: 40px; font-size: 17px; }
@@ -375,3 +392,37 @@ body.cinematic #hud { opacity: 0; transition: opacity 0.6s; }
   .tt-time { width: 60px; font-size: 18px; }
   .timetable table { font-size: 15px; }
 }
+
+/* ---------- 旅のメモ ---------- */
+.hud-btn.new { position: relative; }
+.hud-btn.new::after { content: ""; position: absolute; top: 3px; right: 3px; width: 10px; height: 10px; border-radius: 50%; background: #e8553a; box-shadow: 0 0 0 2px #fff8e6; }
+.nt-tabs { display: flex; gap: 6px; justify-content: center; margin-bottom: 12px; }
+.nt-tab { border: 2px solid var(--line); background: #fff8e6; color: var(--ink-soft); border-radius: 999px; padding: 6px 16px; font: inherit; font-weight: 700; cursor: pointer; }
+.nt-tab.on { background: var(--navy); color: #fff8e6; border-color: var(--navy); }
+.nt-page { max-height: min(56vh, 460px); overflow: auto; padding: 2px; }
+.nt-card { background: #fffdf4; border: 2px dashed #d9c39a; border-radius: 12px; padding: 10px 14px; margin-bottom: 10px; text-align: left; }
+.nt-title { font-weight: 900; color: var(--navy); margin-bottom: 4px; }
+.nt-body { line-height: 1.7; font-size: 14px; }
+.nt-body b, .nt-body em { color: #c8541e; font-style: normal; font-weight: 900; }
+.nt-line { text-align: left; padding: 6px 4px; border-bottom: 1px dotted #e0cfae; font-size: 14px; line-height: 1.6; display: flex; flex-direction: column; gap: 2px; }
+.nt-line b { color: var(--c); font-size: 12px; }
+.nt-line.narr span { color: var(--ink-soft); }
+.nt-line em { color: #c8541e; font-style: normal; font-weight: 700; }
+
+/* ---------- 調べられる場所の名前（✨） ---------- */
+.hs-label { position: fixed; left: 0; top: 0; z-index: 25; pointer-events: none; white-space: nowrap; background: rgba(255, 248, 230, 0.94); color: var(--navy); border: 2px solid #e8c37a; border-radius: 999px; padding: 2px 10px; font-size: 12px; font-weight: 900; box-shadow: 0 3px 8px rgba(0,0,0,0.25); opacity: 0; transition: opacity 0.3s; }
+.hs-label.show { opacity: 1; }
+
+/* ---------- アイテム使用中の案内 ---------- */
+.use-banner { position: fixed; left: 50%; bottom: calc(104px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 12px); z-index: 30; display: flex; align-items: center; gap: 8px; background: rgba(43, 38, 66, 0.94); color: #fff8e6; border-radius: 999px; padding: 6px 8px 6px 10px; font-size: 14px; font-weight: 700; box-shadow: var(--shadow); opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; max-width: calc(100% - 24px); }
+.use-banner.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+.use-banner b { color: #ffd36a; }
+.ub-icon { width: 28px; height: 28px; flex: none; }
+.ub-icon svg { width: 100%; height: 100%; }
+.ub-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ub-cancel { flex: none; border: none; background: #fff8e6; color: var(--navy); border-radius: 999px; padding: 4px 10px; font: inherit; font-size: 12px; font-weight: 900; cursor: pointer; }
+@media (max-width: 700px) {
+  .use-banner { bottom: calc(80px + env(safe-area-inset-bottom, 0px)); font-size: 13px; }
+  .hs-label { font-size: 11px; padding: 1px 8px; }
+}
+@media (pointer: coarse) { #cursor-item { display: none; } }

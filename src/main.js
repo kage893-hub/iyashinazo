@@ -26,7 +26,15 @@ async function main() {
   } catch (e) { /* ignore */ }
 
   // セーブされているステージの箱庭を作る（無ければ はざま駅）
-  const saved0 = game.loadSave();
+  let saved0 = game.loadSave();
+  // クリアした駅のセーブ（出発後）なら、次の駅から再開する
+  if (saved0?.flags?.departed && saved0.cleared?.includes(saved0.stage)) {
+    const i = STAGES.findIndex((x) => x.id === saved0.stage);
+    const next = STAGES.slice(i + 1).find((x) => x.Stage);
+    game.state = saved0;
+    game.resetState(next ? next.id : saved0.stage);
+    saved0 = game.loadSave();
+  }
   let autostart = null;
   try { autostart = sessionStorage.getItem('hoshimawari-autostart'); sessionStorage.removeItem('hoshimawari-autostart'); } catch (e) { /* ignore */ }
   const stageId = autostart || saved0?.stage || 'station';
@@ -84,11 +92,18 @@ async function main() {
   title.querySelector('[data-act="new"]').onclick = async () => {
     game.audio.init();
     game.audio.play('click');
+    if (entry.id !== 'station') {
+      // いまの駅を最初からか、はざま駅からかを選ぶ
+      const note = game.hasSave() ? '<br><small>（いまの進行は消えます）</small>' : '';
+      const i = await game.ui.choose(`どこからはじめますか？${note}`, [`「${entry.name}」を最初から`, 'はざま駅（STAGE 1）から', 'やめる']);
+      if (i === 0) startStage();
+      else if (i === 1) game.goToStage('station');
+      return;
+    }
     if (game.hasSave()) {
-      const i = await game.ui.choose('セーブデータがあります。最初の駅からはじめますか？', ['はじめから', 'やめる']);
+      const i = await game.ui.choose('セーブデータがあります。最初からはじめますか？<br><small>（いまの進行は消えます）</small>', ['はじめから', 'やめる']);
       if (i !== 0) return;
     }
-    if (entry.id !== 'station') { game.goToStage('station'); return; }
     startStage();
   };
 
@@ -119,8 +134,9 @@ async function main() {
     game.stage.applyState(true);
     await game.ui.fade(1, 0.5);
     const portrait = innerWidth < innerHeight;
-    game.camera.position.set(portrait ? 16 : 10, portrait ? 26 : 16, portrait ? 40 : 26);
-    c.target.set(-1, 1, -0.5);
+    // スマホ縦は真上寄りから見下ろして、箱庭を画面いっぱいに
+    if (portrait) { game.camera.position.set(10, 37, 29); c.target.set(0, 0.5, 0); }
+    else { game.camera.position.set(10, 16, 26); c.target.set(-1, 1, -0.5); }
     enterGame();
     await game.ui.fade(0, 0.8);
     game.ui.toast('つづきから再開しました', 2000);
@@ -162,7 +178,12 @@ async function main() {
 
   // HUD
   $('#btn-hint').onclick = () => { game.audio.play('click'); game.hint(); };
-  $('#btn-reveal').onclick = () => { game.stage.revealHotspots(); };
+  $('#btn-notes').onclick = () => { game.audio.play('click'); showNotes(game); };
+  $('#btn-reveal').onclick = () => {
+    if (game.cinematic) return;
+    game.stage.revealHotspots();
+    game.showLabels();
+  };
   $('#btn-roof').onclick = () => {
     game.audio.play('click');
     game.stage.manualRoof = !game.stage.manualRoof;
@@ -185,7 +206,7 @@ async function main() {
     mk('カメラを全体にもどす', () => {
       panel.close();
       const portrait = innerWidth < innerHeight;
-      game.moveCamera(portrait ? new THREE.Vector3(18, 32, 48) : new THREE.Vector3(12, 20, 32), new THREE.Vector3(0, 0.5, 0), 1.2);
+      game.moveCamera(portrait ? new THREE.Vector3(10, 37, 29) : new THREE.Vector3(12, 20, 32), new THREE.Vector3(0, 0.5, 0), 1.2);
     });
     mk('タイトルにもどる', () => { game.save(); location.reload(); });
     mk('この駅を最初からやりなおす', async () => {
@@ -202,8 +223,37 @@ async function main() {
       if (game.ui.panelOpen) game.ui.panels[game.ui.panels.length - 1].close();
       else if (game.selectedItem) game.selectItem(null);
     }
+    if ((e.key === 'm' || e.key === 'M') && !game.ui.dialogueActive && !game.ui.panelOpen) showNotes(game);
     if ((e.key === 'h' || e.key === 'H') && !game.ui.dialogueActive && !game.ui.panelOpen) game.hint();
   });
+}
+
+/** 旅のメモ帳：手がかり と 会話のきろく */
+function showNotes(game) {
+  if (game.cinematic || game.ui.panelOpen) return;
+  $('#btn-notes').classList.remove('new');
+  const esc = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  const fmt = (t) => esc(t).replace(/【([^】]*)】?/g, '<em>$1</em>').replace(/\n/g, '<br>');
+  const notes = (game.state.notes || []).filter((n) => n.stage === game.state.stage).slice().reverse();
+  const body = el('div', 'notes');
+  body.innerHTML = `
+    <div class="nt-tabs"><button class="nt-tab on" data-t="clue">手がかり</button><button class="nt-tab" data-t="log">会話のきろく</button></div>
+    <div class="nt-page" data-p="clue">${notes.length
+      ? notes.map((n) => `<div class="nt-card"><div class="nt-title">${n.title}</div><div class="nt-body">${n.html}</div></div>`).join('')
+      : '<p class="panel-note">まだ何も書きとめていない。<br>手がかりを見つけると、ここに自動で書きとめられます。</p>'}</div>
+    <div class="nt-page hidden" data-p="log">${game.ui.log.length
+      ? game.ui.log.map((l) => `<div class="nt-line ${l.name ? '' : 'narr'}">${l.name ? `<b style="--c:${l.color || '#6b4a2e'}">${l.icon} ${l.name}</b>` : ''}<span>${fmt(l.text)}</span></div>`).join('')
+      : '<p class="panel-note">まだ会話のきろくはありません。</p>'}</div>`;
+  body.querySelectorAll('.nt-tab').forEach((b) => {
+    b.onclick = () => {
+      game.audio.play('click');
+      body.querySelectorAll('.nt-tab').forEach((x) => x.classList.toggle('on', x === b));
+      body.querySelectorAll('.nt-page').forEach((p) => p.classList.toggle('hidden', p.dataset.p !== b.dataset.t));
+      const log = body.querySelector('[data-p="log"]');
+      if (b.dataset.t === 'log') log.scrollTop = log.scrollHeight;
+    };
+  });
+  game.ui.openPanel({ title: '📖 旅のメモ', body, cls: 'wide notes-panel' });
 }
 
 function showHowTo(game) {
@@ -218,7 +268,8 @@ function showHowTo(game) {
         <div><b>👆 クリック / タップ</b>：調べる・話しかける</div>
         <div><b>🎒 持ち物</b>：アイテムを選んでから、使いたい場所をクリック（もう一度押すと説明）</div>
         <div><b>🏠</b>：建物の屋根を外す（近づくと自動でも外れます）</div>
-        <div><b>✨</b>：調べられる場所を光らせる</div>
+        <div><b>✨</b>：調べられる場所を光らせて、名前を出す</div>
+        <div><b>📖</b>：旅のメモ（見つけた手がかりと、会話のきろく）</div>
         <div><b>💡</b>：ヒント（押すたびに少しずつ詳しく）</div>
       </div>
       <p class="panel-note">進行は自動でセーブされます。</p>`,

@@ -64,7 +64,7 @@ export class StationStage {
     const sun = (this.sun = new THREE.DirectionalLight('#ffd2a0', 2.4));
     sun.position.set(-16, 22, 14);
     sun.castShadow = true;
-    const sm = this.g.low ? 1024 : window.innerWidth > 900 ? 4096 : 2048;
+    const sm = this.g.shadowSize();
     sun.shadow.mapSize.set(sm, sm);
     const sc = sun.shadow.camera;
     sc.left = -19; sc.right = 19; sc.top = 16; sc.bottom = -16; sc.near = 5; sc.far = 70;
@@ -97,6 +97,7 @@ export class StationStage {
     this.train = new Train(scene, this.path);
 
     // 駅の箱庭
+    await this.g.loadingStep(0.3, '町並みを組み立てています…');
     const R = (this.R = buildStationDiorama(scene));
     R.lampGlass = R.lampGlass.map((e) => (e.isMaterial ? { material: e, base: e.emissiveIntensity } : e));
     R.lights.forEach((L) => { L.userData.base = L.intensity; });
@@ -113,8 +114,10 @@ export class StationStage {
     this.birds = new Birds(scene, 5);
 
     // 住人たち
+    await this.g.loadingStep(0.6, '住人たちを呼んでいます…');
     this._placeCreatures(scene);
     this._registerInteractables();
+    await this.g.loadingStep(0.75, '仕上げをしています…');
     this._optimize();
 
     this.g.ui.onLine = (who) => {
@@ -261,10 +264,10 @@ export class StationStage {
     reg('tower', R.waterTower, '給水塔', () => this.clickTower());
     reg('signalBox', R.signalBox, '信号所', () => this.clickSignalBox());
     reg('signal', R.signal, '信号機', () => this.clickSignal());
-    reg('windows', R.roundWindows, '三つの丸窓', () => this.say([
+    reg('windows', R.roundWindows, '三つの丸窓', () => (this.g.note('st-windows', '三つの丸窓', '駅舎の正面、屋根の下の丸窓は、左から <b>黄・青・赤</b>。'), this.say([
       '駅舎の正面、屋根の下にならぶ三つの丸窓。',
       '左から【黄色】、【青】、【赤】のステンドグラスがはまっている。',
-    ]));
+    ])));
     reg('sign', R.stationSign, '駅名標', () => this.showSign());
     reg('loco', this.train.loco.g, '機関車', () => this.clickLoco());
     reg('tender', this.train.tender.g, '炭水車', () => this.say(this.g.flags.water
@@ -578,16 +581,21 @@ export class StationStage {
         { who: 'cat', text: '『信号所の鍵』ですニャ。ホームの右のはしにある小屋ですニャ。' },
         { who: 'cat', text: 'レバーの倒し方は……たしか、小屋の中に書いてありましたニャ。' },
       ]);
+      g.note('st-signalKey', '信号所の鍵', '駅長からあずかった。信号所はホームの右のはしの小屋。');
       g.refreshQuests();
       return;
     }
     const lines = [];
     if (f.signalKeyGiven && !f.signal) {
       lines.push({ who: 'cat', text: '信号所のレバーは、出発の早い列車から順に倒すきまりですニャ。' });
+      g.note('st-levers', '信号所のレバー', 'レバーは <b>出発の早い列車の順</b> に倒す。（時刻表を思い出そう）');
       lines.push({ who: 'cat', text: '時刻表は待合室の奥の壁にありますニャ。' });
     } else if (!f.fire || !f.water) {
       lines.push({ who: 'cat', text: '機関車のことは、カエルの機関士にきいてくださいニャ。' });
-      if (!f.ticket) lines.push({ who: 'cat', text: 'それと切符売り場のフクロウさんは……昼間はぐっすりなのですニャ。“夜の鐘”が鳴れば、起きるのですが……' });
+      if (!f.ticket) {
+        lines.push({ who: 'cat', text: 'それと切符売り場のフクロウさんは……昼間はぐっすりなのですニャ。“夜の鐘”が鳴れば、起きるのですが……' });
+        g.note('st-owl', 'フクロウの切符係', '昼間はぐっすり。<b>“夜の鐘”</b> が鳴れば起きるらしい。');
+      }
     } else {
       lines.push({ who: 'cat', text: 'もうすぐ発車ですニャ。わくわくしますニャ。' });
     }
@@ -811,6 +819,7 @@ export class StationStage {
         { who: 'mouse', text: 'かくれているのは3びき。ヒントはね……' },
         { who: 'mouse', text: '【にもつの山】、【大きな木のうろ】、それから【赤くて手紙を食べるもの】！' },
       ]);
+      g.note('st-mice', 'ネズミのかくれんぼ', 'かくれているのは3びき。<br>ヒント：<b>にもつの山</b> ／ <b>大きな木のうろ</b> ／ <b>赤くて手紙を食べるもの</b>');
       g.flag('miceTalked');
       g.refreshQuests();
       if (n > 0) await this.say([{ who: 'mouse', text: `あれっ、もう${n}ぴき見つけてるの？ すごいや！` }]);
@@ -903,6 +912,7 @@ export class StationStage {
       '壁掛け時計は、12時を指したまま止まっている。',
       '文字盤の下に小さな鍵穴がある。ゼンマイが切れているようだ。',
     ]);
+    g.note('st-clock', '待合室の時計', '12時で止まっている。文字盤の下に <b>ゼンマイの鍵穴</b>。');
     f.clockSeen = true;
   }
 
@@ -971,6 +981,7 @@ export class StationStage {
   showTimetable() {
     this.focus(this.R.timetable, 16);
     this.g.ui.openPanel({ title: '時刻表', body: timetableHTML(), cls: 'wide' });
+    this.g.note('st-timetable', '時刻表', '3:00 きりのもり ／ 5:00 かえるぬま ／ <b>?:00 てんくうのまち（ほしまわり号）</b> ／ 9:00 つきのうら<br>📌 ほしまわり号は <b>かえるぬま行きの3時間あと</b> に出る。');
     this.g.flag('timetableSeen');
     return this._waitPanel();
   }
@@ -1056,6 +1067,7 @@ export class StationStage {
     this.focus(R.shed, 16);
     if (!f.shedOpen) {
       await this.say(['小さな倉庫。扉には、三つの色の輪がついた錠前がかかっている。']);
+      g.note('st-lock', '倉庫の錠前', '合言葉は「駅の顔」にある <b>三つの丸窓の色</b>。左から順に。');
       return new Promise((resolve) => {
         let pending = false;
         lockPanel(g.ui, g.audio, {
@@ -1188,6 +1200,7 @@ export class StationStage {
 
   openLevers() {
     const g = this.g;
+    g.note('st-levers', '信号所のレバー', 'レバーは <b>出発の早い列車の順</b> に倒す。（時刻表を思い出そう）');
     return new Promise((resolve) => {
       let pending = false;
       leverPanel(g.ui, g.audio, {

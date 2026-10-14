@@ -28,6 +28,7 @@ export class UI {
     this.toastsEl = $('#toasts');
     this.fadeEl = $('#fade');
     this.panels = [];
+    this.log = []; // 会話のきろく（このページを開いているあいだだけ）
     this.questsCollapsed = window.innerWidth < 700;
     this.questsEl.addEventListener('pointerdown', (e) => {
       e.stopPropagation();
@@ -99,6 +100,10 @@ export class UI {
       this.dlgName.style.display = 'none';
     }
     if (this.onLine) this.onLine(line.who);
+    if (line.who !== 'hint') {
+      this.log.push({ name: sp ? sp.name : '', icon: sp?.icon || '', color: sp?.color, text: line.text });
+      if (this.log.length > 120) this.log.shift();
+    }
     this._full = line.text;
     this._pos = 0;
     this._typing = true;
@@ -265,6 +270,19 @@ export class UI {
   closeAllPanels() { [...this.panels].forEach((p) => p.close()); }
 
   // ---------------- トースト ----------------
+  /** アイテムを選んでいるあいだ、持ち物の上に出しておく案内 */
+  setUseBanner(def, onCancel) {
+    if (!this.useBanner) {
+      this.useBanner = el('div', 'use-banner');
+      document.body.appendChild(this.useBanner);
+    }
+    const b = this.useBanner;
+    if (!def) { b.classList.remove('show'); return; }
+    b.innerHTML = `<span class="ub-icon">${def.icon}</span><span class="ub-text"><b>${def.name}</b> をどこに使う？</span><button class="ub-cancel">やめる</button>`;
+    b.querySelector('.ub-cancel').onclick = (e) => { e.stopPropagation(); this.audio.play('click'); onCancel(); };
+    b.classList.add('show');
+  }
+
   toast(text, ms = 2200) {
     const t = el('div', 'toast', text);
     this.toastsEl.appendChild(t);

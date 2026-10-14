@@ -18,6 +18,11 @@ export function mergeStatic(root) {
     for (const c of o.children) {
       if (c.userData.dynamic || (c.userData.interactId && c !== root)) continue;
       if (c.isMesh && !c.isInstancedMesh && !c.isSkinnedMesh && c.visible && !c.userData.keep && c.children.length === 0 && !Array.isArray(c.material)) {
+        // ごく小さな部品は影を落としても見えないので、影の描画から外す
+        if (c.castShadow) {
+          if (!c.geometry.boundingSphere) c.geometry.computeBoundingSphere();
+          if (c.geometry.boundingSphere.radius * c.matrixWorld.getMaxScaleOnAxis() < 0.09) c.castShadow = false;
+        }
         const key = [c.material.uuid, c.castShadow, c.receiveShadow, !!c.userData.noPick, !!c.userData.roof, c.renderOrder].join('|');
         if (!buckets.has(key)) buckets.set(key, []);
         buckets.get(key).push(c);
