@@ -10,6 +10,8 @@ import { Tweens, Ease } from './tween.js';
 import { UI } from './ui.js';
 import { AudioSys } from './audio.js';
 import { ITEMS } from '../data/items.js';
+import { NavGrid } from './nav.js';
+import { Player } from '../lib/player.js';
 import { clamp } from '../lib/util.js';
 
 const SAVE_KEY = 'hoshimawari-save-v1';
@@ -85,7 +87,7 @@ export class Game {
     const rt = new THREE.WebGLRenderTarget(size.x, size.y, { type: THREE.HalfFloatType, samples: this.low ? 0 : 4 });
     const comp = (this.composer = new EffectComposer(r, rt));
     comp.addPass(new RenderPass(this.scene, this.camera));
-    this.bloom = new UnrealBloomPass(new THREE.Vector2(size.x / 2, size.y / 2), 0.55, 0.55, 0.82);
+    this.bloom = new UnrealBloomPass(new THREE.Vector2(size.x / 2, size.y / 2), 0.42, 0.7, 0.9);
     comp.addPass(this.bloom);
     this.tiltH = new ShaderPass(TiltShiftShader);
     this.tiltV = new ShaderPass(TiltShiftShader);
@@ -141,6 +143,12 @@ export class Game {
   }
 
   _pick(e) {
+    const h = this._pickHit(e);
+    return h ? h.id : null;
+  }
+
+  /** クリックした物（id）と、当たった位置 */
+  _pickHit(e) {
     const rect = this.renderer.domElement.getBoundingClientRect();
     this.pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
     this.pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
@@ -156,7 +164,7 @@ export class Game {
       if (!vis) continue;
       let id;
       for (let p = o; p; p = p.parent) if (p.userData.interactId) { id = p.userData.interactId; break; }
-      return id || null; // 最初に当たった不透明物で判定（壁越しクリック防止）
+      return { id: id || null, point: h.point }; // 最初に当たった不透明物で判定（壁越しクリック防止）
     }
     return null;
   }
@@ -195,9 +203,12 @@ export class Game {
   async _onClick(e) {
     if (this.ui.dialogueActive) { this.ui.advance(); return; }
     if (!this.playing || this.busy || this.cinematic || this.ui.panelOpen) return;
-    const id = this._pick(e);
+    const hit = this._pickHit(e);
+    const id = hit?.id;
     if (!id) {
       if (this.selectedItem) this.selectItem(null);
+      // 地面をタップしたら、そこへ歩く
+      else if (hit && this.player?.root.visible) this.player.walkTo(hit.point);
       return;
     }
     const it = this.interactables.get(id);
@@ -207,6 +218,8 @@ export class Game {
     this.ui.hideTooltip();
     this.busy = true;
     try {
+      // まず主人公が近くまで歩いていく
+      if (this.player?.root.visible && it.walk !== false) await this.player.approach(it.object);
       if (this.selectedItem) {
         const item = this.selectedItem;
         this.selectItem(null);
@@ -225,11 +238,11 @@ export class Game {
   // インタラクト対象の登録
   // =========================================================
   /** object 以下のメッシュをクリック対象にする */
-  addInteractable(id, object, { name, onClick, focus = true }) {
+  addInteractable(id, object, { name, onClick, focus = true, walk = true }) {
     object.userData.interactId = id;
     const meshes = [];
     object.traverse((m) => { if (m.isMesh) meshes.push(m); });
-    this.interactables.set(id, { id, object, name, onClick, meshes, focus, enabled: true });
+    this.interactables.set(id, { id, object, name, onClick, meshes, focus, walk, enabled: true });
   }
 
   /** メッシュ結合のあとにハイライト対象を取り直す */
@@ -455,7 +468,25 @@ export class Game {
     this.stage = new StageClass(this);
     await this.stage.build();
     this.buildPickList();
+    this.nav = new NavGrid();
+    this.nav.build(this.renderer, this.scene);
+    this.player = new Player(this.scene, this.nav);
+    this.placePlayer();
     this.stage.applyState(true);
+  }
+
+  /** ステージの出発地点に主人公を置く */
+  placePlayer() {
+    const sp = this.stage.spawn;
+    if (sp) this.player.place(sp.pos, sp.yaw ?? 0);
+  }
+
+  /** 箱庭の形が変わったら、歩ける場所を作りなおす */
+  rebuildNav() {
+    const vis = this.player.root.visible;
+    this.player.root.visible = false;
+    this.nav.build(this.renderer, this.scene);
+    this.player.root.visible = vis;
   }
 
   start() {
@@ -488,6 +519,21 @@ export class Game {
     if (this.playing && !this.cinematic) this.state.elapsed += dt;
     this.tweens.update(dt);
     if (this.stage) this.stage.update(dt, this.time);
+    if (this.player) {
+      this.player.update(dt, this.time);
+      // 歩いて画面の外へ出ていかないよう、カメラがゆっくりついていく
+      if (this.player.path.length && !this.cinematic) {
+        const p = this.player.position, t0 = this.controls.target;
+        const dx = p.x - t0.x, dz = p.z - t0.z;
+        const d = Math.hypot(dx, dz);
+        if (d > 4.5) {
+          const k = Math.min(1, dt * 1.5) * (d - 4.5) / d;
+          const mv = new THREE.Vector3(dx * k, 0, dz * k);
+          t0.add(mv);
+          this.camera.position.add(mv);
+        }
+      }
+    }
 
     // パンの範囲制限
     const t = this.controls.target;

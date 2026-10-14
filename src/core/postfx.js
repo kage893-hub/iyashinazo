@@ -5,9 +5,9 @@ export const TiltShiftShader = {
   uniforms: {
     tDiffuse: { value: null },
     delta: { value: new THREE.Vector2(1 / 1024, 0) },
-    focus: { value: 0.52 },
-    range: { value: 0.3 },
-    amount: { value: 2.2 },
+    focus: { value: 0.5 },
+    range: { value: 0.48 },
+    amount: { value: 0.9 },
   },
   vertexShader: /* glsl */ `
     varying vec2 vUv;
@@ -61,8 +61,6 @@ export const GradeShader = {
       float v = 1.0 - dot(q, q) * vignette * 2.2;
       c.rgb *= clamp(v, 0.0, 1.0);
       c.rgb += vec3(warmth, warmth * 0.4, -warmth * 0.5);
-      // ごく薄いフィルムグレイン
-      c.rgb += (hash(vUv * 1000.0 + time) - 0.5) * 0.018;
       gl_FragColor = c;
     }
   `,

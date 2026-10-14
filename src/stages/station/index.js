@@ -38,6 +38,8 @@ export class StationStage {
     this.title = 'はざま駅';
     this.questTitle = '🚂 ほしまわり号の発車準備';
     this.hasRoof = true;
+    // 主人公の出発地点（ホームの駅長のとなり）
+    this.spawn = { pos: new V(0.8, 0.75, -2.9), yaw: -Math.PI / 2 };
     this.night = 0;
     this.nightTarget = 0;
     this.roofT = 0;
@@ -353,7 +355,8 @@ export class StationStage {
     if (this.pendulumOn) R.pendulum.rotation.z = Math.sin(t * 3.2) * 0.22;
 
     // ストーブの炎のゆらぎ
-    const flick = 0.85 + Math.sin(t * 13) * 0.08 + Math.sin(t * 7.3) * 0.07;
+    // ゆっくり揺らぐ炎（速い明滅はちらつきに見えるので避ける）
+    const flick = 0.94 + Math.sin(t * 2.1) * 0.04 + Math.sin(t * 3.7) * 0.02;
     R.stoveLight.intensity = (this.g.flags.stoneTaken ? 0.6 : 2.5) * flick;
 
     // 寝ているフクロウの Zzz
@@ -1291,6 +1294,7 @@ export class StationStage {
   // =========================================================
   async opening() {
     const g = this.g;
+    g.placePlayer();
     g.cinematic = true;
     g.camera.position.set(30, 30, 46);
     g.controls.target.set(2, 1, -2);
@@ -1306,6 +1310,7 @@ export class StationStage {
     await g.moveCamera(portrait ? new V(5, 12, 19) : new V(4, 9, 14), new V(-1.2, 1.5, -2.4), 2.6);
     g.cinematic = false;
     await this.talkCat();
+    g.ui.toast('地面をタップすると、そこへ歩いていきます', 3200);
   }
 
   async departure() {
@@ -1315,6 +1320,7 @@ export class StationStage {
       { who: 'cat', text: 'ほしまわり号、天空の街ゆき。まもなく発車いたしますニャ！' },
       'あなたは客車に乗りこみ、窓ぎわの席にすわった。',
     ]);
+    g.player.root.visible = false;
     g.flag('departed');
     g.refreshQuests();
     g.cinematic = true;
