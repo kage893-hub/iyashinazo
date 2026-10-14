@@ -13,6 +13,7 @@ import { cobbleTex, stripeTex, plasterTex, clockFace2Tex, skySignTex, rainbowCol
 export const TRACK_Z = -6.0;
 const FLOOR = 0.75;
 export const BELL_COLORS = ['#e8443a', '#f4f6ff', '#f2c33a', '#3a7ee8', '#4ab06a'];
+export const BELL_SYMS = ['☀', '☁', '★', '☾', '❀'];
 
 /** 白い塔の家（青いとんがり屋根） */
 function towerHouse(parent, x, z, { r = 1.0, h = 2.6, roof = '#4a72c8', ry = 0, vane = true, seed = 1 } = {}) {
@@ -194,8 +195,11 @@ export function buildSkyDiorama(scene) {
     add(bg, new THREE.CylinderGeometry(0.1 * s, 0.2 * s, 0.32 * s, 16, 1, true), mat('#e2bf62', { metalness: 0.85, roughness: 0.25, side: THREE.DoubleSide }), 0, -0.28, 0);
     add(bg, G.sphere(0.1 * s, 12, 6), mat('#e2bf62', { metalness: 0.85, roughness: 0.25 }), 0, -0.13, 0, { scale: [1, 0.6, 1] });
     add(bg, G.sphere(0.045, 8, 6), mat('#3a3a40'), 0, -0.44 * s, 0, { cast: false });
-    // 色のリボン
-    add(bg, G.box(0.06, 0.18, 0.02), mat(BELL_COLORS[i]), 0, -0.02, 0.06, { cast: false });
+    // 色のリボンと、記号の札（宝箱の鈴との対応はここで分かる）
+    add(bg, G.box(0.1, 0.3, 0.02), mat(BELL_COLORS[i]), 0, -0.05, 0.1, { cast: false });
+    add(bg, G.box(0.42, 0.42, 0.03), new THREE.MeshStandardMaterial({ map: signTex(BELL_SYMS[i], { w: 96, h: 96, bg: '#fff8e6', fg: '#3a3048', border: '#c9a77a', size: 64 }) }), 0, -0.78, 0.06, { cast: false });
+    // 札の下にたれるリボン（色がはっきり見えるように）
+    for (const sx of [-0.06, 0.06]) add(bg, G.box(0.09, 0.4, 0.02), mat(BELL_COLORS[i], { emissive: BELL_COLORS[i], emissiveIntensity: 0.15 }), sx, -1.18, 0.07, { rot: [0, 0, sx * 1.6], cast: false });
     bg.userData.dynamic = true;
     R.bells.push(bg);
   }

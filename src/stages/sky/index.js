@@ -216,7 +216,7 @@ export class SkyStage {
     reg('balloon', R.balloon, '気球', () => this.talkMomonga());
     reg('winch', R.winch, '巻き上げ機', () => this.clickWinch());
     reg('fountain', R.fountain, '噴水', () => this.clickFountain());
-    reg('tower', R.tower, '時計台', () => this.say(['町の時計台。てっぺんの鐘楼に、5つの鐘がならんでいる。', '鐘には【赤・白・黄・青・緑】のリボンが結ばれている。']));
+    reg('tower', R.tower, '時計台', () => this.clickTower());
     reg('chest', R.chest, '鈴の宝箱', () => this.clickChest());
     reg('tailor', R.tailor, '仕立て屋', () => this.talkAlpaca());
     reg('post', R.post, '郵便局', () => this.talkSwallow());
@@ -443,7 +443,7 @@ export class SkyStage {
         else if (!f.swallowTalked) steps.push(H('swallow2', 'カメのおじいさんは孫からの手紙を待っている。郵便局のツバメに聞いてみよう。'));
         else steps.push(H('letter2', '飛ばされた手紙は、町の東のほう……', '右手前の『バラのアーチ』を調べよう。'));
       } else if (!f.chestOpen) {
-        steps.push(H('chest', '時計台のそばの宝箱の鈴を「そらのうた」の順に鳴らそう。持ち物の『孫からの手紙』を2回押すと読み返せる。', '☾(ソ) → ★(ミ) → ☁(レ) → ☀(ド) → ☁(レ) → ★(ミ) の順だ。'));
+        steps.push(H('chest', '手紙の「そらのうた」は記号、宝箱の鈴は色。時計台の鐘の『記号の札』と『リボンの色』を見くらべよう。持ち物の『孫からの手紙』を2回押すと読み返せる。', '☾＝青、★＝黄、☁＝白、☀＝赤。鳴らす順は 青 → 黄 → 白 → 赤 → 白 → 黄。'));
       }
     }
     // 風
@@ -473,6 +473,18 @@ export class SkyStage {
   // =========================================================
   // 共通
   // =========================================================
+  async clickTower() {
+    const g = this.g;
+    // 鐘楼を見上げる（札とリボンが読める距離まで寄る）
+    g.focusOn(new V(-9.6, 7.7, 5.5), { dist: 9, duration: 0.9, polar: 1.2, theta: 0.15, frameHigh: false });
+    await this.say([
+      '町の時計台。てっぺんの鐘楼に、5つの鐘がならんでいる。',
+      'それぞれの鐘に、記号の札と色のリボンがついている。',
+      '【☀ に赤】、【☁ に白】、【★ に黄】、【☾ に青】、【❀ に緑】。',
+    ]);
+    g.note('sk-tower', '時計台の鐘', '記号の札とリボンの色：<b>☀＝赤</b> ／ <b>☁＝白</b> ／ <b>★＝黄</b> ／ <b>☾＝青</b> ／ <b>❀＝緑</b>');
+  }
+
   /** 孫からの手紙は 2回押すと読める */
   inspectItem(id) {
     if (id !== 'letterOpen') return false;
@@ -638,7 +650,7 @@ export class SkyStage {
     if (f.chestOpen) {
       return this.say([{ who: 'tortoise', text: f.gearFixed ? 'ふぉっふぉっ、風車の音がもうすぐ聞けそうじゃのう。' : '歯車は、大風車の正面の小窓にはめるんじゃよ。' }]);
     }
-    if (f.letterRead) return this.say([{ who: 'tortoise', text: '宝箱の鈴を、孫の手紙の「そらのうた」の順に鳴らすのじゃ。' }]);
+    if (f.letterRead) return this.say([{ who: 'tortoise', text: '手紙の記号を、時計台の鐘の札で色におきかえて、宝箱の鈴を鳴らすのじゃ。' }]);
     if (!f.tortoiseTalked) {
       await this.say([
         { who: 'tortoise', text: 'ふぉっふぉっ……わしは時計台の番人じゃ。' },
@@ -667,7 +679,8 @@ export class SkyStage {
     g.note('sk-song', 'そらのうた', `宝箱の鈴を、この順に鳴らす。${songHTML()}`);
     g.flag('tortoiseTalked');
     await this.say([
-      { who: 'tortoise', text: 'そうじゃ、そうじゃ、「そらのうた」じゃ！ 鈴の色は、時計台の鐘のリボンと同じじゃよ。' },
+      { who: 'tortoise', text: 'そうじゃ、そうじゃ、「そらのうた」じゃ！ ……じゃが宝箱の鈴には記号がなくて、色のリボンしかついとらん。' },
+      { who: 'tortoise', text: '時計台の鐘には、記号の札と色のリボンが両方ついとる。見くらべてみるとよいぞ。' },
       { who: 'tortoise', text: '手紙はおぬしが持っておいておくれ。宝箱の鈴を、その順に鳴らすのじゃ。' },
     ]);
   }

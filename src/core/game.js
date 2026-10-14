@@ -795,7 +795,7 @@ export class Game {
     const t = this.controls.target;
     const b = this.bounds;
     if (!this.cinematic) {
-      const cx = clamp(t.x, b.minX, b.maxX), cz = clamp(t.z, b.minZ, b.maxZ), cy = clamp(t.y, 0, 4);
+      const cx = clamp(t.x, b.minX, b.maxX), cz = clamp(t.z, b.minZ, b.maxZ), cy = clamp(t.y, 0, 9);
       if (cx !== t.x || cz !== t.z || cy !== t.y) {
         const d = new THREE.Vector3(cx - t.x, cy - t.y, cz - t.z);
         t.add(d);

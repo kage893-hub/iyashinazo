@@ -16,11 +16,12 @@ const hz = (m) => 440 * Math.pow(2, (m - 69) / 12);
 
 /** そらのうた（メモ用） */
 export function songHTML() {
-  return `<div class="letter-song">${SONG.map((i) => `<span class="ln" style="--c:${BELLS[i].color}">${BELLS[i].sym}</span>`).join('')}</div>`;
+  return `<div class="letter-song">${SONG.map((i) => `<span class="ln">${BELLS[i].sym}</span>`).join('')}</div>`;
 }
 
 export function letterHTML() {
-  const notes = SONG.map((i) => `<span class="ln" style="--c:${BELLS[i].color}">${BELLS[i].sym}</span>`).join('');
+  // 手紙には記号だけ（どの鈴かは、時計台の鐘の札とリボンで調べる）
+  const notes = SONG.map((i) => `<span class="ln">${BELLS[i].sym}</span>`).join('');
   return `
   <div class="letter">
     <p>おじいちゃんへ</p>
@@ -44,13 +45,14 @@ export function bellPanel(ui, audio, { onPlay, onSolved }) {
   const paintSeq = () => {
     seqEl.innerHTML = Array.from({ length: SONG.length }, (_, i) => {
       const b = seq[i] !== undefined ? BELLS[seq[i]] : null;
-      return `<span class="bs ${b ? 'on' : ''}" style="--c:${b ? b.color : '#ddd'}">${b ? b.sym : '・'}</span>`;
+      return `<span class="bs ${b ? 'on' : ''}" style="--c:${b ? b.color : '#ddd'}">${b ? '' : '・'}</span>`;
     }).join('');
   };
   paintSeq();
   const wrap = body.querySelector('.bells');
   BELLS.forEach((b, i) => {
-    const btn = el('button', 'bellbtn', `<span class="bb-bell" style="--c:${b.color}">${b.sym}</span><span class="bb-name">${b.name}</span>`);
+    // 宝箱の鈴には記号がなく、色のリボンだけ
+    const btn = el('button', 'bellbtn', `<span class="bb-bell" style="--c:${b.color}"></span><span class="bb-name">${b.name}</span>`);
     btn.onclick = () => {
       if (done) return;
       audio.bellTone(hz(b.midi), { dur: 1.6, gain: 0.12, partials: [1, 2.0, 3.0, 4.2] });

@@ -238,7 +238,7 @@ body.cinematic #hud { opacity: 0; transition: opacity 0.6s; }
 .letter { background: #fbf6ea; border: 2px solid #d8c8a0; border-radius: 6px; padding: 18px 22px; line-height: 1.9; box-shadow: inset 0 0 30px rgba(200,170,120,0.25); font-size: 15px; }
 .letter p { margin: 0 0 8px; }
 .letter-song { display: flex; justify-content: center; gap: 10px; margin: 14px 0; }
-.ln { width: 42px; height: 42px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 22px; background: var(--c); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.5); border: 3px solid rgba(0,0,0,0.15); }
+.ln { width: 42px; height: 42px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 24px; background: #fffaf0; color: #3a3048; border: 2px solid #c9a77a; }
 .letter-sign { text-align: right; font-size: 13px; color: var(--ink-soft); }
 
 /* 鈴の宝箱 */
@@ -248,7 +248,8 @@ body.cinematic #hud { opacity: 0; transition: opacity 0.6s; }
 .bs.on { background: var(--c); border: 2px solid rgba(0,0,0,0.2); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
 .bells { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
 .bellbtn { width: 74px; padding: 8px 4px; border-radius: 14px; border: 2px solid var(--line); background: #fffaf0; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; font: inherit; }
-.bb-bell { width: 46px; height: 46px; border-radius: 50% 50% 40% 40%; background: radial-gradient(circle at 35% 30%, #fff8d0, #e2bf62 60%, #a8802a); display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--c); text-shadow: 0 0 2px #000, 0 0 2px #000; border-bottom: 5px solid var(--c); }
+.bb-bell { position: relative; width: 46px; height: 46px; border-radius: 50% 50% 40% 40%; background: radial-gradient(circle at 35% 30%, #fff8d0, #e2bf62 60%, #a8802a); display: flex; align-items: center; justify-content: center; border-bottom: 5px solid var(--c); }
+.bb-bell::after { content: ""; position: absolute; top: -6px; left: 50%; width: 12px; height: 20px; margin-left: -6px; background: var(--c); border-radius: 2px; box-shadow: 0 1px 2px rgba(0,0,0,0.3); }
 .bb-name { font-weight: 900; font-size: 13px; }
 .bellbtn.ring .bb-bell { animation: ring 0.6s; }
 @keyframes ring { 0%,100% { transform: rotate(0); } 25% { transform: rotate(-18deg); } 50% { transform: rotate(14deg); } 75% { transform: rotate(-8deg); } }
