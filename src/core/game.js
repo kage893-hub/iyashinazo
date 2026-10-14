@@ -81,7 +81,7 @@ export class Game {
     // ホイール／ピンチは、指している場所に向かって寄る
     c.zoomToCursor = true;
     // 2本指／右ドラッグでの移動量（スマホは何度もスライドしなくてすむよう大きめ）
-    c.panSpeed = this.mobile ? 2.4 : 1.2;
+    c.panSpeed = this.mobile ? 1.6 : 1.0;
     c.screenSpacePanning = false;
     c.target.set(0, 1, 0);
     this.bounds = { minX: -14, maxX: 14, minZ: -10, maxZ: 10 };
