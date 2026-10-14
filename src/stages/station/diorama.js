@@ -245,10 +245,13 @@ export function buildStationDiorama(scene) {
   for (const [x, z] of [[-11, -1.3], [-3, -1.3], [-11, 4.0], [-3, 4.0]]) add(bld, G.box(0.3, WALL_H + 0.1, 0.3), darkWood, x, FLOOR + (WALL_H + 0.1) / 2, z);
   // 正面の梁と三つの丸窓（黄・青・赤）
   // 梁は角柱（太さ0.3）より細く・短くして、面が重ならないようにする
-  add(bld, G.box(7.9, 0.95, 0.26), plaster, -7, WALL_TOP - 0.47, 4.0);
-  add(bld, G.box(8.4, 0.1, 0.36), darkWood, -7, WALL_TOP - 0.95, 4.0);
-  add(bld, G.box(8.4, 0.1, 0.36), darkWood, -7, WALL_TOP + 0.02, 4.0);
-  R.roundWindows = group(bld);
+  // （上から中をのぞくときは、この正面の梁ごと消して見やすくする）
+  const frontCut = (R.frontCut = group(bld));
+  frontCut.userData.dynamic = true;
+  add(frontCut, G.box(7.9, 0.95, 0.26), plaster, -7, WALL_TOP - 0.47, 4.0);
+  add(frontCut, G.box(8.4, 0.1, 0.36), darkWood, -7, WALL_TOP - 0.95, 4.0);
+  add(frontCut, G.box(8.4, 0.1, 0.36), darkWood, -7, WALL_TOP + 0.02, 4.0);
+  R.roundWindows = group(frontCut);
   const roundCols = ['#ffcf3a', '#3a8cff', '#ff4a3a'];
   roundCols.forEach((c, i) => {
     const x = -9.2 + i * 2.2;
@@ -262,7 +265,8 @@ export function buildStationDiorama(scene) {
     add(R.roundWindows, G.box(0.03, 0.6, 0.02), darkWood, x, WALL_TOP - 0.47, 4.175, { cast: false });
   });
   // 内部の梁
-  add(bld, G.box(7.8, 0.16, 0.16), darkWood, -7, WALL_TOP - 0.1, 1.4);
+  R.innerBeam = add(bld, G.box(7.8, 0.16, 0.16), darkWood, -7, WALL_TOP - 0.1, 1.4);
+  R.innerBeam.userData.keep = true;
 
   // 屋根（持ち上げ可能）
   const roof = (R.roof = group(bld));
@@ -364,7 +368,10 @@ export function buildStationDiorama(scene) {
   add(stove, G.cyl(0.3, 0.36, 0.25, 18), iron, 0, 0.32, 0);
   add(stove, G.cyl(0.36, 0.3, 0.5, 18), iron, 0, 0.69, 0);
   add(stove, G.cyl(0.32, 0.36, 0.06, 18), iron, 0, 0.97, 0);
-  add(stove, G.cyl(0.08, 0.08, 4.0, 10), iron, 0, 2.97, 0, { cast: false });
+  // 煙突：下半分はそのまま、上半分は屋根といっしょに外れる（上からのぞくときに邪魔にならないよう）
+  add(stove, G.cyl(0.08, 0.08, 1.2, 10), iron, 0, 1.57, 0, { cast: false });
+  R.stovePipeTop = add(stove, G.cyl(0.08, 0.08, 2.8, 10), iron, 0, 3.57, 0, { cast: false });
+  R.stovePipeTop.userData.keep = true;
   R.stoveGlowMat = glow('#ff6a1e', 2.2);
   R.stoveGlowMat.userData.lamp = true;
   add(stove, G.box(0.26, 0.2, 0.02), R.stoveGlowMat, 0, 0.62, 0.345, { cast: false, rot: [-0.12, 0, 0] });

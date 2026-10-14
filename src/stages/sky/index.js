@@ -9,7 +9,7 @@ import { Ease } from '../../core/tween.js';
 import { el } from '../../core/ui.js';
 import { Train, RAIL_Y } from '../station/train.js';
 import { buildSkyDiorama, TRACK_Z } from './diorama.js';
-import { letterHTML, songHTML, bellPanel, pipePanel } from './panels.js';
+import { letterHTML, bellPanel, pipePanel } from './panels.js';
 
 const V = THREE.Vector3;
 
@@ -568,7 +568,6 @@ export class SkyStage {
         { who: 'alpaca', text: '空に近いこの街では、雲のわたがあちこちに引っかかっているはずよ。水の上や、空の上や、鳥の巣なんかにね。' },
       ]);
       g.flag('alpacaTalked');
-      g.note('sk-cotton', '雲のわた', 'アルパカが帆を織るには <b>雲のわたが3つ</b> 必要。<br>水の上 ／ 空の上 ／ 鳥の巣 などに引っかかっているらしい。');
       g.refreshQuests();
     }
     const n = this.cottonCount();
@@ -633,7 +632,6 @@ export class SkyStage {
         { who: 'tortoise', text: '孫がいつも手紙で教えてくれるんじゃが……今月の手紙が、まだ届かんのじゃよ。' },
       ]);
       g.flag('tortoiseTalked');
-      g.note('sk-chest', '時計台の宝箱', '予備の歯車が入っている。ふたの鈴を <b>「そらのうた」</b> の順に鳴らすと開く。<br>歌は、カメのおじいさんの孫の手紙に書いてあるらしい。');
       return;
     }
     await this.say([{ who: 'tortoise', text: '孫からの手紙は、まだかのう……郵便屋のツバメに聞いてみてくれんか。' }]);
@@ -650,7 +648,6 @@ export class SkyStage {
     await this.waitPanel();
     g.give('letterOpen');
     g.flag('letterRead');
-    g.note('sk-song', 'そらのうた', `宝箱の鈴を、この順に鳴らす。${songHTML()}`);
     g.flag('tortoiseTalked');
     await this.say([
       { who: 'tortoise', text: 'そうじゃ、そうじゃ、「そらのうた」じゃ！ 鈴の色は、時計台の鐘のリボンと同じじゃよ。' },
@@ -728,7 +725,6 @@ export class SkyStage {
       { who: 'whale', text: 'Zzz……ブォ……Zzz……' },
       '風穴から吹き出す風が、クジラの体でせきとめられているようだ。',
     ];
-    g.note('sk-whale', '空クジラ', '風穴の前で眠っていて、風をせきとめている。<b>甘いにおい</b> がすれば目をさますかも。');
     if (g.has('konpeito')) lines.push('（甘いにおいのするものがあれば、目をさますかも……）');
     await this.say(lines);
   }
@@ -885,7 +881,6 @@ export class SkyStage {
     this.focus(this.R.pipePanel, 16);
     if (f.pipesDone) return this.say(['風の配管盤。緑のランプがともっている。']);
     if (!f.whaleMoved) {
-      g.note('sk-panel', '風の配管盤', 'パイプをつなぎかえて、<b>風穴の風を大風車へ</b> 送るしくみ。いまは風穴から風が来ていない。');
       return this.say(['風の配管盤。パイプをつなぎかえて、風穴の風を大風車へ送るしくみらしい。', '……でも今は、風穴から風が来ていない。先に風穴を調べてみよう。']);
     }
     let pending = false;
@@ -1062,8 +1057,8 @@ export class SkyStage {
         <div class="route-stop done"><i></i>はざま駅</div>
         <div class="route-stop done"><i></i>天空の街</div>
         <div class="route-stop next"><i></i>寂れた温泉街</div>
-        <div class="route-stop"><i></i>勇者の城下町</div>
-        <div class="route-stop"><i></i>現代日本</div>
+        <div class="route-stop"><i></i>？？？</div>
+        <div class="route-stop"><i></i>？？？</div>
       </div>
       <p class="clear-msg">虹のふもとをくぐりぬけて、ほしまわり号は走っていく。<br>次の停車駅は<em>寂れた温泉街</em>。</p>
       <div class="clear-btns"><button class="btn primary" data-a="next">次の世界へ ▶</button><button class="btn" data-a="title">タイトルへ</button></div>`;

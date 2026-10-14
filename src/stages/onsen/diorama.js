@@ -67,7 +67,10 @@ function wahouse(parent, x, z, { w = 4, d = 3, h = 2.4, ry = 0, wall = '#e8dcc4'
     add(g, G.box(w - 0.2, h - 0.2, 0.08), sh, 0, h / 2 + 0.35, d / 2 - 0.06);
     g.userData.shoji = sh;
   }
-  add(g, G.box(w + 0.1, 0.14, 0.14), wood, 0, h + 0.35, d / 2);
+  // 正面の梁（上から中をのぞくときに消せるよう、別グループにしておく）
+  const front = group(g);
+  front.userData.dynamic = true;
+  add(front, G.box(w + 0.1, 0.14, 0.14), wood, 0, h + 0.35, d / 2);
   add(g, G.box(w + 0.1, 0.14, 0.14), wood, 0, h + 0.35, -d / 2);
   // 屋根（切妻・瓦）
   const roofG = group(g, 0, h + 0.4, 0);
@@ -87,7 +90,7 @@ function wahouse(parent, x, z, { w = 4, d = 3, h = 2.4, ry = 0, wall = '#e8dcc4'
     void gm;
   }
   roofG.traverse((o) => { if (o.isMesh) o.userData.roof = true; });
-  return { g, roof: roofG };
+  return { g, roof: roofG, front };
 }
 
 export function buildOnsenDiorama(scene) {
@@ -367,6 +370,7 @@ export function buildOnsenDiorama(scene) {
   const ry = wahouse(root, -10.2, 3.4, { w: 5.0, d: 3.6, h: 2.5, open: true, wall: '#e8dcc4' });
   R.ryokan = ry.g;
   R.roof = ry.roof;
+  R.ryokanFront = ry.front;
   R.roof.userData.dynamic = true;
   R.roofMats = [];
   R.roof.traverse((o) => { if (o.isMesh && !R.roofMats.includes(o.material)) R.roofMats.push(o.material); });
@@ -396,7 +400,7 @@ export function buildOnsenDiorama(scene) {
   add(R.poker, G.torus(0.05, 0.015, 6, 10), mat('#3a3a40', { metalness: 0.6 }), -0.42, 0.02, 0.18, { rot: [Math.PI / 2, 0, 0] });
   R.poker.userData.dynamic = true;
   // 看板と暖簾
-  add(R.ryokan, G.box(2.2, 0.55, 0.08), new THREE.MeshStandardMaterial({ map: signTex('たぬき屋', { w: 320, h: 80, bg: '#3a2a1e', fg: '#f4dc9a', border: '#c8a050', size: 50 }) }), 0, 3.1, 1.85);
+  add(R.ryokanFront, G.box(2.2, 0.55, 0.08), new THREE.MeshStandardMaterial({ map: signTex('たぬき屋', { w: 320, h: 80, bg: '#3a2a1e', fg: '#f4dc9a', border: '#c8a050', size: 50 }) }), 0, 3.1, 1.85);
   R.ryNoren = add(R.ryokan, G.plane(1.6, 0.7), new THREE.MeshStandardMaterial({ map: norenTex('宿', '#7a2e2a'), side: THREE.DoubleSide }), -1.3, 2.4, 1.8, { cast: false });
   R.ryNoren.userData.keep = true;
 

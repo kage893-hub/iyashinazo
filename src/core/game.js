@@ -512,16 +512,6 @@ export class Game {
     return null;
   }
 
-  /** 旅のメモ帳に手がかりを書きとめる（同じものは一度だけ） */
-  note(id, title, html) {
-    const notes = (this.state.notes = this.state.notes || []);
-    if (notes.some((n) => n.id === id)) return;
-    notes.push({ id, stage: this.state.stage, title, html });
-    this.save();
-    this.ui.toast(`📖 旅のメモに書きとめた：<b>${title}</b>`, 2600);
-    document.querySelector('#btn-notes')?.classList.add('new');
-  }
-
   /** 調べられる場所の名前を、しばらく画面に出す（✨ボタン） */
   showLabels(sec = 4) {
     this._clearLabels();

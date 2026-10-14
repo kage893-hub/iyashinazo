@@ -264,10 +264,10 @@ export class StationStage {
     reg('tower', R.waterTower, '給水塔', () => this.clickTower());
     reg('signalBox', R.signalBox, '信号所', () => this.clickSignalBox());
     reg('signal', R.signal, '信号機', () => this.clickSignal());
-    reg('windows', R.roundWindows, '三つの丸窓', () => (this.g.note('st-windows', '三つの丸窓', '駅舎の正面、屋根の下の丸窓は、左から <b>黄・青・赤</b>。'), this.say([
+    reg('windows', R.roundWindows, '三つの丸窓', () => this.say([
       '駅舎の正面、屋根の下にならぶ三つの丸窓。',
       '左から【黄色】、【青】、【赤】のステンドグラスがはまっている。',
-    ])));
+    ]));
     reg('sign', R.stationSign, '駅名標', () => this.showSign());
     reg('loco', this.train.loco.g, '機関車', () => this.clickLoco());
     reg('tender', this.train.tender.g, '炭水車', () => this.say(this.g.flags.water
@@ -358,6 +358,12 @@ export class StationStage {
       m.depthWrite = this.roofT < 0.5;
     }
     R.roof.traverse((o) => { if (o.isMesh) o.castShadow = this.roofT < 0.3; });
+    // 屋根を外して上からのぞいているときは、手前の梁（丸窓の帯）と中の梁を消す
+    const look = g.camera.position.clone().sub(tgt);
+    const topDown = this.roofT > 0.5 && look.y / look.length() > 0.62;
+    R.frontCut.visible = !(topDown && g.camera.position.z > 1.3);
+    R.innerBeam.visible = !topDown;
+    R.stovePipeTop.visible = this.roofT < 0.3;
     R.vane.rotation.y = Math.sin(t * 0.4) * 0.6;
 
     // 振り子
@@ -581,20 +587,17 @@ export class StationStage {
         { who: 'cat', text: '『信号所の鍵』ですニャ。ホームの右のはしにある小屋ですニャ。' },
         { who: 'cat', text: 'レバーの倒し方は……たしか、小屋の中に書いてありましたニャ。' },
       ]);
-      g.note('st-signalKey', '信号所の鍵', '駅長からあずかった。信号所はホームの右のはしの小屋。');
       g.refreshQuests();
       return;
     }
     const lines = [];
     if (f.signalKeyGiven && !f.signal) {
       lines.push({ who: 'cat', text: '信号所のレバーは、出発の早い列車から順に倒すきまりですニャ。' });
-      g.note('st-levers', '信号所のレバー', 'レバーは <b>出発の早い列車の順</b> に倒す。（時刻表を思い出そう）');
       lines.push({ who: 'cat', text: '時刻表は待合室の奥の壁にありますニャ。' });
     } else if (!f.fire || !f.water) {
       lines.push({ who: 'cat', text: '機関車のことは、カエルの機関士にきいてくださいニャ。' });
       if (!f.ticket) {
         lines.push({ who: 'cat', text: 'それと切符売り場のフクロウさんは……昼間はぐっすりなのですニャ。“夜の鐘”が鳴れば、起きるのですが……' });
-        g.note('st-owl', 'フクロウの切符係', '昼間はぐっすり。<b>“夜の鐘”</b> が鳴れば起きるらしい。');
       }
     } else {
       lines.push({ who: 'cat', text: 'もうすぐ発車ですニャ。わくわくしますニャ。' });
@@ -819,7 +822,6 @@ export class StationStage {
         { who: 'mouse', text: 'かくれているのは3びき。ヒントはね……' },
         { who: 'mouse', text: '【にもつの山】、【大きな木のうろ】、それから【赤くて手紙を食べるもの】！' },
       ]);
-      g.note('st-mice', 'ネズミのかくれんぼ', 'かくれているのは3びき。<br>ヒント：<b>にもつの山</b> ／ <b>大きな木のうろ</b> ／ <b>赤くて手紙を食べるもの</b>');
       g.flag('miceTalked');
       g.refreshQuests();
       if (n > 0) await this.say([{ who: 'mouse', text: `あれっ、もう${n}ぴき見つけてるの？ すごいや！` }]);
@@ -912,7 +914,6 @@ export class StationStage {
       '壁掛け時計は、12時を指したまま止まっている。',
       '文字盤の下に小さな鍵穴がある。ゼンマイが切れているようだ。',
     ]);
-    g.note('st-clock', '待合室の時計', '12時で止まっている。文字盤の下に <b>ゼンマイの鍵穴</b>。');
     f.clockSeen = true;
   }
 
@@ -981,7 +982,6 @@ export class StationStage {
   showTimetable() {
     this.focus(this.R.timetable, 16);
     this.g.ui.openPanel({ title: '時刻表', body: timetableHTML(), cls: 'wide' });
-    this.g.note('st-timetable', '時刻表', '3:00 きりのもり ／ 5:00 かえるぬま ／ <b>?:00 てんくうのまち（ほしまわり号）</b> ／ 9:00 つきのうら<br>📌 ほしまわり号は <b>かえるぬま行きの3時間あと</b> に出る。');
     this.g.flag('timetableSeen');
     return this._waitPanel();
   }
@@ -1067,7 +1067,6 @@ export class StationStage {
     this.focus(R.shed, 16);
     if (!f.shedOpen) {
       await this.say(['小さな倉庫。扉には、三つの色の輪がついた錠前がかかっている。']);
-      g.note('st-lock', '倉庫の錠前', '合言葉は「駅の顔」にある <b>三つの丸窓の色</b>。左から順に。');
       return new Promise((resolve) => {
         let pending = false;
         lockPanel(g.ui, g.audio, {
@@ -1200,7 +1199,6 @@ export class StationStage {
 
   openLevers() {
     const g = this.g;
-    g.note('st-levers', '信号所のレバー', 'レバーは <b>出発の早い列車の順</b> に倒す。（時刻表を思い出そう）');
     return new Promise((resolve) => {
       let pending = false;
       leverPanel(g.ui, g.audio, {
@@ -1383,9 +1381,9 @@ export class StationStage {
       <div class="route">
         <div class="route-stop done"><i></i>はざま駅</div>
         <div class="route-stop next"><i></i>天空の街</div>
-        <div class="route-stop"><i></i>寂れた温泉街</div>
-        <div class="route-stop"><i></i>勇者の城下町</div>
-        <div class="route-stop"><i></i>現代日本</div>
+        <div class="route-stop"><i></i>？？？</div>
+        <div class="route-stop"><i></i>？？？</div>
+        <div class="route-stop"><i></i>？？？</div>
       </div>
       <p class="clear-msg">ほしまわり号は、星の線路をのぼっていく。<br>次の停車駅は【天空の街】。</p>
       <div class="clear-btns"><button class="btn primary" data-a="next">次の世界へ ▶</button><button class="btn" data-a="title">タイトルへ</button></div>`;

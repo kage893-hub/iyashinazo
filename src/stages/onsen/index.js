@@ -346,6 +346,9 @@ export class OnsenStage {
     R.roof.position.y = 2.9 + this.roofT * 4;
     for (const m of R.roofMats) { m.opacity = 1 - this.roofT * 0.9; m.depthWrite = this.roofT < 0.5; }
     R.roof.traverse((o) => { if (o.isMesh) o.castShadow = this.roofT < 0.3; });
+    // 上からのぞいているときは、正面の梁と看板を消す
+    const look = g.camera.position.clone().sub(tgt);
+    R.ryokanFront.visible = !(this.roofT > 0.5 && look.y / look.length() > 0.62 && g.camera.position.z > 3.4);
 
     // 雪
     const sp = this.snowPts.geometry.attributes.position;
@@ -582,7 +585,6 @@ export class OnsenStage {
       ]);
       g.give('lantern');
       g.flag('foxTalked');
-      g.note('on-fire', '火種', '提灯やぐらに火を入れるには火種がいる。<b>釜場の残り火</b> を手さげ提灯にうつせれば……');
       return;
     }
     if (g.has('lanternLit') && !f.foxHasFire) return this.foxGetsFire();
@@ -602,7 +604,6 @@ export class OnsenStage {
     g.audio.play('fire');
     this._setShop(true);
     g.flag('foxHasFire');
-    g.note('on-yagura', '提灯やぐら', 'ひとつ灯すと、<b>上下左右のとなりも入れかわる</b>。九つすべてを灯す。<br>キツネのじいちゃんいわく「<b>五つの火で、九つを灯す</b>」。');
     this._lanternDone();
     await g.wait(0.6);
     await this.say([
@@ -624,7 +625,6 @@ export class OnsenStage {
     this.focus(this.tanuki.root, 16);
     if (!f.iroriLit) {
       const lines = ['タヌキの番頭は、帳場でまるくなって眠っている。', { who: 'tanuki', text: 'Zzz……さむい……冬眠しちゃう……ぽん……' }];
-      g.note('on-tanuki', 'タヌキの番頭', '寒くて眠っている。<b>部屋があたたまれば</b> 目をさますかも。');
       lines.push(g.has('lanternLit') ? '（となりの囲炉裏に、提灯の火をうつせそうだ）' : '（部屋があたたまれば、目をさますかもしれない）');
       return this.say(lines);
     }
@@ -652,7 +652,6 @@ export class OnsenStage {
       { who: 'monkey', text: 'さむいさむい……キキ……あったかくなるまで、うごけない……' },
       '（子ザルが、金色の何かを大事そうににぎっている。……鍵？）',
     ]);
-    g.note('on-monkey', '露天風呂の子ザル', '寒くてふるえている。<b>金色の鍵</b> のようなものをにぎっていた。あたたまれば……');
     g.flag('monkeyTalked');
   }
 
@@ -694,7 +693,6 @@ export class OnsenStage {
       return this.say(['釜場の焚き口で、残り火が赤く光っている。']);
     }
     const lines = ['銭湯の釜場。焚き口の奥に、かすかに赤い残り火が見える。', '灰に深く埋もれていて、手が届かない。'];
-    g.note('on-kama', '釜場の残り火', '灰に深く埋もれていて手が届かない。<b>かき出す道具</b> がほしい。');
     if (g.has('poker')) lines.push('（持ち物の『火かき棒』が使えそうだ）');
     await this.say(lines);
   }
@@ -828,7 +826,6 @@ export class OnsenStage {
     if (!f.gateOpen) return this.clickGate();
     if (f.springFlow) return this.say(['源泉から、湯がこんこんとわき出している。']);
     if (!f.masuPlaced) {
-      g.note('on-masu', '湯分けの台', '「湯の神さまへ、<b>ちょうど四合</b>」。五合升と三合升で四合を量って、樋へ流す。');
       const lines = ['源泉の湯口。湯はちょろちょろとしか出ていない。', 'そばの【湯分けの台】に五合升がひとつ。となりに、もうひとつ升を置く場所が空いている。', '台には「湯の神さまへ、ちょうど四合」と彫ってある。'];
       if (g.has('masu')) lines.push('（持ち物の『三合升』を置けそうだ）');
       return this.say(lines);
@@ -849,7 +846,6 @@ export class OnsenStage {
 
   openMasu() {
     const g = this.g;
-    g.note('on-masu', '湯分けの台', '「湯の神さまへ、<b>ちょうど四合</b>」。五合升と三合升で四合を量って、樋へ流す。');
     let pending = false;
     masuPanel(g.ui, g.audio, {
       onSolved: async (panel) => {
@@ -1045,7 +1041,7 @@ export class OnsenStage {
         <div class="route-stop done"><i></i>天空の街</div>
         <div class="route-stop done"><i></i>寂れた温泉街</div>
         <div class="route-stop next"><i></i>勇者の城下町</div>
-        <div class="route-stop"><i></i>現代日本</div>
+        <div class="route-stop"><i></i>？？？</div>
       </div>
       <p class="clear-msg">湯けむりのトンネルをぬけて、ほしまわり号は走っていく。<br>次の停車駅は<em>勇者の城下町</em>。……つづきは準備中です。</p>
       <div class="clear-btns"><button class="btn primary" data-a="title">タイトルへ</button></div>`;

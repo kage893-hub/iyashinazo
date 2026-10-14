@@ -311,16 +311,6 @@ body.cinematic #hud { opacity: 0; transition: opacity 0.6s; }
 }
 
 /* 路線図 */
-.stage-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
-.stage-card { font: inherit; color: inherit; cursor: pointer; transition: transform 0.12s; }
-.stage-card.open:hover { transform: translateY(-3px); border-color: var(--accent); }
-.stage-card { background: #fff; border: 2px solid var(--line); border-radius: 16px; padding: 12px; text-align: center; position: relative; }
-.stage-card.locked { cursor: default; opacity: 0.55; filter: grayscale(0.6); }
-.stage-card.cleared::after { content: "CLEAR"; position: absolute; top: 8px; right: 8px; background: #ffd36a; color: #6b4a1a; font-size: 10px; font-weight: 900; padding: 2px 6px; border-radius: 6px; }
-.sc-no { font-size: 11px; font-weight: 900; color: var(--accent); letter-spacing: 0.15em; }
-.sc-emoji { font-size: 34px; margin: 4px 0; }
-.sc-name { font-weight: 900; font-size: 17px; }
-.sc-sub { font-size: 12px; color: var(--ink-soft); }
 
 .howto { display: flex; flex-direction: column; gap: 8px; font-size: 15px; line-height: 1.6; }
 
@@ -392,22 +382,6 @@ body.cinematic #hud { opacity: 0; transition: opacity 0.6s; }
   .tt-time { width: 60px; font-size: 18px; }
   .timetable table { font-size: 15px; }
 }
-
-/* ---------- 旅のメモ ---------- */
-.hud-btn.new { position: relative; }
-.hud-btn.new::after { content: ""; position: absolute; top: 3px; right: 3px; width: 10px; height: 10px; border-radius: 50%; background: #e8553a; box-shadow: 0 0 0 2px #fff8e6; }
-.nt-tabs { display: flex; gap: 6px; justify-content: center; margin-bottom: 12px; }
-.nt-tab { border: 2px solid var(--line); background: #fff8e6; color: var(--ink-soft); border-radius: 999px; padding: 6px 16px; font: inherit; font-weight: 700; cursor: pointer; }
-.nt-tab.on { background: var(--navy); color: #fff8e6; border-color: var(--navy); }
-.nt-page { max-height: min(56vh, 460px); overflow: auto; padding: 2px; }
-.nt-card { background: #fffdf4; border: 2px dashed #d9c39a; border-radius: 12px; padding: 10px 14px; margin-bottom: 10px; text-align: left; }
-.nt-title { font-weight: 900; color: var(--navy); margin-bottom: 4px; }
-.nt-body { line-height: 1.7; font-size: 14px; }
-.nt-body b, .nt-body em { color: #c8541e; font-style: normal; font-weight: 900; }
-.nt-line { text-align: left; padding: 6px 4px; border-bottom: 1px dotted #e0cfae; font-size: 14px; line-height: 1.6; display: flex; flex-direction: column; gap: 2px; }
-.nt-line b { color: var(--c); font-size: 12px; }
-.nt-line.narr span { color: var(--ink-soft); }
-.nt-line em { color: #c8541e; font-style: normal; font-weight: 700; }
 
 /* ---------- 調べられる場所の名前（✨） ---------- */
 .hs-label { position: fixed; left: 0; top: 0; z-index: 25; pointer-events: none; white-space: nowrap; background: rgba(255, 248, 230, 0.94); color: var(--navy); border: 2px solid #e8c37a; border-radius: 999px; padding: 2px 10px; font-size: 12px; font-weight: 900; box-shadow: 0 3px 8px rgba(0,0,0,0.25); opacity: 0; transition: opacity 0.3s; }
