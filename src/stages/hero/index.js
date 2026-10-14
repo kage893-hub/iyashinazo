@@ -127,7 +127,7 @@ export class HeroStage {
     // 看板のドット文字に使うフォントを先に読みこむ
     try { await Promise.race([document.fonts.load('12px "DotGothic16"'), new Promise((r) => setTimeout(r, 2500))]); } catch (e) { /* なくても描ける */ }
     this.R = buildHeroDiorama(scene);
-    this.nightLights = [[0.5, 3.2, 6.0, 6], [-15.6, 2.4, 9.0, 5], [-15.6, 2.4, 15.2, 5], [10, 2.4, 11.8, 5]].map(([x, y, z, r]) => {
+    this.nightLights = [[0.5, 3.2, 6.0, 6], [-14.4, 2.4, 5.6, 5], [-14.4, 2.4, 12.0, 5], [10, 2.4, 11.8, 5]].map(([x, y, z, r]) => {
       const L = new THREE.PointLight('#ffb860', 0, r * 2, 1.4);
       L.position.set(x, y, z);
       scene.add(L);
@@ -194,7 +194,7 @@ export class HeroStage {
     this.hero = makeHero({ sword: !!this.g.flags.swordGiven });
     this.hero.root.position.copy(HERO_POS);
     this.slime = makeSlime({});
-    this.slime.root.position.set(10.4, 0, 11.6);
+    this.slime.root.position.set(10.0, 0, 12.6);
     this.goblin = makeGoblin();
     this.goblin.root.position.set(9.65, 0.3, 3.4);
     this.dragon = makeDragon({ happy: !!this.g.flags.dragonHappy });
@@ -202,12 +202,12 @@ export class HeroStage {
     this.king = makeKing();
     this.king.root.position.copy(KING_POS);
     this.guard = makeGuard({});
-    this.guard.root.position.set(14.6, 0, -1.5);
+    this.guard.root.position.set(3.45, HILL, -7.9); // お城の門の前（石段のいちばん上）
     this.owl = makeOwl();
-    this.owl.root.position.set(-15.6, 0, 15.0);
+    this.owl.root.position.set(-14.8, 0, 13.4);
     this.frog = makePixelFrog();
     this.frog.root.position.set(-8.6, 0.75, -3.4);
-    this.chickens = [[7.0, 11.4], [2.6, 11.2], [-14.2, 6.8]].map(([x, z]) => { const c = makeChicken(); c.root.position.set(x, 0, z); c.wander = { x, z, ph: Math.random() * 9 }; return c; });
+    this.chickens = [[7.0, 11.4], [2.6, 11.2], [-13.4, 9.6]].map(([x, z]) => { const c = makeChicken(); c.root.position.set(x, 0, z); c.wander = { x, z, ph: Math.random() * 9 }; return c; });
     this.minis = [
       [{ color: '#5ac85a', dark: '#2a8a3a', light: '#d8f8c8', w: 16, h: 14, bandana: null }, 13.6, 0, 13.6],
       [{ color: '#f0884a', dark: '#c8582a', light: '#fff0d0', w: 16, h: 14, bandana: null }, -19.6, 0, 15.0],
@@ -856,7 +856,7 @@ export class HeroStage {
     this.focus(this.guard.root, 12);
     if (this.night) return this.say(['門番のアルマジロは、立ったまま眠っている。……むにゃ。']);
     g.audio.play('click');
-    return this.say([{ who: 'guard', text: g.flags.departed ? '跳ね橋は下りております。よい旅を！' : '王様のお許しがなければ、跳ね橋は下ろせませぬ！ ……ほんとは早く下ろしてあげたいんですけどね。' }]);
+    return this.say([{ who: 'guard', text: g.flags.departed ? '跳ね橋は下りております。よい旅を！' : 'ここはお城の門。王様のお許しがなければ、町の跳ね橋は下ろせませぬ！ ……ほんとは早く下ろしてあげたいんですけどね。' }]);
   }
 
   async talkFrog() {

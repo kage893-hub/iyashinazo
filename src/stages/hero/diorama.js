@@ -475,11 +475,11 @@ export function buildHeroDiorama(scene) {
   }
 
   // ---------------- 宿屋・ギルド・教会（左） ----------------
-  const inn = house(R, root, -17.6, 5.8, { w: 6.6, d: 4.4, floors: 2, roof: 'roofRed' });
+  const inn = house(R, root, -17.8, 5.6, { w: 6.6, d: 4.4, floors: 2, roof: 'roofRed', ry: Math.PI / 2 });
   R.inn = inn.g;
   hangSign(inn.g, 3.4, 2.6, 2.3, 'inn');
   add(inn.g, new THREE.PlaneGeometry(1.6, 0.4), new THREE.MeshStandardMaterial({ map: pixText('INN', { w: 32, h: 8, size: 8, bg: '#3a2418', fg: '#f4dc8a' }), roughness: 1 }), 0, 2.3, 2.25, { cast: false });
-  const guild = house(R, root, -17.6, 12.0, { w: 6.6, d: 4.4, floors: 2, roof: 'roofBlue' });
+  const guild = house(R, root, -17.8, 12.0, { w: 6.6, d: 4.4, floors: 2, roof: 'roofBlue', ry: Math.PI / 2 });
   R.guild = guild.g;
   hangSign(guild.g, 3.4, 2.6, 2.3, 'mug');
   add(guild.g, new THREE.PlaneGeometry(2.2, 0.4), new THREE.MeshStandardMaterial({ map: pixText('GUILD', { w: 44, h: 8, size: 8, bg: '#3a2418', fg: '#f4dc8a' }), roughness: 1 }), 0, 2.3, 2.25, { cast: false });
@@ -489,7 +489,7 @@ export function buildHeroDiorama(scene) {
   box(board, 1.6, 1.0, 0.08, M.planks, 0, 1.35, 0.02);
   for (let i = 0; i < 4; i++) add(board, new THREE.PlaneGeometry(0.34, 0.4), new THREE.MeshStandardMaterial({ color: ['#f4ecd8', '#f8e8a8', '#e8f0f8', '#f8d8d8'][i] }), -0.52 + i * 0.35, 1.35 + (i % 2) * 0.08, 0.07, { rot: [0, 0, (i - 1.5) * 0.08], cast: false });
   // 教会（鐘楼つき）
-  const ch = (R.church = group(root, -8.4, 0, 13.4));
+  const ch = (R.church = group(root, -6.6, 0, 13.9));
   box(ch, 5.2, 0.4, 4.4, M.brick, 0, 0.2, 0);
   box(ch, 5.0, 3.8, 4.2, M.plaster, 0, 2.3, 0);
   roof(ch, 0, 4.2, 0, 5.0, 4.2, M.roofBlue, { pitch: 0.75, over: 0.3 });
@@ -513,12 +513,12 @@ export function buildHeroDiorama(scene) {
   hangSign(ch, 2.6, 2.4, 2.2, 'bell');
   // 昼だけ、ステンドグラスの色の光が地面に落ちる
   R.glassLight = [
-    lightPool(root, -8.4, 0.03, 16.0, 1.4, 1.0, '#e84a5a'),
-    lightPool(root, -7.6, 0.03, 16.0, 1.2, 1.0, '#4a8ae8'),
-    lightPool(root, -9.2, 0.03, 16.0, 1.2, 1.0, '#f8d040'),
+    lightPool(root, -6.6, 0.03, 16.0, 1.4, 0.8, '#e84a5a'),
+    lightPool(root, -5.8, 0.03, 16.0, 1.2, 0.8, '#4a8ae8'),
+    lightPool(root, -7.4, 0.03, 16.0, 1.2, 0.8, '#f8d040'),
   ];
   // 教会の庭（夜に月光草がさく）
-  const garden = (R.garden = group(root, -4.9, 0, 15.2));
+  const garden = (R.garden = group(root, -2.4, 0, 15.2));
   for (let i = 0; i < 7; i++) box(garden, 0.1, 0.5, 0.1, M.wood, -1.2 + i * 0.4, 0.25, -0.7);
   box(garden, 2.6, 0.06, 0.06, M.wood, 0, 0.42, -0.7, { cast: false });
   for (let i = 0; i < 6; i++) add(garden, new THREE.ConeGeometry(0.08, 0.35, 4), new THREE.MeshStandardMaterial({ color: '#3a7a3a', flatShading: true }), -0.9 + i * 0.35, 0.18, (i % 2) * 0.3);
@@ -624,16 +624,16 @@ export function buildHeroDiorama(scene) {
   }
 
   // ---------------- 木・街灯・小物 ----------------
-  [[-20.5, 13.8, 1.1], [-13.0, 3.0, 0.8], [-13.6, -1.0, 0.7], [-21.0, -8.0, 1.0], [20.8, 4.5, 1.0], [20.8, 15.0, 0.9], [-21.2, 1.0, 0.8], [-0.5, 14.2, 0.8]].forEach(([x, z, s], i) => tree(root, x, z, s, 30 + i));
+  [[-20.5, 13.8, 1.1], [-13.0, 3.0, 0.8], [-13.6, -1.0, 0.7], [-21.0, -8.0, 1.0], [20.8, 4.5, 1.0], [20.8, 15.0, 0.9], [-21.2, 1.0, 0.8], [0.8, 15.4, 0.7]].forEach(([x, z, s], i) => tree(root, x, z, s, 30 + i));
   for (const [x, z] of [[-5.8, 1.6], [6.8, 1.6], [-5.8, 10.4], [6.8, 10.4], [-12.6, 4.8], [8.4, 5.4], [-12.0, -1.6], [2.0, -1.6], [14.4, 7.0]]) lamp(R, root, x, z);
   // ゴールドが出るかもしれない、たる・つぼ・宝箱
-  R.goldSpots.innPot = pot(root, -13.6, 8.6, '#c8783a');
+  R.goldSpots.innPot = pot(root, -14.9, 7.9, '#c8783a');
   R.goldSpots.smithBarrel = barrel(root, 14.6, 4.6);
   R.goldSpots.stableChest = chest(root, 7.6, 13.6, -0.3);
-  R.goldSpots.churchCrate = group(root, -11.2, 0, 15.4);
+  R.goldSpots.churchCrate = group(root, -9.6, 0, 15.4);
   box(R.goldSpots.churchCrate, 0.7, 0.6, 0.7, M.planks, 0, 0.3, 0);
   R.goldSpots.stallPot = pot(root, -6.1, 2.6, '#8a6aa8');
-  pot(root, -13.2, 9.0, '#a86a4a');
+  pot(root, -14.6, 8.4, '#a86a4a');
   barrel(root, 14.6, 5.4, 0.9);
   barrel(root, -13.6, 12.6, 1);
   barrel(root, -13.1, 13.0, 0.85);
@@ -649,6 +649,6 @@ export function buildHeroDiorama(scene) {
 
   // 夜の光だまり
   R.nightPools = R.lampSpots.map(([x, z]) => lightPool(root, x, 0.03, z, 2.6, 2.6, '#ffc070'));
-  R.nightPools.push(lightPool(root, -17.6, 0.03, 15.0, 3.6, 1.8, '#ffb860'), lightPool(root, -17.6, 0.03, 8.8, 3.6, 1.8, '#ffb860'));
+  R.nightPools.push(lightPool(root, -14.6, 0.03, 12.0, 1.8, 3.6, '#ffb860'), lightPool(root, -14.6, 0.03, 5.6, 1.8, 3.6, '#ffb860'));
   return R;
 }
