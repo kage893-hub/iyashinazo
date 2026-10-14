@@ -489,3 +489,40 @@ body.cinematic #camctl { opacity: 0; pointer-events: none; }
   .stage-card.cleared::after { top: 4px; right: 4px; font-size: 8px; padding: 1px 4px; }
   .stage-card.cleared .sc-no { margin-top: 10px; }
 }
+
+/* ---- 潮の港町：郵便の仕分け ---- */
+.mailp { text-align: center; }
+.ml-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 12px 0 10px; }
+.ml-card { text-align: left; background: #fbf8ee; border: 2px solid #c8b890; border-radius: 8px; padding: 8px 10px; cursor: pointer; font: inherit; color: #2a2a3a; transition: transform 0.12s, border-color 0.15s, box-shadow 0.15s; }
+.ml-card.picked { border-color: #2a6ab0; box-shadow: 0 0 0 3px rgba(42, 106, 176, 0.25); transform: translateY(-2px); }
+.ml-card.set { background: #eef4fa; }
+.ml-top { display: flex; gap: 6px; align-items: center; font-size: 12px; margin-bottom: 4px; flex-wrap: wrap; }
+.ml-kind { background: #2a5aa0; color: #fff; border-radius: 4px; padding: 1px 6px; font-weight: 700; }
+.ml-smudge i { filter: blur(1.6px); color: #5a6a8a; font-style: normal; letter-spacing: 2px; }
+.ml-to { margin-left: auto; font-weight: 900; color: #2a5aa0; }
+.ml-feel { font-size: 12px; color: #7a6a5a; margin-bottom: 3px; }
+.ml-text { font-size: 13px; line-height: 1.55; }
+.ml-dests { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-bottom: 10px; }
+.ml-dest { font: inherit; font-weight: 700; padding: 8px 12px; border-radius: 10px; border: 2px solid #2a5aa0; background: #fff; color: #1a3a6a; cursor: pointer; }
+.ml-dest.used { background: #dce8f6; }
+.ml-ic { margin-right: 4px; }
+.mailp.solved .ml-card { border-color: #5aa05a; background: #eef8ea; }
+@media (max-width: 560px) { .ml-list { grid-template-columns: 1fr; } }
+
+/* ---- 潮時計 ---- */
+.tidep { text-align: center; }
+.td-btns { display: flex; flex-direction: column; gap: 8px; margin: 14px auto 6px; max-width: 300px; }
+.td-btn { font: inherit; display: grid; grid-template-columns: 70px 1fr; grid-template-rows: auto auto; align-items: center; text-align: left; gap: 0 10px; padding: 10px 14px; border-radius: 12px; border: 2px solid #2a5aa0; background: #f4f8fc; color: #1a3a6a; cursor: pointer; }
+.td-btn .td-w { grid-row: span 2; font-size: 15px; }
+.td-btn b { font-size: 18px; }
+.td-btn small { color: #4a5a7a; }
+.td-btn.cur { background: #2a5aa0; color: #fff; }
+.td-btn.cur small { color: #dce8f6; }
+
+/* ---- 灯台のレンズ ---- */
+.lensp { text-align: center; }
+.ln-wrap { margin: 8px auto; width: 230px; max-width: 70vw; }
+.ln-svg { width: 100%; display: block; }
+.ln-ring { transform-box: view-box; transform-origin: 110px 118px; transition: transform 0.35s ease; }
+.lensp.solved .ln-core { fill: #fff2a0; filter: drop-shadow(0 0 8px #ffe070); }
+.ln-btns { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 8px; }

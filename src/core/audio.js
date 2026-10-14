@@ -68,6 +68,22 @@ const EDO_CHORDS = [
   [57, 64, 69], [52, 59, 64], [53, 60, 65], [45, 52, 57],
 ];
 
+// 潮の港町：海風のような、明るい舟歌（ト長調・6/8 ふう）
+const PORT_MELODY = [
+  [0, 67, 1], [1, 71, 0.5], [1.5, 74, 1.5], [3, 72, 1],
+  [4, 71, 1.5], [5.5, 69, 0.5], [6, 67, 2],
+  [8, 69, 1], [9, 71, 0.5], [9.5, 72, 1.5], [11, 74, 1],
+  [12, 76, 3],
+  [16, 74, 1], [17, 72, 0.5], [17.5, 71, 1.5], [19, 69, 1],
+  [20, 71, 1.5], [21.5, 72, 0.5], [22, 74, 2],
+  [24, 72, 1], [25, 71, 1], [26, 69, 1], [27, 66, 1],
+  [28, 67, 3],
+];
+const PORT_CHORDS = [
+  [43, 50, 55], [48, 55, 60], [43, 50, 55], [50, 57, 62],
+  [48, 55, 60], [43, 50, 55], [45, 52, 57], [50, 57, 62],
+];
+
 /** 0.5 秒の無音 WAV（data URI） */
 function silentWav() {
   const rate = 8000, n = 4000;
@@ -90,6 +106,7 @@ export const SONGS = {
   sky: { melody: SKY_MELODY, chords: SKY_CHORDS, tempo: 88 },
   onsen: { melody: ONSEN_MELODY, chords: ONSEN_CHORDS, tempo: 64 },
   edo: { melody: EDO_MELODY, chords: EDO_CHORDS, tempo: 70 },
+  port: { melody: PORT_MELODY, chords: PORT_CHORDS, tempo: 82 },
 };
 
 export class AudioSys {
@@ -397,6 +414,31 @@ export class AudioSys {
         break;
       case 'paper':
         this.noise({ dur: 0.18, freq: 3500, q: 0.8, gain: 0.06, sweep: 2000 });
+        break;
+      case 'seal': // アザラシ（オウッ）
+        this.tone(330, { dur: 0.18, gain: 0.08, type: 'sawtooth', slide: 240 });
+        this.tone(360, { dur: 0.2, gain: 0.07, type: 'sawtooth', slide: 250, when: 0.22 });
+        break;
+      case 'octo': // ぷくぷく
+        for (let i = 0; i < 3; i++) this.tone(700 + i * 160, { dur: 0.08, gain: 0.06, slide: 1400 + i * 200, when: i * 0.08 });
+        break;
+      case 'crab': // カチカチ
+        for (let i = 0; i < 3; i++) this.noise({ dur: 0.04, freq: 3200, q: 6, gain: 0.1, when: i * 0.1 });
+        break;
+      case 'pelican':
+        this.tone(260, { dur: 0.25, gain: 0.08, type: 'square', slide: 200, vib: [25, 20] });
+        break;
+      case 'gull': // ミャア
+        this.tone(1500, { dur: 0.35, gain: 0.05, type: 'triangle', slide: 1100, vib: [7, 60], attack: 0.03 });
+        this.tone(1600, { dur: 0.3, gain: 0.04, type: 'triangle', slide: 1150, when: 0.4 });
+        break;
+      case 'wave': // ざざーん
+        this.noise({ dur: 2.4, freq: 500, sweep: 1600, q: 0.5, gain: 0.12, type: 'lowpass', attack: 0.8 });
+        this.noise({ dur: 1.6, freq: 3000, sweep: 1200, q: 0.6, gain: 0.04, type: 'highpass', attack: 0.6, when: 0.8 });
+        break;
+      case 'horn': // 霧笛（ボー）
+        this.tone(98, { dur: 2.2, gain: 0.16, type: 'sawtooth', attack: 0.2 });
+        this.tone(147, { dur: 2.2, gain: 0.06, type: 'triangle', attack: 0.25 });
         break;
       case 'twinkle':
         [1568, 2093, 2637].forEach((f, i) => this.tone(f, { dur: 0.6, gain: 0.04, when: i * 0.06 }));

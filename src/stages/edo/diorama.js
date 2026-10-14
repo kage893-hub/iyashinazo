@@ -54,7 +54,7 @@ const kaminariTex = () => canvasTex(256, 256, (ctx, w, h) => {
 });
 
 /** 切妻の瓦屋根（棟は x 方向） */
-function gableRoof(parent, x, y, z, w, d, { pitch = 0.5, color = '#4a4c56', thick = 0.12, over = 0.3 } = {}) {
+export function gableRoof(parent, x, y, z, w, d, { pitch = 0.5, color = '#4a4c56', thick = 0.12, over = 0.3 } = {}) {
   const g = group(parent, x, y, z);
   const tile = new THREE.MeshStandardMaterial({ map: tileTex(color, [Math.max(1, Math.round(w)), 2]), roughness: 0.85 });
   const run = d / 2 + over;
@@ -69,7 +69,7 @@ function gableRoof(parent, x, y, z, w, d, { pitch = 0.5, color = '#4a4c56', thic
 }
 
 /** 宝形（ほうぎょう）の屋根：四方に流れる */
-function hipRoof(parent, x, y, z, w, d, h, color = '#3e4048') {
+export function hipRoof(parent, x, y, z, w, d, h, color = '#3e4048') {
   const g = group(parent, x, y, z);
   const m = new THREE.MeshStandardMaterial({ map: tileTex(color, [3, 3]), roughness: 0.85, flatShading: true });
   const geo = new THREE.ConeGeometry(Math.SQRT1_2, 1, 4, 1);

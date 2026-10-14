@@ -276,4 +276,49 @@ export const ITEMS = {
       <path d="M26 18 h12 M26 26 h12" stroke="#2a1a14" stroke-width="2"/>
       <rect x="25" y="42" width="14" height="10" rx="2" fill="#c8382e"/>`),
   },
+  // ---- 潮の港町 ----
+  gear: {
+    name: '月の歯車',
+    desc: '金色の歯車。歯の数は二十八。まん中に三日月の穴があいている。潮時計の部品らしい。',
+    icon: svg(`
+      <g fill="#e0b84a" stroke="#8a6416" stroke-width="2">
+        <path d="M32 6 l4 6 h-8 z M32 58 l4 -6 h-8 z M6 32 l6 4 v-8 z M58 32 l-6 4 v-8 z M13 13 l7 2 l-5 5 z M51 51 l-7 -2 l5 -5 z M51 13 l-2 7 l-5 -5 z M13 51 l2 -7 l5 5 z"/>
+        <circle cx="32" cy="32" r="20"/></g>
+      <path d="M36 22a10 10 0 1 0 0 20a8 8 0 1 1 0 -20z" fill="#2a3a6a"/>`),
+  },
+  parcel: {
+    name: '灯台あての小包',
+    desc: '宛名がにじんだ小包。やわらかくて、ほんのり油のにおい。中身は灯台のランプの芯らしい。',
+    icon: svg(`
+      <rect x="10" y="18" width="44" height="34" rx="3" fill="#d8b070" stroke="#7a5a2a" stroke-width="2.5"/>
+      <path d="M32 18 v34 M10 30 h44" stroke="#f4f0e0" stroke-width="4"/>
+      <path d="M24 12 q8 6 16 0" stroke="#f4f0e0" stroke-width="3" fill="none"/>
+      <path d="M38 38 q4 -8 8 0" stroke="#5a7aa8" stroke-width="2" fill="none" opacity=".7"/>`),
+  },
+  net: {
+    name: '漁網',
+    desc: 'カニの漁師の網。黄色い浮き玉がついている。岩山の洞窟にひっかかっていた。',
+    icon: svg(`
+      <path d="M8 16 Q32 4 56 16 L50 52 Q32 60 14 52 Z" fill="#6a9a7a" stroke="#3a5a4a" stroke-width="2.5"/>
+      <path d="M14 22 L48 50 M24 14 L54 40 M50 22 L16 50 M40 14 L10 40" stroke="#3a5a4a" stroke-width="1.5"/>
+      <circle cx="16" cy="18" r="5" fill="#f0c840" stroke="#8a6a1a" stroke-width="1.5"/>
+      <circle cx="48" cy="18" r="5" fill="#f0c840" stroke="#8a6a1a" stroke-width="1.5"/>`),
+  },
+  fish: {
+    name: '朝どれのアジ',
+    desc: 'カニの漁師がとってきた、ぴちぴちのアジ。',
+    icon: svg(`
+      <path d="M8 32 Q24 14 44 26 L56 16 L54 32 L56 48 L44 38 Q24 50 8 32 Z" fill="#9ab4cc" stroke="#3a5a7a" stroke-width="2.5" stroke-linejoin="round"/>
+      <circle cx="18" cy="29" r="3" fill="#1a2a3a"/>
+      <path d="M26 34 q8 2 16 -2" stroke="#e8f0f8" stroke-width="2" fill="none"/>`),
+  },
+  oil: {
+    name: '灯台の油',
+    desc: '灯台のランプに入れる、すきとおった油の小びん。',
+    icon: svg(`
+      <path d="M26 8 h12 v8 l6 6 v30 a4 4 0 0 1 -4 4 h-16 a4 4 0 0 1 -4 -4 v-30 l6 -6 z" fill="#f4dc8a" stroke="#8a6a2a" stroke-width="2.5" stroke-linejoin="round"/>
+      <rect x="24" y="4" width="16" height="6" rx="2" fill="#8a5a3a"/>
+      <path d="M22 34 h20 v16 h-20 z" fill="#e8b840" opacity=".7"/>
+      <path d="M28 26 q4 -6 8 0 q-4 6 -8 0" fill="#fff4c0"/>`),
+  },
 };
