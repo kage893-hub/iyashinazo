@@ -567,6 +567,15 @@ export function buildHeroDiorama(scene) {
   const shop = house(R, root, 12.2, 10.0, { w: 5.6, d: 4.4, floors: 1, roof: 'roofGreen', door: false, chimney: false });
   R.itemShop = shop.g;
   box(shop.g, 3.2, 0.9, 0.5, M.planks, -0.4, 0.9, 2.45);
+  // 壁の貼り紙「調合の心得」（広場側の壁）
+  R.recipePoster = group(shop.g, -2.82, 1.45, 1.2, -Math.PI / 2);
+  add(R.recipePoster, new THREE.PlaneGeometry(1.0, 1.25), pixMat(pixTex('recipe', 16, 20, (p) => {
+    p.rect(0, 0, 16, 20, '#e8d4a8'); p.rect(0, 0, 16, 1, '#a87a4a'); p.rect(0, 19, 16, 1, '#a87a4a');
+    p.rect(3, 2, 10, 2, '#5a3a22');
+    const cs = ['#e83a3a', '#f8d040', '#3a6ae8'];
+    for (let i = 0; i < 3; i++) { p.disc(3, 7 + i * 4, 1.2, cs[i]); p.rect(6, 6 + i * 4, 8, 1, '#7a5a3a'); p.rect(6, 8 + i * 4, 6, 1, '#7a5a3a'); }
+    p.px(1, 1, '#c8303a'); p.px(14, 1, '#c8303a');
+  })), 0, 0, 0, { cast: false });
   R.shutter = box(shop.g, 3.2, 1.3, 0.08, M.wood, -0.4, 2.0, 2.24);
   R.shutter.userData.keep = true;
   for (let i = 0; i < 5; i++) add(shop.g, new THREE.CylinderGeometry(0.1, 0.12, 0.3, 8), new THREE.MeshStandardMaterial({ color: ['#e83a6a', '#3a8ae8', '#f8d040', '#5ac86a', '#b85ae8'][i], emissive: ['#e83a6a', '#3a8ae8', '#f8d040', '#5ac86a', '#b85ae8'][i], emissiveIntensity: 0.25 }), -1.6 + i * 0.6, 1.5, 2.55, { cast: false });

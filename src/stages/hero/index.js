@@ -12,7 +12,7 @@ import { Train, RAIL_Y } from '../station/train.js';
 import { buildPortRails } from '../port/diorama.js';
 import { buildHeroDiorama, TRACK_Z, HILL, ISLAND } from './diorama.js';
 import { heroSheet, slimeSheet, dragonSheet, guardSheet, makeHero, makeSlime, makeGoblin, makeDragon, makeKing, makeGuard, makeOwl, makePixelFrog, makeChicken } from '../../lib/sprites-hero.js';
-import { decodePanel, forgePanel, mixPanel, letterHTML, glassTableHTML } from './panels.js';
+import { decodePanel, forgePanel, mixPanel, letterHTML, glassTableHTML, recipeHTML } from './panels.js';
 
 const V = THREE.Vector3;
 
@@ -237,6 +237,7 @@ export class HeroStage {
     reg('inn', R.inn, '宿屋', () => this.clickInn());
     reg('guild', R.guild, 'ギルド（酒場）', () => this.clickGuild());
     reg('board', R.board, '依頼の掲示板', () => this.clickBoard());
+    reg('recipePoster', R.recipePoster, '調合の心得（貼り紙）', () => this.clickRecipe());
     reg('church', R.church, '教会', () => this.clickChurch());
     reg('garden', R.garden, '教会の庭', () => this.clickGarden());
     reg('smithy', R.smithy, '鍛冶屋', () => this.talkGoblin());
@@ -448,12 +449,12 @@ export class HeroStage {
       if (!f.slimeTalked) return H('slime', '道具屋のスライムに話しかけよう。', night ? 'スライムは夜は寝ている。' : '');
       if (f.slimePaid || (f.flowerGot && !has('moonflower'))) {
         if (night) return H('slimeDay', 'スライムの店は昼だけ。宿屋に泊まって朝にしよう。');
-        return H('mix', '材料もお代もわたしてある。道具屋のスライムに話しかけて、薬づくりのつづきをしよう。', '回復薬＝黄2・青1、毒消し＝赤1・青2、元気の素＝赤2・黄1。');
+        return H('mix', '材料もお代もわたしてある。道具屋の壁の貼り紙『調合の心得』を読んでから、スライムに話しかけよう。', 'おひさま＝黄、空・海＝青、夕やけ・りんご＝赤。回復薬＝黄2・青1、毒消し＝赤1・青2、元気の素＝赤2・黄1。');
       }
       if (!f.flowerGot) return H('flower', '月光草は、夜に教会の庭でさく。', '宿屋に泊まって夜にし、『教会の庭』を調べよう。');
       if (this.g.count('gold') < 3 || !has('gold')) return H('gold', 'ゴールド袋が3つ必要。町のつぼやたる、宝箱を調べよう。', '昼：宿屋の前のつぼ、鍛冶屋の横のたる、竜舎の宝箱。夜：教会の裏の木箱、市場のむらさきのつぼ。');
       if (night) return H('slimeDay', 'スライムの店は昼だけ。宿屋に泊まって朝にしよう。');
-      return H('mix', '道具屋のスライムに話しかけて薬をつくろう。', '回復薬＝黄2・青1、毒消し＝赤1・青2、元気の素＝赤2・黄1。');
+      return H('mix', '道具屋の壁の貼り紙『調合の心得』を読んでから、スライムに話しかけて薬をつくろう。', 'おひさま＝黄、空・海＝青、夕やけ・りんご＝赤。回復薬＝黄2・青1、毒消し＝赤1・青2、元気の素＝赤2・黄1。');
     }
     return H('none', 'あちこち調べてみよう。');
   }
@@ -824,7 +825,9 @@ export class HeroStage {
         { who: 'slime', text: 'いらっしゃいませ〜。ぷるぷる、道具屋だよ〜。商品はぜんぶ、ぼくのおなかの中にしまってあるの。' },
         { who: 'slime', text: '勇者くんの薬だよね？ つくってあげたいんだけど、材料の【月光草】が切れちゃって……。月光草は、夜に教会の庭でさくんだよ。' },
         { who: 'slime', text: 'それと、ごめんね、びん代に【ゴールド袋3つ】もらえるかな？ うちも商売だから〜。' },
+        { who: 'slime', text: '薬の配合は、お店の横の壁の【調合の心得】に書いてあるよ〜。なぞなぞになってるけどね。' },
       ]);
+      this.noteRecipe();
     }
     // 一度はらったら、途中でやめても次からはすぐ薬づくりへ（前の版で受けとり済みのセーブも救う）
     if (!f.slimePaid && f.flowerGot && !g.has('moonflower')) g.flag('slimePaid');
@@ -861,6 +864,21 @@ export class HeroStage {
     g.flag('potionsDone');
     await this.say([{ who: 'slime', text: 'できた〜！ 回復薬・毒消し・元気の素のセットだよ〜。勇者くんに届けてあげて！' }]);
     g.give('potions');
+  }
+
+  noteRecipe() {
+    const g = this.g;
+    if (g.flags.recipeNoted) return;
+    g.flag('recipeNoted');
+    g.note('hr-recipe', '調合の心得（道具屋の貼り紙）', '回復薬：おひさま ふたつに、空 ひとつ<br>毒消し：夕やけ ひとつに、海 ふたつ<br>元気の素：りんご ふたつに、レモン ひとつ');
+  }
+
+  async clickRecipe() {
+    this.focus(this.R.recipePoster, 10);
+    this.g.audio.play('paper');
+    this.g.ui.openPanel({ title: '調合の心得', body: recipeHTML() });
+    await this.waitPanel();
+    this.noteRecipe();
   }
 
   async talkKing() {

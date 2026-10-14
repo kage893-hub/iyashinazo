@@ -178,6 +178,17 @@ export function forgePanel(ui, audio, { onSolved }) {
 }
 
 // ---------------------------------------------------------------
+// 道具屋の壁の貼り紙「調合の心得」（なぞなぞで配合が書いてある）
+export function recipeHTML() {
+  return `<div class="recipe">
+    <div class="rc-head">調合の心得</div>
+    <div class="rc-row"><b>回復薬</b>おひさま ふたつに、空 ひとつ</div>
+    <div class="rc-row"><b>毒消し</b>夕やけ ひとつに、海 ふたつ</div>
+    <div class="rc-row"><b>元気の素</b>りんご ふたつに、レモン ひとつ</div>
+    <div class="rc-foot">しずくは きっちり 数えること。　―スライム</div>
+  </div>`;
+}
+
 // 薬の色まぜ：赤・黄・青のしずくを入れて、注文の色をつくる
 // ---------------------------------------------------------------
 const RYB = [[1, 1, 1], [1, 0, 0], [1, 1, 0], [1, 0.5, 0], [0.163, 0.373, 0.6], [0.5, 0, 0.5], [0, 0.66, 0.2], [0.2, 0.094, 0]];
@@ -216,7 +227,7 @@ export function mixPanel(ui, audio, { onSolved }) {
   let done = false;
   const body = el('div', 'mixp');
   body.innerHTML = `
-    <div class="plaque">スライムの薬づくり<br><small>しずくを入れて、注文の見本と同じ色にしよう（6てきまで）。</small></div>
+    <div class="plaque">スライムの薬づくり<br><small>しずくを入れて、注文の見本と同じ色にしよう（ちょうど3てき）。</small></div>
     <div class="mx-orders"></div>
     <div class="mx-row">
       <div class="mx-pot"><div class="mx-liquid"></div><b class="mx-count"></b></div>
@@ -227,6 +238,7 @@ export function mixPanel(ui, audio, { onSolved }) {
       <button class="btn mx-d" data-i="2" style="--c:#3a6ae8">🔵 青</button>
     </div>
     <div class="tk-btns"><button class="btn small-btn mx-empty">すてる</button><button class="btn primary mx-ok">びんにつめる</button></div>
+    <details class="mx-recipe"><summary>📜 調合の心得を見る</summary>${recipeHTML()}</details>
     <p class="panel-note small mx-msg"></p>`;
   const orders = body.querySelector('.mx-orders');
   const liquid = body.querySelector('.mx-liquid');
@@ -242,7 +254,7 @@ export function mixPanel(ui, audio, { onSolved }) {
   body.querySelectorAll('.mx-d').forEach((b) => {
     b.onclick = () => {
       if (done) return;
-      if (drops[0] + drops[1] + drops[2] >= 6) { msg.textContent = 'これ以上は入らない。いちどすてよう。'; return; }
+      if (drops[0] + drops[1] + drops[2] >= 3) { msg.textContent = 'びんは3てきでいっぱい。ちがったら、いちどすてよう。'; return; }
       drops[+b.dataset.i]++;
       audio.play('pop');
       paint();
@@ -252,7 +264,7 @@ export function mixPanel(ui, audio, { onSolved }) {
   body.querySelector('.mx-ok').onclick = () => {
     if (done) return;
     if (!drops.some(Boolean)) return;
-    if (norm(drops) === norm(ORDERS[step].rec)) {
+    if (drops.join(',') === ORDERS[step].rec.join(',')) {
       audio.play('solve');
       step++;
       drops = [0, 0, 0];

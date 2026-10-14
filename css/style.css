@@ -605,3 +605,11 @@ body.rpg .clear-main { color: #ffd84a; }
 body.rpg .clear-stats b, body.rpg .clear-msg { color: #ffffff; }
 body.rpg .clear-stats span { color: #c8d0f0; }
 .uk-foot { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.recipe { background: #f4e6c4; color: #3a2414; border: 3px solid #a87a4a; border-radius: 4px; padding: 10px 14px; text-align: left; }
+.rc-head { text-align: center; font-size: 18px; border-bottom: 2px dashed #a87a4a; padding-bottom: 4px; margin-bottom: 8px; }
+.rc-row { margin: 6px 0; line-height: 1.6; }
+.rc-row b { display: inline-block; min-width: 5em; color: #8a2a1a; }
+.rc-foot { text-align: right; font-size: 12px; color: #7a5a3a; margin-top: 6px; }
+.mx-recipe { margin: 8px 0; text-align: left; }
+.mx-recipe summary { cursor: pointer; text-align: center; color: #ffd84a; }
+.mx-recipe .recipe { margin-top: 6px; }
