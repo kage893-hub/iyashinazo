@@ -576,10 +576,9 @@ export function buildHeroDiorama(scene) {
   box(stb, 7.4, 0.2, 3.9, M.planks, 0, 0.1, 0);
   box(stb, 7.4, 2.8, 0.25, M.planks, 0, 1.6, -1.8);
   for (const s of [-1, 1]) box(stb, 0.25, 2.8, 3.8, M.planks, s * 3.6, 1.6, 0);
-  for (const x of [-3.6, -1.2, 1.2, 3.6]) box(stb, 0.25, 3.0, 0.25, M.wood, x, 1.5, 1.8);
+  for (const x of [-3.6, 3.6]) box(stb, 0.25, 3.0, 0.25, M.wood, x, 1.5, 1.8);
   // 片流れの屋根（奥だけ。上から子ドラゴンが見えるように）
   box(stb, 7.9, 0.16, 2.6, M.roofBrown, 0, 3.15, -1.0, { rot: [-0.35, 0, 0] });
-  box(stb, 7.4, 0.25, 0.25, M.wood, 0, 2.95, 1.8);
   box(stb, 3.0, 0.5, 1.2, M.hay, -1.8, 0.45, -1.0);
   box(stb, 1.2, 0.4, 1.0, M.hay, 2.4, 0.4, -1.1);
   hangSign(stb, 3.9, 2.6, 2.0, 'dragon');
