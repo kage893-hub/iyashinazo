@@ -366,11 +366,20 @@ export function buildSkyDiorama(scene) {
   const rock = mat('#9a948a', { flatShading: true, roughness: 1 });
   const cliff = group(root, -11.4, 0, -10.0);
   const cl = rng(8);
+  // 岩は洞穴の口より下にとどめる（口と看板が埋もれないように）
   for (let i = 0; i < 14; i++) {
-    const yy = (i / 13) * (CAVE_Y - 0.2);
-    add(cliff, G.dodeca(1.0 + cl() * 0.5 - yy * 0.08), rock, (cl() - 0.5) * 2.8, yy + 0.3, (cl() - 0.5) * 1.0 - 0.2, { rot: [cl(), cl(), cl()] });
+    const r = 0.9 + cl() * 0.4;
+    const yy = Math.min(CAVE_Y - r - 0.15, 0.3 + (i / 13) * (CAVE_Y - 1.0));
+    add(cliff, G.dodeca(r), rock, (cl() - 0.5) * 3.0, yy, -0.3 - cl() * 0.6, { rot: [cl(), cl(), cl()] });
   }
-  for (let i = 0; i < 5; i++) add(cliff, G.sphere(0.5 + cl() * 0.3, 8, 6), mat('#8ab86a', { flatShading: true }), (cl() - 0.5) * 3, 0.6 + cl() * 2.2, 0.6, { scale: [1.2, 0.5, 0.8] });
+  // 洞穴の前の平らな岩だな（看板が立つ）
+  add(cliff, G.box(4.0, 0.35, 2.0), mat('#a8a294', { flatShading: true, roughness: 1 }), 0, CAVE_Y - 0.17, 0.4);
+  add(cliff, G.box(3.6, CAVE_Y - 0.3, 1.6), rock, 0, (CAVE_Y - 0.3) / 2, 0.2);
+  for (let i = 0; i < 9; i++) {
+    const r = 0.45 + cl() * 0.3;
+    add(cliff, G.dodeca(r), rock, -1.7 + (i % 5) * 0.85 + (cl() - 0.5) * 0.3, 0.4 + Math.floor(i / 5) * 1.1 + cl() * 0.3, 0.95 + cl() * 0.2, { rot: [cl(), cl(), cl()] });
+  }
+  for (let i = 0; i < 5; i++) add(cliff, G.sphere(0.45 + cl() * 0.25, 8, 6), mat('#8ab86a', { flatShading: true }), (cl() - 0.5) * 3.2, CAVE_Y + 0.02, 0.9 + cl() * 0.4, { scale: [1.2, 0.35, 0.8] });
   const cave = (R.cave = group(root, -11.4, CAVE_Y, -9.9));
   const cr = rng(5);
   for (let i = 0; i < 16; i++) {
@@ -379,8 +388,8 @@ export function buildSkyDiorama(scene) {
   }
   for (let i = 0; i < 6; i++) add(cave, G.dodeca(0.6 + cr() * 0.4), rock, (cr() - 0.5) * 3.2, 1.2 + cr() * 1.6, -0.9 - cr() * 0.6, { rot: [cr(), cr(), cr()] });
   add(cave, G.circle(1.25, 20, 0), mat('#2a2a3a'), 0, 0.6, 0.15, { scale: [1, 0.9, 1], cast: false });
-  add(cave, G.box(0.9, 0.35, 0.05), new THREE.MeshStandardMaterial({ map: signTex('風穴', { w: 192, h: 72, bg: '#f4ead2', size: 46 }) }), 1.7, 0.45, 0.8, { rot: [0, -0.4, 0] });
-  for (const x of [1.7]) add(cave, G.cyl(0.04, 0.04, 0.5, 6), wood, x, 0.2, 0.75);
+  add(cave, G.box(1.0, 0.4, 0.06), new THREE.MeshStandardMaterial({ map: signTex('風穴', { w: 192, h: 72, bg: '#f4ead2', size: 46 }) }), 1.55, 0.75, 1.05, { rot: [0, -0.25, 0] });
+  add(cave, G.cyl(0.04, 0.04, 0.6, 6), wood, 1.55, 0.3, 1.0);
   R.caveMouth = new THREE.Vector3(-11.4, CAVE_Y + 0.8, -9.6);
 
   // ---------------- 風の配管 ----------------
