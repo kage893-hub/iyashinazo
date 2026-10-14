@@ -6,6 +6,7 @@ import { add, mat, G, group, canvasTex } from './util.js';
 // 原点は足元。+Z が正面。
 // ---------------------------------------------------------------
 
+const _v = new THREE.Vector3();
 const black = () => mat('#16161c', { roughness: 0.25 });
 const shine = () => mat('#ffffff', { emissive: '#ffffff', emissiveIntensity: 0.6, roughness: 0.2 });
 
@@ -64,10 +65,16 @@ class Creature {
       y += Math.sin(k * Math.PI) * 0.35;
     }
     this.body.position.y = y;
-    // 首をかしげるアイドル
-    if (this.head && !this.sleeping && this.talkT <= 0) {
-      this.head.rotation.y = Math.sin(t * 0.5 + p) * 0.18;
-      this.head.rotation.x = Math.sin(t * 0.37 + p * 2) * 0.04;
+    // 首をかしげるアイドル／話すときはカメラのほうを向く
+    if (this.head && !this.sleeping) {
+      let yaw = Math.sin(t * 0.5 + p) * 0.18;
+      if (this.talkT > 0 && this.camPos) {
+        const w = this.root.getWorldPosition(_v);
+        const a = Math.atan2(this.camPos.x - w.x, this.camPos.z - w.z) - this.root.rotation.y;
+        yaw = Math.max(-0.7, Math.min(0.7, Math.atan2(Math.sin(a), Math.cos(a))));
+      }
+      this.head.rotation.y += (yaw - this.head.rotation.y) * Math.min(1, dt * 5);
+      if (this.talkT <= 0) this.head.rotation.x = Math.sin(t * 0.37 + p * 2) * 0.04;
     }
     if (this.extra) this.extra(dt, t);
   }

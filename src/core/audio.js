@@ -239,6 +239,7 @@ export class AudioSys {
   startBGM() {
     if (!this.ctx || this.bgmOn) return;
     this.bgmOn = true;
+    this._startWind();
     this.step = 0;
     this.nextTime = this.ctx.currentTime + 0.1;
     this.timer = setInterval(() => this._schedule(), 50);
@@ -276,9 +277,38 @@ export class AudioSys {
           this.tone(midiHz(m), { dur: spb * 4, gain: 0.018, when, attack: 0.8, type: 'triangle', out: this.bgm });
         });
       }
+      // 夜は虫の声
+      if ((this.night || 0) > 0.5 && Math.random() < 0.18) {
+        const base = 3800 + Math.random() * 900;
+        for (let k = 0; k < 3; k++) this.tone(base, { dur: 0.04, gain: 0.006, when: when + Math.random() * 0.3 + k * 0.06, out: this.sfx });
+      }
       this.nextTime += half;
       this.step++;
     }
+  }
+
+  /** そよ風の環境音 */
+  _startWind() {
+    if (this.wind) return;
+    const ctx = this.ctx;
+    const src = ctx.createBufferSource();
+    src.buffer = this.noiseBuf;
+    src.loop = true;
+    const f = ctx.createBiquadFilter();
+    f.type = 'lowpass'; f.frequency.value = 500; f.Q.value = 0.5;
+    const g = ctx.createGain();
+    g.gain.value = 0.025;
+    const lfo = ctx.createOscillator();
+    const lg = ctx.createGain();
+    lfo.frequency.value = 0.07; lg.gain.value = 0.015;
+    lfo.connect(lg).connect(g.gain);
+    const lfo2 = ctx.createOscillator();
+    const lg2 = ctx.createGain();
+    lfo2.frequency.value = 0.11; lg2.gain.value = 250;
+    lfo2.connect(lg2).connect(f.frequency);
+    src.connect(f).connect(g).connect(this.master);
+    src.start(); lfo.start(); lfo2.start();
+    this.wind = g;
   }
 
   _musicBox(f, when, gain, dur) {

@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { makeSky, makeIslandBase, makeSmallIsland, makeClouds, makeFireflies, Puffs, Leaves } from '../../lib/environment.js';
+import { makeSky, makeIslandBase, makeSmallIsland, makeClouds, makeFireflies, Puffs, Leaves, Butterflies, Birds } from '../../lib/environment.js';
 import { makeCat, makeOwl, makeFrog, makeRabbit, makeCrow, makeMouse } from '../../lib/creatures.js';
 import { add, mat, glow, G, group, lerp, damp, softCircleTexture } from '../../lib/util.js';
 import { Ease } from '../../core/tween.js';
@@ -107,6 +107,8 @@ export class StationStage {
     scene.add(this.fireflies);
     this.leaves = new Leaves(scene, { center: new V(12.4, 0, 7.6), radius: 2.6, top: 5.5 });
     this.sparkles = this._makeSparkles(scene);
+    this.butterflies = new Butterflies(scene, [new V(-7, 0.3, 5.6), new V(7.0, 0.2, 8.6), new V(-12.6, 0.2, 1.8), new V(2.6, 0.9, -1.6)]);
+    this.birds = new Birds(scene, 5);
 
     // 住人たち
     this._placeCreatures(scene);
@@ -316,11 +318,14 @@ export class StationStage {
   // =========================================================
   update(dt, t) {
     const g = this.g, R = this.R;
-    for (const c of this.creatures) c.update(dt, t);
+    for (const c of this.creatures) { c.camPos = g.camera.position; c.update(dt, t); }
+    this.butterflies.update(dt, t, this.night);
+    this.birds.update(dt, t);
 
     // 夜の移り変わり
     this.night = damp(this.night, this.nightTarget, 0.8, dt);
     this._applyNight(this.night);
+    g.audio.night = this.night;
     this.sky.uniforms.time.value = t;
     this.fireflies.material.uniforms.time.value = t;
     this.clouds.rotation.y = t * 0.004;

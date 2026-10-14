@@ -321,3 +321,65 @@ export class Leaves {
     }
   }
 }
+
+/** ひらひら飛ぶチョウ */
+export class Butterflies {
+  constructor(scene, spots, seed = 3) {
+    const r = rng(seed);
+    this.items = spots.map((c, i) => {
+      const g = new THREE.Group();
+      const col = ['#ffd36a', '#8fd4ff', '#ff9ac0', '#ffffff'][i % 4];
+      const m = new THREE.MeshStandardMaterial({ color: col, side: THREE.DoubleSide, emissive: col, emissiveIntensity: 0.25 });
+      const wing = new THREE.CircleGeometry(0.09, 8);
+      const L = new THREE.Mesh(wing, m), R = new THREE.Mesh(wing, m);
+      L.position.x = -0.08; R.position.x = 0.08;
+      const lp = new THREE.Group(), rp = new THREE.Group();
+      lp.add(L); rp.add(R);
+      g.add(lp, rp);
+      g.traverse((o) => { o.userData.noPick = true; });
+      scene.add(g);
+      return { g, lp, rp, c, ph: r() * 10, rad: 0.8 + r() * 1.2 };
+    });
+  }
+  update(dt, t, night) {
+    for (const b of this.items) {
+      b.g.visible = night < 0.6;
+      const k = t * 0.5 + b.ph;
+      b.g.position.set(b.c.x + Math.cos(k) * b.rad, b.c.y + 0.5 + Math.sin(k * 2.3) * 0.25, b.c.z + Math.sin(k * 1.3) * b.rad);
+      b.g.rotation.y = -k + Math.PI / 2;
+      const f = Math.sin(t * 18 + b.ph) * 1.1;
+      b.lp.rotation.z = f; b.rp.rotation.z = -f;
+      b.lp.rotation.x = b.rp.rotation.x = -Math.PI / 2;
+    }
+  }
+}
+
+/** 遠くを旋回する鳥 */
+export class Birds {
+  constructor(scene, count = 5, seed = 4) {
+    const r = rng(seed);
+    const m = new THREE.MeshBasicMaterial({ color: '#4a3a5a', side: THREE.DoubleSide, fog: true });
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute([0, 0, 0.15, -0.5, 0, -0.1, 0, 0, -0.15, 0, 0, 0.15, 0.5, 0, -0.1, 0, 0, -0.15], 3));
+    geo.computeVertexNormals();
+    this.items = [];
+    for (let i = 0; i < count; i++) {
+      const b = new THREE.Mesh(geo.clone(), m);
+      b.userData.noPick = true;
+      b.scale.setScalar(1.4);
+      scene.add(b);
+      this.items.push({ b, ph: r() * 10, rad: 26 + r() * 14, h: 9 + r() * 6, sp: 0.12 + r() * 0.06 });
+    }
+  }
+  update(dt, t) {
+    for (const it of this.items) {
+      const k = t * it.sp + it.ph;
+      it.b.position.set(Math.cos(k) * it.rad, it.h + Math.sin(k * 3) * 0.8, Math.sin(k) * it.rad * 0.7);
+      it.b.rotation.y = -k;
+      const p = it.b.geometry.attributes.position;
+      const flap = Math.sin(t * 7 + it.ph) * 0.25;
+      p.setY(1, flap); p.setY(4, flap);
+      p.needsUpdate = true;
+    }
+  }
+}
