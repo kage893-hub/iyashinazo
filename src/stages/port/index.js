@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import { makeBackdrop } from '../../lib/backdrop.js';
+import { GRADES, mixGrade } from '../../core/postfx.js';
 import { Motes } from '../../lib/livefx.js';
 import { showStageClear } from '../clear.js';
 import { stageNo } from '../../data/route.js';
@@ -93,6 +95,8 @@ export class PortStage {
     scene.add(this.island);
     this.clouds = makeClouds(43);
     scene.add(this.clouds);
+    this.backdrop = makeBackdrop('port');
+    scene.add(this.backdrop.group);
     this.smallIslands = [[-60, 6, -34, 4, 41], [54, -2, 28, 3, 42], [-74, 10, 18, 5, 43], [-24, -6, 62, 4, 44]].map(([x, y, z, s, seed]) => {
       const si = makeSmallIsland(seed, s);
       si.position.set(x, y, z);
@@ -259,6 +263,8 @@ export class PortStage {
   /** 朝霧(0) → 晴れ(1)：灯台が灯ると霧がはれる */
   _applyClear(k) {
     const g = this.g, R = this.R;
+    this.backdrop.set(k);
+    g.setGrade(mixGrade(GRADES.portFog, GRADES.port, k));
     const u = this.sky.uniforms;
     u.dMid.value.set('#d8e4ec').lerp(new THREE.Color('#a8d4f4'), k);
     u.dTop.value.set('#8ab0d0').lerp(new THREE.Color('#3a86d8'), k);

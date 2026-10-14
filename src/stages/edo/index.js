@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import { makeBackdrop } from '../../lib/backdrop.js';
+import { GRADES, mixGrade } from '../../core/postfx.js';
 import { Motes } from '../../lib/livefx.js';
 import { showStageClear } from '../clear.js';
 import { stageNo } from '../../data/route.js';
@@ -89,6 +91,8 @@ export class EdoStage {
     scene.add(this.island);
     this.clouds = makeClouds(33);
     scene.add(this.clouds);
+    this.backdrop = makeBackdrop('edo');
+    scene.add(this.backdrop.group);
     this.smallIslands = [[-60, 6, -34, 4, 31], [54, -2, 28, 3, 32], [-74, 10, 18, 5, 33], [-24, -6, 62, 4, 34]].map(([x, y, z, s, seed]) => {
       const si = makeSmallIsland(seed, s);
       si.position.set(x, y, z);
@@ -271,6 +275,8 @@ export class EdoStage {
     const R = this.R, g = this.g;
     const u = this.sky.uniforms;
     u.night.value = lerp(0.85, 0.08, k);
+    this.backdrop.set(k);
+    g.setGrade(mixGrade(GRADES.edoNight, GRADES.edo, k));
     u.sunDir.value.set(0.9, lerp(-0.12, 0.22, k), -0.4).normalize();
     this.hemi.intensity = lerp(0.95, 1.25, k);
     this.hemi.color.set('#a8b4e8').lerp(new THREE.Color('#ffe8d0'), k);

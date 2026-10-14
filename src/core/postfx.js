@@ -44,6 +44,10 @@ export const GradeShader = {
     vignette: { value: 0.38 },
     warmth: { value: 0.03 },
     time: { value: 0 },
+    lift: { value: new THREE.Vector3(0, 0, 0) },
+    gain: { value: new THREE.Vector3(1, 1, 1) },
+    sat: { value: 1 },
+    contrast: { value: 1 },
   },
   vertexShader: /* glsl */ `
     varying vec2 vUv;
@@ -54,18 +58,60 @@ export const GradeShader = {
     uniform float vignette;
     uniform float warmth;
     uniform float time;
+    uniform vec3 lift;
+    uniform vec3 gain;
+    uniform float sat;
+    uniform float contrast;
     varying vec2 vUv;
     float hash(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
     void main() {
       vec4 c = texture2D(tDiffuse, vUv);
+      // 街ごとの色合わせ：彩度・コントラスト、暗部の色（lift）と明部の色（gain）
+      float l = dot(c.rgb, vec3(0.299, 0.587, 0.114));
+      c.rgb = mix(vec3(l), c.rgb, sat);
+      c.rgb = (c.rgb - 0.5) * contrast + 0.5;
+      c.rgb *= mix(vec3(1.0), gain, smoothstep(0.15, 0.95, l));
+      c.rgb += lift * (1.0 - smoothstep(0.0, 0.75, l));
       vec2 q = vUv - 0.5;
       float v = 1.0 - dot(q, q) * vignette * 2.2;
       c.rgb *= clamp(v, 0.0, 1.0);
       c.rgb += vec3(warmth, warmth * 0.4, -warmth * 0.5);
-      gl_FragColor = c;
+      gl_FragColor = vec4(max(c.rgb, 0.0), c.a);
     }
   `,
 };
+
+/**
+ * 街ごとの仕上げの色調。lift＝暗いところの色、gain＝明るいところの色。
+ * 状態の変化（夜→朝など）は mixGrade(a, b, k) でまぜる。
+ */
+export const GRADES = {
+  neutral: { lift: [0, 0, 0], gain: [1, 1, 1], sat: 1, contrast: 1, warmth: 0.03, vignette: 0.38 },
+  // はざま駅：夕暮れの琥珀と、紫の影 → 夜は青い影
+  station: { lift: [0.022, 0.0, 0.04], gain: [1.05, 1.0, 0.93], sat: 1.05, contrast: 1.03, warmth: 0.02, vignette: 0.38 },
+  stationNight: { lift: [0.0, 0.012, 0.05], gain: [1.04, 0.99, 0.95], sat: 0.98, contrast: 1.04, warmth: 0.01, vignette: 0.42 },
+  // 天空の街：明るく澄んだ色（雨雲のあいだは少しくすむ）
+  skyStorm: { lift: [0.02, 0.022, 0.032], gain: [0.97, 0.99, 1.02], sat: 0.88, contrast: 0.97, warmth: 0.0, vignette: 0.32 },
+  sky: { lift: [0.0, 0.008, 0.02], gain: [1.01, 1.02, 1.03], sat: 1.12, contrast: 1.04, warmth: 0.005, vignette: 0.24 },
+  // 江戸：藍の影と朱のあかり
+  edoNight: { lift: [0.0, 0.012, 0.065], gain: [1.08, 0.97, 0.86], sat: 1.02, contrast: 1.06, warmth: 0.0, vignette: 0.44 },
+  edo: { lift: [0.0, 0.01, 0.045], gain: [1.07, 1.0, 0.9], sat: 1.08, contrast: 1.04, warmth: 0.025, vignette: 0.36 },
+  // 温泉：青い夜と、灯りの橙
+  onsenDark: { lift: [0.0, 0.012, 0.06], gain: [1.02, 0.98, 0.98], sat: 0.95, contrast: 1.04, warmth: 0.0, vignette: 0.46 },
+  onsen: { lift: [0.0, 0.014, 0.065], gain: [1.1, 0.98, 0.86], sat: 1.05, contrast: 1.07, warmth: 0.01, vignette: 0.44 },
+  // 港：朝霧のミルク色 → 晴れた青と白
+  portFog: { lift: [0.035, 0.04, 0.05], gain: [0.98, 1.0, 1.02], sat: 0.88, contrast: 0.93, warmth: 0.0, vignette: 0.3 },
+  port: { lift: [0.0, 0.006, 0.025], gain: [0.99, 1.01, 1.04], sat: 1.12, contrast: 1.05, warmth: -0.005, vignette: 0.28 },
+};
+
+export function mixGrade(a, b, k) {
+  const L = (x, y) => x + (y - x) * k;
+  return {
+    lift: a.lift.map((v, i) => L(v, b.lift[i])),
+    gain: a.gain.map((v, i) => L(v, b.gain[i])),
+    sat: L(a.sat, b.sat), contrast: L(a.contrast, b.contrast), warmth: L(a.warmth, b.warmth), vignette: L(a.vignette, b.vignette),
+  };
+}
 
 // ---------------------------------------------------------------
 // 深度つきの被写界深度：ピント（見ている場所）から前後に離れるほどぼける。

@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import { makeBackdrop } from '../../lib/backdrop.js';
+import { GRADES, mixGrade } from '../../core/postfx.js';
 import { showStageClear } from '../clear.js';
 import { stageNo } from '../../data/route.js';
 import { makeSky, makeIslandBase, makeSmallIsland, makeClouds, Puffs, Birds } from '../../lib/environment.js';
@@ -93,6 +95,9 @@ export class OnsenStage {
     this.clouds.userData.mat.color.set('#8a8ab0');
     this.clouds.userData.mat.emissive.set('#2a2a5a');
     scene.add(this.clouds);
+    this.backdrop = makeBackdrop('onsen');
+    scene.add(this.backdrop.group);
+    g.setGrade(GRADES.onsenDark);
     this.smallIslands = [[-58, 4, -36, 4, 21], [52, -2, 30, 3, 22], [-72, 12, 20, 5, 23], [-26, -6, 62, 4, 25]].map(([x, y, z, s, seed]) => {
       const si = makeSmallIsland(seed, s);
       si.position.set(x, y, z);
@@ -298,6 +303,8 @@ export class OnsenStage {
   }
 
   _setStreet(on) {
+    this.backdrop.set(on ? 1 : 0);
+    this.g.setGrade(on ? GRADES.onsen : GRADES.onsenDark);
     for (const m of this.R.streetLanterns) m.emissiveIntensity = on ? 1.7 : 0;
     for (const m of this.R.toroMats) m.emissiveIntensity = on ? 2.0 : 0;
     for (const L of this.R.streetLight) L.intensity = on ? 3 : 0;

@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import { makeBackdrop } from '../../lib/backdrop.js';
+import { GRADES, mixGrade } from '../../core/postfx.js';
 import { showStageClear } from '../clear.js';
 import { stageNo } from '../../data/route.js';
 import { makeSky, makeIslandBase, makeSmallIsland, makeClouds, makeFireflies, Puffs, Leaves, Butterflies, Birds } from '../../lib/environment.js';
@@ -82,6 +84,8 @@ export class StationStage {
     scene.add(island);
     this.clouds = makeClouds();
     scene.add(this.clouds);
+    this.backdrop = makeBackdrop('station');
+    scene.add(this.backdrop.group);
     this.far = group(scene);
     const smalls = [
       [-55, 2, -40, 4, 1], [48, -4, 35, 3, 2], [-70, 10, 25, 5, 3], [30, 8, -70, 3.5, 4], [-25, -8, 60, 4, 5], [75, 2, -10, 3, 6],
@@ -441,6 +445,8 @@ export class StationStage {
   _applyNight(k) {
     const R = this.R;
     this.sky.uniforms.night.value = k;
+    this.backdrop.set(k);
+    this.g.setGrade(mixGrade(GRADES.station, GRADES.stationNight, k));
     this.sun.intensity = lerp(2.4, 0.55, k);
     this.sun.color.set('#ffd2a0').lerp(new THREE.Color('#9db4ff'), k);
     this.hemi.intensity = lerp(1.1, 0.5, k);

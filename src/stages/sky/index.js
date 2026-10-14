@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import { makeBackdrop } from '../../lib/backdrop.js';
+import { GRADES, mixGrade } from '../../core/postfx.js';
 import { Motes } from '../../lib/livefx.js';
 import { showStageClear } from '../clear.js';
 import { stageNo } from '../../data/route.js';
@@ -98,6 +100,8 @@ export class SkyStage {
     this.clouds.userData.mat.emissive.set('#8fb0e0');
     this.clouds.userData.mat.emissiveIntensity = 0.1;
     scene.add(this.clouds);
+    this.backdrop = makeBackdrop('sky');
+    scene.add(this.backdrop.group);
     this.smallIslands = [[-58, 4, -36, 4, 11], [52, -2, 30, 3, 12], [-72, 12, 20, 5, 13], [-28, -6, 62, 4, 15], [70, 6, 10, 3, 16]].map(([x, y, z, s, seed]) => {
       const si = makeSmallIsland(seed, s);
       si.position.set(x, y, z);
@@ -267,6 +271,8 @@ export class SkyStage {
 
   _applyStorm() {
     const R = this.R, k = this.stormT;
+    this.backdrop.set(1 - k);
+    this.g.setGrade(mixGrade(GRADES.skyStorm, GRADES.sky, 1 - k));
     R.storm.visible = k > 0.01;
     R.storm.scale.setScalar(0.3 + 0.7 * k);
     R.storm.position.x = 23 + (1 - k) * 18;

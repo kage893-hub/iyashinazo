@@ -173,9 +173,10 @@ export function makeClouds(seed = 9) {
   const dummy = new THREE.Object3D();
   for (let i = 0; i < count; i++) {
     const a = r() * Math.PI * 2;
-    const far = i > 300;
+    // 遠くの雲はまばらに低く（奥の遠景がすき間からのぞく）
+    const far = i > 360;
     const rad = far ? 80 + r() * 90 : 22 + r() * 120;
-    const y = far ? -8 + r() * 18 : -20 - r() * 7;
+    const y = far ? -14 + r() * 12 : -20 - r() * 7;
     dummy.position.set(Math.cos(a) * rad, y, Math.sin(a) * rad);
     const s = far ? 3 + r() * 6 : 4 + r() * 7;
     dummy.scale.set(s * (1.2 + r()), s * (0.45 + r() * 0.3), s * (1 + r() * 0.6));

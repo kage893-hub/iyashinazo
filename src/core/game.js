@@ -5,7 +5,7 @@ import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
-import { DofShader, GradeShader, AoPass } from './postfx.js';
+import { DofShader, GradeShader, AoPass, GRADES } from './postfx.js';
 import { Tweens, Ease } from './tween.js';
 import { UI } from './ui.js';
 import { AudioSys } from './audio.js';
@@ -712,6 +712,26 @@ export class Game {
   // ステージとメインループ
   // =========================================================
   /** 読み込み画面の進み具合（p: 0〜1）。画面を描きかえる時間をつくる */
+  /** 仕上げの色調を変える（now=false なら、なめらかに近づける） */
+  setGrade(p, now = false) {
+    this.gradeTarget = p;
+    if (now) this._stepGrade(0, true);
+  }
+
+  _stepGrade(dt, snap = false) {
+    const p = this.gradeTarget;
+    if (!p) return;
+    const u = this.grade.uniforms;
+    const k = snap ? 1 : Math.min(1, dt * 3);
+    u.lift.value.x += (p.lift[0] - u.lift.value.x) * k;
+    u.lift.value.y += (p.lift[1] - u.lift.value.y) * k;
+    u.lift.value.z += (p.lift[2] - u.lift.value.z) * k;
+    u.gain.value.x += (p.gain[0] - u.gain.value.x) * k;
+    u.gain.value.y += (p.gain[1] - u.gain.value.y) * k;
+    u.gain.value.z += (p.gain[2] - u.gain.value.z) * k;
+    for (const n of ['sat', 'contrast', 'warmth', 'vignette']) u[n].value += (p[n] - u[n].value) * k;
+  }
+
   async loadingStep(p, text) {
     const bar = document.querySelector('#loading .ld-bar i');
     if (bar) bar.style.width = `${Math.round(p * 100)}%`;
@@ -722,11 +742,13 @@ export class Game {
 
   async loadStage(StageClass) {
     this.bounds = { minX: -14, maxX: 14, minZ: -10, maxZ: 10 };
+    this.setGrade(GRADES.neutral, true);
     this.stage = new StageClass(this);
     await this.loadingStep(0.1, '箱庭を組み立てています…');
     await this.stage.build();
     this.buildPickList();
     this.stage.applyState(true);
+    this._stepGrade(0, true);
     // 最初の表示で固まらないよう、シェーダーを先に用意しておく
     await this.loadingStep(0.85, 'もうすぐ出発します…');
     try {
@@ -829,6 +851,7 @@ export class Game {
     }
 
     this.grade.uniforms.time.value = this.time % 100;
+    this._stepGrade(raw);
     // 影は止まっている物がほとんどなので、ふだんは1フレームおきに更新（演出中は毎フレーム）
     const sm = this.renderer.shadowMap;
     sm.autoUpdate = false;
