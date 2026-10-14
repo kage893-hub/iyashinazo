@@ -146,6 +146,41 @@ async function main() {
     game.ui.toast('つづきから再開しました', 2000);
   };
 
+  // 路線図：通った駅と次の駅だけ見える（まだ見ぬ駅は「？？？」）
+  title.querySelector('[data-act="stages"]').onclick = () => {
+    game.audio.init();
+    game.audio.play('click');
+    const body = el('div', 'stage-list');
+    let panel;
+    const reached = Math.max(0, ...STAGES.map((s, i) => (cleared.includes(s.id) ? i + 1 : 0)));
+    STAGES.forEach((s, i) => {
+      const done = cleared.includes(s.id);
+      const known = done || i <= reached; // 通った駅と、その次の駅
+      const open = known && !!s.Stage;
+      const card = el('button', `stage-card ${open ? 'open' : 'locked'} ${done ? 'cleared' : ''} ${known ? '' : 'unknown'}`, known ? `
+        <div class="sc-no">STAGE ${s.no}</div>
+        <div class="sc-emoji">${s.emoji}</div>
+        <div class="sc-name">${s.name}</div>
+        <div class="sc-sub">${!s.Stage ? '準備中…' : done ? s.sub : '次の停車駅'}</div>` : `
+        <div class="sc-no">STAGE ${s.no}</div>
+        <div class="sc-emoji">❔</div>
+        <div class="sc-name">？？？</div>
+        <div class="sc-sub">まだ見ぬ駅</div>`);
+      card.disabled = !open;
+      card.onclick = async () => {
+        game.audio.play('click');
+        const q = await game.ui.choose(`「${s.name}」から遊びますか？${game.hasSave() ? '<br><small>（いまの進行は上書きされます）</small>' : ''}`, ['出発する', 'やめる']);
+        if (q !== 0) return;
+        panel.close();
+        await game.ui.fade(1, 0.5);
+        game.goToStage(s.id);
+      };
+      body.appendChild(card);
+    });
+    body.appendChild(el('p', 'panel-note', 'クリアした駅には、いつでも戻れます。'));
+    panel = game.ui.openPanel({ title: '路線図', body, cls: 'wide' });
+  };
+
   title.querySelector('[data-act="howto"]').onclick = () => {
     game.audio.init();
     game.audio.play('click');
