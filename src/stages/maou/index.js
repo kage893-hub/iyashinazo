@@ -45,7 +45,7 @@ const GHOSTS = {
   fountain: { pos: new V(2.5, 1.9, 6.2), dark: false, name: '噴水', color: '#e8f0ff' },
   kitchen: { pos: new V(-5.4, 1.9, 13.3), dark: false, name: '台所の大鍋', color: '#f0e8ff' },
   library: { pos: new V(-3.3, 3.2, 5.6), dark: false, name: '図書室の本棚', color: '#e0f8f0' },
-  candle: { pos: new V(10.0, 2.25, 11.4), dark: true, name: '消えた燭台', color: '#d8e0ff' },
+  candle: { pos: new V(8.0, 2.25, 10.0), dark: true, name: '消えた燭台', color: '#d8e0ff' },
 };
 const PARTY = { fountain: new V(-3.2, HILL + 2.4, -8.4), kitchen: new V(-1.2, HILL + 2.7, -8.2), library: new V(1.2, HILL + 2.7, -8.2), candle: new V(3.2, HILL + 2.4, -8.4) };
 const INNER = ['fountain', 'gallery', 'library', 'kitchen', 'blackboard', 'dungeon', 'treasury', 'mimic', 'witch', 'tomato', 'darkBrazier', 'terrace', 'maou', 'stairs', 'ghost_fountain', 'ghost_kitchen', 'ghost_library', 'ghost_candle'];
@@ -602,7 +602,7 @@ export class MaouStage {
   async clickGallery() {
     const g = this.g;
     this.focus(this.R.gallery, 14);
-    if (!this.lit) return this.say(['肖像画の回廊。5まいの絵が、むらさきの額縁にかざられている。', '小さな2ひきのドラゴン、噴水、大鍋、本棚、そして……火のついていない燭台。', '（なんだか、ランタンで照らすと何か見えそうだ）']);
+    if (!this.lit) return this.say(['肖像画の回廊。5まいの絵が、金色の額縁にかざられている。', '小さな2ひきのドラゴン、噴水、大鍋、本棚、そして……火のついていない燭台。', '（なんだか、ランタンで照らすと何か見えそうだ）']);
     if (!g.flags.galleryLit) {
       g.flag('galleryLit');
       g.note('mo-gallery', '肖像画の手がかり', 'ランタンで照らすと、絵の中にゴーストがうかびあがる。<br><b>噴水の上</b>、<b>台所の大鍋</b>、<b>図書室の本棚の上</b>。<br>そして<b>消えた燭台</b>の絵だけは、光の中ではなく<b>暗がりの中</b>にゴーストの目が光っている。');
@@ -704,7 +704,8 @@ export class MaouStage {
 
   async clickBlackboard() {
     const g = this.g;
-    this.focus(this.R.blackboard, 9);
+    const board = this.R.blackboard;
+    await g.focusOn(board.getWorldPosition(new V()).add(new V(0, 1.6, 0)), { dist: 9, polar: 1.1, theta: 0, keepAngle: true, subject: board, duration: 0.8 });
     if (!this.lit) return this.say(['台所の黒板。なにも書いていない……ように見える。', '（魔界のチョークは、紫の光でしか読めないらしい）']);
     if (!g.flags.recipeSeen) {
       g.flag('recipeSeen');

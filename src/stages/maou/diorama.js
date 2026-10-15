@@ -201,25 +201,25 @@ export function buildMaouDiorama(scene) {
   // ---------------- 城壁と門（x = -9） ----------------
   const cw = group(root);
   const wallZ = (z0, z1) => { const g2 = group(cw, GATE_X, 0, (z0 + z1) / 2, Math.PI / 2); wall(g2, -(z1 - z0) / 2, (z1 - z0) / 2, 0, 0, 2.6, { th: 0.8 }); };
-  wallZ(-1.6, 1.4);
-  wallZ(4.6, 16.0);
-  for (const z of [1.6, 4.4]) tower(cw, GATE_X, 0, z, 0.9, 4.0, roofP);
+  wallZ(-1.6, 0.4);
+  wallZ(5.6, 16.0);
+  for (const z of [0.6, 5.4]) tower(cw, GATE_X, 0, z, 0.9, 4.0, roofP);
   R.gate = group(root, GATE_X, 0, 3.0);
-  box(R.gate, 1.0, 1.0, 2.2, stone, 0, 3.4, 0);
-  for (let z = -0.9; z <= 0.9; z += 0.6) box(R.gate, 1.04, 0.4, 0.32, stone, 0, 4.1, z);
+  box(R.gate, 1.0, 1.0, 4.2, stone, 0, 3.4, 0);
+  for (let z = -1.8; z <= 1.81; z += 0.6) box(R.gate, 1.04, 0.4, 0.32, stone, 0, 4.1, z);
   // 鉄格子の門扉（開くと上へあがる）
   R.portcullis = group(R.gate, 0, 0, 0);
   R.portcullis.userData.dynamic = true;
-  for (let z = -0.9; z <= 0.91; z += 0.3) box(R.portcullis, 0.08, 2.9, 0.08, R.iron, 0, 1.45, z);
-  for (const y of [0.6, 1.5, 2.4]) box(R.portcullis, 0.08, 0.08, 2.0, R.iron, 0, y, 0);
+  for (let z = -1.8; z <= 1.81; z += 0.3) box(R.portcullis, 0.08, 2.9, 0.08, R.iron, 0, 1.45, z);
+  for (const y of [0.6, 1.5, 2.4]) box(R.portcullis, 0.08, 0.08, 4.0, R.iron, 0, y, 0);
   // 門の上の、合言葉の魔界文字（ランタンで照らすと見える）
-  R.passGlyph = glyphBoard('おとうと', { w: 0.95, h: 0.45, color: '#e8c8ff' });
+  R.passGlyph = glyphBoard('おとうと', { w: 2.4, h: 0.55, color: '#e8c8ff' });
   R.passGlyph.position.set(-0.52, 3.4, 0);
   R.passGlyph.rotation.y = -Math.PI / 2;
   R.passGlyph.userData.noPick = true;
   R.gate.add(R.passGlyph);
   // 門の外の、門番の詰め所（小さな屋根）
-  const hut = group(root, -10.6, 0, 5.6);
+  const hut = group(root, -11.0, 0, 5.6);
   for (const [px, pz] of [[-0.7, -0.6], [0.7, -0.6], [-0.7, 0.6], [0.7, 0.6]]) box(hut, 0.12, 2.0, 0.12, R.iron, px, 1.0, pz);
   box(hut, 1.8, 0.12, 1.6, roofP, 0, 2.05, 0, { rot: [0.12, 0, 0] });
 
@@ -295,7 +295,7 @@ export function buildMaouDiorama(scene) {
   for (let i = 0; i < 4; i++) add(ft, new THREE.DodecahedronGeometry(0.25, 0), stone, Math.cos(i * 1.7) * 1.2, 0.68, Math.sin(i * 1.7) * 1.1, { rot: [i, i, 0] });
   // 紫の炎の燭台（中庭の四すみ）。ひとつだけ炎の消えたものがある
   for (const [x, z] of [[-5.0, 1.4], [10.0, 1.4], [-5.0, 11.4]]) brazier(R, root, x, z);
-  R.darkBrazier = brazier(R, root, 10.0, 11.4, { dark: true });
+  R.darkBrazier = brazier(R, root, 8.0, 10.0, { dark: true });
   // 肖像画の回廊（中庭の奥、線路の手前）
   const gal = (R.gallery = group(root, 2.5, 0, -0.2));
   box(gal, 13.0, 0.3, 1.4, stone, 0, 0.15, 0);
@@ -336,12 +336,18 @@ export function buildMaouDiorama(scene) {
   add(R.cauldron, new THREE.CircleGeometry(0.62, 14), R.soupMat, 0, 1.1, 0, { rot: [-Math.PI / 2, 0, 0], cast: false });
   R.cookFire = add(R.cauldron, new THREE.ConeGeometry(0.4, 0.4, 6), new THREE.MeshBasicMaterial({ color: '#ff8a2a' }), 0, 0.12, 0, { cast: false });
   R.cookFire.userData.keep = true;
-  // 黒板（レシピはランタンの光でしか読めない）
-  const bb = (R.blackboard = group(kit, 1.5, 0, -1.25));
-  box(bb, 1.4, 1.0, 0.08, new THREE.MeshStandardMaterial({ color: '#1a2a22' }), 0, 1.6, 0);
-  box(bb, 1.5, 1.1, 0.06, M.wood, 0, 1.6, -0.04);
-  R.recipeGlow = add(bb, new THREE.PlaneGeometry(1.2, 0.8), new THREE.MeshBasicMaterial({ map: pixText('トマト→キノコ→塩', { w: 96, h: 32, size: 10, bg: '#1a2a22', fg: '#d8b8ff', border: '#1a2a22' }), transparent: true }), 0, 1.6, 0.05, { cast: false });
-  R.recipeGlow.userData.noPick = true;
+  // 猫や壁に隠れない、台所の横の立て看板。文字はランタンの光で浮かぶ。
+  const bb = (R.blackboard = group(kit, 3.2, 0, 0.9));
+  for (const x of [-0.7, 0.7]) box(bb, 0.12, 1.2, 0.16, M.wood, x, 0.6, -0.04);
+  box(bb, 2.0, 1.4, 0.08, new THREE.MeshStandardMaterial({ color: '#1a2a22' }), 0, 1.6, 0);
+  box(bb, 2.14, 1.54, 0.1, M.wood, 0, 1.6, -0.06);
+  R.recipeGlow = group(bb, 0, 0, 0.05);
+  R.recipeGlow.userData.dynamic = true;
+  ['ほのおのシチュー', 'トマト → キノコ → 塩', 'さいごに 3回 まぜる'].forEach((text, i) => {
+    const line = add(R.recipeGlow, new THREE.PlaneGeometry(1.9, 0.32), new THREE.MeshBasicMaterial({ map: pixText(text, { w: 256, h: 40, size: 18, bg: '#1a2a22', fg: '#e8d8ff', border: '#1a2a22' }) }), 0, 2.05 - i * 0.43, 0, { cast: false });
+    line.userData.noPick = true;
+    line.userData.keep = true;
+  });
   // 野菜かご
   box(kit, 0.6, 0.3, 0.45, M.planks, 1.4, 0.35, 0.8);
 

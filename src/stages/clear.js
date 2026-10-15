@@ -18,7 +18,7 @@ export function showStageClear(g, id, line) {
   const body = el('div', 'clear');
   body.innerHTML = `
     <div class="clear-sub">STAGE ${cur.no} CLEAR</div>
-    <div class="clear-main">${cur.name}</div>
+    <div class="clear-main" style="--title-chars:${[...cur.name].length}">${cur.name}</div>
     <div class="clear-stats"><div><span>プレイ時間</span><b>${time}</b></div><div><span>ヒント</span><b>${g.state.hints}回</b></div></div>
     <div class="rt">${dots}</div>
     <p class="clear-msg">${line}<br>${next ? `次の停車駅は<em>${next.name}</em>。${ready ? '' : '……つづきは準備中です。'}` : 'ほしまわり号の旅は、ここで おしまい。'}</p>

@@ -152,6 +152,70 @@ try {
     }
     assert.equal(panelsChecked, 28);
   });
+  await test('縦画面: 会話文と名前が重ならず、各駅のクリア見出しが1行に収まる', async () => {
+    for (const width of [320, 375, 390]) {
+      await page.setViewportSize({ width, height: 812 });
+      await page.evaluate(() => {
+        g.ui.setSpeakers({ hero: { name: 'ハリネズミの勇者', icon: '🦔' } });
+        g.ui.say([{ who: 'hero', text: 'ぼくはハリネズミの勇者。きょう、魔王城へ旅立つ……はず、だったんだけど。' }]);
+        g.ui.advance();
+      });
+      await page.locator('#dialogue.show').waitFor();
+      const gap = await page.evaluate(() => document.querySelector('.dlg-text').getBoundingClientRect().top - document.querySelector('.dlg-name').getBoundingClientRect().bottom);
+      assert.ok(gap >= 4, `${width}px: 会話文と名前の間隔 ${gap}px`);
+      await page.evaluate(() => { g.ui.advance(); });
+      const ids = await page.evaluate(async () => (await import('/src/data/route.js')).ROUTE.map(s => s.id));
+      for (const id of ids) {
+        await page.evaluate(async id => {
+          const { showStageClear } = await import('/src/stages/clear.js');
+          showStageClear(g, id, 'ほしまわり号は、次の世界へ。');
+        }, id);
+        const fits = await page.locator('.clear-main').evaluate(e => {
+          const range = document.createRange(); range.selectNodeContents(e);
+          return range.getClientRects().length === 1 && e.scrollWidth <= e.clientWidth;
+        });
+        assert.ok(fits, `${width}px/${id}: クリア見出しが収まらない`);
+        await close();
+      }
+    }
+  });
+  await test('瓦版: 9枚を並べると、元の絵とずれなくつながる', async () => {
+    await page.evaluate(() => document.body.classList.remove('rpg'));
+    for (const width of [375, 1000]) {
+      await page.setViewportSize({ width, height: 812 });
+      await page.evaluate(async () => {
+        const { ukiyoePanel } = await import('/src/stages/edo/panels.js');
+        ukiyoePanel(g.ui, g.audio, { onSolved() {} });
+      });
+      const order = [6, 4, 1, 8, 2, 0, 5, 3, 7];
+      for (let i = 0; i < 9; i++) if (order[i] !== i) {
+        const j = order.indexOf(i);
+        await page.locator('.uk-cell').nth(i).click();
+        await page.locator('.uk-cell').nth(j).click();
+        [order[i], order[j]] = [order[j], order[i]];
+      }
+      await page.locator('.ukiyop.solved').waitFor();
+      const png = await page.locator('.uk-grid').screenshot({ animations: 'disabled' });
+      const error = await page.evaluate(async b64 => {
+        const load = src => new Promise(resolve => { const img = new Image(); img.onload = () => resolve(img); img.src = src; });
+        const actual = await load(`data:image/png;base64,${b64}`);
+        const reference = await load(getComputedStyle(document.querySelector('.uk-cell')).backgroundImage.slice(5, -2));
+        const size = Math.round(document.querySelector('.uk-cell').getBoundingClientRect().width * 3);
+        const a = document.createElement('canvas'); a.width = a.height = size;
+        const b = a.cloneNode();
+        // スクリーンショットは小数座標を外側へ丸めるので、中央から絵だけを切り出す。
+        a.getContext('2d').drawImage(actual, Math.round((actual.width - size) / 2), Math.round((actual.height - size) / 2), size, size, 0, 0, size, size);
+        b.getContext('2d').drawImage(reference, 0, 0, size, size);
+        const aa = a.getContext('2d').getImageData(0, 0, size, size).data;
+        const bb = b.getContext('2d').getImageData(0, 0, size, size).data;
+        let diff = 0;
+        for (let i = 0; i < aa.length; i++) if (i % 4 !== 3) diff += Math.abs(aa[i] - bb[i]);
+        return diff / (size * size * 3);
+      }, png.toString('base64'));
+      assert.ok(error < 2, `${width}px: 元画像との平均RGB誤差 ${error}`);
+      await close();
+    }
+  });
   assert.deepEqual(errors, []);
   console.log(`PASS: ${passed} checks`);
 } finally { await browser.close(); }
