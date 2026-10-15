@@ -182,6 +182,34 @@ function rainbow(group, mats, { a = BACK, r = 236, y0 = -20, R0 = 120, w = 14, o
   group.add(new THREE.Mesh(g, m));
 }
 
+/** 積み木の塔のシルエット（遠くの、もっと大きなおもちゃ箱） */
+function blocks(group, mats, { a, r = 240, y0 = -30, seed = 1, n = 5, color, color2 = color, op = 0.6, op2 = op }) {
+  const rnd = rng(seed);
+  const m = silMat(mats, color, color2, op, op2);
+  const cx = Math.cos(a) * r, cz = Math.sin(a) * r;
+  const tx = -Math.sin(a), tz = Math.cos(a);
+  let u = -n * 7;
+  for (let i = 0; i < n; i++) {
+    const w = 8 + rnd() * 8;
+    let y = y0;
+    const stack = 1 + Math.floor(rnd() * 4);
+    for (let k = 0; k < stack; k++) {
+      const s = w * (1 - k * 0.12);
+      const geo = new THREE.PlaneGeometry(s, s);
+      const col = [];
+      for (let v = 0; v < 4; v++) col.push(1, 1, 1, 1);
+      geo.setAttribute('color', new THREE.Float32BufferAttribute(col, 4));
+      const mesh = new THREE.Mesh(geo, m);
+      mesh.position.set(cx + tx * u, y + s / 2, cz + tz * u);
+      mesh.lookAt(0, y + s / 2, 0);
+      mesh.rotation.z = (rnd() - 0.5) * 0.12;
+      group.add(mesh);
+      y += s * 0.98;
+    }
+    u += w + 3 + rnd() * 6;
+  }
+}
+
 // 方向の目安：カメラはふだん +z 側から見ているので、奥は a ≈ -π/2（z が負）
 const BACK = -Math.PI / 2;
 
@@ -235,6 +263,15 @@ const KINDS = {
       peak(g, M, { a, r: 246, y0: -24, h: 34 * s, w: 30 * s, color: '#4a6a52', color2: '#5a8a5a', op: 0.55, op2: 0.5, snowLine: 2 });
     }
     rainbow(g, M, { a: BACK + 0.12, r: 232, y0: -28, R0: 42, w: 8, op: 0, op2: 0.65 });
+  },
+  // おもちゃの街：遠くに、積み木の塔とクレヨンの丘。動きだすと、色があざやかに
+  toy(g, M) {
+    ridge(g, M, { r: 256, y0: -30, h: [10, 28], seed: 91, freq: 5, color: '#c890a8', color2: '#e8a0c0', op: 0.55, op2: 0.6 });
+    blocks(g, M, { a: BACK - 0.35, seed: 92, n: 4, color: '#a07aa0', color2: '#e86a5a', op: 0.5, op2: 0.65 });
+    blocks(g, M, { a: BACK + 0.45, seed: 93, n: 5, color: '#9080b0', color2: '#4a8ae8', op: 0.5, op2: 0.65 });
+    blocks(g, M, { a: BACK + 1.4, seed: 94, n: 3, color: '#a088a8', color2: '#f0c040', op: 0.45, op2: 0.6 });
+    blocks(g, M, { a: BACK - 1.4, seed: 95, n: 3, color: '#a088a8', color2: '#5ac06a', op: 0.45, op2: 0.6 });
+    lights(g, M, { n: 40, r: 230, y: [-20, 20], a0: BACK - 1.4, a1: BACK + 1.4, seed: 96, color: '#ffe0a0', op: 0, op2: 0.9, size: 1.6 });
   },
   // 温泉：雪をかぶった山なみと、遠くの湯の里の灯り
   onsen(g, M) {

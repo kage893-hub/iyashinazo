@@ -447,4 +447,19 @@ export const ITEMS = {
     desc: 'クモの機織り職人が編んだ、細くて、とても丈夫な綱。',
     icon: svg(`<g fill="none" stroke="#f4f0ff" stroke-width="5" stroke-linecap="round"><path d="M14 46 c8 -20 28 -20 36 -4"/><path d="M14 38 c8 -20 28 -20 36 -4"/></g><g fill="none" stroke="#a898c8" stroke-width="1.5"><path d="M14 46 c8 -20 28 -20 36 -4"/><path d="M14 38 c8 -20 28 -20 36 -4"/></g><circle cx="50" cy="42" r="4" fill="#e8e0f8" stroke="#8a7ab0" stroke-width="2"/>`),
   },
+  toyKey: {
+    name: 'ゼンマイ鍵',
+    desc: '町長からあずかった、大きな真鍮の鍵。止まったおもちゃのゼンマイを巻ける。',
+    icon: svg(`<g fill="#e2b54a" stroke="#7a5414" stroke-width="2.5" stroke-linejoin="round"><path d="M32 26 C14 8 4 18 10 28 C4 38 14 46 32 30 Z"/><path d="M32 26 C50 8 60 18 54 28 C60 38 50 46 32 30 Z"/><rect x="28" y="26" width="8" height="30" rx="3"/></g><circle cx="32" cy="28" r="4" fill="#fff4c0"/>`),
+  },
+  gearBox: {
+    name: '歯車箱',
+    desc: 'ロボット犬が砂場にうめていた、ブリキの箱。歯8が2こ、歯12が1こ、歯24が2こ入っている。',
+    icon: svg(`<rect x="8" y="22" width="48" height="30" rx="4" fill="#5a7a9a" stroke="#2a3a4a" stroke-width="2.5"/><rect x="8" y="18" width="48" height="8" rx="2" fill="#e8c25a" stroke="#7a5414" stroke-width="2"/><g fill="#e8c25a" stroke="#7a5414" stroke-width="1.5"><circle cx="22" cy="37" r="8"/><circle cx="40" cy="38" r="10"/></g><circle cx="22" cy="37" r="2.5" fill="#5a7a9a"/><circle cx="40" cy="38" r="3" fill="#5a7a9a"/>`),
+  },
+  crankHandle: {
+    name: '巻きハンドル',
+    desc: '時計塔の大ゼンマイを巻くための、赤いハンドル。積み木の迷路のいちばん奥にあった。',
+    icon: svg(`<rect x="28" y="10" width="8" height="36" rx="3" fill="#e8402e" stroke="#7a1a0a" stroke-width="2.5"/><rect x="18" y="8" width="20" height="8" rx="3" fill="#f0c830" stroke="#7a5414" stroke-width="2"/><circle cx="32" cy="50" r="7" fill="#8a8a9a" stroke="#3a3a4a" stroke-width="2.5"/>`),
+  },
 };

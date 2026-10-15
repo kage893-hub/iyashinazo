@@ -132,6 +132,22 @@ const KINOKO_CHORDS = [
   [50, 57, 62], [46, 53, 58], [48, 55, 60], [53, 57, 60],
 ];
 
+// おもちゃの街：オルゴールの、ゆったりしたワルツ（ハ長調）
+const TOY_MELODY = [
+  [0, 72, 1], [1, 76, 0.5], [1.5, 79, 0.5], [2, 84, 1], [3, 79, 1],
+  [4, 77, 1], [5, 76, 1], [6, 74, 2],
+  [8, 71, 1], [9, 74, 0.5], [9.5, 77, 0.5], [10, 79, 1], [11, 77, 1],
+  [12, 76, 3],
+  [16, 72, 1], [17, 76, 0.5], [17.5, 79, 0.5], [18, 84, 1], [19, 83, 1],
+  [20, 81, 1], [21, 79, 1], [22, 77, 2],
+  [24, 76, 1], [25, 74, 1], [26, 71, 1], [27, 74, 1],
+  [28, 72, 3],
+];
+const TOY_CHORDS = [
+  [48, 55, 64], [41, 53, 57], [43, 55, 59], [48, 55, 64],
+  [48, 55, 64], [45, 52, 57], [41, 53, 57], [48, 55, 60],
+];
+
 /** 0.5 秒の無音 WAV（data URI） */
 function silentWav() {
   const rate = 8000, n = 4000;
@@ -158,6 +174,7 @@ export const SONGS = {
   hero: { melody: HERO_MELODY, chords: HERO_CHORDS, tempo: 96, chip: true },
   maou: { melody: MAOU_MELODY, chords: MAOU_CHORDS, tempo: 76, chip: true },
   kinoko: { melody: KINOKO_MELODY, chords: KINOKO_CHORDS, tempo: 84 },
+  toy: { melody: TOY_MELODY, chords: TOY_CHORDS, tempo: 90 },
 };
 
 export class AudioSys {
