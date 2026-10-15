@@ -273,6 +273,31 @@ const KINDS = {
     blocks(g, M, { a: BACK - 1.4, seed: 95, n: 3, color: '#a088a8', color2: '#5ac06a', op: 0.45, op2: 0.6 });
     lights(g, M, { n: 40, r: 230, y: [-20, 20], a0: BACK - 1.4, a1: BACK + 1.4, seed: 96, color: '#ffe0a0', op: 0, op2: 0.9, size: 1.6 });
   },
+  // 東京：遠くの富士山と、スカイツリー、地平線までつづく街の灯り
+  japan(g, M) {
+    peak(g, M, { a: BACK - 0.55, r: 268, y0: -42, h: 96, w: 86, color: '#3a3a6a', color2: '#1a1a40', op: 0.7, op2: 0.75, snowLine: 0.66 });
+    ridge(g, M, { r: 250, y0: -32, h: [4, 14], seed: 101, freq: 7, color: '#2a2a50', color2: '#141432', op: 0.75, op2: 0.85 });
+    blocks(g, M, { a: BACK + 0.35, r: 238, y0: -30, seed: 102, n: 6, color: '#2a2a4a', color2: '#141430', op: 0.7, op2: 0.85 });
+    blocks(g, M, { a: BACK - 1.2, r: 238, y0: -30, seed: 103, n: 5, color: '#2a2a4a', color2: '#141430', op: 0.7, op2: 0.85 });
+    blocks(g, M, { a: BACK + 1.3, r: 238, y0: -30, seed: 104, n: 4, color: '#2a2a4a', color2: '#141430', op: 0.7, op2: 0.85 });
+    // スカイツリー（細長い塔）
+    {
+      const a = BACK + 0.9, r = 232;
+      const m = silMat(M, '#3a3a5a', '#5a8ad8', 0.7, 0.9);
+      const pos = [], col = [], idx = [];
+      const cx = Math.cos(a) * r, cz = Math.sin(a) * r, tx = -Math.sin(a), tz = Math.cos(a);
+      const prof = [[0, 4.2], [30, 2.6], [60, 1.8], [62, 3.2], [66, 1.4], [86, 1.0], [88, 2.0], [92, 0.8], [120, 0.2]];
+      prof.forEach(([y, w2]) => { for (const s of [-1, 1]) { pos.push(cx + tx * s * w2, -30 + y, cz + tz * s * w2); col.push(1, 1, 1, 1); } });
+      for (let i = 0; i < prof.length - 1; i++) { const k = i * 2; idx.push(k, k + 1, k + 2, k + 1, k + 3, k + 2); }
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+      geo.setAttribute('color', new THREE.Float32BufferAttribute(col, 4));
+      geo.setIndex(idx);
+      g.add(new THREE.Mesh(geo, m));
+    }
+    lights(g, M, { n: 90, r: 230, y: [-30, -8], a0: BACK - 1.5, a1: BACK + 1.5, seed: 105, color: '#ffd8a0', op: 0.25, op2: 0.95, size: 1.4 });
+    lights(g, M, { n: 30, r: 236, y: [-30, -14], a0: 0.2, a1: 2.9, seed: 106, color: '#ffd8a0', op: 0.2, op2: 0.8, size: 1.4 });
+  },
   // 温泉：雪をかぶった山なみと、遠くの湯の里の灯り
   onsen(g, M) {
     ridge(g, M, { r: 254, y0: -30, h: [18, 54], seed: 51, freq: 6, color: '#283058', color2: '#36406e', op: 0.8, op2: 0.8, snow: 1.4 });

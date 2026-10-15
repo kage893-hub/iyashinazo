@@ -148,6 +148,22 @@ const TOY_CHORDS = [
   [48, 55, 64], [45, 52, 57], [41, 53, 57], [48, 55, 60],
 ];
 
+// 東京：夏の夜の、少しなつかしいワルツ（ト長調）。終点の駅のメロディ
+const JAPAN_MELODY = [
+  [0, 74, 1], [1, 79, 1], [2, 78, 1], [3, 76, 1],
+  [4, 74, 2], [6, 71, 2],
+  [8, 72, 1], [9, 76, 1], [10, 74, 1], [11, 72, 1],
+  [12, 71, 3],
+  [16, 74, 1], [17, 79, 1], [18, 81, 1], [19, 83, 1],
+  [20, 81, 2], [22, 78, 2],
+  [24, 79, 1], [25, 76, 1], [26, 74, 1], [27, 78, 1],
+  [28, 79, 3],
+];
+const JAPAN_CHORDS = [
+  [43, 50, 59], [47, 54, 62], [48, 55, 64], [43, 50, 59],
+  [43, 50, 59], [40, 47, 55], [45, 52, 60], [50, 57, 62],
+];
+
 /** 0.5 秒の無音 WAV（data URI） */
 function silentWav() {
   const rate = 8000, n = 4000;
@@ -175,6 +191,7 @@ export const SONGS = {
   maou: { melody: MAOU_MELODY, chords: MAOU_CHORDS, tempo: 76, chip: true },
   kinoko: { melody: KINOKO_MELODY, chords: KINOKO_CHORDS, tempo: 84 },
   toy: { melody: TOY_MELODY, chords: TOY_CHORDS, tempo: 90 },
+  japan: { melody: JAPAN_MELODY, chords: JAPAN_CHORDS, tempo: 78 },
 };
 
 export class AudioSys {

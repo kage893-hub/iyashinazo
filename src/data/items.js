@@ -462,4 +462,24 @@ export const ITEMS = {
     desc: '時計塔の大ゼンマイを巻くための、赤いハンドル。積み木の迷路のいちばん奥にあった。',
     icon: svg(`<rect x="28" y="10" width="8" height="36" rx="3" fill="#e8402e" stroke="#7a1a0a" stroke-width="2.5"/><rect x="18" y="8" width="20" height="8" rx="3" fill="#f0c830" stroke="#7a5414" stroke-width="2"/><circle cx="32" cy="50" r="7" fill="#8a8a9a" stroke="#3a3a4a" stroke-width="2.5"/>`),
   },
+  koBell: {
+    name: '狛犬の鈴',
+    desc: '浅草寺の狛犬にもらった、古い鈴。もう一度押して鳴らすと「むかし目」になり、二百年前の江戸の町が重なって見える。',
+    icon: svg(`<path d="M32 10 c-12 0 -18 10 -18 22 v10 h36 v-10 c0 -12 -6 -22 -18 -22z" fill="#e2b54a" stroke="#7a5414" stroke-width="2.5"/><rect x="12" y="40" width="40" height="6" rx="3" fill="#c8402e"/><circle cx="32" cy="50" r="5" fill="#7a5414"/><path d="M26 6 h12" stroke="#c8402e" stroke-width="4" stroke-linecap="round"/>`),
+  },
+  ningyoyaki: {
+    name: '人形焼の包み',
+    desc: '仲見世のリスにたのまれた、焼きたての人形焼。渋谷のネコと、とちゅうの秋葉原と東京にもひとつずつ。',
+    icon: svg(`<rect x="10" y="18" width="44" height="32" rx="4" fill="#f4ead2" stroke="#8a5a3a" stroke-width="2.5"/><path d="M10 28 h44" stroke="#c8402e" stroke-width="4"/><circle cx="22" cy="40" r="5" fill="#d8a060"/><circle cx="34" cy="40" r="5" fill="#d8a060"/><circle cx="46" cy="40" r="5" fill="#d8a060"/>`),
+  },
+  tenugui: {
+    name: '江戸の時刻の手ぬぐい',
+    desc: 'ネコのアナウンサーにもらった手ぬぐい。江戸の時の数えかたが染めてある。もう一度押すと読める。',
+    icon: svg(`<rect x="8" y="16" width="48" height="32" rx="2" fill="#f8f4ea" stroke="#2b3a6a" stroke-width="2.5"/><circle cx="24" cy="32" r="8" fill="none" stroke="#2b3a6a" stroke-width="2.5"/><path d="M24 26 v6 l4 3" stroke="#2b3a6a" stroke-width="2.5" fill="none"/><path d="M38 24 h12 M38 32 h12 M38 40 h12" stroke="#2b3a6a" stroke-width="2.5"/>`),
+  },
+  ramune: {
+    name: 'キュウリ味ラムネ',
+    desc: '自動販売機のひみつの押しかたで出てきた、緑のびん。カッパの大好物らしい。',
+    icon: svg(`<path d="M26 8 h12 v8 c0 4 6 6 6 14 v22 c0 4 -4 6 -12 6 s-12 -2 -12 -6 v-22 c0 -8 6 -10 6 -14z" fill="#8ad8a0" stroke="#2a6a4a" stroke-width="2.5"/><circle cx="32" cy="22" r="4" fill="#e8f8ff"/><rect x="22" y="36" width="20" height="10" rx="2" fill="#4ab04a"/>`),
+  },
 };

@@ -704,3 +704,60 @@ body.rpg .clear-stats span { color: #c8d0f0; }
   .gearp .plaque, .musicp .plaque, .marchp .plaque { padding: 8px 10px; font-size: 14px; }
   .gr-svg { width: min(300px, 80vw); }
 }
+
+/* ---------- とうきょう：名所あわせ ---------- */
+.meishop, .subp, .vendp, .tidep { text-align: center; }
+.meishop .plaque small, .subp .plaque small, .vendp .plaque small, .tidep .plaque small { font-weight: 500; }
+.subp .plaque b { color: #b0401e; }
+.ms-list { display: flex; flex-direction: column; gap: 5px; margin: 10px auto 8px; max-width: 380px; }
+.ms-row { display: grid; grid-template-columns: 1fr 20px 1fr; align-items: center; gap: 6px; background: #fff8e6; border: 2px solid #e0cfae; border-radius: 10px; padding: 4px 8px; }
+.ms-edo { font-weight: 900; text-align: left; color: #6a4a2e; }
+.ms-arrow { color: #a88a5a; font-weight: 900; }
+.ms-pick.on { background: var(--navy); color: #fff8e6; }
+/* ---------- とうきょう：手ぬぐい ---------- */
+.tenugui { background: #f8f4ea; border: 3px solid #2b3a6a; border-radius: 6px; padding: 12px; color: #2b3a6a; }
+.tn-t { font-weight: 900; font-size: 18px; text-align: center; margin-bottom: 8px; letter-spacing: 0.1em; }
+.tn-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; }
+.tn-c { display: flex; flex-direction: column; align-items: center; padding: 6px 2px; border-radius: 6px; }
+.tn-c.day { background: #fbe8c0; }
+.tn-c.night { background: #c8d0e8; }
+.tn-c b { font-size: 14px; }
+.tn-c small { font-size: 11px; }
+.tn-foot { font-size: 12px; text-align: center; margin-top: 8px; }
+@media (max-width: 520px) { .tn-grid { grid-template-columns: repeat(4, 1fr); } }
+/* ---------- とうきょう：路線図 ---------- */
+.sb-map { width: min(420px, 86vw); height: auto; display: block; margin: 8px auto 4px; background: #fbfaf6; border-radius: 10px; border: 2px solid #e0dccf; }
+.sb-st { cursor: default; }
+.sb-st.adj { cursor: pointer; }
+.sb-st.adj circle { stroke: #e8603a; stroke-width: 3.5; }
+.sb-t { font-size: 10px; font-weight: 700; fill: #3a3a44; paint-order: stroke; stroke: #fbfaf6; stroke-width: 3px; }
+.sb-t.key { fill: #b0401e; font-weight: 900; }
+.sb-route { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 3px; font-size: 12px; font-weight: 700; min-height: 22px; margin-bottom: 6px; }
+.sb-ln { display: inline-block; width: 14px; height: 5px; border-radius: 3px; }
+.sb-rs { background: #fff8e6; border-radius: 6px; padding: 1px 5px; }
+.sb-tr { margin-left: 8px; color: #b0401e; }
+/* ---------- とうきょう：自動販売機 ---------- */
+.vd-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; width: min(300px, 76vw); margin: 10px auto; padding: 10px; background: #e8f0f8; border: 6px solid #f4f4f0; border-radius: 10px; box-shadow: inset 0 0 0 2px #c8d0d8; }
+.vd-b { display: flex; flex-direction: column; align-items: center; gap: 2px; border: none; background: #fbfbf8; border-radius: 6px; padding: 6px 2px; cursor: pointer; font-weight: 700; }
+.vd-b b { background: #2a2a30; color: #fff; border-radius: 4px; padding: 0 6px; font-size: 12px; }
+.vd-b small { font-size: 10px; }
+.vd-can { display: block; width: 16px; height: 30px; border-radius: 4px; }
+.vd-can.c0 { background: #4ab04a; } .vd-can.c1 { background: #5ac8f0; } .vd-can.c2 { background: #8a5a3a; } .vd-can.c3 { background: #e8f4ff; border: 1px solid #aac; }
+.vd-can.c4 { background: #c8e8ff; } .vd-can.c5 { background: #6a3a2a; } .vd-can.c6 { background: #f4b8cc; } .vd-can.c7 { background: #d8b070; } .vd-can.c8 { background: #f08a2a; }
+.vd-seq { min-height: 22px; font-weight: 900; font-size: 18px; letter-spacing: 0.2em; }
+/* ---------- とうきょう：水上バス ---------- */
+.td-list { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 12px 0; }
+.td-b.on { background: var(--navy); color: #fff8e6; }
+.pier-board { background: #fbfbf8; border: 3px solid #2a6ab0; border-radius: 8px; padding: 10px 14px; color: #2a2a30; text-align: center; line-height: 1.8; }
+.pb-h { font-weight: 900; font-size: 17px; color: #2a6ab0; margin-bottom: 4px; }
+.pier-board b { color: #b0401e; }
+.pb-s { font-size: 12px; color: #6a6a74; }
+/* ---------- エンドロール ---------- */
+.credits { height: min(60vh, 460px); overflow: hidden; position: relative; text-align: center; }
+.cr-roll { animation: crRoll 15s linear forwards; padding-top: 60%; }
+@keyframes crRoll { from { transform: translateY(0); } to { transform: translateY(-110%); } }
+.cr-t { font-size: 30px; font-weight: 900; color: var(--navy); margin-bottom: 26px; letter-spacing: 0.15em; }
+.cr-s { font-size: 18px; font-weight: 700; margin: 12px 0; color: #4a3a2a; }
+.cr-s span { display: block; font-size: 12px; color: #a88a5a; letter-spacing: 0.2em; }
+.cr-g { margin-top: 30px; font-size: 16px; font-weight: 700; color: #4f9a3a; }
+.cr-e { margin-top: 60px; font-size: 34px; font-weight: 900; color: #c8402e; letter-spacing: 0.4em; }
