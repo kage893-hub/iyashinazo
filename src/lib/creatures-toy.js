@@ -280,9 +280,9 @@ export function makeTinLoco() {
   c.keys.push(windKey(b, 0.42, 0.78, -0.45, 1.1));
   c.keys[0].parent.rotation.y = -Math.PI / 2;
   // 貨車（あとで楽譜の積み木をのせる）
-  const wag = (c.wagon = group(b, 0, 0, -1.55));
-  add(wag, G.box(0.8, 0.3, 1.1), tin('#f0c040'), 0, 0.35, 0);
-  for (const s of [-1, 1]) for (const z of [-0.35, 0.35]) add(wag, G.cyl(0.15, 0.15, 0.08, 14), tin('#2a2a34'), s * 0.42, 0.18, z, { rot: [0, 0, Math.PI / 2] });
+  const wag = (c.wagon = group(b, 0, 0, -2.05));
+  add(wag, G.box(0.8, 0.3, 1.8), tin('#f0c040'), 0, 0.35, 0);
+  for (const s of [-1, 1]) for (const z of [-0.65, 0.65]) add(wag, G.cyl(0.15, 0.15, 0.08, 14), tin('#2a2a34'), s * 0.42, 0.18, z, { rot: [0, 0, Math.PI / 2] });
   add(b, G.box(0.08, 0.06, 0.3), tin('#2a2a34'), 0, 0.26, -0.95);
   return c;
 }

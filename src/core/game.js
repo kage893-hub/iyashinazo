@@ -222,7 +222,15 @@ export class Game {
 
   async _onClick(e) {
     if (this.ui.dialogueActive) { this.ui.advance(); return; }
-    if (!this.playing || this.busy || this.cinematic || this.ui.panelOpen) return;
+    if (!this.playing || this.ui.panelOpen) return;
+    if (this.busy || this.cinematic) {
+      const now = performance.now();
+      if (now - (this._busyNoticeAt ?? -Infinity) > 2000) {
+        this._busyNoticeAt = now;
+        this.ui.toast('もう少し待ってから、調べてみよう。');
+      }
+      return;
+    }
     const id = this._pick(e);
     if (!id) {
       if (this.selectedItem) this.selectItem(null);
@@ -811,7 +819,8 @@ export class Game {
     this._adapt(raw);
     this._updateLabels(raw);
     this._updateFade(raw);
-    if (this.playing && !this.cinematic) this.state.elapsed += dt;
+    // Clock の差分は performance.now() による実時間。描画用の上限や早送りは記録時間に含めない。
+    if (this.playing && !this.cinematic) this.state.elapsed += raw;
     liveTime.value = this.time;
     this.tweens.update(dt);
     if (this.stage) this.stage.update(dt, this.time);

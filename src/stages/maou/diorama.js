@@ -213,9 +213,9 @@ export function buildMaouDiorama(scene) {
   for (let z = -0.9; z <= 0.91; z += 0.3) box(R.portcullis, 0.08, 2.9, 0.08, R.iron, 0, 1.45, z);
   for (const y of [0.6, 1.5, 2.4]) box(R.portcullis, 0.08, 0.08, 2.0, R.iron, 0, y, 0);
   // 門の上の、合言葉の魔界文字（ランタンで照らすと見える）
-  R.passGlyph = glyphBoard('おとうと', { w: 2.0, h: 0.5, color: '#e8c8ff' });
-  R.passGlyph.position.set(0.52, 3.4, 0);
-  R.passGlyph.rotation.y = Math.PI / 2;
+  R.passGlyph = glyphBoard('おとうと', { w: 0.95, h: 0.45, color: '#e8c8ff' });
+  R.passGlyph.position.set(-0.52, 3.4, 0);
+  R.passGlyph.rotation.y = -Math.PI / 2;
   R.passGlyph.userData.noPick = true;
   R.gate.add(R.passGlyph);
   // 門の外の、門番の詰め所（小さな屋根）

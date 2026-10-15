@@ -31,7 +31,7 @@ export function gearPanel(ui, audio, { onSolved, onTest }) {
   let anim = null;
   const body = el('div', 'gearp');
   body.innerHTML = `
-    <div class="plaque">時計塔の歯車<br><small>「かみあう歯車は、となりと<b>反対</b>に回る」<br>時計の針：<b>右回り</b>に、大ゼンマイが<b>2回</b>まわるあいだに<b>1回</b>。</small></div>
+    <div class="plaque">時計塔の歯車<br><small>「かみあう歯車は、となりと<b>反対</b>に回る」<br>大ゼンマイ（歯12）から、時計の針へ。<br>時計の針：<b>右回り</b>に、大ゼンマイが<b>2回</b>まわるあいだに<b>1回</b>。</small></div>
     <svg class="gr-svg" viewBox="0 0 340 150"></svg>
     <div class="gr-row gr-mids"></div>
     <div class="gr-row gr-hand"></div>
@@ -91,7 +91,7 @@ export function gearPanel(ui, audio, { onSolved, onTest }) {
       const a = (angle * MOTOR_TEETH / g.n) * dir * (180 / Math.PI);
       const col = i === 0 ? '#e2b54a' : i === L.length - 1 ? '#c8ccd4' : '#e8c25a';
       html += `<g transform="translate(${g.x},${g.y}) rotate(${a.toFixed(1)})">${gearSVG(g.n, g.r, col)}</g>`;
-      if (i === 0) html += `<text x="${g.x}" y="${g.y + g.r + 14}" text-anchor="middle" class="gr-t">大ゼンマイ</text>`;
+      if (i === 0) html += `<text x="${g.x}" y="${g.y + g.r + 14}" text-anchor="middle" class="gr-t">大ゼンマイ<tspan x="${g.x}" dy="12">歯12</tspan></text>`;
       if (i === L.length - 1) html += `<text x="${g.x}" y="${g.y + g.r + 14}" text-anchor="middle" class="gr-t">針</text>`;
     });
     html += '</g>';
@@ -107,7 +107,7 @@ export function gearPanel(ui, audio, { onSolved, onTest }) {
     });
     handBtns.forEach(([n, b]) => b.classList.toggle('on', n === hand));
     const u = used();
-    stockEl.innerHTML = '歯車箱：' + [8, 12, 24].map((n) => `<span class="${u[n] > STOCK[n] ? 'over' : ''}">歯${n}×${STOCK[n] - u[n]}</span>`).join('');
+    stockEl.innerHTML = `歯車箱（針に歯${hand}を装着中）：` + [8, 12, 24].map((n) => `<span class="${u[n] > STOCK[n] ? 'over' : ''}">歯${n}×${STOCK[n] - u[n]}</span>`).join('');
     draw();
   };
   body.querySelector('.gr-go').onclick = () => {

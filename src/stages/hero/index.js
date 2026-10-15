@@ -492,7 +492,9 @@ export class HeroStage {
   focus(obj, dist) {
     const p = obj.getWorldPosition ? obj.getWorldPosition(new V()) : obj.clone();
     const cur = this.g.camera.position.distanceTo(this.g.controls.target);
-    return this.g.focusOn(new V(p.x, Math.min(6.5, Math.max(0.8, p.y + 0.6)), p.z), { dist: Math.min(cur, dist ?? 20), duration: 0.8, subject: obj.isObject3D ? obj : undefined });
+    const view = obj === this.hero.root ? { dist: 13, polar: 0.65, theta: -0.3, keepAngle: true }
+      : obj === this.owl.root ? { dist: 12, polar: 1.1, theta: -0.35, keepAngle: true } : {};
+    return this.g.focusOn(new V(p.x, obj === this.hero.root ? 1.1 : Math.min(6.5, Math.max(0.8, p.y + 0.6)), p.z), { dist: Math.min(cur, dist ?? 20), duration: 0.8, subject: obj.isObject3D ? obj : undefined, ...view });
   }
 
   questDone(text) {
@@ -560,6 +562,7 @@ export class HeroStage {
     const name = { innPot: 'つぼ', smithBarrel: 'たる', stableChest: '宝箱', churchCrate: '木箱', stallPot: 'つぼ' }[id];
     const nightOnly = id === 'churchCrate' || id === 'stallPot';
     if (f[`gold_${id}`]) return this.say([`${name}の中は、もうからっぽだ。`]);
+    if (f.potionsDone) return this.say(['薬のお代はもう払った。残りのゴールド袋は、ほかの旅人のために置いておこう。']);
     if (nightOnly && !this.night) return this.say([`${name}をのぞいてみた。……昼間は人目が多くて、なんだか気がひける。`, '（夜にまた来てみよう）']);
     if (id === 'stableChest') {
       g.audio.play('chest');
@@ -736,6 +739,8 @@ export class HeroStage {
       { who: 'dragon', text: 'ぼく、会いに行く！ 勇者の道案内をして、いっしょに魔王城へ行く！' },
     ]);
     g.note('hr-letter', '魔界の手紙', '「おとうと へ　さびしい　あいたい」<br>子ドラゴンの兄は<b>魔王城</b>にひとりで住んでいる。');
+    g.take('maletter');
+    await this.say(['手紙を子ドラゴンに返した。読みといたことばは、旅のメモに残っている。']);
     this.questDone('子ドラゴンが元気になった！');
     await this.dragonLightsForge();
     await this.checkReady();
@@ -818,7 +823,8 @@ export class HeroStage {
     g.audio.play('puyo');
     if (this.night) return this.say(['スライムは、とろんと平たくなって眠っている。……すぴー。', '（道具屋は昼だけ開いているようだ）']);
     if (f.potionsDone) return this.say([{ who: 'slime', text: 'まいどあり〜！ 勇者くんに、よろしくね〜。' }]);
-    if (!f.slimeTalked) {
+    const firstVisit = !f.slimeTalked;
+    if (firstVisit) {
       g.flag('slimeTalked');
       g.note('hr-slime', 'スライムの道具屋', '勇者の薬をつくるには、<b>月光草</b>（夜に教会の庭でさく）と、びん代の<b>ゴールド袋3つ</b>がいる。');
       await this.say([
@@ -838,7 +844,10 @@ export class HeroStage {
     const lack = [];
     if (!g.has('moonflower')) lack.push('月光草');
     if (g.count('gold') < 3 || !g.has('gold')) lack.push(`ゴールド袋（あと${3 - (g.has('gold') ? g.count('gold') : 0)}つ）`);
-    if (lack.length) return this.say([{ who: 'slime', text: `あとは【${lack.join('】と【')}】があればつくれるよ〜。` }]);
+    if (lack.length) {
+      if (firstVisit) return;
+      return this.say([{ who: 'slime', text: `あとは【${lack.join('】と【')}】があればつくれるよ〜。` }]);
+    }
     g.take('moonflower');
     // ゴールド袋は3つだけはらう（あまりは手もとに残す）
     const left = g.count('gold') - 3;
@@ -876,7 +885,7 @@ export class HeroStage {
   async clickRecipe() {
     this.focus(this.R.recipePoster, 10);
     this.g.audio.play('paper');
-    this.g.ui.openPanel({ title: '調合の心得', body: recipeHTML() });
+    this.g.ui.openPanel({ body: recipeHTML() });
     await this.waitPanel();
     this.noteRecipe();
   }
@@ -995,6 +1004,11 @@ export class HeroStage {
 
   async finale() {
     const g = this.g, R = this.R;
+    g.take('maletter'); // 解読済みの手紙が残る旧セーブも整理する
+    if (g.has('gold')) {
+      g.take('gold');
+      await this.say(['残ったゴールド袋を、勇者の旅じたくの足しに渡した。']);
+    }
     await this.say([
       { who: 'king', text: 'ほう……剣も薬もそろい、たよれる道案内までおるか。' },
       { who: 'king', text: 'よかろう！ 勇者よ、旅立つがよい！ 門番、跳ね橋を下ろせーい！' },

@@ -70,6 +70,7 @@ export class UI {
       this._resolve = resolve;
       this._idx = -1;
       this.dialogueActive = true;
+      document.body.classList.add('dialogue-active');
       this.dlg.classList.remove('hidden');
       requestAnimationFrame(() => this.dlg.classList.add('show'));
       this._next();
@@ -82,7 +83,12 @@ export class UI {
       this.dialogueActive = false;
       this.dlg.classList.remove('show');
       clearInterval(this._typer);
-      setTimeout(() => { if (!this.dialogueActive) this.dlg.classList.add('hidden'); }, 200);
+      setTimeout(() => {
+        if (!this.dialogueActive) {
+          this.dlg.classList.add('hidden');
+          document.body.classList.remove('dialogue-active');
+        }
+      }, 200);
       const r = this._resolve;
       this._resolve = null;
       r && r();

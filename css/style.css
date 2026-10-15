@@ -116,6 +116,7 @@ body.cinematic #hud { opacity: 0; transition: opacity 0.6s; }
   padding: 6px 10px 8px; box-shadow: var(--shadow); pointer-events: auto;
 }
 .inv-label { font-size: 11px; font-weight: 900; color: var(--ink-soft); letter-spacing: 0.2em; margin: 0 0 4px 4px; }
+body.dialogue-active #inventory, body.dialogue-active .use-banner { visibility: hidden; }
 .inv-row { display: flex; gap: 6px; }
 .inv-slot {
   position: relative; width: 58px; height: 58px; border-radius: 12px; border: 2px solid #e2cfa8;
@@ -618,6 +619,17 @@ body.rpg .choice-q { color: #fff; }
 .mx-liquid { position: absolute; left: 0; right: 0; bottom: 0; height: 70%; transition: background 0.3s; }
 .mx-count { position: absolute; left: 0; right: 0; top: 6px; font-weight: 400; font-size: 13px; text-shadow: 0 0 3px #000; }
 .mx-d { border-color: var(--c) !important; }
+@media (max-height: 600px) {
+  .panel { padding: 14px 18px; max-height: calc(100dvh - 32px); }
+  .panel-title { margin-bottom: 8px; }
+  .decodep .maletter { padding: 6px 8px 2px; }
+  .decodep .lt-line { margin: 2px 0; }
+  .decodep .maletter .panel-note { margin: 4px 0; }
+  .dc-slots { margin: 6px 0; }
+  .dc-slot { height: 56px; }
+  .mixp .mx-orders { margin: 6px 0; }
+  .mixp .mx-pot { height: 76px; margin-bottom: 6px; }
+}
 body.rpg .clear-panel { background: var(--rpg-bg); }
 body.rpg .clear-main { color: #ffd84a; }
 body.rpg .clear-stats b, body.rpg .clear-msg { color: #ffffff; }

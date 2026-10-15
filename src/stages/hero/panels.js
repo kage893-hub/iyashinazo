@@ -41,7 +41,7 @@ export function letterHTML(decoded = false) {
 
 /** ステンドグラスの対応表 */
 export function glassTableHTML() {
-  return `<div class="gtable">${GLASS_TABLE.map((c) => `<div class="gt-cell">${glyphSVG(c, 28, '#2a1a40')}<b>${c}</b></div>`).join('')}<div class="gt-cell broken">？<b>？</b></div></div>
+  return `<div class="gtable">${GLASS_TABLE.map((c) => `<div class="gt-cell">${glyphSVG(c, 28, '#2a1a40')}<b>${c}</b></div>`).join('')}<div class="gt-cell broken"><span aria-hidden="true">◌</span><b>？</b></div></div>
   <p class="panel-note small">ひとつだけ、ガラスが欠けて読めない。</p>`;
 }
 
@@ -133,22 +133,25 @@ export function forgePanel(ui, audio, { onSolved }) {
   const name = body.querySelector('.fg-name');
   const recEl = body.querySelector('.fg-rec');
   const msg = body.querySelector('.fg-msg');
+  const instruction = msg.textContent;
   const paint = () => {
     bar.style.background = HEAT_COL[heat];
     bar.style.boxShadow = heat ? `0 0 ${heat * 6}px ${HEAT_COL[heat]}` : 'none';
     name.textContent = FORGE_HEAT[heat];
     recEl.innerHTML = rec.length ? rec.map((h) => `<span style="background:${HEAT_COL[h]}">${FORGE_HEAT[h]}</span>`).join('') : '<span class="tk-empty">まだ打っていない</span>';
   };
+  const reset = () => { heat = 0; rec = []; msg.textContent = instruction; paint(); };
   const fail = (t) => {
+    reset();
     audio.play('wrong');
     msg.textContent = t;
     body.classList.remove('shake'); void body.offsetWidth; body.classList.add('shake');
-    setTimeout(() => { heat = 0; rec = []; paint(); }, 900);
   };
   body.querySelector('.fg-bel').onclick = () => {
     if (done) return;
     if (heat >= 4) { fail('熱しすぎて、鉄がとろけてしまった！ はじめから。'); return; }
     heat++;
+    msg.textContent = instruction;
     audio.play('fire');
     paint();
   };
@@ -171,7 +174,7 @@ export function forgePanel(ui, audio, { onSolved }) {
     msg.textContent = 'じゅわっ！ ……刃が青白くかがやいている！';
     setTimeout(() => onSolved(panel), 1300);
   };
-  body.querySelector('.fg-reset').onclick = () => { if (done) return; heat = 0; rec = []; audio.play('click'); paint(); };
+  body.querySelector('.fg-reset').onclick = () => { if (done) return; reset(); audio.play('click'); };
   const panel = ui.openPanel({ title: '鍛冶', body });
   paint();
   return panel;

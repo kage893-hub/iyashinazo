@@ -389,7 +389,7 @@ export class EdoStage {
     const H = (key, ...lines) => ({ key, lines });
     if (!f.introDone) return H('intro', '雷門をくぐった先、浅草寺の本堂の前にいる狛犬（口をあけているほう）に話しかけよう。');
     if (f.printed && f.dawn && f.tegata) return H('final', '準備はそろった！ 浅草寺の狛犬に知らせよう。');
-    if (!f.printed) return H('print', '通りの左の『瓦版屋』のネコに話しかけよう。', '版木合わせは、こまを2つ選ぶと入れかわる。左上に『江戸名所』の題、右上に赤い朝日、左下に大波。');
+    if (!f.printed) return H('print', '通りの左の『瓦版屋』のネコに話しかけよう。', '版木合わせは、こまを2つ選ぶと入れかわる。左上に『江戸名所』の題、右上に赤い朝日、左の中ほどに大波。');
     if (!f.dawn) {
       if (!f.ropeFixed) {
         if (has('rope')) return H('fixRope', '持ち物の『舫い綱』を選んで、『時の鐘』に使おう。');
@@ -443,7 +443,11 @@ export class EdoStage {
   focus(obj, dist) {
     const p = obj.getWorldPosition ? obj.getWorldPosition(new V()) : obj.clone();
     const cur = this.g.camera.position.distanceTo(this.g.controls.target);
-    return this.g.focusOn(new V(p.x, Math.min(4, Math.max(0.8, p.y + 0.5)), p.z), { dist: Math.min(cur, dist ?? 20), duration: 0.8, subject: obj.isObject3D ? obj : undefined });
+    if (obj === this.koma.root) this.koma.root.rotation.y = 1.3;
+    const view = obj === this.koma.root ? { dist: 8, polar: 0.85, theta: 1.3, keepAngle: true }
+      : obj === this.dog.root ? { dist: 14, polar: 1.1, theta: -0.45, keepAngle: true }
+      : obj === this.crane.root ? { dist: 14, polar: 1.1, theta: 0.35, keepAngle: true } : {};
+    return this.g.focusOn(new V(p.x, obj === this.koma.root ? 1.3 : Math.min(4, Math.max(0.8, p.y + 0.5)), p.z), { dist: Math.min(cur, dist ?? 20), duration: 0.8, subject: obj.isObject3D ? obj : undefined, ...view });
   }
 
   questDone(text) {
@@ -472,7 +476,7 @@ export class EdoStage {
   // =========================================================
   async talkKoma() {
     const f = this.g.flags;
-    this.focus(this.koma.root, 16);
+    await this.focus(this.koma.root, 16);
     if (!f.introDone) return this.komaIntro();
     if (f.printed && f.dawn && f.tegata) return this.finale();
     const lines = [];
@@ -510,7 +514,7 @@ export class EdoStage {
 
   async talkCat() {
     const g = this.g, f = g.flags;
-    this.focus(this.cat.root, 15);
+    await this.focus(this.cat.root, 15);
     g.audio.play('meow');
     if (f.printed) {
       if (!g.has('kawaraban')) { g.give('kawaraban'); return; }
@@ -520,7 +524,7 @@ export class EdoStage {
       await this.say([
         { who: 'cat', text: 'おや、早いお客さんだニャ。けさの瓦版を刷るところだったんだけど……' },
         { who: 'cat', text: 'さっきの風で、版木のこまがばらばらになっちゃったニャ！ これじゃ刷れないニャ〜。' },
-        { who: 'cat', text: '絵柄は『江戸名所』。富士のお山に赤い朝日、左下には大波……手伝ってくれるかニャ？' },
+        { who: 'cat', text: '絵柄は『江戸名所』。富士のお山に赤い朝日、左の中ほどには大波……手伝ってくれるかニャ？' },
       ]);
       g.flag('catTalked');
     }
@@ -736,7 +740,7 @@ export class EdoStage {
     // こいで、渡し場へもどる
     await g.moveCamera(new V(0.5, 6, 14), new V(5, 0.4, 7.8), 1.0);
     lastRow = 0;
-    await row(bxA, bx0, 5.0);
+    await row(bxA, bx0, 2.5);
     this.kappa.root.position.x = k0.x;
     g.cinematic = false;
     g.flag('jitteGot');
@@ -902,13 +906,14 @@ export class EdoStage {
 
   async finale() {
     const g = this.g, R = this.R;
+    await this.focus(this.koma.root, 16);
     await this.say([
       { who: 'koma', text: 'おお、瓦版も刷れ、鐘も鳴り、手形もそろったか。ようやった。' },
       { who: 'koma', text: '親分！ この旅のお方を通してやっておくれ！' },
     ]);
     g.cinematic = true;
     document.body.classList.add('cinematic');
-    await g.moveCamera(new V(15.5, 4.5, -1.0), new V(9, 1.5, -6), 2.0);
+    await g.moveCamera(new V(16, 7, -12), new V(9, 1.5, -6), 2.0);
     g.audio.play('wan');
     await g.wait(0.4);
     g.audio.play('hyoshigi');
@@ -935,12 +940,12 @@ export class EdoStage {
 
   async departure() {
     const g = this.g;
-    await g.moveCamera(new V(15.5, 4.5, -1.0), new V(9, 1.5, -6), 2.0);
+    await g.moveCamera(new V(16, 7, -12), new V(9, 1.5, -6), 2.0);
     g.audio.play('whistle');
     await g.wait(1.4);
     this.departing = true;
     g.tweens.add({ duration: 7, ease: Ease.in, onUpdate: (k) => { this.trainSpeed = 0.3 + k * 6; } });
-    await g.moveCamera(new V(16, 5.5, 0.5), new V(13, 1.5, -6), 6);
+    await g.moveCamera(new V(20, 7, -11), new V(13, 1.5, -6), 6);
     g.audio.play('whistle');
     await g.wait(2.5);
     await g.ui.fade(1, 1.8, '#fff8ec');

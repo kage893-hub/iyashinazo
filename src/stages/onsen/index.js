@@ -523,7 +523,10 @@ export class OnsenStage {
   focus(obj, dist, opt = {}) {
     const p = obj.getWorldPosition ? obj.getWorldPosition(new V()) : obj.clone();
     const cur = this.g.camera.position.distanceTo(this.g.controls.target);
-    return this.g.focusOn(new V(p.x, Math.min(4, Math.max(0.8, p.y + 0.5)), p.z), { dist: Math.min(cur, dist ?? 20), duration: 0.8, subject: obj.isObject3D ? obj : undefined, ...opt });
+    const view = obj === this.capy.root ? { dist: 11, polar: 1.05, theta: -0.5, keepAngle: true }
+      : obj === this.R.source ? { dist: 13, polar: 0.4, theta: -0.5, keepAngle: true } : {};
+    const ty = obj === this.capy.root ? 1.0 : obj === this.R.source ? p.y + 0.7 : Math.min(4, Math.max(0.8, p.y + 0.5));
+    return this.g.focusOn(new V(p.x, ty, p.z), { dist: Math.min(cur, dist ?? 20), duration: 0.8, subject: obj.isObject3D ? obj : undefined, ...view, ...opt });
   }
 
   questDone(text) {
@@ -680,6 +683,7 @@ export class OnsenStage {
 
   async giveAmazake() {
     const g = this.g;
+    await this.focus(this.monkey.root, 11, { dist: 11, polar: 0.95, theta: -0.45, keepAngle: true });
     await this.say([{ who: 'monkey', text: 'キキッ！ あまざけ！？' }]);
     g.take('amazake');
     this.monkey.cold = false;
@@ -787,7 +791,7 @@ export class OnsenStage {
     this.focus(this.R.yagura, 18);
     if (f.lightsDone) return this.say(['提灯やぐらの九つの灯りが、町をあたたかく照らしている。']);
     if (!f.foxHasFire) {
-      return this.say(['提灯やぐら。九つの提灯がならんでいるが、どれも火が消えている。', '火種がないと、灯せない。']);
+      return this.say(['提灯やぐら。九つの提灯がならんでいるが、どれも火が消えている。', g.has('lanternLit') ? '灯った提灯を、キツネに見せてたのもう。' : '火種がないと、灯せない。']);
     }
     let pending = false;
     yaguraPanel(g.ui, g.audio, {
@@ -806,6 +810,7 @@ export class OnsenStage {
   async lightsDone() {
     const g = this.g;
     g.cinematic = true;
+    await g.focusOn(new V(-4.2, 2.4, 6.2), { dist: 18, polar: 1.1, theta: 0, frameHigh: false, duration: 0.8 });
     this._setYagura(Array(9).fill(true));
     await g.wait(0.5);
     g.audio.play('chime');

@@ -178,7 +178,7 @@ export function buildOnsenDiorama(scene) {
   for (const s of [-1, 1]) add(portal, G.box(0.6, 3.2, 0.7), ps, 0, 1.6, s * 1.45);
   add(portal, G.box(0.6, 0.7, 3.6), ps, 0, 3.45, 0);
   add(portal, G.box(0.3, 3.4, 2.3), mat('#151418'), 0.2, 1.6, 0, { cast: false });
-  add(portal, G.box(0.08, 0.5, 1.4), new THREE.MeshStandardMaterial({ map: signTex('湯けむり隧道', { w: 256, h: 64, bg: '#3a3430', fg: '#e8dcc4', border: '#8a7a6a', size: 30 }) }), -0.32, 3.45, 0, { rot: [0, -Math.PI / 2, 0] });
+  add(portal, G.plane(1.8, 0.5), new THREE.MeshStandardMaterial({ map: signTex('湯けむり隧道', { w: 256, h: 64, bg: '#3a3430', fg: '#e8dcc4', border: '#8a7a6a', size: 30 }) }), -0.72, 3.5, 0, { rot: [0, -Math.PI / 2, 0] });
   // 氷の壁とつらら
   const ice = (R.ice = group(portal, -0.45, 0, 0));
   ice.userData.dynamic = true;

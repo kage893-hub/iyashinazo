@@ -236,8 +236,9 @@ export function buildToyDiorama(scene) {
   const gw = (R.gearWin = group(tw, 0, 5.6, 1.92));
   gw.userData.dynamic = true;
   const gm = mat('#e8c25a', { metalness: 0.35, roughness: 0.35 });
-  R.winGears = [[-0.65, 0.2, 12, 0.45], [0.15, -0.25, 24, 0.75], [0.8, 0.45, 8, 0.32]].map(([x, y, n, rr], i) => {
-    const m = gearMesh(n, rr, i === 1 ? mat('#c8ccd4', { metalness: 0.35, roughness: 0.35 }) : gm, 0.06);
+  // 歯の大きさをそろえ、12 → 8 → 24 の順にピッチ円が接する位置へ。
+  R.winGears = [[-0.68, -0.25, 12, 0.24], [-0.34, -0.11, 8, 0.16], [0.21, 0.1, 24, 0.48]].map(([x, y, n, rr], i) => {
+    const m = gearMesh(n, rr, i === 2 ? mat('#c8ccd4', { metalness: 0.35, roughness: 0.35 }) : gm, 0.06);
     m.position.set(x, y, 0);
     m.visible = i === 0; // 大ゼンマイの歯車だけ。ほかはなくなっている
     m.userData.n = n;
@@ -284,7 +285,10 @@ export function buildToyDiorama(scene) {
   const drum = (R.drum = group(mb, -0.3, 1.25, -0.45));
   drum.userData.dynamic = true;
   add(drum, G.cyl(0.24, 0.24, 1.6, 20), mat('#e8c25a', { metalness: 0.35, roughness: 0.3 }), 0, 0, 0, { rot: [0, 0, Math.PI / 2] });
-  for (let i = 0; i < 18; i++) { const a = r() * Math.PI * 2; add(drum, G.cyl(0.015, 0.015, 0.08, 4), mat('#c8ccd4'), -0.7 + r() * 1.4, Math.cos(a) * 0.26, Math.sin(a) * 0.26, { rot: [a, 0, 0], cast: false }); }
+  const pins = (R.drumPins = group(drum));
+  pins.userData.dynamic = true;
+  pins.visible = false;
+  for (let i = 0; i < 18; i++) { const a = r() * Math.PI * 2; add(pins, G.cyl(0.015, 0.015, 0.08, 4), mat('#c8ccd4'), -0.7 + r() * 1.4, Math.cos(a) * 0.26, Math.sin(a) * 0.26, { rot: [a, 0, 0], cast: false }); }
   for (let i = 0; i < 12; i++) add(mb, G.box(0.06, 0.03, 0.42 - i * 0.012), mat('#c8ccd4', { metalness: 0.4, roughness: 0.3 }), -0.95 + i * 0.12, 1.2, -0.05);
   // ウサギの回る台
   const ped = (R.pedestal = group(mb, 0.8, 1.16, 0.45));

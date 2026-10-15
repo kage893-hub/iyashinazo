@@ -264,8 +264,8 @@ export class MaouStage {
     // 門の外／中で、なかまの立ち位置が変わる
     const inside = !!f.gateOpen;
     this.bat.root.position.set(...(inside ? [1.2, 0, 2.6] : [-12.4, 0, 0.8]));
-    this.hero.root.position.set(...(inside ? [-1.4, 0, 2.8] : [-13.4, 0, 1.6]));
-    this.dragon.root.position.set(...(inside ? [-2.9, 0, 3.4] : [-12.0, 0, 2.6]));
+    this.hero.root.position.set(...(inside ? [-1.4, 0, 2.8] : [-15.0, 0, 2.8]));
+    this.dragon.root.position.set(...(inside ? [-2.9, 0, 3.4] : [-12.0, 0, 3.6]));
     R.portcullis.position.y = inside ? 2.6 : 0;
     R.tomato.visible = !f.tomatoGot;
     R.saltJar.visible = !f.saltGot;
@@ -445,6 +445,7 @@ export class MaouStage {
       return true;
     }
     if (id !== 'purpleLantern') return false;
+    if (this.g.ui.panelOpen) return true;
     this.toggleLantern();
     return true;
   }
@@ -464,10 +465,10 @@ export class MaouStage {
   // =========================================================
   say(lines) { return this.g.say(lines); }
 
-  focus(obj, dist) {
+  focus(obj, dist, options = {}) {
     const p = obj.getWorldPosition ? obj.getWorldPosition(new V()) : obj.clone();
     const cur = this.g.camera.position.distanceTo(this.g.controls.target);
-    return this.g.focusOn(new V(p.x, Math.min(7, Math.max(0.8, p.y + 0.6)), p.z), { dist: Math.min(cur, dist ?? 20), duration: 0.8, subject: obj.isObject3D ? obj : undefined });
+    return this.g.focusOn(new V(p.x, Math.min(7, Math.max(0.8, p.y + 0.6)), p.z), { dist: Math.min(cur, dist ?? 20), duration: 0.8, subject: obj.isObject3D ? obj : undefined, ...options });
   }
 
   questDone(text) {
@@ -501,7 +502,7 @@ export class MaouStage {
   // =========================================================
   async talkBat() {
     const g = this.g, f = g.flags;
-    this.focus(this.bat.root, 13);
+    await this.focus(this.bat.root, 14, { dist: 14, polar: 1.12, theta: -Math.PI / 2, keepAngle: true });
     g.audio.play('squeak');
     if (!f.introDone) return this.batIntro();
     if (!f.gateOpen) return this.say([{ who: 'bat', text: '合言葉は、門の上に魔界文字で……。ランタンで照らせば見えるはずでございます。読みかたは、駅前の石碑に。' }]);
@@ -543,7 +544,7 @@ export class MaouStage {
 
   async talkSkeleton() {
     const g = this.g, f = g.flags;
-    this.focus(this.skeleton.root, 13);
+    await g.focusOn(new V(GATE_X - 0.8, 1.8, 3), { dist: 15, polar: 1.15, theta: -Math.PI / 2, keepAngle: true, frameHigh: false, subject: this.skeleton.root, duration: 0.8 });
     g.audio.play('click');
     if (f.gateOpen) return this.say([{ who: 'skeleton', text: 'ど、どうぞ……ゆっくりしていってくださいね……カタカタ。' }]);
     if (!f.introDone) return this.say([{ who: 'skeleton', text: 'ひいっ！ だ、だれですか……ご、ご用のかたは、執事さんを通してくださいぃ……。' }]);
@@ -825,7 +826,7 @@ export class MaouStage {
     const s0 = this.stopS;
     this.train.s = s0 - 80;
     this.train.place();
-    g.camera.position.set(16, 12, 16);
+    g.camera.position.set(-30, 14, 14);
     g.controls.target.set(-20, 4, -6);
     await g.ui.fade(0, 1.4);
     g.audio.play('whistle');
@@ -838,7 +839,7 @@ export class MaouStage {
       last = s;
       if (Math.random() < 0.15 * (1 - k)) g.audio.play('chuff');
       g.controls.target.lerp(this.train.loco.g.position, 0.08);
-      g.camera.position.lerpVectors(camFrom, new V(4, 9, 12), k);
+      g.camera.position.lerpVectors(camFrom, new V(-24, 10, 12), k);
     } });
     g.audio.play('steam');
     await g.ui.banner('魔王城', `STAGE ${stageNo('maou')}`, 2400);

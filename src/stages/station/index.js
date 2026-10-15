@@ -373,7 +373,7 @@ export class StationStage {
     const topDown = this.roofT > 0.5 && look.y / look.length() > 0.62;
     if (this.talkInside && !g.ui.dialogueActive && !g.ui.panelOpen && g.time > (this.talkInsideT || 0)) this.talkInside = false;
     R.frontCut.visible = !((topDown || this.talkInside) && g.camera.position.z > 1.3);
-    R.innerBeam.visible = !topDown;
+    R.innerBeam.visible = !(topDown || this.talkInside);
     R.stovePipeTop.visible = this.roofT < 0.3;
     R.vane.rotation.y = Math.sin(t * 0.4) * 0.6;
 
@@ -562,14 +562,17 @@ export class StationStage {
   // =========================================================
   say(lines) { return this.g.say(lines); }
 
-  focus(obj, dist, { inside = false } = {}) {
+  focus(obj, dist, { inside = false, ...options } = {}) {
     const p = obj.getWorldPosition ? obj.getWorldPosition(new V()) : obj.clone();
     const cur = this.g.camera.position.distanceTo(this.g.controls.target);
     // 駅舎の中は、開いた正面から少し見下ろすくらいの角度で（手前の梁は会話中だけ消す）
     const isInside = inside || (p.x > -11 && p.x < -3 && p.z > -1.4 && p.z < 4);
-    const ty = isInside ? Math.min(2.2, Math.max(0.9, p.y + 0.4)) : Math.max(0.8, p.y + 0.6);
+    const ty = obj === this.R.signal ? 3.4 : isInside ? Math.min(2.2, Math.max(0.9, p.y + 0.4)) : Math.max(0.8, p.y + 0.6);
+    const view = obj === this.cat.root ? { dist: 16, polar: 1.12, theta: 0.15 }
+      : obj === this.R.shed ? { dist: 18, polar: 1.02, theta: -0.65, keepAngle: true }
+      : obj === this.R.signal ? { dist: 22, polar: 1.0, theta: -0.5, keepAngle: true, frameHigh: false } : {};
     if (isInside) { this.talkInside = true; this.talkInsideT = this.g.time + 1.5; this.R.frontCut.visible = false; }
-    return this.g.focusOn(new V(p.x, ty, p.z), { dist: isInside ? Math.min(cur, 13) : Math.min(cur, dist ?? 22), duration: 0.8, polar: isInside ? 0.98 : undefined, theta: isInside ? 0 : undefined, keepAngle: isInside, subject: obj.isObject3D ? obj : undefined });
+    return this.g.focusOn(new V(p.x, ty, p.z), { dist: isInside ? Math.min(cur, 13) : Math.min(cur, dist ?? 22), duration: 0.8, polar: isInside ? 0.98 : undefined, theta: isInside ? 0 : undefined, keepAngle: isInside, subject: obj.isObject3D ? obj : undefined, ...view, ...options });
   }
 
   questDone(text) {
@@ -584,7 +587,7 @@ export class StationStage {
   // =========================================================
   async talkCat() {
     const g = this.g, f = g.flags;
-    this.focus(this.cat.root);
+    await this.focus(this.cat.root);
     g.audio.play('meow');
     if (!f.introDone) return this.catIntro();
     if (f.fire && f.water && f.signal) {
@@ -1025,6 +1028,7 @@ export class StationStage {
     await this.say(['駅の入口の鉢植え。……土の中で、何かがキラリと光った。']);
     this.R.marble.visible = false;
     g.give('marble');
+    g.ui.toast('ビー玉を手に入れた！', 3000);
     g.flag('marbleTaken');
   }
 
@@ -1256,7 +1260,7 @@ export class StationStage {
     g.audio.play('caw');
     await this.say(['ガシャン！ 出発信号が青に変わった！']);
     this.questDone('出発信号が青になった！');
-    this.focus(this.cat.root);
+    await this.focus(this.cat.root);
     await this.say([{ who: 'cat', text: 'おお、信号が青になりましたニャ！' }]);
   }
 

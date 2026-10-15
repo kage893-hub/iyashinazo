@@ -193,7 +193,7 @@ export class ToyStage {
     this.loco.noIdleHop = true;
     // ⚁ の楽譜を貨車にのせる
     this.score2 = R.scoreRow(this.loco.wagon, SCORE[1], 2, 0.3);
-    this.score2.position.set(0, 0.5, 0.75);
+    this.score2.position.set(0, 0.5, 0.7);
     this.score2.rotation.y = Math.PI / 2;
     this.ducks = [makeDuck(1.1), makeDuck(0.9), makeDuck(1.0)];
     [[16.6, 2.0, 0.4], [17.2, 4.6, -0.6], [16.4, -3.0, 2.4]].forEach(([x, z, ry], i) => { this.ducks[i].root.position.set(x, 0.1, z); this.ducks[i].root.rotation.y = ry; });
@@ -253,10 +253,11 @@ export class ToyStage {
     R.gearBox.visible = false;
     R.sandMound.visible = !f.gearBoxDug;
     R.winGears.forEach((m, i) => { m.visible = i === 0 || !!f.gearsFixed; });
+    R.drumPins.visible = !!f.songFixed;
     if (f.handleGot) R.mazeHandle.visible = false;
     if (f.marchDone) {
       const p = mazeCell(4, 0);
-      this.mouse.root.position.set(p.x - 0.6, 0, p.z + 0.4);
+      this.mouse.root.position.copy(p);
       this._showArrows(f.marchTiles || {});
     }
     R.crankHandle.visible = !!f.finaleDone;
@@ -304,7 +305,7 @@ export class ToyStage {
     // オルゴール
     if (f.songFixed) {
       R.drum.rotation.x += dt * 0.6;
-      R.pedestal.rotation.y += dt * (f.finaleDone ? 1.2 : 0.5);
+      if (g.lookSubject !== this.rabbit.root) R.pedestal.rotation.y += dt * (f.finaleDone ? 1.2 : 0.5);
     }
     // ブリキの機関車（フィナーレのあとは、ぐるぐる走る）
     if (this.locoLoop) { this.locoT += dt * 0.06; this._placeLoco(this.locoT); }
@@ -410,7 +411,8 @@ export class ToyStage {
   talkCam(c, dist) {
     const ry = c.root.getWorldQuaternion(new THREE.Quaternion());
     const fwd = new V(0, 0, 1).applyQuaternion(ry);
-    return this.focus(c.root, dist, { theta: Math.atan2(fwd.x, fwd.z), polar: 1.02, keepAngle: true });
+    const face = (c.head || c.root).getWorldPosition(new V());
+    return this.g.focusOn(face, { dist, duration: 0.8, theta: Math.atan2(fwd.x, fwd.z), polar: 1.02, keepAngle: true, subject: c.root });
   }
 
   questDone(text) {
@@ -588,7 +590,7 @@ export class ToyStage {
     R.winGears.forEach((m) => { m.visible = true; });
     g.flag('gearsFixed');
     g.audio.play('clunk');
-    await g.moveCamera(new V(3, 9.5, -1.5), new V(3, 8.2, -10.5), 1.4);
+    await g.moveCamera(new V(3, 7.2, -1.5), new V(3, 5.6, -10.5), 1.4);
     g.audio.play('bell');
     await this.say(['カチッ、カチッ……時計塔の針が、右回りに、ゆっくり動きだした！']);
     this.questDone('時計塔の歯車がなおった！');
@@ -636,6 +638,8 @@ export class ToyStage {
   async songDone() {
     const g = this.g;
     g.flag('songFixed');
+    this.R.drumPins.visible = true;
+    await this.talkCam(this.rabbit, 10);
     await this.say(['ポロン、ポロロン……オルゴールの太鼓がまわりだし、街の歌が流れた。', { who: 'rabbit', text: 'この歌！ 街のみんなの歌……やっと思いだせた。' }]);
     this.questDone('オルゴールに街の歌がもどった！');
     await this.checkReady();
@@ -760,10 +764,10 @@ export class ToyStage {
     }
     g.audio.play('item');
     R.mazeHandle.visible = false;
-    m.root.position.add(new V(-0.6, 0, 0.4));
     g.flag('marchDone');
     g.flag('handleGot');
     g.cinematic = false;
+    await g.focusOn(m.root.position.clone().add(new V(0, 0.5, 0)), { dist: 11, polar: 0.35, theta: -0.55, duration: 0.8 });
     await this.say(['カシャン！ ネズミが、迷路の奥でぴたりと止まり、赤いハンドルをくわえた。', { who: 'mouse', text: 'チュー！ ぴったりだチュー！ これ、町長さんにとどけてチュー！' }]);
     g.give('crankHandle');
     this.questDone('巻きハンドルを見つけた！');
@@ -906,14 +910,16 @@ export class ToyStage {
       [this.dino, new V(-8.6, 0, 11.2), 0.5],
     ];
     const from = spots.map(([c]) => ({ p: c.root.position.clone(), r: c.root.rotation.y }));
-    await g.moveCamera(new V(-4.8, 5.6, 19.5), new V(-4.8, 1.3, 10.6), 1.6);
+    await g.moveCamera(new V(-5, 8, 25), new V(-5, 1.6, 10.6), 1.6);
     await g.tweens.add({ duration: 2.6, ease: Ease.inOut, onUpdate: (k) => spots.forEach(([c, to, ry], i) => {
       c.root.position.lerpVectors(from[i].p, to, k);
+      // 小さな駅の屋根をよけて、町長は東側から回りこむ。
+      if (c === this.bear) c.root.position.x += Math.sin(k * Math.PI) * 3;
       c.root.rotation.y = lerp(from[i].r, ry, k);
     }) });
     // カエルも
     const f0 = this.frog.root.position.clone();
-    const f1 = new V(-5.0, 0, 12.2);
+    const f1 = new V(-1.0, 0, 11.8);
     await g.tweens.add({ duration: 1.6, ease: Ease.inOut, onUpdate: (k) => { this.frog.root.position.lerpVectors(f0, f1, k); this.frog.root.position.y = Math.abs(Math.sin(k * Math.PI * 4)) * 0.3; this.frog.root.rotation.y = 0; } });
     await this.say([
       { who: 'bear', text: 'ありがとう。街に、また歌と、時計の音がもどった。' },
@@ -929,7 +935,7 @@ export class ToyStage {
     await g.tweens.add({ duration: 1.4, ease: Ease.inOut, onUpdate: (k) => { this.frog.root.position.lerpVectors(f2, FROG_HOME, k); this.frog.root.position.y = Math.abs(Math.sin(k * Math.PI * 4)) * 0.3; } });
     this.frog.root.rotation.y = -0.3;
     await this.say([
-      { who: 'frog', text: 'さあ、出発するケロ！ つぎの駅は……どんな町ケロ？' },
+      { who: 'frog', text: 'さあ、出発するケロ！ つぎはいよいよ終点ケロ。最後まで、いっしょに旅するケロ！' },
       'あなたは客車に乗りこみ、窓ぎわの席にすわった。',
     ]);
   }

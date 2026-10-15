@@ -84,6 +84,7 @@ hero・maou の HD-2D の住人は `PixelCreature`（`src/lib/pixel.js`）。**�
 npm install              # 初回だけ（playwright。ブラウザ本体は入れなくてよい）
 npm run check            # 全 JS の構文チェック + アイテム id の重複チェック
 npm run serve &          # 8123 番で配信しておく
+node tools/regressions.mjs # 時間計測・パネル操作・低い画面の回帰確認（CHROMIUM も指定可）
 
 # カメラ位置ごとのスクリーンショット → shots/name0.png …
 ST=kinoko node tools/shot.mjs '{"introDone":true}' '[[[0,16,26],[0,0.5,0]]]' name
