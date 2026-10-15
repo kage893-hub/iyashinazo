@@ -172,7 +172,7 @@ export function buildToyDiorama(scene) {
     ctx.strokeStyle = '#3a7ae8'; ctx.lineWidth = 10; ctx.strokeRect(5, 5, w - 10, h - 10);
     ctx.fillStyle = '#2a2a3a'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.font = `900 60px ${FONT}`; ctx.fillText('おもちゃのまち', w / 2, h * 0.42);
-    ctx.font = `700 26px ${FONT}`; ctx.fillText('← きのこのもり　　　　　？？？ →', w / 2, h * 0.8);
+    ctx.font = `700 26px ${FONT}`; ctx.fillText('← きのこのもり　　　　とうきょう →', w / 2, h * 0.8);
   }), roughness: 0.6 }), 0, 1.6, 0);
   // ホームの積み木のベンチ
   for (const x of [-16.5, -10.0]) { add(root, G.box(1.6, 0.4, 0.6), mat('#3a7ae8', { roughness: 0.5 }), x, FLOOR + 0.2, TRACK_Z + 2.9); add(root, G.box(1.6, 0.5, 0.15), mat('#f0c830', { roughness: 0.5 }), x, FLOOR + 0.55, TRACK_Z + 3.25); }
@@ -265,10 +265,10 @@ export function buildToyDiorama(scene) {
   add(ch, G.cyl(0.08, 0.08, 0.4, 10), mat('#f0c830'), 0, 0.82, 0.2, { rot: [Math.PI / 2, 0, 0] });
   ch.visible = false;
 
-  // ---------------- 町の入口の門「はるの まち」 ----------------
+  // ---------------- 町の入口の門「おもちゃのまち」 ----------------
   const gate = (R.gate = group(root, -11.5, 0, 0.9));
   for (const s of [-1, 1]) for (let i = 0; i < 3; i++) add(gate, G.box(0.9, 0.9, 0.9), blockMat((s < 0 ? ['あ', 'い', 'う'] : ['か', 'き', 'く'])[2 - i], BLOCK_COLS[(i + (s > 0 ? 3 : 0)) % 6]), s * 1.9, 0.45 + i * 0.9, 0, { rot: [0, i * 0.08 * s, 0] });
-  ['は', 'る', 'の', 'ま', 'ち'].forEach((ch2, i) => add(gate, G.box(0.85, 0.85, 0.85), blockMat(ch2, BLOCK_COLS[i % 6]), -1.8 + i * 0.9, 3.15, 0));
+  ['お', 'も', 'ち', 'ゃ', 'の', 'ま', 'ち'].forEach((ch2, i) => add(gate, G.box(0.62, 0.62, 0.62), blockMat(ch2, BLOCK_COLS[i % 6]), -1.92 + i * 0.64, 3.0, 0));
 
   // ---------------- オルゴール（ウサギがのる台） ----------------
   const mb = (R.musicBox = group(root, OVAL.x, 0, OVAL.z));

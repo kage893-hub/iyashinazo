@@ -233,9 +233,9 @@ export class ToyStage {
     reg('maze', R.maze, '積み木の迷路', () => this.talkMouse());
     reg('xylo', R.xylo, '木琴の橋', () => this.clickXylo());
     reg('score1', R.score1, '色の積み木', () => this.clickScore(0));
-    reg('gate', R.gate, '町の門', () => this.say(['積み木を積んだ門。上の段に「は・る・の・ま・ち」と書いてある。', { who: 'frog', text: '「はるのまち」……春の町、ケロ？' }]));
+    reg('gate', R.gate, '町の門', () => this.say(['積み木を積んだ門。上の段に「お・も・ち・ゃ・の・ま・ち」と書いてある。', { who: 'frog', text: '積み木の門、ぼくもくぐってみたいケロ。' }]));
     reg('drawbridge', R.drawbridge, 'はね橋', () => this.say([this.g.flags.bridgeDown ? 'はね橋が下りて、線路がつながった。' : 'おもちゃの川にかかる、はね橋。上がったまま止まっていて、列車がわたれない。']));
-    reg('sign', R.stationSign, '駅名標', () => this.say(['駅名標。『おもちゃのまち』……左は『きのこのもり』。右は……『？？？』。', { who: 'frog', text: 'つぎの駅、まだ名前がないケロ？ ふしぎケロ……。' }]));
+    reg('sign', R.stationSign, '駅名標', () => this.say(['駅名標。『おもちゃのまち』……左は『きのこのもり』、右は『とうきょう』。', { who: 'frog', text: 'つぎは、とうとう終点ケロ……。' }]));
     reg('trainLoco', this.train.loco.g, '機関車', () => this.say(['ほしまわり号の機関車。ブリキの機関車が、うらやましそうに見ていた気がする。']));
     reg('coach', this.train.coach.g, '客車', () => this.say(['ほしまわり号の客車。']));
   }
@@ -511,9 +511,8 @@ export class ToyStage {
     ]);
     g.give('toyKey');
     await this.say([
-      { who: 'bear', text: '……この街のおもちゃはね、みんな「あの子」のおもちゃだったんだ。あの子がいたころは、毎日にぎやかでね。' },
-      { who: 'frog', text: '「あの子」……ケロ？' },
-      { who: 'bear', text: 'ふふ、むかしの話さ。さあ、たのんだよ。' },
+      { who: 'bear', text: '街が動いていたころは、毎日にぎやかでね。歌と、時計の音と、みんなの笑い声で。' },
+      { who: 'bear', text: 'もう一度、あのにぎやかさを取りもどしたいんだ。さあ、たのんだよ。' },
     ]);
     g.flag('introDone');
     g.audio.play('quest');
@@ -600,7 +599,7 @@ export class ToyStage {
     const g = this.g, f = g.flags;
     this.talkCam(this.rabbit, 7);
     if (await this.tryWind('rabbit', ['オルゴールの上の、白いウサギの人形。両手を上げたまま、止まっている。'])) return;
-    if (f.songFixed) return this.say([{ who: 'rabbit', text: 'ラ、ラ、ラ〜♪ あの子がいつも口ずさんでいた歌よ。' }]);
+    if (f.songFixed) return this.say([{ who: 'rabbit', text: 'ラ、ラ、ラ〜♪ 街のみんなが大好きな歌よ。' }]);
     if (!f.rabbitTalked) {
       g.flag('rabbitTalked');
       await this.say([
@@ -637,7 +636,7 @@ export class ToyStage {
   async songDone() {
     const g = this.g;
     g.flag('songFixed');
-    await this.say(['ポロン、ポロロン……オルゴールの太鼓がまわりだし、街の歌が流れた。', { who: 'rabbit', text: 'この歌！ あの子が、いつも口ずさんでいた歌……。' }]);
+    await this.say(['ポロン、ポロロン……オルゴールの太鼓がまわりだし、街の歌が流れた。', { who: 'rabbit', text: 'この歌！ 街のみんなの歌……やっと思いだせた。' }]);
     this.questDone('オルゴールに街の歌がもどった！');
     await this.checkReady();
   }
@@ -922,11 +921,8 @@ export class ToyStage {
       { who: 'mouse', text: 'チュー！ 1巻き1歩、これからもがんばるチュー！' },
       { who: 'rabbit', text: 'ラ、ラ、ラ〜♪' },
       { who: 'loco', text: 'ほしまわり号さん、いってらっしゃい！ ぼくも、いつか空を走るよ！' },
-      { who: 'frog', text: '……ねえ、町長さん。「あの子」って、だれケロ？' },
-      { who: 'bear', text: '……ぼくらを、いちばん大事にしてくれた子さ。あの子は大きくなって、遠くの町へ行ってしまった。' },
-      { who: 'bear', text: 'でも、ぼくらは知ってるよ。あの子はいまも、どこかで、あの歌をおぼえてる。' },
-      { who: 'bear', text: 'ほしまわり号のつぎの駅は、まだ名前のない駅だろう？ ……もしかしたら、ね。' },
-      { who: 'frog', text: 'ケロ……？' },
+      { who: 'bear', text: 'ほしまわり号のつぎの駅は、終点の「とうきょう」だね。にぎやかな町だと聞いているよ。' },
+      { who: 'frog', text: '終点ケロ……。さみしいような、楽しみなような、ふしぎな気持ちケロ。' },
     ]);
     await g.moveCamera(new V(1.5, 3.5, -0.6), FROG_HOME.clone().add(new V(0, 1.0, 0)), 1.8);
     const f2 = this.frog.root.position.clone();
