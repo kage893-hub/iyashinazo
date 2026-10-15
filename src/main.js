@@ -1,6 +1,7 @@
 import { Game } from './core/game.js';
 import { el } from './core/ui.js';
 import { STAGES } from './stages/registry.js';
+import { ROUTE, stageByPass } from './data/route.js';
 
 const $ = (s) => document.querySelector(s);
 
@@ -181,6 +182,43 @@ async function main() {
     panel = game.ui.openPanel({ title: '路線図', body, cls: 'wide' });
   };
 
+  // あいことば：ほかの端末やブラウザでも、その駅から始められる
+  title.querySelector('[data-act="pass"]').onclick = () => {
+    game.audio.init();
+    game.audio.play('click');
+    const body = el('div', 'pass-form');
+    body.innerHTML = `
+      <p class="panel-note">クリア画面やメニューに出ている<br>「あいことば」を入れてください。</p>
+      <input class="pass-input" type="text" maxlength="20" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="ひらがなで">
+      <p class="pass-msg"></p>
+      <button class="btn primary">この駅へ ▶</button>`;
+    const input = body.querySelector('input');
+    const msg = body.querySelector('.pass-msg');
+    const panel = game.ui.openPanel({ title: 'あいことば', body, cls: 'small' });
+    const go = async () => {
+      const s = stageByPass(input.value);
+      const st = s && STAGES.find((x) => x.id === s.id);
+      if (!st?.Stage) {
+        game.audio.play('wrong');
+        msg.textContent = 'あいことばが ちがうようだ……';
+        body.classList.remove('shake'); void body.offsetWidth; body.classList.add('shake');
+        return;
+      }
+      game.audio.play('click');
+      const q = await game.ui.choose(`STAGE ${st.no}「${st.name}」から遊びますか？${game.hasSave() ? '<br><small>（いまの進行は上書きされます）</small>' : ''}`, ['出発する', 'やめる']);
+      if (q !== 0) return;
+      panel.close();
+      // その駅より前の駅は、クリアしたことにする
+      const before = ROUTE.slice(0, ROUTE.findIndex((x) => x.id === st.id)).map((x) => x.id);
+      game.state.cleared = [...new Set([...(game.state.cleared || []), ...before])];
+      await game.ui.fade(1, 0.5);
+      game.goToStage(st.id);
+    };
+    body.querySelector('button').onclick = go;
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.isComposing) go(); });
+    setTimeout(() => input.focus(), 100);
+  };
+
   title.querySelector('[data-act="howto"]').onclick = () => {
     game.audio.init();
     game.audio.play('click');
@@ -228,6 +266,8 @@ async function main() {
       const i = await game.ui.choose('この駅の進行状況を消して、最初からやりなおしますか？', ['やりなおす', 'やめる']);
       if (i === 0) { game.resetState(game.state.stage); location.reload(); }
     }, 'danger');
+    const pass = ROUTE.find((x) => x.id === game.state.stage)?.pass;
+    if (pass) body.appendChild(el('p', 'panel-note', `この駅のあいことば：<b class="pass-word">${pass}</b><br><small>タイトルの「あいことば」で、ほかの端末でも来られます。</small>`));
     panel = game.ui.openPanel({ title: 'メニュー', body, cls: 'small' });
   };
 

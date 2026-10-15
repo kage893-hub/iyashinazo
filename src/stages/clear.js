@@ -22,6 +22,7 @@ export function showStageClear(g, id, line) {
     <div class="clear-stats"><div><span>プレイ時間</span><b>${time}</b></div><div><span>ヒント</span><b>${g.state.hints}回</b></div></div>
     <div class="rt">${dots}</div>
     <p class="clear-msg">${line}<br>${next ? `次の停車駅は<em>${next.name}</em>。${ready ? '' : '……つづきは準備中です。'}` : 'ほしまわり号の旅は、ここで おしまい。'}</p>
+    ${ready && next.pass ? `<p class="clear-pass">次の駅のあいことば：<b class="pass-word">${next.pass}</b><br><small>タイトルの「あいことば」で、ほかの端末でも遊べます。</small></p>` : ''}
     <div class="clear-btns">${ready ? '<button class="btn primary" data-a="next">次の世界へ ▶</button>' : ''}<button class="btn" data-a="title">タイトルへ</button></div>`;
   g.ui.openPanel({ title: '', body, closable: false, cls: 'clear-panel' });
   const nb = body.querySelector('[data-a="next"]');

@@ -39,7 +39,7 @@ src/core/ui.js          パネル・選択肢・トースト・バナー・フ�
 src/core/audio.js       効果音と曲（SONGS）
 src/core/postfx.js      ポストエフェクト（GRADES：ステージ・場面ごとの色調）
 src/core/tween.js       トゥイーン
-src/data/route.js       路線（順番はここだけ直せばよい）
+src/data/route.js       路線（順番はここだけ直せばよい）・各駅の「あいことば」（pass）
 src/data/items.js       アイテム定義（SVG アイコン）。id は全ステージで一意
 src/lib/                共通の造形（creatures*.js・backdrop.js・merge.js・pixel.js・util.js など）
 src/stages/registry.js  実装ずみステージの登録（IMPL）
