@@ -31,7 +31,7 @@ npm run serve            # = python3 -m http.server 8123（リポジトリ直下
 ```
 
 - セーブは localStorage の `hoshimawari-save-v1`（`{stage, flags, inventory, counts, elapsed, hints, cleared, journeys}`）。旧形式を後方互換で読み込み、`journeys.main` と `journeys.extras[id]` に各旅の進行を保存する。`Game.save()` では使用中の flags の参照を差し替えない。
-- `cleared` に `japan` があれば追加の旅を解放（旧セーブも尊重）。`g.goToStage(id, {resume:true})` で続きから、既定は最初から。`g.openExtraJourneys()` がタイトル・メニュー・クリア画面共通の入口。
+- `cleared` に `japan` があれば路線図内に追加の旅を表示（旧セーブも尊重）。タイトルに専用ボタンは置かず、クリア前は路線図・メニューにも入口を表示しない。`createExtraJourneyList()` が路線図と旅券の選択カードを共用し、`g.openExtraJourneys()` はクリア後のメニュー・クリア画面から旅券を開く。`g.goToStage(id, {resume:true})` で続きから、既定は最初から。
 - `journeys.extras.museum` と `journeys.extras.saga` は独立。本編・博物館・佐賀を往復しても、持ち物・メモ・時間・謎の途中状態を混ぜず、片方のやり直しでもほかの旅とクリア記録を残す。
 - デバッグ用に `window.__game`（Game）が見える。`__game.stage` が今のステージ。
 - ステージ切り替えはページの読み直し。

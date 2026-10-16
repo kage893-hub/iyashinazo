@@ -3,6 +3,7 @@ import { el } from './core/ui.js';
 import { STAGES, ALL_STAGES } from './stages/registry.js';
 import { ROUTE, stageByPass, stageLabel, nextStop, isExtraStage } from './data/route.js';
 import { extrasUnlocked } from './core/save-state.js';
+import { createExtraJourneyList } from './core/extra-journeys.js';
 
 const $ = (s) => document.querySelector(s);
 
@@ -84,10 +85,6 @@ async function main() {
   }
   // いまの箱庭のステージ名
   title.querySelector('.title-stage').textContent = `${stageLabel(entry.id)}　${entry.name}`;
-  const extraBtn = title.querySelector('[data-act="extras"]');
-  extraBtn.textContent = extrasUnlocked(game.state) ? '✦ 追加の旅を選ぶ' : '🔒 追加の旅';
-  extraBtn.classList.toggle('unlocked', extrasUnlocked(game.state));
-  extraBtn.onclick = () => { game.audio.init(); game.audio.play('click'); game.openExtraJourneys(); };
 
   const enterGame = () => {
     game.audio.init();
@@ -198,7 +195,14 @@ async function main() {
       body.appendChild(card);
     });
     body.appendChild(el('p', 'panel-note', 'クリアした駅には、いつでも戻れます。'));
-    panel = game.ui.openPanel({ title: '路線図', body, cls: 'wide' });
+    if (extrasUnlocked(game.state)) {
+      const extras = el('section', 'route-extras');
+      extras.appendChild(el('h2', 'route-extras-title', '✦ 追加の旅'));
+      extras.appendChild(el('p', 'panel-note', '好きな駅を選んで、もうひとつの旅へ。'));
+      extras.appendChild(createExtraJourneyList(game, () => panel.close()));
+      body.appendChild(extras);
+    }
+    panel = game.ui.openPanel({ title: '路線図', body, cls: 'wide route-panel' });
   };
 
   // あいことば：ほかの端末やブラウザでも、その駅から始められる
@@ -279,7 +283,7 @@ async function main() {
     let panel;
     mk('あそびかた', () => { panel.close(); showHowTo(game); });
     mk('カメラを全体にもどす', () => { panel.close(); game.cameraHome(); });
-    mk(extrasUnlocked(game.state) ? '✦ 追加の旅を選ぶ' : '🔒 追加の旅', () => { panel.close(); game.openExtraJourneys(); });
+    if (extrasUnlocked(game.state)) mk('✦ 追加の旅を選ぶ', () => { panel.close(); game.openExtraJourneys(); });
     mk('タイトルにもどる', () => { game.save(); location.reload(); });
     mk('この駅を最初からやりなおす', async () => {
       panel.close();

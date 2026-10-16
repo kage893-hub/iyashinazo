@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import { mkdir } from 'node:fs/promises';
 import { chromium } from 'playwright';
-import { EXTRA_ROUTE } from '../src/data/route.js';
+import { ROUTE, EXTRA_ROUTE } from '../src/data/route.js';
 const base = process.env.BASE || 'http://localhost:8123';
 const stubRegistry = `
 import { ROUTE, EXTRA_ROUTE } from '/src/data/route.js';
@@ -82,15 +82,28 @@ try {
     assert.equal(await page.locator('.clear [data-a="extras"]').count(), 1);
     await page.evaluate(() => __game.ui.closeAllPanels());
     await page.waitForTimeout(300);
-    await page.locator('[data-act="extras"]').click();
-    await page.waitForSelector('.extra-panel .extra-station');
+    assert.equal(await page.locator('#title [data-act="extras"]').count(), 0);
+    await page.locator('[data-act="stages"]').click();
+    await page.waitForSelector('.route-panel .route-extras .extra-station');
     await page.waitForTimeout(300);
+    assert.equal(await page.locator('.route-panel .stage-card').count(), ROUTE.length);
     assert.equal(await page.locator('.extra-station').count(), EXTRA_ROUTE.length);
     assert.equal(await card('museum').count(), 1);
     assert.equal(await card('saga').count(), 1);
     assert.match(await card('museum').innerText(), /新しい旅/);
     assert.match(await card('saga').innerText(), /新しい旅/);
-    await page.screenshot({ animations: 'disabled', path: 'shots/review/extra-selection-portrait.png' });
+    for (const [width, height, label] of [[375, 812, 'portrait'], [820, 520, 'landscape']]) {
+      await page.setViewportSize({ width, height });
+      await page.locator('.route-extras-title').scrollIntoViewIfNeeded();
+      await page.waitForTimeout(300);
+      assert.equal(await page.locator('.route-panel').evaluate(p => p.scrollWidth <= p.clientWidth), true, '路線図が横にはみ出さない');
+      await page.screenshot({ animations: 'disabled', path: `shots/review/extra-route-${label}.png` });
+      for (const button of await page.locator('.route-extras button').all()) {
+        await button.scrollIntoViewIfNeeded();
+        await button.click({ trial: true });
+      }
+    }
+    await page.setViewportSize({ width: 375, height: 812 });
     await departTo('museum');
     assert.equal(await page.evaluate(() => window.openings), 1);
     assert.deepEqual(await page.evaluate(() => __game.state.inventory), []);
@@ -171,15 +184,27 @@ try {
     assert.deepEqual(await page.evaluate(() => __game.state.journeys.extras.museum.flags), { introDone: true });
   });
 
-  await test('本編クリア前の入口はロックし、博物館と佐賀の個別確認用URLからは出発できる', async () => {
-    await page.evaluate(() => {
-      localStorage.setItem('hoshimawari-save-v1', JSON.stringify({ stage: 'station', flags: { introDone: true }, inventory: [], counts: {}, elapsed: 0, hints: 0, cleared: [] }));
-    });
-    await page.goto(`${base}/index.html?low`);
-    await ready();
-    await page.locator('[data-act="extras"]').click();
-    await page.waitForSelector('.extra-locked');
-    assert.equal(await page.locator('.extra-station').count(), 0);
+  await test('本編クリア前はタイトル・路線図・メニューに追加の旅を表示せず、個別確認用URLは保つ', async () => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    for (const stage of ['station', 'japan']) {
+      await page.evaluate(({ stage, cleared }) => {
+        localStorage.setItem('hoshimawari-save-v1', JSON.stringify({ stage, flags: { introDone: true }, inventory: [], counts: {}, elapsed: 0, hints: 0, cleared }));
+      }, { stage, cleared: stage === 'japan' ? ROUTE.slice(0, -1).map(s => s.id) : [] });
+      await page.goto(`${base}/index.html?low`);
+      await ready();
+      assert.equal(await page.locator('#title [data-act="extras"]').count(), 0);
+      if (stage === 'station') await page.screenshot({ animations: 'disabled', path: 'shots/review/extra-title-hidden.png' });
+      await page.locator('[data-act="stages"]').click();
+      await page.waitForSelector('.route-panel');
+      assert.equal(await page.locator('.route-panel .stage-card').count(), ROUTE.length);
+      assert.equal(await page.locator('.route-extras, .extra-station').count(), 0);
+      await page.evaluate(() => __game.ui.closeAllPanels());
+      await page.waitForTimeout(300);
+      await page.locator('[data-act="continue"]').click();
+      await page.waitForFunction(() => __game.playing);
+      await page.locator('#btn-menu').click();
+      assert.equal(await page.locator('.menu .btn').filter({ hasText: '追加の旅' }).count(), 0);
+    }
     await page.goto(`${base}/index.html?low&stage=museum`);
     await ready();
     assert.equal(await page.evaluate(() => __game.state.stage), 'museum');
