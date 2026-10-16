@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import { mkdir } from 'node:fs/promises';
 import { chromium } from 'playwright';
+import { EXTRA_ROUTE } from '../src/data/route.js';
 const base = process.env.BASE || 'http://localhost:8123';
 const stubRegistry = `
 import { ROUTE, EXTRA_ROUTE } from '/src/data/route.js';
@@ -31,13 +32,13 @@ try {
   await context.route('**/src/stages/registry.js', r => r.fulfill({ contentType: 'text/javascript', body: stubRegistry }));
   const page = await context.newPage();
   page.on('pageerror', e => errors.push(e.message));
-  await page.addInitScript(() => {
+  await page.addInitScript(({ oldSave }) => {
     localStorage.setItem('hoshimawari-muted', '1');
     if (!sessionStorage.getItem('extra-test-seeded')) {
       sessionStorage.setItem('extra-test-seeded', '1');
-      localStorage.setItem('hoshimawari-save-v1', JSON.stringify({ stage: 'japan', flags: { introDone: true, departed: true, towerLit: true }, inventory: ['koBell'], counts: {}, elapsed: 720, hints: 3, cleared: ['japan'] }));
+      localStorage.setItem('hoshimawari-save-v1', JSON.stringify(oldSave));
     }
-  });
+  }, { oldSave });
   const ready = () => page.waitForSelector('#title:not(.hidden), .depart-gate.show', { timeout: 60000 });
   const depart = async () => {
     await page.locator('.depart-gate button').click();
@@ -50,11 +51,30 @@ try {
     await page.waitForSelector('.extra-panel');
     await page.waitForTimeout(270);
   };
+  // 追加の旅は増えても、旅先の名前でカードを一意に特定する。
+  const card = (id) => page.locator('.extra-station').filter({
+    has: page.getByRole('heading', { name: EXTRA_ROUTE.find(s => s.id === id).name, exact: true }),
+  });
+  const departTo = async (id) => {
+    await card(id).locator('.primary').click();
+    await page.waitForSelector('.depart-gate.show', { timeout: 60000 });
+    await depart();
+    assert.equal(await page.evaluate(() => __game.state.stage), id);
+  };
+  const progress = () => page.evaluate(() => {
+    const { stage, flags, inventory, counts, elapsed, hints, notes } = __game.state;
+    return { stage, flags, inventory, counts, elapsed, hints, notes };
+  });
+  const assertProgress = (actual, expected) => {
+    for (const key of ['stage', 'flags', 'inventory', 'counts', 'hints', 'notes']) assert.deepEqual(actual[key], expected[key], key);
+    assert.ok(actual.elapsed >= expected.elapsed && actual.elapsed < expected.elapsed + 60, 'ほかの旅にいた時間を加算せず復帰する');
+  };
+  let museumProgress, sagaProgress;
   const test = async (name, fn) => { await fn(); passed++; console.log(`OK ${name}`); };
   await page.goto(`${base}/index.html?low`);
   await ready();
 
-  await test('旧セーブの japan クリアでタイトルから追加を選び、初回の導入を一度だけ再生する', async () => {
+  await test('旧セーブの japan クリアで博物館と佐賀の2枚を選べて、初回の導入を一度だけ再生する', async () => {
     await page.evaluate(async () => {
       const { showStageClear } = await import('/src/stages/clear.js');
       showStageClear(__game, 'japan', '終点に着いた。');
@@ -65,23 +85,44 @@ try {
     await page.locator('[data-act="extras"]').click();
     await page.waitForSelector('.extra-panel .extra-station');
     await page.waitForTimeout(300);
-    assert.match(await page.locator('.extra-panel').innerText(), /星あかりの博物館/);
+    assert.equal(await page.locator('.extra-station').count(), EXTRA_ROUTE.length);
+    assert.equal(await card('museum').count(), 1);
+    assert.equal(await card('saga').count(), 1);
+    assert.match(await card('museum').innerText(), /新しい旅/);
+    assert.match(await card('saga').innerText(), /新しい旅/);
     await page.screenshot({ animations: 'disabled', path: 'shots/review/extra-selection-portrait.png' });
-    await page.locator('.extra-station .primary').click();
-    await page.waitForSelector('.depart-gate.show', { timeout: 60000 });
-    await depart();
-    assert.equal(await page.evaluate(() => __game.state.stage), 'museum');
+    await departTo('museum');
     assert.equal(await page.evaluate(() => window.openings), 1);
     assert.deepEqual(await page.evaluate(() => __game.state.inventory), []);
   });
 
-  await test('追加の旅から本編へ戻り、追加の持ち物・メモ・時間を続きから復帰する', async () => {
+  await test('博物館の途中で佐賀へ出発し、博物館の持ち物・メモ・時間を続きから復帰する', async () => {
     await page.evaluate(() => {
       const g = __game;
-      g.flags.galleryOpen = true; g.state.inventory = ['koBell']; g.state.elapsed = 180; g.state.hints = 2;
+      g.flags.galleryOpen = true; g.state.inventory = ['museumGuide']; g.state.counts = { museumTest: 3 }; g.state.elapsed = 180; g.state.hints = 2;
       g.state.notes = [{ id: 'museum-test', stage: 'museum', title: '星のメモ', html: '旅の手がかり' }];
       g.save();
     });
+    museumProgress = await progress();
+    await openFromMenu();
+    await departTo('saga');
+    assert.equal(await page.evaluate(() => window.openings), 1);
+    assert.deepEqual(await page.evaluate(() => __game.flags), { introDone: true });
+    assert.deepEqual(await page.evaluate(() => __game.state.inventory), []);
+    await page.evaluate(() => {
+      const g = __game;
+      g.flags.testSagaStamp = true; g.state.inventory = ['marble']; g.state.counts = { sagaTest: 4 }; g.state.elapsed = 240; g.state.hints = 1;
+      g.state.notes = [{ id: 'saga-test', stage: 'saga', title: '街角のメモ', html: '佐賀の手がかり' }];
+      g.save();
+    });
+    sagaProgress = await progress();
+    await openFromMenu();
+    await departTo('museum');
+    assertProgress(await progress(), museumProgress);
+    assert.equal(await page.evaluate(() => window.openings || 0), 0);
+  });
+
+  await test('博物館から本編へ戻ったあと佐賀を再開し、3つの旅の進行を個別に保つ', async () => {
     await openFromMenu();
     await page.locator('.extra-main-return').click();
     await page.waitForSelector('.depart-gate.show', { timeout: 60000 });
@@ -90,40 +131,47 @@ try {
     assert.equal(main.stage, 'japan'); assert.deepEqual(main.flags, oldSave.flags);
     assert.deepEqual(main.inventory, oldSave.inventory); assert.equal(main.hints, oldSave.hints); assert.equal(main.openings, 0);
     await openFromMenu();
-    await page.locator('.extra-station .primary').click();
-    await page.waitForSelector('.depart-gate.show', { timeout: 60000 });
-    await depart();
-    const extra = await page.evaluate(() => ({ flags: __game.flags, inventory: __game.state.inventory, elapsed: __game.state.elapsed, hints: __game.state.hints, note: __game.state.notes[0].id, openings: window.openings || 0 }));
-    assert.equal(extra.flags.galleryOpen, true); assert.deepEqual(extra.inventory, ['koBell']);
-    assert.ok(extra.elapsed >= 180 && extra.elapsed < 210); assert.equal(extra.hints, 2); assert.equal(extra.note, 'museum-test'); assert.equal(extra.openings, 0);
+    await departTo('saga');
+    assertProgress(await progress(), sagaProgress);
+    assert.equal(await page.evaluate(() => window.openings || 0), 0);
+    assert.equal(await page.evaluate(() => __game.state.journeys.extras.museum.flags.galleryOpen), true);
   });
 
-  await test('追加のクリア画面から選択へ戻り、やり直しても本編とクリア記録を保つ', async () => {
+  await test('佐賀のクリア画面から博物館をやり直しても、本編・佐賀・両方のクリア記録を保つ', async () => {
     await page.evaluate(async () => {
-      __game.state.cleared.push('museum'); __game.save();
+      __game.state.cleared.push('museum', 'saga'); __game.flags.departed = true; __game.save();
       const { showStageClear } = await import('/src/stages/clear.js');
-      showStageClear(__game, 'museum', '博物館の灯りに見送られた。');
+      showStageClear(__game, 'saga', '佐賀の街角に見送られた。');
     });
+    sagaProgress = await progress();
     assert.equal(await page.locator('.clear .rt').count(), 0);
     await page.locator('.clear [data-a="extras"]').click();
     await page.waitForSelector('.extra-panel');
     await page.setViewportSize({ width: 820, height: 520 });
     await page.waitForTimeout(300);
     await page.screenshot({ animations: 'disabled', path: 'shots/review/extra-selection-landscape.png' });
-    await page.locator('.extra-restart').click();
+    assert.match(await card('museum').innerText(), /★ CLEAR/);
+    assert.match(await card('saga').innerText(), /★ CLEAR/);
+    await card('museum').locator('.extra-restart').click();
     await page.locator('.choice .btn').filter({ hasText: 'やめる' }).click();
     await page.waitForTimeout(300);
-    assert.equal(await page.evaluate(() => __game.flags.galleryOpen), true);
-    await page.locator('.extra-restart').click();
+    assert.equal(await page.evaluate(() => __game.state.stage), 'saga');
+    assert.equal(await page.evaluate(() => __game.state.journeys.extras.museum.flags.galleryOpen), true);
+    await card('museum').locator('.extra-restart').click();
     await page.locator('.choice .btn').filter({ hasText: '最初から出発する' }).click();
     await page.waitForSelector('.depart-gate.show', { timeout: 60000 });
     await depart();
     const reset = await page.evaluate(() => ({ flags: __game.flags, inventory: __game.state.inventory, cleared: __game.state.cleared, main: __game.state.journeys.main, openings: window.openings }));
     assert.deepEqual(reset.flags, { introDone: true }); assert.deepEqual(reset.inventory, []);
-    assert.deepEqual(reset.cleared, ['japan', 'museum']); assert.equal(reset.main.flags.towerLit, true); assert.equal(reset.openings, 1);
+    assert.deepEqual(reset.cleared, ['japan', 'museum', 'saga']); assert.equal(reset.main.flags.towerLit, true); assert.equal(reset.openings, 1);
+    await openFromMenu();
+    await departTo('saga');
+    assertProgress(await progress(), sagaProgress);
+    assert.equal(await page.evaluate(() => window.openings || 0), 0);
+    assert.deepEqual(await page.evaluate(() => __game.state.journeys.extras.museum.flags), { introDone: true });
   });
 
-  await test('本編クリア前の入口はロックし、?stage=museum は動作確認に使える', async () => {
+  await test('本編クリア前の入口はロックし、博物館と佐賀の個別確認用URLからは出発できる', async () => {
     await page.evaluate(() => {
       localStorage.setItem('hoshimawari-save-v1', JSON.stringify({ stage: 'station', flags: { introDone: true }, inventory: [], counts: {}, elapsed: 0, hints: 0, cleared: [] }));
     });
@@ -136,6 +184,10 @@ try {
     await ready();
     assert.equal(await page.evaluate(() => __game.state.stage), 'museum');
     assert.match(await page.locator('.title-stage').innerText(), /追加の旅/);
+    await page.goto(`${base}/index.html?low&stage=saga`);
+    await ready();
+    assert.equal(await page.evaluate(() => __game.state.stage), 'saga');
+    assert.match(await page.locator('.title-stage').innerText(), /佐賀のまち/);
     await page.evaluate(() => __game.goToStage('station'));
     await page.waitForSelector('.depart-gate.show', { timeout: 60000 });
     await depart();

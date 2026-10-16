@@ -2,6 +2,11 @@
 const svg = (inner) => `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">${inner}</svg>`;
 
 export const ITEMS = {
+  sagaGuide: {
+    name: '佐賀の旅ノート',
+    desc: '佐賀駅、モラージュ佐賀、川久保の街角をめぐる小さな旅ノート。地図と集めたスタンプ、見つけた手がかりを読み返せる。もう一度押すと開く。',
+    icon: svg(`<path d="M8 12l16-4 16 4 16-4v43l-16 4-16-4-16 4z" fill="#f6edd7" stroke="#7a7259" stroke-width="2.3" stroke-linejoin="round"/><path d="M24 9v41M40 13v41" stroke="#cbbf9c" stroke-width="1.5"/><path d="M9 40c8-9 12 4 20-4s15 1 26-9" fill="none" stroke="#a9d4d4" stroke-width="4"/><path d="M17 23l14 14 15-17" fill="none" stroke="#b8843d" stroke-width="2" stroke-dasharray="2.5 2.5"/><g fill="#fff9e8" stroke="#597766" stroke-width="1.8"><circle cx="17" cy="23" r="7"/><circle cx="31" cy="37" r="7"/><circle cx="46" cy="20" r="7"/></g><g fill="none" stroke="#597766" stroke-width="1.5" stroke-linejoin="round"><rect x="14" y="18.5" width="6" height="7" rx="1"/><path d="M14 22h6m-5 4-1 2m5-2 1 2M27 35h8v6h-8zm1-2h6m-4 2v6M42 20l4-4 4 4m-7-1v5h6v-5m-3 2v3"/></g>`),
+  },
   museumGuide: {
     name: '夜の観覧手帳',
     desc: '星あかりの博物館の、小さな紺色の手帳。展示の案内と、集めた4つの印を読み返せる。もう一度押すと開く。',

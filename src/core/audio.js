@@ -194,6 +194,22 @@ const MUSEUM_MELODY = [
 ];
 const MUSEUM_CHORDS = [[50, 57, 61], [54, 61, 66], [55, 62, 66], [50, 57, 62], [47, 54, 62], [55, 59, 66], [57, 61, 64], [50, 57, 62]];
 
+// 佐賀のまち：五月の田畑を渡る風と、街歩きの足どり。少し懐かしいヘ長調の8小節。
+const SAGA_MELODY = [
+  [0, 69, 1], [1, 72, 0.5], [1.5, 74, 0.5], [2, 72, 1.5], [3.5, 69, 0.5],
+  [4, 67, 1], [5, 69, 1], [6, 72, 1.5],
+  [8, 74, 1.5], [9.5, 72, 0.5], [10, 69, 1], [11, 67, 1],
+  [12, 65, 2.5], [15, 67, 0.5],
+  [16, 69, 1], [17, 72, 1], [18, 77, 1.5], [19.5, 76, 0.5],
+  [20, 74, 1], [21, 72, 0.5], [21.5, 69, 0.5], [22, 67, 1.5],
+  [24, 67, 1], [25, 69, 0.5], [25.5, 72, 0.5], [26, 69, 1], [27, 67, 1],
+  [28, 65, 3],
+];
+const SAGA_CHORDS = [
+  [53, 57, 60], [52, 55, 60], [46, 53, 62], [53, 57, 60],
+  [50, 57, 62], [46, 53, 62], [48, 52, 55], [41, 53, 57],
+];
+
 export const SONGS = {
   station: { melody: MELODY, chords: CHORDS, tempo: 74 },
   sky: { melody: SKY_MELODY, chords: SKY_CHORDS, tempo: 88 },
@@ -206,6 +222,7 @@ export const SONGS = {
   toy: { melody: TOY_MELODY, chords: TOY_CHORDS, tempo: 90 },
   japan: { melody: JAPAN_MELODY, chords: JAPAN_CHORDS, tempo: 78 },
   museum: { melody: MUSEUM_MELODY, chords: MUSEUM_CHORDS, tempo: 66 },
+  saga: { melody: SAGA_MELODY, chords: SAGA_CHORDS, tempo: 76 },
 };
 
 export class AudioSys {

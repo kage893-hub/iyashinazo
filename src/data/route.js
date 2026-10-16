@@ -19,6 +19,7 @@ export const routeIndex = (id) => ROUTE.findIndex((s) => s.id === id);
 // 終点の先は自由に選ぶ「追加の旅」。本編の路線・あいことばには連結しない。
 export const EXTRA_ROUTE = [
   { id: 'museum', name: '星あかりの博物館', emoji: '🏛️', sub: '夜の展示に、もう一度星を灯す', extra: true },
+  { id: 'saga', name: '佐賀のまち', emoji: '🚉', sub: '佐賀駅から、川久保の街角まで', extra: true },
 ];
 export const stageInfo = (id) => ROUTE.find((s) => s.id === id) || EXTRA_ROUTE.find((s) => s.id === id) || null;
 export const isExtraStage = (id) => EXTRA_ROUTE.some((s) => s.id === id);

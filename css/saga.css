@@ -1,0 +1,176 @@
+/* 佐賀のまち：旅の時刻表、買物袋、クリークの水色。すべて専用パネル内に限定。 */
+.panel.saga-panel {
+  --sa-ink: #35525c;
+  --sa-muted: #647578;
+  --sa-water: #3e8ea1;
+  --sa-paper: #fcf7e8;
+  --sa-line: #c4c4aa;
+  width: min(660px, 100%);
+  max-width: 660px;
+  max-height: calc(100dvh - 32px);
+  padding: 22px 25px 24px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-color: #7eaaa9 #e6eadc;
+  border: 2px solid #6e9594;
+  border-radius: 17px;
+  background: radial-gradient(ellipse at top left, #fffdf4, #f0f0df 85%);
+  color: var(--sa-ink);
+  box-shadow: 0 0 0 4px #e2e6cf, 0 0 0 5px #779395, 0 24px 70px #15333c88;
+}
+.saga-panel *, .saga-panel *::before, .saga-panel *::after { box-sizing: border-box; }
+.saga-panel .panel-title { margin: 0 15px 12px; color: var(--sa-ink); font-size: 21px; line-height: 1.5; letter-spacing: .06em; }
+.saga-panel .panel-close { color: #49656b; }
+.saga-panel .saga-puzzle { font-size: 14px; line-height: 1.75; }
+.saga-panel .sa-kicker { display: flex; justify-content: space-between; gap: 9px; padding-top: 8px; border-top: 1px solid var(--sa-line); font-size: 10px; font-weight: 700; color: #6f847d; letter-spacing: .1em; }
+.saga-panel .sa-intro { margin: 11px 0 15px; text-align: center; }
+.saga-panel .sa-workspace { min-width: 0; }
+.saga-panel .sa-rule-summary { margin: 9px 0 15px; padding: 10px; border: 1px dashed #94ae9d; border-radius: 8px; background: #e8eedd; text-align: center; font-size: 13px; line-height: 1.8; font-weight: 700; }
+.saga-panel .sa-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 9px; margin: 17px 0 11px; }
+.saga-panel button { font-family: inherit; cursor: pointer; }
+.saga-panel .btn { min-height: 44px; border: 1px solid #8fa4a0; border-radius: 7px; padding: 9px 13px; font-size: 13px; line-height: 1.5; color: #3b5860; background: linear-gradient(#fffdf3, #e5e7d6); box-shadow: 0 2px 0 #a5b5a2; }
+.saga-panel .btn.primary { border-color: #35616b; color: #fffdf0; background: linear-gradient(#517e88, #365c68); box-shadow: 0 2px 0 #294752; text-shadow: none; }
+.saga-panel button:disabled { opacity: .44; cursor: default; }
+.saga-panel button:focus-visible, .saga-panel summary:focus-visible { outline: 3px solid #ba7939; outline-offset: 3px; }
+.saga-panel .sa-reference { margin-top: 13px; padding: 9px 12px; border: 1px solid var(--sa-line); border-radius: 8px; background: #fffdf466; }
+.saga-panel summary { cursor: pointer; min-height: 28px; font-size: 13px; font-weight: 700; }
+.saga-panel .sa-clue { color: var(--sa-ink); font-size: 14px; line-height: 1.9; overflow-wrap: anywhere; }
+.saga-panel .sa-clue h3 { margin: 8px 0 10px; font-size: 16px; }
+.saga-panel .sa-clue p { margin: 8px 0; }
+.saga-panel .sa-clue ul { padding-left: 1.35em; margin: 8px 0; }
+.saga-panel .sa-clue li + li { margin-top: 6px; }
+.saga-panel .sa-clue b { color: #8b602e; }
+.saga-panel .sa-fiction { color: #6d7c76; font-size: 11px; }
+.saga-panel .sa-message { min-height: 3em; margin: 13px 0 0; padding-top: 10px; border-top: 1px solid #d0d5bb; color: #4c6c68; font-size: 13px; text-align: center; overflow-wrap: anywhere; }
+.saga-panel .sa-route-picture { max-width: 425px; margin: 0 auto; }
+.saga-panel .sa-route-picture svg { display: block; width: 100%; height: auto; font: 13px sans-serif; fill: #3d5961; }
+.saga-panel fieldset { min-width: 0; padding: 11px 12px 13px; border: 1px solid #bdc6b2; border-radius: 9px; margin: 12px 0 0; background: #fffdf25c; }
+.saga-panel legend { padding: 0 6px; font-size: 13px; font-weight: 700; color: #486d72; max-width: 100%; }
+.saga-panel .sa-bus-leg p { margin: -3px 0 8px; font-size: 11px; color: #70827d; }
+.saga-panel .sa-bus-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.saga-panel .sa-bus-options button { display: flex; flex-direction: column; align-items: center; min-width: 0; min-height: 62px; padding: 7px 4px; border: 1px solid #aabdb4; border-radius: 7px; color: var(--sa-ink); background: #fbf9ee; box-shadow: 0 2px 0 #b5c0aa; font-variant-numeric: tabular-nums; line-height: 1.65; }
+.saga-panel .sa-bus-options b { font-size: 17px; }
+.saga-panel .sa-bus-options span { font-size: 11px; }
+.saga-panel [aria-pressed="true"] { outline: 3px solid #477d85; outline-offset: -3px; background: #d9e9e6; }
+.saga-panel .sa-bus-options button[aria-pressed="true"] { background: #d9e9e6; }
+.saga-panel .sa-bus-options button[aria-pressed="true"] b::before { content: '✓ '; font-size: 12px; }
+.saga-panel .sa-bus-receipt { margin: 14px 0 0; padding: 9px 11px; border-bottom: 1px dashed #b9c7b5; color: #496963; font-size: 12px; text-align: center; line-height: 1.9; font-variant-numeric: tabular-nums; }
+.saga-panel .sa-shop-shelves { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 11px; }
+.saga-panel .sa-shop-item { padding: 9px 8px 12px; border: 1px solid #c4c8af; border-radius: 9px; background: #fffaf0; text-align: center; box-shadow: 0 4px 0 #d9dcc4; min-width: 0; }
+.saga-panel .sa-shop-item > svg { display: block; width: 110px; max-width: 100%; height: 70px; margin: 0 auto; font: 12px sans-serif; fill: #5b614b; }
+.saga-panel .sa-shop-item h3 { margin: 2px 0 0; font-size: 14px; line-height: 1.6; }
+.saga-panel .sa-shop-item p { margin: 2px 0 8px; font-size: 12px; color: #7d7558; }
+.saga-panel .sa-quantity { display: grid; grid-template-columns: 42px 1fr 42px; align-items: center; gap: 4px; max-width: 185px; margin: auto; }
+.saga-panel .sa-quantity .btn { min-height: 42px; padding: 5px; font-size: 19px; }
+.saga-panel .sa-quantity output { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.saga-panel .sa-receipt { max-width: 370px; margin: 20px auto 8px; padding: 11px 17px 15px; border-top: 2px dashed #acb49d; border-bottom: 2px dashed #acb49d; background: #fffdf5; color: #55655c; font: 12px/1.9 sans-serif; }
+.saga-panel .sa-receipt h3 { text-align: center; margin: 0 0 8px; font-size: 12px; letter-spacing: .17em; }
+.saga-panel .sa-receipt > div { display: flex; justify-content: space-between; gap: 8px; }
+.saga-panel .sa-receipt-total { margin-top: 7px; padding-top: 8px; border-top: 1px dotted #b6bda7; font-size: 17px; }
+.saga-panel .sa-sluice-map { width: 100%; max-width: 440px; margin: 0 auto; }
+.saga-panel .sa-sluice-map > svg { width: 100%; display: block; height: auto; overflow: visible; font: 12px sans-serif; fill: #50695f; }
+.saga-panel .sa-canal { fill: none; stroke: #ccd6c0; stroke-width: 13; stroke-linecap: round; }
+.saga-panel .sa-canal.wet { stroke: #5199aa; stroke-width: 9; }
+.saga-panel .sa-field rect { fill: #e4eacb; stroke: #9da980; stroke-width: 2; }
+.saga-panel .sa-field path { fill: none; stroke: #b0bd91; stroke-width: 2; }
+.saga-panel .sa-field.wet rect { fill: #d0e7d5; stroke: #4d8f81; stroke-width: 3; }
+.saga-panel .sa-field-status { font-size: 10px; }
+.saga-panel .sa-house > path { fill: #f3e2d5; stroke: #aa7d69; stroke-width: 2; }
+.saga-panel .sa-house.flooded > path { fill: #f0c2ad; stroke: #ab5f48; stroke-width: 3; }
+.saga-panel .sa-house-status { font-size: 10px; }
+.saga-panel .sa-gate circle { fill: #fbf7e7; stroke: #9fac91; stroke-width: 3; }
+.saga-panel .sa-gate text { font-size: 18px; font-weight: 700; }
+.saga-panel .sa-gate.wet circle { fill: #e0f0e7; stroke: #3d8194; stroke-width: 4; }
+.saga-panel .sa-gate-controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 10px 0; }
+.saga-panel .sa-gate-control { margin: 0; padding: 9px 8px 10px; }
+.saga-panel .sa-gate-control:last-child { grid-column: 1 / -1; max-width: 340px; width: 100%; justify-self: center; }
+.saga-panel .sa-gate-control > div { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
+.saga-panel .sa-gate-control button { min-height: 45px; min-width: 0; border: 1px solid #a6b9ac; border-radius: 5px; padding: 4px 3px; background: #f8f7eb; color: #3d6369; font-size: 11px; line-height: 1.4; }
+.saga-panel .sa-gate-control button[aria-pressed="true"] { background: #d9e9e6; font-weight: 700; }
+.saga-panel .sa-gate-control button[aria-pressed="true"]::before { content: '✓ '; }
+.saga-panel .sa-balloon-board { width: 100%; max-width: 350px; margin: 0 auto; }
+.saga-panel .sa-balloon-board > svg { display: block; width: 100%; height: auto; overflow: visible; font: 13px sans-serif; fill: #4a6a6b; }
+.saga-panel .sa-flight-background { fill: #e1efdf; stroke: #adbea1; stroke-width: 2; }
+.saga-panel .sa-flight-grid { fill: none; stroke: #b9cdb1; stroke-width: 1; }
+.saga-panel .sa-flight-hazard { fill: #dfc7b3; stroke: #a37a60; stroke-width: 1.5; }
+.saga-panel .sa-hazard-cross { fill: #8c624c; font-size: 25px; }
+.saga-panel .sa-compass { font-size: 10px; }
+.saga-panel .sa-flight-mark circle { fill: #fcf5d7; stroke: #b39c61; stroke-width: 2; }
+.saga-panel .sa-flight-mark text { font-weight: 700; }
+.saga-panel .sa-flight-mark.visited circle { stroke: #427d72; stroke-width: 4; fill: #d5e9cb; }
+.saga-panel .sa-flight-place path { fill: #f6edd4; stroke: #819b90; stroke-width: 1.5; }
+.saga-panel .sa-flight-place text { font-size: 11px; }
+.saga-panel .sa-flight-path { fill: none; stroke: #628d8f; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 5 4; opacity: .8; }
+.saga-panel .sa-balloon-token { fill: #d38957; stroke: #fff8df; stroke-width: 2; filter: drop-shadow(0 2px 1px #3d675654); }
+.saga-panel .sa-flight-status { display: flex; justify-content: space-around; gap: 8px; margin: 7px 0 14px; color: #57776c; font-size: 13px; }
+.saga-panel .sa-map-key { margin: 3px 0 7px; text-align: center; color: #6d7d68; font-size: 11px; }
+.saga-panel .sa-altitude-controls { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.saga-panel .sa-altitude-controls button { display: flex; flex-direction: column; align-items: center; gap: 5px; min-width: 0; min-height: 77px; padding: 10px 4px; border: 1px solid #a6b9ac; border-radius: 8px; color: #41656d; background: linear-gradient(#fffdf3, #dfeadf); box-shadow: 0 3px 0 #a0b7a4; }
+.saga-panel .sa-altitude-controls b { font-size: 14px; }
+.saga-panel .sa-altitude-controls span { font-size: 12px; }
+.saga-panel .sa-forecast { margin-top: 17px; border: 1px solid #b5c6ad; border-radius: 8px; padding: 9px 12px; background: #fffdf466; }
+.saga-panel .sa-forecast table { width: 100%; border-collapse: collapse; margin: 7px 0 0; color: #536c68; font-size: 12px; text-align: center; }
+.saga-panel .sa-forecast caption { text-align: left; padding-bottom: 7px; font-size: 11px; line-height: 1.7; color: #7c8775; }
+.saga-panel .sa-forecast th, .saga-panel .sa-forecast td { padding: 5px; border-bottom: 1px solid #d7deca; }
+.saga-panel .sa-forecast tr.current { background: #d7e9db; color: #294f59; outline: 2px solid #719e94; outline-offset: -2px; font-weight: 700; }
+.saga-panel .sa-flight-history { font-size: 11px; line-height: 1.9; color: #788573; overflow-wrap: anywhere; }
+.saga-panel .sa-sketch-group { padding: 10px 11px 13px; margin-top: 15px; }
+.saga-panel .sa-sketch-options { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.saga-panel .sa-sketch-options button { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-width: 0; border: 1px solid #b4bfa9; border-radius: 7px; padding: 6px 4px 9px; color: #4c6966; background: #fbf8e9; line-height: 1.5; }
+.saga-panel .sa-sketch-options svg { display: block; width: 100%; height: auto; max-height: 83px; }
+.saga-panel .sa-sketch-options span { font-size: 11px; }
+.saga-panel .sa-sketch-options button[aria-pressed="true"] { background: #dce9df; }
+.saga-panel .sa-sketch-options button[aria-pressed="true"] span::before { content: '✓ '; }
+@media (max-width: 600px) {
+  .panel.saga-panel { padding: 20px 16px; max-height: calc(100dvh - 26px); }
+  .saga-panel .panel-title { font-size: 18px; margin-bottom: 9px; }
+  .saga-panel .saga-puzzle { font-size: 13px; }
+  .saga-panel .sa-intro { margin: 9px 0 12px; }
+  .saga-panel .sa-kicker { font-size: 9px; }
+  .saga-panel .sa-rule-summary { font-size: 12px; padding: 8px; }
+  .saga-panel fieldset { padding: 8px 9px 11px; }
+  .saga-panel legend { font-size: 12px; padding: 0 4px; }
+  .saga-panel .sa-bus-options { gap: 6px; }
+  .saga-panel .sa-bus-options b { font-size: 15px; }
+  .saga-panel .sa-bus-options button { min-height: 59px; }
+  .saga-panel .sa-shop-shelves { gap: 9px; }
+  .saga-panel .sa-shop-item h3 { font-size: 12px; }
+  .saga-panel .sa-quantity { grid-template-columns: 35px 1fr 35px; gap: 2px; }
+  .saga-panel .sa-quantity output { font-size: 16px; }
+  .saga-panel .sa-gate-controls { grid-template-columns: 1fr; gap: 8px; }
+  .saga-panel .sa-gate-control:last-child { max-width: none; }
+  .saga-panel .sa-gate-control button { min-height: 44px; font-size: 12px; }
+  .saga-panel .sa-sketch-options { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .saga-panel .sa-sketch-options svg { max-height: 78px; }
+  .saga-panel .sa-sketch-options span { font-size: 12px; }
+  .saga-panel .sa-reference, .saga-panel .sa-forecast { padding: 8px 10px; }
+  .saga-panel .sa-clue { font-size: 13px; }
+  .saga-panel .sa-actions .btn { flex: 1 1 135px; }
+  .saga-panel .sa-altitude-controls { gap: 6px; }
+  .saga-panel .sa-altitude-controls b { font-size: 13px; }
+  .saga-panel .sa-altitude-controls span { font-size: 11px; }
+}
+@media (max-height: 580px) and (min-width: 601px) {
+  .panel.saga-panel { padding: 16px 22px 20px; }
+  .saga-panel .sa-sluice-map { max-width: 340px; }
+  .saga-panel .sa-balloon-board { max-width: 290px; }
+  .saga-panel .sa-intro { margin: 8px 0 12px; }
+}
+.saga-panel .sa-destinations { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+.saga-panel .sa-destination { text-align: left; display: flex; flex-direction: column; gap: 4px; padding: 12px; white-space: normal; }
+.saga-panel .sa-destination small { font-size: 11px; opacity: .75; }
+.saga-panel .sa-map-caption { text-align: center; font-size: 12px; line-height: 1.7; opacity: .75; margin: 16px 0; }
+.saga-panel .sa-guide-stop { padding: 12px 0; border-top: 1px solid #c8d3b9; }
+.saga-panel .sa-guide-stop h3 { margin: 0 0 8px; font-size: 15px; }
+.saga-panel .sa-guide-stop.stamped h3 { color: #438576; }
+.saga-panel .sa-guide-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.saga-panel .sa-guide-actions .btn { font-size: 12px; }
+.saga-panel .sa-property-guide { text-align: center; line-height: 1.8; }
+.saga-panel .sa-property-guide .btn { margin: 5px; }
+@media (max-width: 359px) {
+  .panel.saga-panel { padding: 17px 12px; }
+  .saga-panel .sa-quantity { grid-template-columns: 31px 1fr 31px; }
+  .saga-panel .sa-shop-item { padding-right: 5px; padding-left: 5px; }
+  .saga-panel .sa-quantity output { font-size: 14px; }
+  .saga-panel .sa-bus-options b { font-size: 13px; }
+}

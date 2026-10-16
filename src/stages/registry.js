@@ -10,9 +10,10 @@ import { KinokoStage } from './kinoko/index.js';
 import { ToyStage } from './toy/index.js';
 import { JapanStage } from './japan/index.js';
 import { MuseumStage } from './museum/index.js';
+import { SagaStage } from './saga/index.js';
 
 // 実装ずみのステージ。まだ無いものは Stage: null（準備中）
-const IMPL = { station: StationStage, sky: SkyStage, edo: EdoStage, port: PortStage, hero: HeroStage, maou: MaouStage, onsen: OnsenStage, kinoko: KinokoStage, toy: ToyStage, japan: JapanStage, museum: MuseumStage };
+const IMPL = { station: StationStage, sky: SkyStage, edo: EdoStage, port: PortStage, hero: HeroStage, maou: MaouStage, onsen: OnsenStage, kinoko: KinokoStage, toy: ToyStage, japan: JapanStage, museum: MuseumStage, saga: SagaStage };
 
 export const STAGES = ROUTE.map((s) => ({ ...s, Stage: IMPL[s.id] || null }));
 export const EXTRA_STAGES = EXTRA_ROUTE.map((s) => ({ ...s, Stage: IMPL[s.id] || null }));
