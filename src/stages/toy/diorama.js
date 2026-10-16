@@ -166,7 +166,7 @@ export function buildToyDiorama(scene) {
   add(root, G.box(10.1, 0.06, 0.3), mat('#fbf6f0'), -13, FLOOR + 0.03, TRACK_Z + 1.2);
   for (let i = 0; i < 3; i++) add(root, G.box(1.5, FLOOR * (3 - i) / 3, 0.35), mat(BLOCK_COLS[i], { roughness: 0.55 }), -8.6, FLOOR * (3 - i) / 6, TRACK_Z + 3.58 + i * 0.35);
   const sign = (R.stationSign = group(root, -12.0, FLOOR, TRACK_Z + 1.55));
-  for (const s of [-1, 1]) add(sign, G.cyl(0.06, 0.06, 1.9, 8), mat('#e8402e'), s * 1.0, 0.95, 0);
+  for (const s of [-1, 1]) add(sign, G.cyl(0.06, 0.06, 1.9, 8), mat('#e8402e'), s * 1.0, 0.95, -0.1);
   add(sign, G.box(2.3, 0.9, 0.08), new THREE.MeshStandardMaterial({ map: canvasTex(512, 200, (ctx, w, h) => {
     ctx.fillStyle = '#fbf6f0'; ctx.fillRect(0, 0, w, h);
     ctx.strokeStyle = '#3a7ae8'; ctx.lineWidth = 10; ctx.strokeRect(5, 5, w - 10, h - 10);

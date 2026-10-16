@@ -324,6 +324,7 @@ src/stages/maou/        STAGE 6 魔王城（src/lib/sprites-maou.js）
 src/stages/hero/        STAGE 5 勇者の城下町（HD-2D：src/lib/pixel.js・sprites-hero.js）
 src/stages/onsen/       STAGE 7 寂れた温泉街
 src/stages/kinoko/      STAGE 8 巨大キノコの森（src/lib/creatures-kinoko.js）
+src/stages/kinoko/coins.js 五円玉・百円玉の表裏と縁の模型（郵便車の交換車輪にも共用）
 src/stages/toy/         STAGE 9 からくりおもちゃの街（src/lib/creatures-toy.js）
 src/stages/japan/       STAGE 10 現代日本（src/lib/creatures-japan.js。むかし目は江戸の箱庭を重ねて使う）
 src/stages/museum/      追加の旅 星あかりの博物館（src/lib/creatures-museum.js・css/museum.css）

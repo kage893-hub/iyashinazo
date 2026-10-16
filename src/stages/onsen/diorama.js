@@ -29,7 +29,7 @@ const norenTex = (ch, bg = '#2b3a6a') => canvasTex(256, 192, (ctx, w, h) => {
   ctx.fillText(ch, w / 2, h * 0.5);
 });
 
-const lanternTex = (ch) => canvasTex(128, 128, (ctx, w, h) => {
+const lanternTex = (ch) => canvasTex(256, 128, (ctx, w, h) => {
   ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, w, h);
   ctx.strokeStyle = 'rgba(120,60,30,0.35)'; ctx.lineWidth = 2;
   for (let i = 1; i < 8; i++) { ctx.beginPath(); ctx.moveTo(0, (i * h) / 8); ctx.lineTo(w, (i * h) / 8); ctx.stroke(); }
@@ -44,7 +44,8 @@ export function chochin(parent, x, y, z, { s = 1, color = '#d8402e', ch = '', ma
   const g = group(parent, x, y, z);
   const m = new THREE.MeshStandardMaterial({ color, map: lanternTex(ch), emissive: '#ffb050', emissiveMap: lanternTex(ch), emissiveIntensity: 0, roughness: 0.6 });
   m.userData.lamp = true;
-  add(g, G.sphere(0.22 * s, 16, 12), m, 0, 0, 0, { scale: [1, 1.25, 1] });
+  // 球のUV中央は側面を向くので、文字の中央を正面（+Z）へ回す。
+  add(g, G.sphere(0.22 * s, 24, 16), m, 0, 0, 0, { scale: [1, 1.25, 1], rot: [0, -Math.PI / 2, 0] });
   add(g, G.cyl(0.13 * s, 0.13 * s, 0.06 * s, 12), mat('#2a1a14'), 0, 0.27 * s, 0);
   add(g, G.cyl(0.13 * s, 0.13 * s, 0.06 * s, 12), mat('#2a1a14'), 0, -0.27 * s, 0);
   add(g, G.cyl(0.008, 0.008, 0.2, 4), mat('#2a1a14'), 0, 0.38 * s, 0, { cast: false });

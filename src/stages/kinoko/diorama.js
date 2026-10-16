@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { waterize, sway } from '../../lib/livefx.js';
 import { add, mat, glow, G, group, rng, canvasTex, roundRectShape, FONT } from '../../lib/util.js';
+import { makeFiveYen, makeHundredYen } from './coins.js';
 import { dome } from '../../lib/creatures-kinoko.js';
 import { grassTex } from '../station/textures.js';
 
@@ -76,17 +77,6 @@ const leafTex = (base = '#6aa84a', vein = '#cfe8a0') => canvasTex(256, 256, (ctx
     const y = h - (i * h) / 8;
     for (const s of [-1, 1]) { ctx.beginPath(); ctx.moveTo(w / 2, y); ctx.quadraticCurveTo(w / 2 + s * w * 0.2, y - 10, w / 2 + s * w * 0.48, y - 34); ctx.stroke(); }
   }
-});
-
-const coinTex = (text, base, ink, sub) => canvasTex(256, 256, (ctx, w, h) => {
-  const g = ctx.createRadialGradient(w * 0.4, h * 0.35, 10, w / 2, h / 2, w * 0.6);
-  g.addColorStop(0, '#ffffff'); g.addColorStop(0.15, base); g.addColorStop(1, base);
-  ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
-  ctx.strokeStyle = ink; ctx.lineWidth = 6;
-  ctx.beginPath(); ctx.arc(w / 2, h / 2, w * 0.44, 0, Math.PI * 2); ctx.stroke();
-  ctx.fillStyle = ink; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.font = `900 92px ${FONT}`; ctx.fillText(text, w / 2, h / 2 + 4);
-  if (sub) { ctx.font = `700 26px ${FONT}`; ctx.fillText(sub, w / 2, h * 0.78); }
 });
 
 // ---------------- 部品 ----------------
@@ -345,19 +335,9 @@ export function buildKinokoDiorama(scene) {
   // ---------------- 5円玉（ぬかるみに半分うまっている） ----------------
   const mud = (R.mud = group(root, -1.0, 0, 8.2));
   add(mud, G.circle(1.3, 24), waterize(new THREE.MeshStandardMaterial({ color: '#5a4430', roughness: 0.2, polygonOffset: true, polygonOffsetFactor: -3 })), 0, 0.025, 0, { rot: [-Math.PI / 2, 0, 0], cast: false, scale: [1.2, 1, 1] });
-  const goenShape = new THREE.Shape();
-  goenShape.absarc(0, 0, 0.8, 0, Math.PI * 2);
-  const holeP = new THREE.Path(); holeP.absarc(0, 0, 0.18, 0, Math.PI * 2, true); goenShape.holes.push(holeP);
-  const goenGeo = new THREE.ExtrudeGeometry(goenShape, { depth: 0.1, bevelEnabled: true, bevelSize: 0.02, bevelThickness: 0.02, bevelSegments: 2, curveSegments: 32 });
-  goenGeo.translate(0, 0, -0.05);
-  R.goenGeo = goenGeo;
-  R.goenMat = mat('#e8b84a', { metalness: 0.35, roughness: 0.3, emissive: '#3a2a08', emissiveIntensity: 0.4 });
-  const goen = (R.goen = group(mud, 0.1, 0.0, 0.0, 0.5));
+  const goen = (R.goen = makeFiveYen());
+  mud.add(goen); goen.position.set(0.1, 0, 0); goen.rotation.y = 0.5;
   goen.userData.dynamic = true;
-  const gm = add(goen, goenGeo, R.goenMat, 0, 0, 0);
-  void gm;
-  // 稲穂のもよう（かんたんに）
-  for (let i = 0; i < 7; i++) add(goen, G.box(0.04, 0.14, 0.03), mat('#a8782a', { metalness: 0.3, roughness: 0.4 }), -0.45 + i * 0.15, -0.42, 0.075, { rot: [0, 0, 0.3], cast: false });
   goen.position.y = 0.22; // 下半分は泥の中
   goen.rotation.x = -0.12;
 
@@ -395,9 +375,7 @@ export function buildKinokoDiorama(scene) {
     pebble(rill, s * (0.7 + r() * 0.2), -6.2 + i * 0.52, 0.12 + r() * 0.12, i, r() > 0.5 ? '#a8a296' : '#8a8478');
   }
   const coin = (R.coin100 = group(root, 3.6, 0.08, 4.6, 0.25));
-  const coinFace = new THREE.MeshStandardMaterial({ map: coinTex('100', '#d8dce4', '#6a7080', '桜'), metalness: 0.35, roughness: 0.3 });
-  const coinSide = mat('#b8bcc4', { metalness: 0.35, roughness: 0.35 });
-  add(coin, new THREE.CylinderGeometry(0.85, 0.85, 0.1, 40), [coinSide, coinFace, coinFace], 0, 0, 0);
+  const hundred = makeHundredYen(); hundred.rotation.x = -Math.PI / 2; coin.add(hundred);
   add(coin, G.box(0.25, 0.08, 0.6), mat('#8a7a5a'), -0.95, -0.05, 0, { cast: false });
   add(coin, G.box(0.25, 0.08, 0.6), mat('#8a7a5a'), 0.95, -0.05, 0, { cast: false });
 

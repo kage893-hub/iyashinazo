@@ -1,3 +1,4 @@
+import { makeFiveYen } from './coins.js';
 import * as THREE from 'three';
 import { makeBackdrop } from '../../lib/backdrop.js';
 import { GRADES } from '../../core/postfx.js';
@@ -317,7 +318,7 @@ export class KinokoStage {
     R.goen.visible = !f.goenTaken;
     R.goenWheel.visible = !!f.cartFixed;
     if (f.cartFixed && !R.goenWheel.children.length) {
-      add(R.goenWheel, R.goenGeo, R.goenMat, 0, 0, 0, { scale: 0.48 });
+      const wheel = makeFiveYen(); wheel.scale.setScalar(0.48); R.goenWheel.add(wheel);
     }
     R.digHole.visible = !!f.thimbleDug;
     R.thimble.visible = false;
@@ -775,7 +776,7 @@ export class KinokoStage {
     g.take('goen');
     g.audio.play('clunk');
     g.flag('cartFixed');
-    if (!R.goenWheel.children.length) add(R.goenWheel, R.goenGeo, R.goenMat, 0, 0, 0, { scale: 0.48 });
+    if (!R.goenWheel.children.length) { const wheel = makeFiveYen(); wheel.scale.setScalar(0.48); R.goenWheel.add(wheel); }
     R.goenWheel.visible = true;
     await g.tweens.add({ duration: 0.8, onUpdate: (k) => { R.goenWheel.rotation.z = k * Math.PI * 2; } });
     this.snail.hop();
@@ -945,7 +946,9 @@ export class KinokoStage {
     const g = this.g, R = this.R;
     const tip = R.dewTip;
     g.cinematic = true;
-    await this.frogGo(new V(tip.x + 1.5, 0, tip.z + 0.9), -2.2);
+    // 大きいカエルの頭と胴が、葉の茎へ入りこまないだけの間隔を取る。
+    const stand = new V(R.dewLeaf.position.x + SIZES[this.size] * 0.75 + 0.4, 0, tip.z + 0.9);
+    await this.frogGo(stand, Math.atan2(tip.x - stand.x, tip.z - stand.z));
     await g.moveCamera(new V(tip.x - 3.6, 5.2, tip.z + 11.0), new V(tip.x + 0.6, 2.0, tip.z + 0.4), 1.0);
     this.frog.hop();
     g.audio.play('pop');

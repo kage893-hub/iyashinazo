@@ -336,8 +336,16 @@ export function makeFrog() {
   add(cap, G.sphere(0.25, 20, 10), capMat, 0, 0.16, 0, { scale: [1, 0.35, 1] });
   add(cap, new THREE.CylinderGeometry(0.27, 0.27, 0.025, 20, 1, false, -Math.PI / 2, Math.PI), mat('#2a3a6a'), 0, -0.06, 0.08, { scale: [1, 1, 1.1] });
   // 赤いスカーフ
-  add(b, G.cyl(0.36, 0.43, 0.12, 24), red, 0, 0.74, 0);
-  add(b, G.cone(0.12, 0.25, 4), red, 0.12, 0.62, 0.36, { rot: [0.4, 0, 0.3] });
+  const scarf = (c.scarf = group(b));
+  add(scarf, G.cyl(0.36, 0.43, 0.12, 24), red, 0, 0.74, 0);
+  // 結び目と垂れる布を胸当ての表へ。服と交差せず、布らしい薄い形にする。
+  add(scarf, G.sphere(0.065, 16, 12), red, 0.12, 0.745, 0.5, { scale: [1, 0.85, 0.65] });
+  const scarfEnd = new THREE.Shape();
+  scarfEnd.moveTo(-0.045, 0.08); scarfEnd.lineTo(0.045, 0.08);
+  scarfEnd.lineTo(0.065, -0.14); scarfEnd.lineTo(0, -0.19);
+  scarfEnd.lineTo(-0.055, -0.14); scarfEnd.closePath();
+  add(scarf, new THREE.ExtrudeGeometry(scarfEnd, { depth: 0.018, bevelEnabled: true, bevelSize: 0.005, bevelThickness: 0.005, bevelSegments: 2, steps: 1 }), red,
+    0.12, 0.66, 0.48, { rot: [0, 0, 0.08], name: 'frog-scarf-end' });
 
   c.extra = (dt, t) => {
     // のどをふくらませる
