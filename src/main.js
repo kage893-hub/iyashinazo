@@ -4,6 +4,7 @@ import { STAGES, ALL_STAGES } from './stages/registry.js';
 import { ROUTE, stageByPass, stageLabel, nextStop, isExtraStage } from './data/route.js';
 import { extrasUnlocked } from './core/save-state.js';
 import { createExtraJourneyList } from './core/extra-journeys.js';
+import { isDeveloperPass, loadDeveloperMode, setDeveloperMode, showDeveloperMode } from './core/developer.js';
 
 const $ = (s) => document.querySelector(s);
 
@@ -21,6 +22,7 @@ async function main() {
   await waitFonts();
   const game = new Game($('#app'));
   window.__game = game; // デバッグ用
+  game.developerMode = loadDeveloperMode();
   try {
     const saved = localStorage.getItem('hoshimawari-muted') === '1';
     game.audio.setMuted(saved);
@@ -169,6 +171,11 @@ async function main() {
     game.audio.play('click');
     const body = el('div', 'stage-list');
     let panel;
+    if (game.developerMode) {
+      const developer = el('button', 'btn dev-entry', '🛠 開発モード（全ステージ）');
+      developer.onclick = () => { panel.close(); showDeveloperMode(game); };
+      body.appendChild(developer);
+    }
     const reached = Math.max(0, ...STAGES.map((s, i) => (cleared.includes(s.id) ? i + 1 : 0)));
     STAGES.forEach((s, i) => {
       const done = cleared.includes(s.id);
@@ -219,6 +226,14 @@ async function main() {
     const msg = body.querySelector('.pass-msg');
     const panel = game.ui.openPanel({ title: 'あいことば', body, cls: 'small' });
     const go = async () => {
+      if (isDeveloperPass(input.value)) {
+        setDeveloperMode(game, true);
+        game.audio.play('unlock');
+        panel.close();
+        game.ui.toast('開発モードを解禁しました', 2400);
+        showDeveloperMode(game);
+        return;
+      }
       const s = stageByPass(input.value);
       const st = s && STAGES.find((x) => x.id === s.id);
       if (!st?.Stage) {
@@ -283,6 +298,7 @@ async function main() {
     let panel;
     mk('あそびかた', () => { panel.close(); showHowTo(game); });
     mk('カメラを全体にもどす', () => { panel.close(); game.cameraHome(); });
+    if (game.developerMode) mk('🛠 開発モード', () => { panel.close(); showDeveloperMode(game); });
     if (extrasUnlocked(game.state)) mk('✦ 追加の旅を選ぶ', () => { panel.close(); game.openExtraJourneys(); });
     mk('タイトルにもどる', () => { game.save(); location.reload(); });
     mk('この駅を最初からやりなおす', async () => {

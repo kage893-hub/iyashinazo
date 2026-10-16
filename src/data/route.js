@@ -30,10 +30,12 @@ export const nextStop = (id) => {
   return i >= 0 ? ROUTE[i + 1] || null : null;
 };
 
-/** 入力されたあいことばの駅（カタカナ・空白・全角半角のちがいは気にしない）。無ければ null */
+/** あいことばのカタカナ・空白・全角半角のちがいをそろえる。 */
+export const normalizePass = (word) => String(word || '').normalize('NFKC').replace(/[\s・ー-]/g, '')
+  .replace(/[\u30a1-\u30f6]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0x60));
+
+/** 入力されたあいことばの駅。無ければ null */
 export function stageByPass(word) {
-  const norm = (w) => String(w || '').normalize('NFKC').replace(/[\s・ー-]/g, '')
-    .replace(/[\u30a1-\u30f6]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0x60));
-  const w = norm(word);
-  return (w && ROUTE.find((s) => s.pass && norm(s.pass) === w)) || null;
+  const w = normalizePass(word);
+  return (w && ROUTE.find((s) => s.pass && normalizePass(s.pass) === w)) || null;
 }

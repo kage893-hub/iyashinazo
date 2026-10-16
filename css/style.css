@@ -504,6 +504,8 @@ body.cinematic #camctl { opacity: 0; pointer-events: none; }
 .stage-card.unknown .sc-name { letter-spacing: 0.2em; color: var(--ink-soft); }
 @media (max-width: 520px) { .stage-list { grid-template-columns: repeat(2, 1fr); gap: 8px; } .sc-emoji { font-size: 26px; } .sc-name { font-size: 14px; } .stage-card { padding: 8px; } }
 .stage-list .panel-note { grid-column: 1 / -1; }
+.stage-list > .dev-entry { grid-column: 1 / -1; }
+.developer-tools > .danger { display: block; margin: 20px auto 0; }
 
 /* 本編の終点でひらく、追加の旅の紙の旅券 */
 .route-extras { grid-column: 1 / -1; min-width: 0; padding-top: 16px; border-top: 1px dashed #bd9c66; }

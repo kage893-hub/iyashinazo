@@ -34,6 +34,7 @@ npm run serve            # = python3 -m http.server 8123（リポジトリ直下
 - `cleared` に `japan` があれば路線図内に追加の旅を表示（旧セーブも尊重）。タイトルに専用ボタンは置かず、クリア前は路線図・メニューにも入口を表示しない。`createExtraJourneyList()` が路線図と旅券の選択カードを共用し、`g.openExtraJourneys()` はクリア後のメニュー・クリア画面から旅券を開く。`g.goToStage(id, {resume:true})` で続きから、既定は最初から。
 - `journeys.extras.museum` と `journeys.extras.saga` は独立。本編・博物館・佐賀を往復しても、持ち物・メモ・時間・謎の途中状態を混ぜず、片方のやり直しでもほかの旅とクリア記録を残す。
 - デバッグ用に `window.__game`（Game）が見える。`__game.stage` が今のステージ。
+- タイトルのあいことば「つごもりりん」で開発モードを解禁。`src/core/developer.js` が `hoshimawari-developer-v1` へ解禁状態だけ保存し、進行・クリア記録とは分ける。解禁後は路線図とメニューから全12駅の選択画面へ進め、画面下部で解除できる。通常の追加旅の解放条件は変えない。
 - ステージ切り替えはページの読み直し。
 
 ## 3. 構成
