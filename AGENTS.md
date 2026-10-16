@@ -19,6 +19,7 @@ Codex・Claude Code など、このリポジトリで作業するエージェン
 - japan は「江戸の宿場町の二百年後」。江戸の区画（座標）を残し、まわりに東京らしさを足している。
   持ち物の「むかし目」（koBell）を使うと江戸の箱庭が半透明で重なる。
 - 外部アセットはなし。造形はすべてコード、音は Web Audio で合成。
+- ホーム画面用の `manifest.webmanifest` と `icons/` がある。アプリID `/iyashinazo/` は固定し、scope/start_urlは配信フォルダ内の `./`。同じGitHub Pagesドメインの別ゲームとIDを共有しない。Service Workerやオフラインキャッシュは導入していない。
 
 ## 2. 動かし方
 

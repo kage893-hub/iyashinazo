@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="night" x2="0.8" y2="1"><stop stop-color="#294f5b"/><stop offset="1" stop-color="#142a35"/></linearGradient>
+    <linearGradient id="paint" x2="0.4" y2="1"><stop stop-color="#75b2a4"/><stop offset="1" stop-color="#39786f"/></linearGradient>
+    <linearGradient id="gold" x2="0.2" y2="1"><stop stop-color="#f3db9a"/><stop offset="1" stop-color="#ba8b51"/></linearGradient>
+  </defs>
+  <path fill="url(#night)" d="M0 0h512v512H0z"/>
+  <g fill="#f0dba6">
+    <path d="m350 95 6 19 20 6-20 6-6 20-6-20-20-6 20-6z"/>
+    <path d="m155 118 4 12 12 4-12 4-4 12-4-12-12-4 12-4z"/>
+    <circle cx="279" cy="99" r="3"/><circle cx="388" cy="203" r="4"/><circle cx="123" cy="230" r="3"/>
+  </g>
+  <g fill="#d9e7d9"><circle cx="258" cy="164" r="19" opacity=".9"/><circle cx="233" cy="144" r="23" opacity=".7"/><circle cx="204" cy="128" r="14" opacity=".42"/></g>
+  <path d="M123 355h272" stroke="#d5bf89" stroke-width="9" stroke-linecap="round"/>
+  <path d="M132 370h253" stroke="#607c77" stroke-width="5" stroke-linecap="round"/>
+  <path d="M139 229q0-10 11-10h83v105h-94z" fill="url(#paint)" stroke="#203e43" stroke-width="6"/>
+  <path d="M132 219q0-14 16-14h80q16 0 16 14v9H132z" fill="url(#gold)"/>
+  <rect x="157" y="239" width="24" height="38" rx="5" fill="#f0d69a"/>
+  <rect x="192" y="239" width="24" height="38" rx="5" fill="#f0d69a"/>
+  <path d="M231 256h96q28 0 28 28v38H231z" fill="url(#paint)" stroke="#203e43" stroke-width="6"/>
+  <path d="M243 269h72" stroke="#c6e1ca" stroke-width="5" stroke-linecap="round"/>
+  <path d="M271 252v-47h36v47" fill="url(#gold)" stroke="#203e43" stroke-width="5"/>
+  <rect x="263" y="197" width="52" height="13" rx="5" fill="#c9a36a"/>
+  <path d="M344 296h26v31h-26z" fill="#d0a365"/>
+  <circle cx="357" cy="280" r="14" fill="#f3dea3" stroke="#ba8b51" stroke-width="5"/>
+  <path d="m359 326 28 19h-36" fill="#a2764f"/>
+  <path d="M143 319h208" stroke="#d7b97c" stroke-width="10" stroke-linecap="round"/>
+  <g stroke="#e6cb8d" stroke-width="6" fill="#234c51">
+    <circle cx="173" cy="330" r="22"/><circle cx="233" cy="330" r="25"/><circle cx="306" cy="330" r="25"/>
+  </g>
+  <g fill="#d7b777"><circle cx="173" cy="330" r="6"/><circle cx="233" cy="330" r="7"/><circle cx="306" cy="330" r="7"/></g>
+  <path d="M173 330h133" stroke="#dfbe7f" stroke-width="6" stroke-linecap="round"/>
+</svg>
