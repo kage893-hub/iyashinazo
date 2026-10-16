@@ -3,10 +3,13 @@ import { waterize, sway, lightPool } from '../../lib/livefx.js';
 import { add, mat, glow, G, group, rng, canvasTex, roundRectShape, FONT } from '../../lib/util.js';
 import { hipRoof, gableRoof } from '../edo/diorama.js';
 import { stoneTex, planksTex } from '../station/textures.js';
+import { layoutX, layoutZ, applyJapanLayout } from './layout.js';
+import { addTokyoStationDetails } from './station-details.js';
 
 // ---------------------------------------------------------------
-// 現代日本（とうきょう）の箱庭：江戸の宿場町の二百年後（2倍の大きさ）
-// 島は x[-30,30] z[-22,22]。まんなかの x[-15,15] z[-11,11] は江戸と同じ配置。
+// 現代日本（とうきょう）の箱庭：江戸の宿場町の二百年後。
+// 建物は江戸と共通の旧座標で定義し、layout.js で街区の間隔を広げる。
+// 島は72×56。模型の縮尺を保ち、むかし目にも同じ配置変換を適用する。
 //  江戸 → いま
 //   浅草寺・雷門・五重塔 → そのまま（仲見世がふえる）
 //   瓦版屋(-0.6) → 大型ビジョンのビル、団子屋(2.9) → ラーメン屋、呉服屋(6.4) → ファッションビル
@@ -17,7 +20,7 @@ import { stoneTex, planksTex } from '../station/textures.js';
 //           東京駅（右）、山手線の高架と新宿の高層ビル（奥）
 // ---------------------------------------------------------------
 
-export const ISLAND = { w: 60, d: 44 };
+export const ISLAND = { w: 72, d: 56 };
 export const TRACK_Z = -6.0;
 export const FLOOR = 0.75;
 export const RIVER_Z0 = 6.4, RIVER_Z1 = 8.7;
@@ -28,7 +31,7 @@ export const STATION = { x: 22.5, z: -1.4 };
 
 // ---------------- テクスチャ ----------------
 /** 地面：道路・歩道・広場をワールド座標で描いた一枚の地図 */
-const groundTex = () => canvasTex(2400, 1760, (ctx, w, h) => {
+const legacyGroundTex = () => canvasTex(2400, 1760, (ctx, w, h) => {
   const K = 40;
   const X = (x) => (x + 30) * K, Z = (z) => (z + 22) * K;
   const rect = (x0, z0, x1, z1, c) => { ctx.fillStyle = c; ctx.fillRect(X(x0), Z(z0), X(x1) - X(x0), Z(z1) - Z(z0)); };
@@ -41,7 +44,7 @@ const groundTex = () => canvasTex(2400, 1760, (ctx, w, h) => {
   // 線路の奥（高架の下とビル街）
   rect(-30, -22, 30, -8.6, '#8e8a84');
   // 浅草寺の境内（玉砂利）と参道（石だたみ）
-  rect(-15, -2.4, -6.2, 6.3, '#d6ccb4');
+  rect(-15, -2.4, -5.8, 6.3, '#d6ccb4');
   for (let i = 0; i < 3000; i++) { ctx.fillStyle = r() > 0.5 ? 'rgba(255,255,255,0.25)' : 'rgba(120,110,90,0.2)'; ctx.fillRect(X(-15) + r() * 8.8 * K, Z(-2.4) + r() * 8.7 * K, 2, 2); }
   rect(-11.4, 1.6, -9.8, 6.3, '#a8a49a');
   // 道路
@@ -54,7 +57,9 @@ const groundTex = () => canvasTex(2400, 1760, (ctx, w, h) => {
     if (x1 - x0 > z1 - z0) { ctx.moveTo(X(x0), Z((z0 + z1) / 2)); ctx.lineTo(X(x1), Z((z0 + z1) / 2)); } else { ctx.moveTo(X((x0 + x1) / 2), Z(z0)); ctx.lineTo(X((x0 + x1) / 2), Z(z1)); }
     ctx.stroke(); ctx.setLineDash([]);
   };
-  road(-30, -0.5, 30, 2.3);           // 大通り（江戸の往来）
+  // 境内は歩行者の広場。車道を本堂の下へ通さない。
+  road(-30, -0.5, -17.3, 2.3);
+  road(-5.8, -0.5, 30, 2.3);
   road(9.0, -8.6, 11.4, -0.5);        // 踏切へむかう道（江戸の町木戸）
   road(-17.3, -8.6, -14.9, 6.2);      // 中央通り（浅草寺と秋葉原のあいだ）
   road(-30, 10.6, 4.0, 12.6);         // 手前の通り（下町・上野）
@@ -67,10 +72,15 @@ const groundTex = () => canvasTex(2400, 1760, (ctx, w, h) => {
       else ctx.fillRect(X(cx - len / 2), Z(cz - wid / 2) + i * (wid * K / 9) + 3, len * K, wid * K / 18);
     }
   };
-  zebra(2.0, -0.1, 1.1, 4.0, true); zebra(2.0, 1.9, 1.1, 4.0, true);
-  zebra(-0.4, 0.9, 1.0, 2.2, false); zebra(4.4, 0.9, 1.0, 2.2, false);
-  ctx.save(); ctx.translate(X(2.0), Z(0.9)); for (const a of [0.55, -0.55]) { ctx.save(); ctx.rotate(a); for (let i = -5; i <= 5; i++) ctx.fillRect(i * 9 - 3, -6, 6, 12); ctx.fillRect(-90, -3, 180, 0); ctx.restore(); }
-  for (const a of [0.55, -0.55]) { ctx.save(); ctx.rotate(a); for (let i = 0; i < 14; i++) ctx.fillRect(-100 + i * 15, -14, 7, 28); ctx.restore(); } ctx.restore();
+  zebra(2.0, -0.2, 0.65, 3.4, true); zebra(2.0, 2.0, 0.65, 3.4, true);
+  zebra(-0.05, 0.9, 0.65, 1.5, false); zebra(4.05, 0.9, 0.65, 1.5, false);
+  ctx.save(); ctx.translate(X(2.0), Z(0.9));
+  for (const a of [0.42, -0.42]) {
+    ctx.save(); ctx.rotate(a);
+    for (let i = 0; i < 13; i++) ctx.fillRect(-74 + i * 12, -8, 5, 16);
+    ctx.restore();
+  }
+  ctx.restore();
   // ほかの横断歩道
   for (const [cx, cz] of [[-16.1, -1.0], [-16.1, 2.8], [10.2, -1.0], [-16.1, 13.2], [-16.1, 10.1]]) zebra(cx, cz, 0.9, 2.4, true);
   for (const [cx, cz] of [[-18.0, 0.9], [-13.6, 0.9], [12.0, 0.9], [-18.0, 11.6], [-13.6, 11.6]]) zebra(cx, cz, 0.9, 2.0, false);
@@ -95,6 +105,23 @@ const groundTex = () => canvasTex(2400, 1760, (ctx, w, h) => {
   // マンホール
   for (const [x, z] of [[-6, 0.4], [8, 1.6], [-22, 0.6], [20, 1.4], [-10, 11.2], [-24, 11.8], [5.5, 1.2]]) { ctx.fillStyle = '#3a3c42'; ctx.beginPath(); ctx.arc(X(x), Z(z), 16, 0, Math.PI * 2); ctx.fill(); ctx.strokeStyle = '#6a6c72'; ctx.lineWidth = 3; ctx.stroke(); }
 });
+
+/** 道路・広場の地図にも模型と同じ街区変換を適用する。 */
+function groundTex() {
+  const old = legacyGroundTex();
+  const tex = canvasTex(ISLAND.w * 40, ISLAND.d * 40, (ctx) => {
+    ctx.fillStyle = '#b4b0a6'; ctx.fillRect(0, 0, ISLAND.w * 40, ISLAND.d * 40);
+    const xs = [-30, -16, -6, 8, 16, 30], zs = [-22, -2.4, 6.4, 22];
+    for (let i = 0; i < xs.length - 1; i++) for (let j = 0; j < zs.length - 1; j++) {
+      const x0 = xs[i], x1 = xs[i + 1], z0 = zs[j], z1 = zs[j + 1];
+      ctx.drawImage(old.image, (x0 + 30) * 40, (z0 + 22) * 40, (x1 - x0) * 40, (z1 - z0) * 40,
+        (layoutX(x0) + ISLAND.w / 2) * 40, (layoutZ(z0) + ISLAND.d / 2) * 40,
+        (layoutX(x1) - layoutX(x0)) * 40, (layoutZ(z1) - layoutZ(z0)) * 40);
+    }
+  });
+  old.dispose();
+  return tex;
+}
 
 /** ビルの窓（昼の色と、夜にともる窓） */
 const winCache = new Map();
@@ -227,7 +254,8 @@ function wires(parent, pts) {
     for (const dx of [-0.38, 0, 0.38]) {
       const a = pts[i].clone().add(new THREE.Vector3(dx, 0, 0)), b = pts[i + 1].clone().add(new THREE.Vector3(dx, 0, 0));
       const mid = a.clone().lerp(b, 0.5); mid.y -= 0.35;
-      add(parent, new THREE.TubeGeometry(new THREE.QuadraticBezierCurve3(a, mid, b), 10, 0.012, 3), m, 0, 0, 0, { cast: false });
+      const wire = add(parent, new THREE.TubeGeometry(new THREE.QuadraticBezierCurve3(a, mid, b), 10, 0.012, 3), m, 0, 0, 0, { cast: false });
+      wire.userData.layoutStretch = true;
     }
   }
 }
@@ -292,12 +320,15 @@ export function buildJapanDiorama(scene) {
   // ---------------- 地面 ----------------
   const gm = new THREE.MeshStandardMaterial({ map: groundTex(), roughness: 0.92 });
   const ground = add(root, new THREE.ShapeGeometry(roundRectShape(ISLAND.w - 0.4, ISLAND.d - 0.4, 3), 12), gm, 0, 0.003, 0, { rot: [-Math.PI / 2, 0, 0], cast: false });
+  ground.userData.layoutFixed = true;
   {
     const p = ground.geometry.attributes.position, uv = ground.geometry.attributes.uv;
-    for (let i = 0; i < uv.count; i++) uv.setXY(i, (p.getX(i) + 30) / 60, 1 - (-p.getY(i) + 22) / 44);
+    for (let i = 0; i < uv.count; i++) uv.setXY(i, (p.getX(i) + ISLAND.w / 2) / ISLAND.w, 1 - (-p.getY(i) + ISLAND.d / 2) / ISLAND.d);
   }
   // 歩道のふち石（大通り）
-  for (const z of [-0.6, 2.4]) add(root, G.box(59.4, 0.08, 0.12), mat('#d8d4cc'), 0, 0.04, z, { cast: false });
+  for (const z of [-0.6, 2.4]) for (const [a, b] of [[-29.7, -17.3], [-5.8, 29.7]]) {
+    add(root, G.box(b - a, 0.08, 0.12), mat('#d8d4cc'), (a + b) / 2, 0.04, z, { cast: false });
+  }
 
   // ---------------- 川（隅田川）と石垣、手前の海（お台場） ----------------
   const water = (R.waterMat = waterize(new THREE.MeshStandardMaterial({ color: '#2a4a6a', emissive: '#0a1a30', emissiveIntensity: 0.4, roughness: 0.06, metalness: 0.15, transparent: true, opacity: 0.93 }), { strength: 0.3 }));
@@ -406,7 +437,7 @@ export function buildJapanDiorama(scene) {
   for (let i = 0; i < 4; i++) add(canopy, G.box(1.4, 0.05, 0.12), pl, -3.6 + i * 2.4, 2.36, 0.1, { cast: false });
   // 駅名標
   const sign = (R.stationSign = group(root, -10.4, FLOOR, -4.45));
-  for (const s of [-1, 1]) add(sign, G.cyl(0.05, 0.05, 1.9, 8), mat('#5a6a7a'), s * 1.0, 0.95, 0);
+  for (const s of [-1, 1]) add(sign, G.cyl(0.05, 0.05, 1.9, 8), mat('#5a6a7a'), s * 1.0, 0.95, -0.07);
   const sgm = new THREE.MeshStandardMaterial({ map: canvasTex(512, 200, (ctx, w, h) => {
     ctx.fillStyle = '#fbfbf8'; ctx.fillRect(0, 0, w, h);
     ctx.fillStyle = '#3ab04a'; ctx.fillRect(0, 128, w, 18);
@@ -453,7 +484,7 @@ export function buildJapanDiorama(scene) {
   R.lampMats.push(big);
   add(hondo, G.cyl(0.5, 0.5, 1.1, 18), big, 2.0, 2.2, 0);
   // 常香炉（けむり）
-  const kou = (R.incense = group(root, -10.6, 0, 2.2));
+  const kou = (R.incense = group(root, -10.6, 0, 3.0));
   add(kou, G.cyl(0.5, 0.6, 0.7, 14), mat('#5a5048', { metalness: 0.4 }), 0, 0.5, 0);
   add(kou, G.cone(0.6, 0.6, 8), mat('#4a4038', { metalness: 0.4 }), 0, 1.25, 0);
   for (const s of [-1, 1]) add(kou, G.cyl(0.06, 0.06, 0.5, 6), mat('#4a4038'), s * 0.35, 0.15, 0);
@@ -484,7 +515,7 @@ export function buildJapanDiorama(scene) {
   const kmMat = new THREE.MeshStandardMaterial({ map: kmTex, emissive: '#ffb050', emissiveMap: kmTex, emissiveIntensity: 0.2, roughness: 0.6 });
   R.lampMats.push(kmMat);
   const och = (R.ochochin = group(kmon, 0, 1.7, 0));
-  add(och, G.cyl(0.6, 0.6, 1.3, 22), kmMat, 0, 0, 0, { rot: [0, Math.PI / 2, 0] });
+  add(och, G.cyl(0.6, 0.6, 1.3, 40), kmMat, 0, 0, 0, { rot: [0, Math.PI / 2, 0] });
   for (const yy of [-0.68, 0.68]) add(och, G.cyl(0.55, 0.55, 0.08, 20), mat('#2a1a14'), 0, yy, 0);
   // 仲見世（参道の両がわの小さな店）
   const nakaShops = [['人形焼', '#c8402e'], ['雷おこし', '#d87a2a'], ['せんべい', '#8a5a3a'], ['扇子', '#3a5a8a']];
@@ -503,7 +534,7 @@ export function buildJapanDiorama(scene) {
     R.nakamise.push(g);
   });
   // リスの和菓子屋（いちばん奥、本堂の右）
-  const wag = (R.wagashi = group(root, -7.8, 0, 3.6, -Math.PI / 2));
+  const wag = (R.wagashi = group(root, -7.8, 0, 3.6));
   add(wag, G.box(1.6, 2.0, 1.4), mat('#f0e6d4'), 0, 1.0, 0);
   add(wag, G.box(1.8, 0.12, 1.7), mat('#2b3a6a'), 0, 2.05, 0.15, { rot: [0.15, 0, 0] });
   add(wag, G.box(1.2, 0.5, 0.5), mat('#6a4a32'), 0, 0.5, 0.75);
@@ -820,7 +851,8 @@ export function buildJapanDiorama(scene) {
     const c = car(far, 0, 0, lane, lane > 1 ? Math.PI : 0, i === 0 || i === 3 ? '#f0c030' : carCols[(i + 2) % 6], i === 0 || i === 3);
     c.scale.setScalar(0.85);
     c.userData.dynamic = true;
-    R.roadCars.push({ g: c, dir: lane > 1 ? -1 : 1, x: -28 + i * 11, v: 2.2 });
+    const minX = i < 2 ? -29 : -4.6, maxX = i < 2 ? -18 : 29;
+    R.roadCars.push({ g: c, dir: lane > 1 ? -1 : 1, x: minX + (i + 0.5) / 5 * (maxX - minX), minX, maxX, v: 2.2 });
   }
 
   // ---------------- 東京駅（赤レンガの駅舎・終点） ----------------
@@ -838,7 +870,7 @@ export function buildJapanDiorama(scene) {
     const dm = group(st, s * 5.6, 0, 0);
     add(dm, G.box(2.6, 4.4, 3.4), brick, 0, 2.2, 0);
     add(dm, G.cyl(1.25, 1.35, 0.8, 8), mat('#f0ece2'), 0, 4.8, 0);
-    add(dm, G.sphere(1.3, 8, 6), mat('#4a6a6a', { roughness: 0.6 }), 0, 5.2, 0, { scale: [1, 0.9, 1] });
+    add(dm, G.sphere(1.3, 24, 16), mat('#4a6a6a', { roughness: 0.6 }), 0, 5.2, 0, { scale: [1, 0.9, 1] });
     add(dm, G.cyl(0.08, 0.12, 0.8, 6), mat('#4a6a6a'), 0, 6.6, 0);
     add(dm, G.box(1.2, 1.6, 0.05), new THREE.MeshStandardMaterial({ color: '#f4f0e6', emissive: '#ffe0a0', emissiveIntensity: 0 }), 0, 1.0, 1.71, { cast: false });
     R.winMats.push(dm.children[dm.children.length - 1].material);
@@ -850,6 +882,7 @@ export function buildJapanDiorama(scene) {
   stn.emissiveMap = stn.map;
   R.lampMats.push(stn);
   add(st, G.box(1.6, 0.4, 0.05), stn, 0, 3.4, 1.66, { cast: false });
+  addTokyoStationDetails(st, R);
   // 駅のホーム（駅舎のうら）
   add(root, G.box(14, FLOOR, 1.6), platTile, STATION.x, FLOOR / 2, TRACK_Z + 2.0);
   add(root, G.box(14.1, 0.06, 0.32), mat('#f0d040'), STATION.x, FLOOR + 0.03, TRACK_Z + 1.3);
@@ -863,9 +896,9 @@ export function buildJapanDiorama(scene) {
   add(bus, G.box(3.0, 0.4, 1.04), new THREE.MeshStandardMaterial({ color: '#2a3a4a', emissive: '#fff0c8', emissiveIntensity: 0 }), 0, 1.0, 0, { cast: false });
   R.winMats.push(bus.children[bus.children.length - 1].material);
   for (const s of [-1, 1]) for (const k of [-1, 1]) add(bus, G.cyl(0.2, 0.2, 0.12, 10), mat('#1a1a20'), s * 1.1, 0.2, k * 0.5, { rot: [Math.PI / 2, 0, 0] });
-  // 丸の内のビル
-  building(root, 17.6, 9.4, 3.0, 2.0, 6.0, { wall: '#d8d0c4', glass: '#6a7a90', seed: 601, R });
-  building(root, 28.0, 3.4, 2.6, 3.0, 9.0, { wall: '#c8ccd4', glass: '#4a6a8a', seed: 602, R });
+  // 丸の内のビルは奥へ置き、駅前と再会の仲間を手前から隠さない。
+  building(root, 25.0, -20.5, 3.0, 2.0, 6.0, { wall: '#d8d0c4', glass: '#6a7a90', seed: 601, R });
+  building(root, 21.0, -13.8, 2.6, 3.0, 9.0, { wall: '#c8ccd4', glass: '#4a6a8a', seed: 602, R });
 
   // ---------------- 秋葉原（左） ----------------
   const aki = (R.akiba = group(root));
@@ -1075,5 +1108,7 @@ export function buildJapanDiorama(scene) {
     p.material.opacity = 0;
     R.pools.push(p);
   }
+  applyJapanLayout(root);
+  R.towerTop = R.tower.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(0, 9.9, 1.2));
   return R;
 }

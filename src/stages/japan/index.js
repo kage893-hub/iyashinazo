@@ -23,9 +23,13 @@ import { el } from '../../core/ui.js';
 import { Train, RAIL_Y } from '../station/train.js';
 import { buildEdoDiorama } from '../edo/diorama.js';
 import { buildJapanDiorama, TRACK_Z, ISLAND, FLOOR, TOWER, STATION, VIA, HW, RIVER_Z0, RIVER_Z1 } from './diorama.js';
+import { layoutX, layoutZ, layoutPoint, applyJapanLayout } from './layout.js';
+import { showAreaGuide } from './guide.js';
 import { meishoPanel, MEISHO, tenuguiHTML, bellPanel2, subwayPanel, vendingPanel, tidePanel, pierBoardHTML } from './panels.js';
 
 const V = THREE.Vector3;
+// 演出で使う旧市街の座標も、模型と同じ配置へそろえる。
+const cityPoint = (x, y, z) => layoutPoint(new V(x, y, z));
 
 export const SPEAKERS = {
   koma: { name: '狛犬', icon: '🦁', color: '#8a8274', voice: 200 },
@@ -49,8 +53,8 @@ const END_X = 27.2; // 終点・東京駅
 
 function makeTokyoPath() {
   const p = new THREE.CurvePath();
-  p.add(new THREE.CubicBezierCurve3(new V(-140, 36, 52), new V(-96, 26, 30), new V(-52, RAIL_Y, TRACK_Z), new V(-36, RAIL_Y, TRACK_Z)));
-  p.add(new THREE.LineCurve3(new V(-36, RAIL_Y, TRACK_Z), new V(40, RAIL_Y, TRACK_Z)));
+  p.add(new THREE.CubicBezierCurve3(cityPoint(-140, 36, 52), cityPoint(-96, 26, 30), cityPoint(-52, RAIL_Y, TRACK_Z), cityPoint(-36, RAIL_Y, TRACK_Z)));
+  p.add(new THREE.LineCurve3(cityPoint(-36, RAIL_Y, TRACK_Z), cityPoint(40, RAIL_Y, TRACK_Z)));
   p.arcLengthDivisions = 1000;
   return p;
 }
@@ -116,7 +120,7 @@ class Fireworks {
 }
 
 /**
- * ステージ：現代日本（とうきょう）— 江戸の宿場町の二百年後（2倍の大きさ）
+ * ステージ：現代日本（とうきょう）— 江戸の宿場町の二百年後
  * 目的：街の灯りをとりもどし、通行手形で終点・東京駅へ入る
  * しかけ：狛犬の鈴で「むかし目」になると、二百年前の江戸の町が重なって見える
  */
@@ -134,8 +138,10 @@ export class JapanStage {
   }
 
   homeView(portrait) {
-    return portrait ? [new V(10, 74, 62), new V(0, 0.5, 1)] : [new V(14, 42, 60), new V(0, 0.5, 0)];
+    return portrait ? [new V(8, 175, 165), new V(0, 2, 2)] : [new V(14, 58, 90), new V(0, 2, 2)];
   }
+
+  openAreaGuide() { return showAreaGuide(this.g); }
 
   // =========================================================
   // 構築
@@ -144,8 +150,9 @@ export class JapanStage {
     const g = this.g, scene = g.scene;
     g.ui.setSpeakers(SPEAKERS);
     g.audio.setSong('japan');
-    g.bounds = { minX: -28, maxX: 28, minZ: -20, maxZ: 20 };
-    g.controls.maxDistance = 120;
+    g.bounds = { minX: -ISLAND.w / 2 + 2, maxX: ISLAND.w / 2 - 2, minZ: -ISLAND.d / 2 + 2, maxZ: ISLAND.d / 2 - 2 };
+    g.controls.minDistance = 4; // 参道の会話を、高架より内側から映せる距離。
+    g.controls.maxDistance = 260; // 縦画面でも島全体を収める。
 
     // 夏の宵：夕焼けの名残と、群青の空
     this.sky = makeSky();
@@ -160,12 +167,12 @@ export class JapanStage {
     this.hemi = new THREE.HemisphereLight('#b8c4f0', '#5a5050', 1.0);
     scene.add(this.hemi);
     const sun = (this.sun = new THREE.DirectionalLight('#ffc8a0', 1.8));
-    sun.position.set(-26, 30, 18);
+    sun.position.copy(cityPoint(-26, 36, 18));
     sun.castShadow = true;
     const sm = g.shadowSize();
     sun.shadow.mapSize.set(sm, sm);
     const sc = sun.shadow.camera;
-    sc.left = -40; sc.right = 40; sc.top = 30; sc.bottom = -30; sc.near = 5; sc.far = 120;
+    sc.left = -48; sc.right = 48; sc.top = 42; sc.bottom = -42; sc.near = 5; sc.far = 150;
     sun.shadow.bias = -0.0006;
     sun.shadow.normalBias = 0.08;
     scene.add(sun, sun.target);
@@ -189,7 +196,7 @@ export class JapanStage {
     this.path = makeTokyoPath();
     this.cl = this.path.getCurveLengths();
     this.stopS = this.sOf(LOCO_X);
-    this.tracks = buildRails(scene, this.path, { z: TRACK_Z, islandX: [-29.8, 29.8], pillars: [this.cl[0] - 8, this.cl[0] - 16].filter((s) => s > 0) });
+    this.tracks = buildRails(scene, this.path, { z: layoutZ(TRACK_Z), islandX: [-ISLAND.w / 2 + 0.2, ISLAND.w / 2 - 0.2], pillars: [this.cl[0] - 8, this.cl[0] - 16].filter((s) => s > 0) });
     this.train = new Train(scene, this.path);
     this.train.s = this.stopS;
     this.train.place();
@@ -202,7 +209,7 @@ export class JapanStage {
     this.smoke = new Puffs(scene, { count: 60, color: '#f0f0f4', opacity: 0.6 });
     this.incense = new Puffs(scene, { count: 30, color: '#e8e4e0', opacity: 0.35 });
     this.fireworks = new Fireworks(scene);
-    this.motes = new Motes(scene, { count: 60, color: '#ffe8b0', size: 0.1, area: { x: 56, z: 40, y0: 0.5, y1: 9 }, kind: 'firefly', opacity: 0.4 });
+    this.motes = new Motes(scene, { count: 60, color: '#ffe8b0', size: 0.1, area: { x: ISLAND.w - 4, z: ISLAND.d - 4, y0: 0.5, y1: 9 }, kind: 'firefly', opacity: 0.4 });
     this.sparkles = this._makeSparkles(scene);
 
     await this.g.loadingStep(0.6, '街の住人たちを呼んでいます…');
@@ -219,7 +226,7 @@ export class JapanStage {
     };
   }
 
-  sOf(x) { return this.cl[0] + (x + 36); }
+  sOf(x) { return this.cl[0] + layoutX(x) - layoutX(-36); }
 
   /** むかし目：江戸の宿場町を、半透明の幻として同じ場所に重ねる */
   _buildGhost(scene) {
@@ -247,6 +254,7 @@ export class JapanStage {
     // 雨戸を外して、のれんの出た姿で
     for (const s of E.shops || []) { if (s.shutter) s.shutter.visible = false; if (s.openG) s.openG.visible = true; }
     if (E.ice) E.ice.visible = false;
+    applyJapanLayout(ghost);
     ghost.traverse((o) => { if (o.userData) o.userData.dynamic = false; });
     holder.remove(ghost);
     scene.add(ghost);
@@ -262,7 +270,7 @@ export class JapanStage {
     });
     this.plateMat = new THREE.MeshBasicMaterial({ map: plate, transparent: true, opacity: 0, depthWrite: false, depthTest: false, fog: false });
     this.plate = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 0.56), this.plateMat);
-    this.plate.position.set(2.1, 1.35, 5.25);
+    this.plate.position.copy(cityPoint(2.1, 1.35, 5.25));
     this.plate.renderOrder = 51;
     this.plate.userData.noPick = true;
     scene.add(this.plate);
@@ -300,20 +308,29 @@ export class JapanStage {
 
   _placeCreatures(scene) {
     const R = this.R;
-    const put = (c, x, y, z, ry = 0) => { c.root.position.set(x, y, z); c.root.rotation.y = ry; return c; };
+    const put = (c, x, y, z, ry = 0) => { c.root.position.copy(cityPoint(x, y, z)); c.root.rotation.y = ry; return c; };
     this.frog = put(makeFrog(), FROG_HOME.x, FROG_HOME.y, FROG_HOME.z, -0.3);
     this.koma = put(makeKomainu({ open: true }), -11.7, 0, 2.9, 0.15);
     this.koma2 = put(makeKomainu({ open: false }), -9.5, 0, 2.9, -0.15);
+    // 参道の門の両脇に立つ。正面の店の屋根に顔を隠されない場所。
+    const gate = R.kaminarimon.getWorldPosition(new V());
+    this.koma.root.position.copy(gate).add(new V(-2.2, 0, 0));
+    this.koma2.root.position.copy(gate).add(new V(2.2, 0, 0));
     this.tsuru = put(dressHappi(makeCrane()), -3.4, 0, 4.4, -0.3);
-    this.risu = put(dressWagashi(makeSquirrel()), -6.7, 0, 3.6, 1.1);
+    this.risu = put(dressWagashi(makeSquirrel()), -6.7, 0, 3.6, -0.15);
+    this.risu.root.position.copy(R.wagashi.getWorldPosition(new V())).add(new V(0, 0, 1.4));
+    this.risu.root.rotation.y = 0;
     this.neko = put(dressCaster(makeKawarabanCat()), 1.0, 0, 3.3, 0.2);
     this.inu = put(dressPolice(makeShiba()), 10.8, 0, -0.9, -0.3);
     this.kappa = put(dressCaptain(makeKappa()), 8.9, 0.45, 7.75, -0.4);
+    // 船上と展望台の住人は、模型に対する立ち位置の寸法を保つ。
+    this.kappa.root.position.copy(R.waterBus.getWorldPosition(new V())).add(new V(0.9, 0.37, 0));
     this.ekicho = put(makeCat(), 21.0, 0, 1.2, -0.1);
     this.panda = put(makePanda(), -24.4, 0, 13.3, 0.35);
     this.karasu = put(makeCrow(), -24.5, 3.9, 2.8, 0.3);
     if (this.karasu.key) this.karasu.key.visible = false;
     this.suzume = put(makeSparrow(), TOWER.x + 0.5, 9.75, TOWER.z + 1.2, 0);
+    this.suzume.root.position.copy(R.tower.getWorldPosition(new V())).add(new V(0.5, 9.75, 1.2));
     this.pigeons = [[-11.0, 1.8, 0.3], [-10.0, 2.0, -0.6], [-11.6, 5.9, 2.0], [-9.6, 6.0, 1.0], [-8.8, 1.5, 2.6]].map(([x, z, ry]) => { const p = put(makePigeon(), x, 0, z, ry); p.root.scale.setScalar(0.9); return p; });
     this.creatures = [this.frog, this.koma, this.koma2, this.tsuru, this.risu, this.neko, this.inu, this.kappa, this.ekicho, this.panda, this.karasu, this.suzume, ...this.pigeons];
     for (const c of this.creatures) scene.add(c.root);
@@ -492,6 +509,10 @@ export class JapanStage {
   // =========================================================
   update(dt, t) {
     const g = this.g, R = this.R, f = g.flags;
+    // 全景まで引いたときも、街全体が霧に埋もれないよう距離を延ばす。
+    const pullBack = Math.max(0, g.camera.position.distanceTo(g.controls.target) - 140);
+    g.scene.fog.near = 90 + pullBack * 0.6;
+    g.scene.fog.far = 300 + pullBack * 1.3;
     for (const c of this.creatures) { c.camPos = g.camera.position; c.update(dt, t); }
     if (this.guests) for (const c of this.guests) { c.camPos = g.camera.position; c.update(dt, t); }
     this.sky.uniforms.time.value = t;
@@ -502,7 +523,7 @@ export class JapanStage {
     // 首都高：手前の低いところから街をのぞくときは、うっすら透ける
     {
       const cam = g.camera.position, tg = g.controls.target;
-      const block = cam.z > HW.z + 0.5 && tg.z < HW.z - 0.5 && cam.y < 24 && !this.departing;
+      const block = cam.z > layoutZ(HW.z) + 0.5 && tg.z < layoutZ(HW.z) - 0.5 && cam.y < 24 && !this.departing;
       this.hwK = (this.hwK ?? 1) + ((block ? 0.2 : 1) - (this.hwK ?? 1)) * Math.min(1, dt * 6);
       for (const m of R.hwMats) { m.opacity = this.hwK; m.depthWrite = this.hwK > 0.9; }
       R.highway.traverse((o) => { if (o.isMesh) o.castShadow = this.hwK > 0.9; });
@@ -515,13 +536,19 @@ export class JapanStage {
     if (this.yamanoteOn) {
       this.yamaX = ((this.yamaX ?? -40) + dt * 6);
       if (this.yamaX > 44) this.yamaX = -44;
-      R.yamanote.position.x = this.yamaX;
+      R.yamanote.position.x = layoutX(this.yamaX);
     }
     R.yamanote.visible = !!this.yamanoteOn;
     // 首都高と大通りの車
     if (this.carsOn && R.far.visible) {
-      for (const c of R.hwCars) { c.x += c.dir * c.v * dt; if (c.x > 31) c.x = -31; if (c.x < -31) c.x = 31; c.g.position.x = c.x; }
-      for (const c of R.roadCars) { c.x += c.dir * c.v * dt; if (c.x > 31) c.x = -31; if (c.x < -31) c.x = 31; c.g.position.x = c.x; }
+      for (const c of R.hwCars) { c.x += c.dir * c.v * dt; if (c.x > 31) c.x = -31; if (c.x < -31) c.x = 31; c.g.position.x = layoutX(c.x); }
+      for (const c of R.roadCars) {
+        const min = c.minX ?? -31, max = c.maxX ?? 31;
+        c.x += c.dir * c.v * dt;
+        if (c.x > max) c.x = min;
+        if (c.x < min) c.x = max;
+        c.g.position.x = layoutX(c.x);
+      }
     }
     for (const c of R.roadCars) c.g.visible = !!this.carsOn;
     // 航空灯の点滅
@@ -537,7 +564,7 @@ export class JapanStage {
     // 十手のきらめき
     if (R.jitte.visible) R.jitteGlint.material.opacity = Math.max(0, Math.sin(t * 2.4)) ** 6 * 0.9;
     // 常香炉のけむり
-    if (Math.random() < dt * 2) this.incense.emit(new V(-10.6 + (Math.random() - 0.5) * 0.4, 1.4, 2.2), { vel: new V(0.05, 0.6, 0), spread: 0.2, life: 3, size0: 0.3, size1: 1.4 });
+    if (Math.random() < dt * 2) this.incense.emit(R.incense.getWorldPosition(new V()).add(new V((Math.random() - 0.5) * 0.4, 1.4, 0)), { vel: new V(0.05, 0.6, 0), spread: 0.2, life: 3, size0: 0.3, size1: 1.4 });
     this.incense.update(dt);
     // 大型ビジョン・電光掲示板
     this.visionT -= dt;
@@ -551,7 +578,7 @@ export class JapanStage {
       if (this.fwT < 0) {
         this.fwT = 0.5 + Math.random() * 0.7;
         const c = ['#ff5a7a', '#ffd84a', '#5ae0ff', '#8aff6a', '#c08aff', '#ff9a3a'][Math.floor(Math.random() * 6)];
-        const o = new V(-20 + Math.random() * 40, 14 + Math.random() * 6, -1 + Math.random() * 8);
+        const o = cityPoint(-20 + Math.random() * 40, 14 + Math.random() * 6, -1 + Math.random() * 8);
         this.fireworks.burst(o, c, t);
         if (g.playing) g.audio.play('pop');
       }
@@ -603,7 +630,7 @@ export class JapanStage {
   hint() {
     const f = this.g.flags, has = (i) => this.g.has(i);
     const H = (key, ...lines) => ({ key, lines });
-    if (!f.introDone) return H('intro', '浅草寺の本堂の前の、狛犬に話しかけよう。');
+    if (!f.introDone) return H('intro', '浅草寺の参道にいる、狛犬に話しかけよう。');
     if (this.progress >= 5) return H('final', '準備はそろった！ 右の東京駅の駅長に話しかけよう。');
     const steps = [];
     if (!f.mukashiTried) steps.push(H('bell', '持ち物の『狛犬の鈴』を、もう一度押して鳴らしてみよう。二百年前の江戸の町が、重なって見える。'));
@@ -654,12 +681,17 @@ export class JapanStage {
 
   focus(obj, dist, opt = {}) {
     const p = obj.getWorldPosition ? obj.getWorldPosition(new V()) : obj.clone();
-    const cur = this.g.camera.position.distanceTo(this.g.controls.target);
-    return this.g.focusOn(new V(p.x, Math.min(8, Math.max(0.6, p.y + 0.5)), p.z), { dist: Math.min(cur, dist ?? 20), duration: 0.8, subject: obj.isObject3D ? obj : undefined, ...opt });
+    return this.g.focusOn(new V(p.x, Math.min(8, Math.max(0.6, p.y + 0.5)), p.z), { dist: dist ?? 20, duration: 0.8, subject: obj.isObject3D ? obj : undefined, ...opt });
   }
 
   talkCam(c, dist) {
-    return this.focus(c.root, dist, { theta: c.root.rotation.y, polar: 1.02, keepAngle: true });
+    const portrait = innerWidth < innerHeight;
+    if (portrait) { this.g.ui.questsCollapsed = true; this.g.refreshQuests(); }
+    // 参道では高速道路より内側から映し、道路や欄干で画面を埋めない。
+    const radius = c === this.koma ? 4.2 : c === this.risu ? 4.8 : (dist ?? 9) * (portrait ? 1.15 : 1);
+    const target = c.root.getWorldPosition(new V());
+    target.y = c === this.koma ? c.head.getWorldPosition(new V()).y - 0.15 : Math.min(8, Math.max(0.6, target.y + 0.5));
+    return this.g.focusOn(target, { dist: radius, subject: c.root, duration: 0.8, theta: c.root.rotation.y, polar: c === this.koma ? 1.08 : 1.13, keepAngle: true });
   }
 
   view(pos, dist, theta = 0, polar = 1.0) {
@@ -702,8 +734,7 @@ export class JapanStage {
 
   async talkKoma() {
     const g = this.g, f = g.flags;
-    // 雷門ごしにならないよう、上から見おろす
-    this.focus(this.koma.root, 11, { theta: 0.1, polar: 0.62, keepAngle: true });
+    this.talkCam(this.koma, 10);
     if (!f.introDone) return this.komaIntro();
     if (f.finaleDone) return this.say([{ who: 'koma', text: '二百年ぶりの旅人よ。また、いつでも来るがよい。' }]);
     if (g.has('jitte') && !f.tegataGot) return this.say([{ who: 'koma', text: '十手か！ それを、子孫の柴犬に返してやれ。わしがあずかっておる手形に、判を押してもらえるはずじゃ。' }]);
@@ -754,7 +785,7 @@ export class JapanStage {
 
   async clickSubway() {
     const g = this.g, f = g.flags;
-    await this.view(new V(-6.6, 1.2, 0.9), 9, 0.3, 1.0);
+    await this.view(cityPoint(-6.6, 1.2, 0.9), 9, 0.3, 1.0);
     if (f.subwayDone) return this.say(['銀座線の入口。オレンジ色の「G」のマーク。']);
     if (!g.has('ningyoyaki')) return this.say(['地下鉄・銀座線の入口。階段のわきに、地下鉄の路線図がはってある。']);
     let pending = false;
@@ -774,7 +805,7 @@ export class JapanStage {
     g.take('ningyoyaki');
     g.flag('subwayDone');
     g.cinematic = true;
-    await g.moveCamera(new V(-4, 9, 12), new V(-6, 2.5, -6), 1.6);
+    await g.moveCamera(cityPoint(-4, 9, 12), cityPoint(-6, 2.5, -6), 1.6);
     this._applyLights(this.progress);
     g.audio.play('chime');
     await g.wait(1.2);
@@ -820,7 +851,7 @@ export class JapanStage {
     const g = this.g;
     g.flag('meishoDone');
     g.cinematic = true;
-    await g.moveCamera(new V(2, 6.5, 13), new V(2, 3.5, -1.5), 1.6);
+    await g.moveCamera(cityPoint(2, 6.5, 13), cityPoint(2, 3.5, -1.5), 1.6);
     this._applyLights(this.progress);
     g.audio.play('fanfare');
     await g.wait(1.4);
@@ -874,17 +905,17 @@ export class JapanStage {
     const g = this.g, R = this.R;
     g.flag('towerLit');
     g.cinematic = true;
-    await g.moveCamera(new V(4, 8, 20), new V(TOWER.x, 10, TOWER.z), 1.8);
+    await g.moveCamera(cityPoint(4, 8, 20), cityPoint(TOWER.x, 10, TOWER.z), 1.8);
     g.audio.play('chime');
     await g.tweens.add({ duration: 2.0, onUpdate: (k) => { R.towerLightMat.emissiveIntensity = k * 2.4; } });
     this._applyLights(this.progress);
     await this.say(['ゴーン……鐘の音とともに、東京タワーが、オレンジ色にかがやいた！']);
     // てっぺんのスズメが、川の光を見つける
-    await g.moveCamera(new V(TOWER.x - 2, 11.5, TOWER.z + 6), R.towerTop.clone(), 1.4);
+    await g.moveCamera(cityPoint(TOWER.x - 2, 11.5, TOWER.z + 6), R.towerTop.clone(), 1.4);
     await this.say([{ who: 'suzume', text: 'チュン！ 展望台から見えたよ。太鼓橋の下の川底で、何かが光ってる！' }]);
     g.flag('jitteSeen');
     R.jitte.visible = true;
-    await g.moveCamera(new V(2.5, 4.5, 13), new V(2.6, 0.2, 7.8), 1.6);
+    await g.moveCamera(cityPoint(2.5, 4.5, 13), R.jitte.getWorldPosition(new V()), 1.6);
     g.cinematic = false;
     await this.say(['タワーの灯りに照らされて、太鼓橋の下の川底で、細長い物がきらりと光った。']);
     g.note('jp-jitte', '川底の光', '太鼓橋の下の川底で、何かが光っている。');
@@ -893,14 +924,15 @@ export class JapanStage {
   }
 
   async clickTower() {
-    this.focus(this.R.tower, 24);
+    const target = this.R.tower.getWorldPosition(new V()).add(new V(0, 9, 0));
+    await this.g.focusOn(target, { dist: innerWidth < innerHeight ? 62 : 66, theta: 0.18, polar: 1.18, keepAngle: true, duration: 0.9 });
     const f = this.g.flags;
     await this.say([f.towerLit ? 'オレンジ色にかがやく東京タワー。' : '赤と白の、鉄の塔。灯りは消えている。', 'ここは江戸のころ、火の見やぐらが立っていた場所。']);
   }
 
   async clickVending() {
     const g = this.g, f = g.flags;
-    await this.view(new V(2.1, 1.0, 4.5), 7, 0, 1.15);
+    await this.view(cityPoint(2.1, 1.0, 4.5), 7, 0, 1.15);
     if (f.ramuneGot) return this.say(['自動販売機。ボタンが9つ。']);
     if (!f.vendTalked) {
       g.flag('vendTalked');
@@ -954,7 +986,7 @@ export class JapanStage {
       { who: 'inu', text: '狛犬さま、手形をおかりします！' },
     ]);
     g.cinematic = true;
-    await g.moveCamera(new V(-10.6, 10, 8.5), new V(-10.6, 0.8, 2.9), 1.6);
+    await this.talkCam(this.koma, 10);
     await this.say([
       { who: 'koma', text: '二百年、あずかっておった手形じゃ。……ほれ、判がかすれてしもうておる。' },
       'おまわりさんが、十手の柄の判を、手形にぐっと押しあてた。',
@@ -1017,21 +1049,22 @@ export class JapanStage {
   async diveJitte() {
     const g = this.g, R = this.R, kp = this.kappa;
     g.cinematic = true;
-    await g.moveCamera(new V(5, 5, 15), new V(4.5, 0.5, 7.6), 1.4);
+    await g.moveCamera(cityPoint(5, 5, 15), cityPoint(4.5, 0.5, 7.6), 1.4);
     // 水上バスで橋の下へ
     const b0 = R.waterBus.position.clone(), k0 = kp.root.position.clone();
-    const b1 = new V(3.9, b0.y, 7.75);
+    const b1 = cityPoint(3.9, b0.y, 7.75);
     g.audio.play('whistle');
     await g.tweens.add({ duration: 2.4, ease: Ease.inOut, onUpdate: (k) => { R.waterBus.position.lerpVectors(b0, b1, k); kp.root.position.copy(k0).add(R.waterBus.position).sub(b0); } });
     g.audio.play('splash');
     const kd = kp.root.position.clone();
-    await g.tweens.add({ duration: 0.8, onUpdate: (k) => { kp.root.position.set(lerp(kd.x, 2.7, k), kd.y + Math.sin(k * Math.PI) * 0.8 - k * 1.2, lerp(kd.z, 7.9, k)); } });
+    const dive = R.jitte.getWorldPosition(new V());
+    await g.tweens.add({ duration: 0.8, onUpdate: (k) => { kp.root.position.set(lerp(kd.x, dive.x, k), kd.y + Math.sin(k * Math.PI) * 0.8 - k * 1.2, lerp(kd.z, dive.z, k)); } });
     kp.root.visible = false;
     await g.wait(1.2);
     R.jitte.visible = false;
     kp.root.visible = true;
     g.audio.play('splash');
-    await g.tweens.add({ duration: 0.8, onUpdate: (k) => { kp.root.position.set(lerp(2.7, kd.x, k), kd.y - 1.2 + k * 1.2 + Math.sin(k * Math.PI) * 0.8, lerp(7.9, kd.z, k)); } });
+    await g.tweens.add({ duration: 0.8, onUpdate: (k) => { kp.root.position.set(lerp(dive.x, kd.x, k), kd.y - 1.2 + k * 1.2 + Math.sin(k * Math.PI) * 0.8, lerp(dive.z, kd.z, k)); } });
     g.cinematic = false;
     g.flag('jitteGot');
     await this.say([{ who: 'kappa', text: 'ぷはっ！ あったぞ、十手だ！ ちょうど潮が引ききって、底まで手が届いた！' }]);
@@ -1104,8 +1137,8 @@ export class JapanStage {
     const s0 = this.stopS;
     this.train.s = s0 - 90;
     this.train.place();
-    g.camera.position.set(24, 16, 26);
-    g.controls.target.set(-24, 4, -8);
+    g.camera.position.copy(cityPoint(24, 16, 26));
+    g.controls.target.copy(cityPoint(-24, 4, -8));
     await g.ui.fade(0, 1.4);
     g.audio.play('whistle');
     const start = this.train.s;
@@ -1117,7 +1150,7 @@ export class JapanStage {
       last = s;
       if (Math.random() < 0.15 * (1 - k)) g.audio.play('chuff');
       g.controls.target.lerp(this.train.loco.g.position, 0.08);
-      g.camera.position.lerpVectors(camFrom, new V(6, 10, 14), k);
+      g.camera.position.lerpVectors(camFrom, cityPoint(6, 10, 14), k);
     } });
     g.audio.play('steam');
     await g.ui.banner('現代日本', `STAGE ${stageNo('japan')}　終点`, 2600);
@@ -1126,15 +1159,14 @@ export class JapanStage {
       'どこまでもつづくビル、高架を走る電車、川ぞいの高速道路……。',
       '……でも、街の灯りは、ほとんど消えている。',
     ]);
-    await g.moveCamera(new V(-5, 7.5, 15), new V(-10.2, 2.0, 3.6), 1.8);
+    await g.moveCamera(cityPoint(-5, 9, 16), cityPoint(-10.6, 2.0, 3.6), 1.8);
     g.audio.play('ribbit');
     await g.say([
       { who: 'frog', text: 'ケロ!? あの赤い大提灯……雷門ケロ！ あっちの五重塔も、鐘も……！' },
       { who: 'frog', text: 'ここ、江戸の宿場町ケロ!? でも、建物がぜんぜんちがうケロ……！' },
-      { who: 'frog', text: 'あっ、本堂の前の狛犬さん……江戸で会った狛犬さんと、そっくりケロ！' },
+      { who: 'frog', text: 'あっ、参道の狛犬さん……江戸で会った狛犬さんと、そっくりケロ！' },
     ]);
-    const portrait = innerWidth < innerHeight;
-    await g.moveCamera(portrait ? new V(-10.6, 13, 12) : new V(-10.6, 10.5, 9.5), new V(-10.6, 1.0, 2.9), 1.8);
+    await this.talkCam(this.koma, 10);
     g.cinematic = false;
     await this.talkKoma();
   }
@@ -1150,7 +1182,7 @@ export class JapanStage {
     g.cinematic = true;
     document.body.classList.add('cinematic');
     if (this.mukashi) { g.flag('mukashi', false); this._setMukashi(false); }
-    await g.moveCamera(new V(9, 6, 2), new V(13.6, 3, TRACK_Z - 1.6), 1.6);
+    await g.moveCamera(cityPoint(9, 6, 2), cityPoint(13.6, 3, TRACK_Z - 1.6), 1.6);
     g.audio.play('dial');
     R.sigRed.emissiveIntensity = 0.05;
     R.sigGreen.emissiveIntensity = 1.8;
@@ -1162,7 +1194,7 @@ export class JapanStage {
     // 列車が終点へ
     await this.say(['カンカンカン……。踏切が鳴り、信号が青に変わった。']);
     g.audio.play('whistle');
-    await g.moveCamera(new V(4, 7, 9), new V(10, 1.5, TRACK_Z), 1.4);
+    await g.moveCamera(cityPoint(4, 7, 9), cityPoint(10, 1.5, TRACK_Z), 1.4);
     const s0 = this.train.s, s1 = this.sOf(END_X);
     let last = s0;
     const cam0 = g.camera.position.clone();
@@ -1172,7 +1204,7 @@ export class JapanStage {
       last = s;
       if (Math.random() < 0.12) g.audio.play('chuff');
       g.controls.target.lerp(this.train.loco.g.position, 0.06);
-      g.camera.position.lerpVectors(cam0, new V(22, 9, 13), k);
+      g.camera.position.lerpVectors(cam0, cityPoint(22, 9, 13), k);
     } });
     g.audio.play('steam');
     await g.tweens.add({ duration: 1.0, onUpdate: (k) => { for (const { arm, s } of R.crossingArms) arm.rotation.x = -s * 1.35 * k; } });
@@ -1182,7 +1214,7 @@ export class JapanStage {
     this._applyLights(6);
     // 隅田川の花火
     this.fireworksOn = true;
-    await g.moveCamera(new V(0, 10, 40), new V(2, 14, 0), 2.6);
+    await g.moveCamera(cityPoint(0, 10, 45), cityPoint(2, 14, 0), 2.6);
     g.audio.play('chime');
     await this.say(['ドーン……！ 隅田川の空に、大きな花火が上がった。', '東京タワーも、ビルの窓も、つり橋も、街じゅうの灯りがいっせいにともる。']);
     await this.reunion();
@@ -1194,17 +1226,27 @@ export class JapanStage {
   /** 東京駅の駅前で：旅の仲間たちが、客車からおりてくる */
   async reunion() {
     const g = this.g;
+    const portrait = innerWidth < innerHeight;
+    const station = this.R.station.getWorldPosition(new V());
     const mk = [
       [() => makeRabbit(), 1.0, 'はざま駅'], [() => makeSheep(), 1.0, '天空の街'], [() => makeSeal(), 1.0, '潮の港町'], [() => makeHero(), 0.95, '勇者の城下町'],
       [() => makeMaou(), 0.4, '魔王城'], [() => makeCapybara(), 1.0, '寂れた温泉街'], [() => makeElder(), 1.0, '巨大キノコの森'], [() => makeBear(), 0.9, 'からくりおもちゃの街'],
     ];
     this.guests = mk.map(([f, s]) => { const c = f(); c.root.scale.multiplyScalar(s); c.root.visible = false; g.scene.add(c.root); return c; });
-    await g.moveCamera(new V(STATION.x, 6.5, 13.5), new V(STATION.x, 1.4, 2.0), 2.0);
+    await g.moveCamera(
+      portrait ? new V(station.x, 17, 23.4) : cityPoint(STATION.x, 8, 17),
+      portrait ? new V(station.x, 1.05, 5.3) : cityPoint(STATION.x, 1.4, 2.0), 2.0,
+    );
     await this.say([{ who: 'frog', text: '……あれっ？ 客車から、だれかおりてくるケロ……！' }]);
-    const door = new V(STATION.x, 0, 0.6);
+    const door = station.clone().add(new V(0, 0, 2));
+    // 縦画面は二列四段。背の高い仲間を奥にし、手前の頭で顔を隠さない。
+    const portraitSlots = [[0, 1], [0, 2], [0, 3], [0, 0], [1, 0], [1, 3], [1, 2], [1, 1]];
     for (let i = 0; i < this.guests.length; i++) {
       const c = this.guests[i];
-      const to = new V(STATION.x - 6.3 + i * 1.8, 0, 2.2 + (i % 2) * 0.5);
+      const [column, row] = portraitSlots[i];
+      const to = portrait
+        ? new V(station.x + (column ? 1.6 : -1.6), 0, 3.5 + row * 1.2)
+        : cityPoint(STATION.x - 6.3 + i * 1.8, 0, 2.2 + (i % 2) * 0.5);
       c.root.position.copy(door);
       c.root.rotation.y = 0;
       c.root.visible = true;
@@ -1215,7 +1257,7 @@ export class JapanStage {
     await g.wait(0.8);
     this.guests.forEach((c) => c.hop());
     // カエルも駅前へ
-    this.frog.root.position.set(STATION.x, 0, 3.2);
+    this.frog.root.position.copy(cityPoint(STATION.x, 0, 3.2));
     this.frog.root.rotation.y = 0;
     await this.say([
       { who: 'guest', text: 'ほしまわり号の旅の仲間たちが、みんな、客車にのっていた！' },
@@ -1224,7 +1266,11 @@ export class JapanStage {
       { who: 'ekicho', text: 'ほしまわり号は、旅をした世界の思い出を、ぜんぶのせて走る列車ですから。' },
       { who: 'koma', text: '二百年ぶりに、にぎやかな夜じゃ。……旅人よ、よう来た。' },
     ]);
-    await g.moveCamera(new V(STATION.x - 2.5, 4.4, 9.4), new V(STATION.x, 1.0, 3.2), 1.6);
+    if (portrait) {
+      await g.focusOn(this.frog.root.getWorldPosition(new V()).add(new V(0, 0.9, 0)), { dist: 11.5, theta: 0, polar: 1.13, keepAngle: true, duration: 1.6 });
+    } else {
+      await g.moveCamera(cityPoint(STATION.x - 2.5, 4.4, 9.4), cityPoint(STATION.x, 1.0, 3.2), 1.6);
+    }
     this.frog.hop();
     await this.say([
       { who: 'frog', text: '……ここが、終点ケロ。ほしまわり号の旅は、ここでおしまいケロ。' },
@@ -1237,7 +1283,7 @@ export class JapanStage {
 
   async ending() {
     const g = this.g;
-    await g.moveCamera(new V(0, 26, 52), new V(0, 6, 0), 4);
+    await g.moveCamera(cityPoint(0, 30, 58), cityPoint(0, 6, 0), 4);
     await g.wait(1.0);
     // エンドロール
     const body = el('div', 'credits');

@@ -15,9 +15,9 @@ Codex・Claude Code など、このリポジトリで作業するエージェン
 - saga の住人はカササギ・ネコ・ウサギ・ツル・モモンガ・カエル・カピバラの湯案内・キツネの料理人。旅程・買物・水門・風読み・外観観察を好きな順に進め、最後は駅前のカササギへ。「佐賀の旅ノート」（sagaGuide）から各施設・北西地区・川久保の6方向・全景へ移れる。謎の入力途中は `flags.saDrafts`、達成は `sa*Done` に保存する。
 - saga 北西には公式資料を参照したアマンディ佐賀と、架空の「ビストロ 翠の泡」、14の街の小景がある。休憩 `saSpaRested` と料理 `saFoamTasted` は任意の記録で、必須5謎の `STOPS` に追加しない。既存セーブ・クリア条件は維持。敷地は `R.northwestLots`、街の操作対象は `R.streetScenes`。建物追加時は地表だけでなくFIELD_RECTSの稲やクリーク護岸も重なりを確認する。
 - saga の駅北東にラウンドワン佐賀店、北側に井手ちゃんぽん大和店と忠兼総本社の写真参照模型を追加。区画は `R.cityLots`、模型は `roundone.js` / `ide-chanpon.js` / `tadakane.js`。`saBowlingPlayed`・`saBowlingBest`（0〜10）、`saChanponTasted`、`saTadakaneSeen` は任意の記録でSTOPSに入れない。新資料は [docs/saga-city-references.md](docs/saga-city-references.md)。忠兼は高木瀬町長瀬の外観で、別住所の直営店と混同しない。現在の営業や工場見学を案内しない。
-- 1 ステージ 15〜20 分の想定。箱庭の大きさは標準。ただし hero と toy は 1.5 倍、japan は 2 倍、saga は複数の実在地点を収める広域の箱庭。
-- japan は「江戸の宿場町の二百年後」。江戸の区画（座標）を残し、まわりに東京らしさを足している。
-  持ち物の「むかし目」（koBell）を使うと江戸の箱庭が半透明で重なる。
+- 1 ステージ 15〜20 分の想定。箱庭の大きさは標準。ただし hero と toy は 1.5 倍、japan は 72×56 へ拡張、saga は複数の実在地点を収める広域の箱庭。
+- japan は「江戸の宿場町の二百年後」。浅草寺の参道・仲見世や街区の間隔を広げ、模型の寸法を保ちながら見通しを改善。現代の模型と「むかし目」用の江戸の模型に共通の `layout.js` の配置変換を掛け、持ち物の「むかし目」（koBell）で名所の同じ位置を比べられる。江戸ステージ自体の配置は変えない。
+- japan のメニュー「東京のエリアを選ぶ」は、`guide.js` から浅草寺・仲見世／渋谷・時の鐘／秋葉原／東京タワー・船着き場／東京駅／上野公園／下町の路地／お台場の8地区へ視点を移す。東京駅の窓枠・アーチ玄関・扇形高窓は `station-details.js` で加える。
 - 外部アセットはなし。造形はすべてコード、音は Web Audio で合成。
 - ホーム画面用の `manifest.webmanifest` と `icons/` がある。アプリID `/iyashinazo/` は固定し、scope/start_urlは配信フォルダ内の `./`。同じGitHub Pagesドメインの別ゲームとIDを共有しない。Service Workerやオフラインキャッシュは導入していない。
 
@@ -55,6 +55,9 @@ src/data/items.js       アイテム定義（SVG アイコン）。id は全ス�
 src/lib/                共通の造形（creatures*.js・backdrop.js・merge.js・pixel.js・util.js など）
 src/stages/registry.js  実装ずみステージの登録（IMPL）
 src/stages/<id>/        index.js（ステージクラス）・diorama.js（箱庭の造形）・panels.js（謎のパネル）
+src/stages/japan/layout.js 現代とむかし目に共通の配置変換（模型の寸法は維持）
+src/stages/japan/guide.js 東京8地区のカメラ案内
+src/stages/japan/station-details.js 東京駅の窓枠・アーチ玄関・扇形窓
 src/stages/saga/        index・diorama・panels・visits、station・mallage・kawakubo・amandi・bistro・roundone・ide-chanpon・tadakaneの模型
 src/lib/creatures-saga.js 佐賀のカササギ（ほかの住人は既存のCreature）
 docs/saga-*-references.md 施設ごとの写真・公式資料と再現範囲
@@ -100,6 +103,7 @@ npm run check            # 全 JS の構文チェック + アイテム id の重
 npm run serve &          # 8123 番で配信しておく
 node tools/regressions.mjs # 時間計測・パネル操作・低い画面の回帰確認（CHROMIUM も指定可）
 node tools/save-regressions.mjs # ブラウザ不要：旧セーブ・本編と追加2旅の往復・再開・やり直し
+node tools/japan-layout-logic-regressions.mjs # ブラウザ不要：現代とむかし目の配置・模型寸法・道路・電線・二重変換の防止
 node tools/museum-logic-regressions.mjs # ブラウザ不要：地層の一意性・光路・配送・水量
 node tools/saga-logic-regressions.mjs # ブラウザ不要：佐賀の旅程・買物・水門・風読み・観察の条件
 node tools/extra-regressions.mjs # 追加2旅の選択と実Gameの保存・導入・復帰（箱庭だけ仮の駅）
@@ -150,5 +154,7 @@ ST=japan FLAGS='{"introDone":true}' node tools/flow.mjs "$(cat tools/examples/ja
 - スポットライトの向きは行列更新前の `lookAt` だとずれる。`setFromUnitVectors` などで決める。
 - japan：首都高はカメラが低く手前にあると透ける（`R.hwMats`）。重い端末では車（`R.far`）だけ隠す。
   むかし目の江戸は depthTest なしのゴースト材質（不透明度 0.17）。
+  会話の寄りと縦の全景のためカメラ距離は4〜260。浅草と東京駅の縦案内は専用の倍率を使い、全景まで引いたときは霧の距離も延ばす。
+  `diorama.js` の模型と演出の基準座標は旧街区の値で定義し、配置後・静的結合前に `applyJapanLayout` を適用する。原点のコンテナは再帰し、建物の親アンカーだけ移して子の寸法・位置を保つ。長い道路・護岸や `layoutStretch` の電線は頂点を伸長し、新寸法の地面は `layoutFixed` で除外する。`R.*.getWorldPosition()` 等は変換済みなので再変換しない。船上・塔上・駅玄関など模型からの相対位置も変換せず加える。
 - saga：必須3地点は写真の外観・敷地内配置を優先する。川久保の未確認の背面・内部や居住者の設定を作らない。模型の推奨視点にはVector3と数値配列があり、`modelView`で吸収する。縦画面の距離と`interiorAt`の角度制約も整合させる。
 - 実機スマホでの重さはまだ確かめていない。

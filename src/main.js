@@ -298,6 +298,7 @@ async function main() {
     let panel;
     mk('あそびかた', () => { panel.close(); showHowTo(game); });
     mk('カメラを全体にもどす', () => { panel.close(); game.cameraHome(); });
+    if (game.stage.openAreaGuide) mk('東京のエリアを選ぶ', () => { panel.close(); game.stage.openAreaGuide(); });
     if (game.developerMode) mk('🛠 開発モード', () => { panel.close(); showDeveloperMode(game); });
     if (extrasUnlocked(game.state)) mk('✦ 追加の旅を選ぶ', () => { panel.close(); game.openExtraJourneys(); });
     mk('タイトルにもどる', () => { game.save(); location.reload(); });
