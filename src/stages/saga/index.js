@@ -3,7 +3,7 @@ import { makeSky, makeIslandBase, makeClouds, Puffs } from '../../lib/environmen
 import { makeCat, makeFrog, makeRabbit } from '../../lib/creatures.js';
 import { makeCrane } from '../../lib/creatures-edo.js';
 import { makeMomonga } from '../../lib/creatures-sky.js';
-import { makeMagpieGuide } from '../../lib/creatures-saga.js';
+import { makeMagpieGuide, makeSagaSpaHost, makeBistroChef } from '../../lib/creatures-saga.js';
 import { add, group, mat, G } from '../../lib/util.js';
 import { mergeStatic } from '../../lib/merge.js';
 import { Train, placeOnPath } from '../station/train.js';
@@ -12,6 +12,9 @@ import { Ease } from '../../core/tween.js';
 import { el } from '../../core/ui.js';
 import { showStageClear } from '../clear.js';
 import { buildSagaDiorama, ISLAND } from './diorama.js';
+import { createAmandiSaga } from './amandi.js';
+import { createFoamBistro } from './bistro.js';
+import { amandiVisitPanel, bistroMenuPanel } from './visits.js';
 import { busPanel, shoppingPanel, sluicePanel, balloonPanel, sketchPanel, busClueHTML, shoppingClueHTML, sluiceClueHTML, balloonClueHTML, sketchClueHTML } from './panels.js';
 
 const V = THREE.Vector3;
@@ -30,6 +33,8 @@ export const SPEAKERS = {
   crane: { name: 'ツルの水番', icon: '🌾', color: '#64877b', voice: 360 },
   momonga: { name: 'モモンガの飛行士', icon: '🐿', color: '#b17d48', voice: 960 },
   frog: { name: 'カエルの機関士', icon: '🐸', color: '#4f9a3a', voice: 240 },
+  spaHost: { name: 'カピバラの湯案内', icon: '♨', color: '#9a7554', voice: 280 },
+  chef: { name: 'キツネの料理人', icon: '🦊', color: '#65826b', voice: 620 },
   hint: { name: 'ヒント', icon: '💡', color: '#b68a3b' },
 };
 
@@ -64,6 +69,8 @@ export class SagaStage {
     if (target.distanceTo(new V(22, 2, -43)) < 24) return { polar: 1.56, maxDist: 200 };
     if (target.distanceTo(new V(-28, 2, 18)) < 20) return { polar: 1.48, maxDist: 200 };
     if (target.distanceTo(new V(35, 2, 47)) < 38) return { polar: 1.48, maxDist: 200 };
+    if (target.x < -34 && target.z < -45) return { polar: 1.48, maxDist: 200 };
+    if (target.x > -33 && target.x < -10 && target.z < -43) return { polar: 1.48, maxDist: 160 };
     return null;
   }
 
@@ -91,6 +98,7 @@ export class SagaStage {
     this.clouds = makeClouds(869); this.clouds.scale.setScalar(3.2); this.clouds.position.y = -5; scene.add(this.clouds);
     await g.loadingStep(.25, '佐賀駅と、街の道をつないでいます…');
     this.R = buildSagaDiorama(scene);
+    this._buildNorthwest();
     this.path = trainPath(); this.stopS = this.path.getCurveLengths()[0] + 57;
     this._makeTracks(scene);
     this.train = new Train(scene, this.path);
@@ -102,6 +110,21 @@ export class SagaStage {
     await g.loadingStep(.78, '五つの寄り道を、旅ノートにまとめています…');
     this._optimize();
     g.ui.onLine = who => this.residents[who]?.talk(2.1);
+  }
+
+  _buildNorthwest() {
+    const R = this.R;
+    R.amandi = createAmandiSaga(R.root);
+    // 箱庭の南側道路に正面を合わせ、敷地の中で本館とプール棟を十分な大きさに見せる。
+    R.amandi.root.updateMatrixWorld(true);
+    const box = new THREE.Box3().setFromObject(R.amandi.root);
+    const size = box.getSize(new V()), center = box.getCenter(new V());
+    const scale = Math.min(35 / size.x, 24 / size.z);
+    R.amandi.root.scale.setScalar(scale);
+    R.amandi.root.position.set(-52 - center.x * scale, -box.min.y * scale, -60 - center.z * scale);
+    R.bistro = createFoamBistro(R.root);
+    R.bistro.root.position.set(-22, 0, -52);
+    R.root.updateMatrixWorld(true);
   }
 
   _makeTracks(scene) {
@@ -132,12 +155,12 @@ export class SagaStage {
   }
 
   _placeCreatures(scene) {
-    this.residents = { cat: makeCat(), magpie: makeMagpieGuide(), rabbit: makeRabbit(), crane: makeCrane(), momonga: makeMomonga(), frog: makeFrog() };
+    this.residents = { cat: makeCat(), magpie: makeMagpieGuide(), rabbit: makeRabbit(), crane: makeCrane(), momonga: makeMomonga(), frog: makeFrog(), spaHost: makeSagaSpaHost(), chef: makeBistroChef() };
     const fallback = { cat: [-32, 0, 27], magpie: [-23, 0, 27], rabbit: [27, 0, 42], crane: [-42, 0, -31], momonga: [-30, 0, 51], frog: [-42, 0, 27] };
     for (const [id, c] of Object.entries(this.residents)) {
-      const p = id === 'magpie' ? new V(-38, 0, 25) : id === 'rabbit' ? new V(22, 0, 42.5) : this.R.npcPlaces?.[id === 'cat' ? 'station' : id];
+      const p = id === 'spaHost' ? new V(-56, 0, -47) : id === 'chef' ? new V(-18, 0, -45.2) : id === 'magpie' ? new V(-38, 0, 25) : id === 'rabbit' ? new V(22, 0, 42.5) : this.R.npcPlaces?.[id === 'cat' ? 'station' : id];
       c.root.position.copy(p || new V(...fallback[id]));
-      c.root.scale.setScalar(id === 'crane' ? 1.35 : id === 'rabbit' ? .65 : 1.75);
+      c.root.scale.setScalar(id === 'crane' ? 1.35 : id === 'rabbit' ? .65 : ['spaHost', 'chef'].includes(id) ? 1.25 : 1.75);
       c.root.userData.dynamic = true; scene.add(c.root);
     }
     this.creatures = Object.values(this.residents);
@@ -146,15 +169,20 @@ export class SagaStage {
   _registerInteractables() {
     const g = this.g, R = this.R;
     const reg = (id, object, name, onClick) => { if (object) g.addInteractable(id, object, { name, onClick }); };
-    for (const [id, c] of Object.entries(this.residents)) reg(id, c.root, SPEAKERS[id].name, () => id === 'magpie' ? this.talkGuide() : id === 'frog' ? this.talkFrog() : this.talkKeeper(id));
+    for (const [id, c] of Object.entries(this.residents)) reg(id, c.root, SPEAKERS[id].name, () => id === 'magpie' ? this.talkGuide() : id === 'frog' ? this.talkFrog() : id === 'spaHost' ? this.talkSpaHost() : id === 'chef' ? this.talkChef() : this.talkKeeper(id));
     for (const [id, stop] of Object.entries(STOPS)) {
       reg(id, R[stop.object], stop.name, () => this.openPuzzle(id));
       reg(`${id}Clue`, R[stop.clue], `${stop.name}のメモ`, () => this.readClue(id));
     }
     reg('sagaMap', R.mapBoard, '佐賀のまちあるき案内', () => this.showGuide());
+    reg('northwestMap', R.northwestBoard, '北西のよりみち案内', () => this.showGuide());
     reg('sagaStation', R.station?.root, '佐賀駅', () => this.visit('station'));
     reg('mallageSaga', R.mallage?.root, 'モラージュ佐賀', () => this.visit('mallage'));
     reg('kawakubo', R.property?.root, '川久保の街角', () => this.showPropertyViews());
+    reg('amandi', R.amandi.root, 'アマンディ佐賀', () => this.openAmandi());
+    reg('bistro', R.bistro.root, 'ビストロ 翠の泡', () => this.openBistro());
+    reg('bistroDish', R.bistro.platedDish, '苦い泡のドレッシングのサラダ', () => this.openBistro());
+    for (const [id, place] of Object.entries(R.streetScenes || {})) reg(`street_${id}`, place.root, place.name, () => this.inspectStreet(id));
     reg('loco', this.train.loco.g, 'ほしまわり号', () => this.talkFrog());
   }
 
@@ -174,12 +202,14 @@ export class SagaStage {
     if (R.marketFlags) R.marketFlags.visible = !!f.saShoppingDone;
     if (R.sketchComplete) R.sketchComplete.visible = !!f.saSketchDone;
     if (R.balloon) { R.balloon.userData.baseY ??= R.balloon.position.y; R.balloon.position.y = R.balloon.userData.baseY + (f.saBalloonDone ? 6 : 0); }
+    if (R.bistro.servedDish) R.bistro.servedDish.visible = !!f.saFoamTasted;
     this.g.setGrade(GRADES.saga); this.g.refreshInventory(); this.g.refreshQuests();
   }
 
   update(dt, t) {
     for (const c of this.creatures) { c.camPos = this.g.camera.position; c.update(dt, t); }
     this.sky.uniforms.time.value = t; this.clouds.rotation.y = t * .001;
+    if (this.R.bistro.foam) this.R.bistro.foam.rotation.y = Math.sin(t * .3) * .025;
     this.smoke.update(dt);
     if (this.R.balloon && !this.flying) {
       const b = this.R.balloon;
@@ -225,7 +255,7 @@ export class SagaStage {
       g.refreshQuests();
       g.note('sa-welcome', '佐賀のまちあるき', '佐賀駅、モラージュ佐賀、川久保の街角。<b>五つの寄り道</b>を好きな順で巡ろう。<br>持ち物の<b>佐賀の旅ノート</b>から行き先を選べる。<br>五つのスタンプが集まったら、駅前のカササギへ。');
       this.residents.magpie.wave = 2;
-      return this.say([{ who: 'magpie', text: '佐賀へ、ようこそ。屋根の向こうまで平らな空。今日は、歩くのにいい日だね。' }, { who: 'magpie', text: '駅とモールを巡って、クリークの水や、空の風にも会ってきて。川久保では、街角の形をゆっくり眺めてほしいな。' }, { who: 'magpie', text: '五つの寄り道のスタンプを、この【佐賀の旅ノート】に集めよう。順番は自由。行き先のボタンを押せば、その場所の近くへ移れるよ。' }, { who: 'magpie', text: '全部そろったら、この駅前へ。君の見つけた佐賀を、一枚の便りにしよう。' }]);
+      return this.say([{ who: 'magpie', text: '佐賀へ、ようこそ。屋根の向こうまで平らな空。今日は、歩くのにいい日だね。' }, { who: 'magpie', text: '駅とモールを巡って、クリークの水や、空の風にも会ってきて。川久保では、街角の形をゆっくり眺めてほしいな。' }, { who: 'magpie', text: '五つの寄り道のスタンプを、この【佐賀の旅ノート】に集めよう。順番は自由。行き先のボタンを押せば、その場所の近くへ移れるよ。' }, { who: 'magpie', text: '北西にはアマンディ佐賀と、小さなビストロもあるよ。お風呂の話や、不思議な泡のサラダ。休みながら、歩いておいで。' }, { who: 'magpie', text: '全部そろったら、この駅前へ。君の見つけた佐賀を、一枚の便りにしよう。' }]);
     }
     return this.say([{ who: 'magpie', text: `スタンプは${this.stamps.length}つ。急がなくていいよ。ノートの行き先から、気になる景色へどうぞ。` }]);
   }
@@ -283,9 +313,9 @@ export class SagaStage {
 
   showGuide() {
     const body = el('div', 'sa-guide');
-    body.innerHTML = '<p class="panel-note">五つの寄り道を、好きな順に。<br>行き先を選ぶと、その場所の近くへ移ります。</p><div class="sa-destinations"></div><p class="sa-map-caption">北 ↑　川久保は駅の北東、モールは南東。<br>まちの距離を縮めた、旅の箱庭です。</p>';
+    body.innerHTML = '<p class="panel-note">五つの寄り道を、好きな順に。<br>北西の湯どころや食事処で、ひと休みもどうぞ。</p><div class="sa-destinations"></div><p class="sa-map-caption">北 ↑　アマンディと翠の泡は北西。<br>川久保は北東、モールは南東にあります。</p>';
     let panel;
-    for (const [id, name, sub] of [['station', '🚉 佐賀駅', '南口と木組みの大屋根'], ['mallage', '🛍 モラージュ佐賀', '北館の入口'], ['cinema', '🎬 モラージュ南館', 'シネマ側の外観'], ['mallageWhole', '🏬 モール全体', '北館・南館と駐車場'], ['kawakubo', '🏡 川久保の街角', '屋根・作業場・庭・瓦塀'], ['sluice', '🌾 クリーク', '水と田んぼの寄り道'], ['balloon', '🎈 バルーン広場', '風読みの寄り道'], ['whole', '🗺 まち全体', '箱庭を見渡す']]) {
+    for (const [id, name, sub] of [['station', '🚉 佐賀駅', '南口と木組みの大屋根'], ['mallage', '🛍 モラージュ佐賀', '北館の入口'], ['cinema', '🎬 モラージュ南館', 'シネマ側の外観'], ['mallageWhole', '🏬 モール全体', '北館・南館と駐車場'], ['kawakubo', '🏡 川久保の街角', '屋根・作業場・庭・瓦塀'], ['amandi', '♨ アマンディ佐賀', '北西の湯どころでひと休み'], ['bistro', '🌿 ビストロ 翠の泡', '苦い泡のドレッシング'], ['northwest', '🚶 北西の散歩道', '商店とクリークの小橋'], ['sluice', '🌾 クリーク', '水と田んぼの寄り道'], ['balloon', '🎈 バルーン広場', '風読みの寄り道'], ['whole', '🗺 まち全体', '箱庭を見渡す']]) {
       const b = el('button', 'btn sa-destination', `<b>${name}</b><small>${sub}</small>`);
       b.onclick = () => { panel.close(); this.visit(id); }; body.querySelector('.sa-destinations').appendChild(b);
     }
@@ -298,6 +328,7 @@ export class SagaStage {
       const clue = el('button', 'btn', 'メモを読む'); clue.onclick = () => { panel.close(); this.recordClue(id); this.showClue(id); }; buttons.appendChild(clue);
       row.appendChild(buttons); body.appendChild(row);
     }
+    body.appendChild(el('p', 'sa-side-memories', `よりみち日記　♨ ${this.g.flags.saSpaRested ? '湯どころでひと休み ✓' : '湯どころは、まだこれから'}<br>🌿 ${this.g.flags.saFoamTasted ? '苦い泡のサラダを味わった ✓' : '翠の泡の看板メニューもどうぞ'}`));
     panel = this.g.ui.openPanel({ title: `佐賀の旅ノート　${this.stamps.length}/5`, body, cls: 'saga-panel' });
     return panel;
   }
@@ -305,6 +336,15 @@ export class SagaStage {
   async visit(id) {
     const g = this.g, R = this.R;
     if (id === 'whole') return g.moveCamera(...this.homeView(innerWidth < innerHeight), 1.2);
+    if (id === 'amandi') {
+      const v = R.amandi.views.front;
+      return this.modelView(R.amandi, v.position, v.target, 110);
+    }
+    if (id === 'bistro') {
+      const v = R.bistro.views.front;
+      return this.modelView(R.bistro, v.position, v.target, 20);
+    }
+    if (id === 'northwest') return g.focusOn(new V(-38, 1.5, -54), { dist: innerWidth < innerHeight ? 185 : 86, polar: .72, theta: .25, duration: 1.1 });
     if (id === 'kawakubo') { await this.propertyView('front'); return this.showPropertyViews(); }
     if (id === 'station') return this.modelView(R.station, new V(65, 20, 115), new V(0, 4.8, 14), 100);
     if (id === 'mallageWhole') {
@@ -347,6 +387,74 @@ export class SagaStage {
     }
     const b = el('button', 'btn primary', '街角スケッチを開く'); b.onclick = () => { panel.close(); this.openPuzzle('sketch'); }; body.appendChild(b);
     panel = this.g.ui.openPanel({ title: '川久保の街角', body, cls: 'saga-panel small' }); return panel;
+  }
+
+  async openAmandi() {
+    await this.visit('amandi');
+    return amandiVisitPanel(this.g.ui, {
+      rested: !!this.g.flags.saSpaRested,
+      onRest: () => this.sideScene(() => this.restAtAmandi()), onTalk: () => this.sideScene(() => this.talkSpaHost()), onView: () => this.visit('amandi'),
+    });
+  }
+
+  async talkSpaHost() {
+    await this.view(this.residents.spaHost.root, { height: 1.35, dist: 14, theta: .25 });
+    await this.say([{ who: 'spaHost', text: 'アマンディ佐賀へようこそ。ずいぶん、歩いてこられましたね。' }, { who: 'spaHost', text: '旅の途中には、何も数えない時間も大切です。スタンプのことは、少しだけ横に置いて。' }, { who: 'spaHost', text: 'ひと休みしてから、またお好きな道へ。北西のビストロも、よい香りがしていますよ。' }]);
+    return this.openAmandi();
+  }
+
+  async restAtAmandi() {
+    const g = this.g, rested = !!g.flags.saSpaRested;
+    await this.view(this.residents.spaHost.root, { height: 1.35, dist: 14, theta: .25 });
+    g.flag('saSpaRested');
+    g.note('sa-side-spa', '♨ アマンディ佐賀でひと休み', 'まち歩きの合間、カピバラの案内でひと休み。<br>湯上がりのように肩の力が抜けると、さっきまでの景色が、少し近くなった。');
+    await g.ui.banner('湯どころで、ひと休み', '急がない時間も、旅のうち。', 1500);
+    await this.say([rested ? 'タオルのやわらかさに、さっき歩いた道を思い出す。' : '温かな時間が、歩き疲れた肩をゆっくりほどいていく。', { who: 'spaHost', text: 'どうぞ、ごゆっくり。佐賀の空は、逃げませんから。' }]);
+  }
+
+  async openBistro() {
+    await this.visit('bistro');
+    return bistroMenuPanel(this.g.ui, {
+      tasted: !!this.g.flags.saFoamTasted,
+      onTaste: () => this.sideScene(() => this.tasteFoamSalad()), onTalk: () => this.sideScene(() => this.talkChef()),
+      onView: () => {
+        const v = this.R.bistro.views.terrace;
+        return this.modelView(this.R.bistro, v.position, v.target, 17);
+      },
+    });
+  }
+
+  async talkChef() {
+    await this.view(this.residents.chef.root, { height: 1.4, dist: 13, theta: -.18 });
+    await this.say([{ who: 'chef', text: 'いらっしゃいませ。ここは「翠の泡」。畑から届く野菜を、一皿ずつお出ししています。' }, { who: 'chef', text: '看板は、苦い泡のドレッシング。ふわっと消えたあと、葉の甘さと、ほろ苦い香りが残るんです。' }, { who: 'chef', text: 'ひと口目は、泡と野菜をいっしょに。二口目には、また違う味が見つかりますよ。' }]);
+    return this.openBistro();
+  }
+
+  async tasteFoamSalad() {
+    const g = this.g, tasted = !!g.flags.saFoamTasted;
+    g.flag('saFoamTasted'); this.applyState();
+    g.note('sa-side-bistro', '🌿 翠の泡の、苦い泡のドレッシング', '白い皿に盛られた、畑のサラダ。<br>ふわりと消える泡のドレッシングは、ほろ苦く、そのあとに野菜の甘さが残る。<br>キツネの料理人は「二口目には、また違う味が見つかりますよ」と笑った。');
+    await this.view(this.R.bistro.platedDish, { height: .15, dist: 7.5, polar: .7, theta: .25 });
+    g.audio.play('pop');
+    await this.say([{ who: 'chef', text: tasted ? 'おかえりなさい。今日も、泡はできたてです。' : 'お待たせしました。畑のサラダと、苦い泡のドレッシングです。' }, '細かな泡が、舌の上ですっと消えた。ほろ苦い香りのあとに、野菜の甘さがゆっくり広がる。', { who: 'frog', text: '苦いのに、もうひと口ほしくなるケロ。ふしぎな泡だケロ！' }]);
+  }
+
+  sideScene(action) {
+    if (this.sideBusy) return;
+    this.sideBusy = true; this.g.busy = true;
+    Promise.resolve().then(action).catch(error => { console.error(error); this.g.ui.toast('もう一度、この寄り道を調べてみよう。'); }).finally(() => { this.sideBusy = false; this.g.busy = false; this.g.save(); });
+  }
+
+  async inspectStreet(id) {
+    const place = this.R.streetScenes[id];
+    await this.g.focusOn(place.target, { dist: place.dist || 16, polar: 1.05, theta: place.theta || 0, subject: place.root, keepAngle: true, duration: .9 });
+    const lines = {
+      bakery: ['焼きたてのパンの香りが、通りにこぼれている。ガラスの向こうでは、小さな丸パンがきれいに並んでいた。', '窓辺の札には「歩いたあとには、ひとつおやつ」。'],
+      florist: ['花屋の軒先で、葉の形の違う鉢が、風に揺れている。小さな花束の横に、今日の水やりのじょうろ。', '同じ緑でも、日向と日陰で、少しずつ色が違って見える。'],
+      bridge: ['小橋の下を、水が静かに通り抜けていく。向こうの岸には、散歩の途中の自転車。', '少し立ち止まると、水音の間に、遠い踏切の音が聞こえた。'],
+      park: ['木陰のベンチには、誰かが休んだあとの、やさしい静けさが残っている。', '街角の小さな公園にも、空はちゃんと広がっていた。'],
+    }[id] || ['通りの向こうに、今日もいつもの暮らしが続いている。'];
+    await this.say(lines); this.g.note(`sa-street-${id}`, place.name, lines.join('<br>'));
   }
 
   async talkFrog() { await this.view(this.residents.frog.root, { dist: 15 }); return this.say([{ who: 'frog', text: this.g.flags.finaleDone ? 'いい便りができたケロ。好きな旅へ、また出かけるケロ！' : '線路の先でも、ちゃんと佐賀の風が吹いてるケロ。今日は寄り道しほうだいケロ！' }]); }

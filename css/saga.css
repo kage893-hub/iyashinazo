@@ -167,6 +167,24 @@
 .saga-panel .sa-guide-actions .btn { font-size: 12px; }
 .saga-panel .sa-property-guide { text-align: center; line-height: 1.8; }
 .saga-panel .sa-property-guide .btn { margin: 5px; }
+.saga-panel .sa-side-memories { padding: 15px; background: #e8edde; border-radius: 10px; font-size: 12px; line-height: 1.9; }
+.saga-panel .sa-visit-card { text-align: center; color: #465e50; font-size: 14px; line-height: 1.9; }
+.saga-panel .sa-visit-kicker { font: 600 10px/1.5 Georgia, serif; letter-spacing: .17em; color: #75856e; margin: 4px 0 14px; }
+.saga-panel .sa-spa-mark { font-size: 58px; line-height: 1.3; color: #a57d50; margin: 18px 0; }
+.saga-panel .sa-visit-lead { font-size: 20px; font-weight: 800; color: #70634e; }
+.saga-panel .sa-visit-quote { font-size: 13px; padding: 13px 8px; border-top: 1px solid #d5d9c7; border-bottom: 1px solid #d5d9c7; color: #637b60; }
+.saga-panel .sa-dish-name { font-size: 24px; font-family: Georgia, 'Noto Serif JP', serif; font-weight: 500; line-height: 1.65; margin: 6px 0 0; }
+.saga-panel .sa-menu-art { max-width: 390px; margin: 0 auto; }
+.saga-panel .sa-menu-art svg { width: 100%; display: block; }
+.saga-panel .sa-dish-caption { font-size: 12px; letter-spacing: .03em; margin: -6px 0 12px; }
+.saga-panel .sa-visit-done { font-size: 12px; color: #4a8775; }
+.saga-panel .sa-visit-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 9px; margin-top: 20px; }
+.saga-panel .sa-visit-actions .btn { min-height: 44px; white-space: normal; }
+@media (max-width: 600px) {
+  .saga-panel .sa-dish-name { font-size: 21px; }
+  .saga-panel .sa-visit-card { font-size: 13px; }
+  .saga-panel .sa-visit-actions .btn { flex: 1 1 210px; }
+}
 @media (max-width: 359px) {
   .panel.saga-panel { padding: 17px 12px; }
   .saga-panel .sa-quantity { grid-template-columns: 31px 1fr 31px; }
