@@ -264,7 +264,8 @@ export class MaouStage {
     // 門の外／中で、なかまの立ち位置が変わる
     const inside = !!f.gateOpen;
     this.bat.root.position.set(...(inside ? [1.2, 0, 2.6] : [-12.4, 0, 0.8]));
-    this.hero.root.position.set(...(inside ? [-1.4, 0, 2.8] : [-15.0, 0, 2.8]));
+    // 駅前の石碑（-14.4, 2.6）から離し、子ドラゴンとも重ならない駅寄りの空地に立つ。
+    this.hero.root.position.set(...(inside ? [-1.4, 0, 2.8] : [-15.0, 0, -1.1]));
     this.dragon.root.position.set(...(inside ? [-2.9, 0, 3.4] : [-12.0, 0, 3.6]));
     R.portcullis.position.y = inside ? 2.6 : 0;
     R.tomato.visible = !f.tomatoGot;
