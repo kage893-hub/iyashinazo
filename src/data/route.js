@@ -15,8 +15,19 @@ export const ROUTE = [
 ].map((s, i) => ({ ...s, no: i + 1 }));
 
 export const routeIndex = (id) => ROUTE.findIndex((s) => s.id === id);
-export const stageNo = (id) => routeIndex(id) + 1;
-export const nextStop = (id) => ROUTE[routeIndex(id) + 1] || null;
+
+// 終点の先は自由に選ぶ「追加の旅」。本編の路線・あいことばには連結しない。
+export const EXTRA_ROUTE = [
+  { id: 'museum', name: '星あかりの博物館', emoji: '🏛️', sub: '夜の展示に、もう一度星を灯す', extra: true },
+];
+export const stageInfo = (id) => ROUTE.find((s) => s.id === id) || EXTRA_ROUTE.find((s) => s.id === id) || null;
+export const isExtraStage = (id) => EXTRA_ROUTE.some((s) => s.id === id);
+export const stageNo = (id) => isExtraStage(id) ? 'EXTRA' : routeIndex(id) + 1;
+export const stageLabel = (id) => isExtraStage(id) ? '追加の旅' : `STAGE ${stageNo(id)}`;
+export const nextStop = (id) => {
+  const i = routeIndex(id);
+  return i >= 0 ? ROUTE[i + 1] || null : null;
+};
 
 /** 入力されたあいことばの駅（カタカナ・空白・全角半角のちがいは気にしない）。無ければ null */
 export function stageByPass(word) {

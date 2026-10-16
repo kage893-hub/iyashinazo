@@ -2,6 +2,11 @@
 const svg = (inner) => `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">${inner}</svg>`;
 
 export const ITEMS = {
+  museumGuide: {
+    name: '夜の観覧手帳',
+    desc: '星あかりの博物館の、小さな紺色の手帳。展示の案内と、集めた4つの印を読み返せる。もう一度押すと開く。',
+    icon: svg(`<path d="M14 8h34a4 4 0 014 4v42H17a6 6 0 01-6-6V12a4 4 0 014-4z" fill="#294d63" stroke="#cba86b" stroke-width="2.5"/><path d="M18 9v42M18 48h32" stroke="#e8d8af" stroke-width="2"/><path d="M34 17l3 7 8 1-6 5 2 8-7-4-7 4 2-8-6-5 8-1z" fill="#efcf85"/><circle cx="25" cy="43" r="1.5" fill="#efcf85"/><circle cx="34" cy="43" r="1.5" fill="#efcf85"/><circle cx="43" cy="43" r="1.5" fill="#efcf85"/>`),
+  },
   marble: {
     name: 'ビー玉',
     desc: '透きとおった青いビー玉。中で小さな光がくるくる回っている。',

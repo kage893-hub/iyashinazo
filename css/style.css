@@ -504,6 +504,53 @@ body.cinematic #camctl { opacity: 0; pointer-events: none; }
 .stage-card.unknown .sc-name { letter-spacing: 0.2em; color: var(--ink-soft); }
 @media (max-width: 520px) { .stage-list { grid-template-columns: repeat(2, 1fr); gap: 8px; } .sc-emoji { font-size: 26px; } .sc-name { font-size: 14px; } .stage-card { padding: 8px; } }
 .stage-list .panel-note { grid-column: 1 / -1; }
+
+/* 本編の終点でひらく、追加の旅の紙の旅券 */
+.extra-entry.unlocked { background: linear-gradient(#fff4c7, #e8cb88); border-color: #af8548; color: #60451d; }
+.extra-panel { max-width: 760px; background: linear-gradient(135deg, #fffaf0, #f6ecd6); }
+.extra-passport { position: relative; display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 16px 24px; border: 1px solid #bda274; outline: 1px solid #bda274; outline-offset: -5px; border-radius: 5px; background: repeating-linear-gradient(0deg, transparent 0 5px, #a5814910 5px 6px); color: #6d5230; }
+.extra-passport::before, .extra-passport::after { content: '✦'; position: absolute; top: 50%; transform: translateY(-50%); color: #ae8246; font-size: 28px; }
+.extra-passport::before { left: 14px; } .extra-passport::after { right: 14px; }
+.extra-passport span { font-size: 9px; font-weight: 900; letter-spacing: .22em; }
+.extra-passport b { font-size: 25px; font-weight: 900; letter-spacing: .12em; }
+.extra-passport i { font-size: 12px; font-style: normal; }
+.extra-intro, .extra-locked { margin: 18px 0; text-align: center; line-height: 1.8; font-size: 14px; }
+.extra-locked { padding: 20px 8px; }
+.extra-locked b { font-size: 18px; }
+.extra-station-list { display: grid; gap: 16px; }
+.extra-station { display: grid; grid-template-columns: 118px minmax(0, 1fr); gap: 0 20px; padding: 18px; border: 2px solid #d4bd91; border-radius: 14px; background: #fffdf5; box-shadow: 0 4px 0 #dbc49b55; }
+.extra-station-art { grid-row: 1 / 3; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 118px; border-radius: 9px; background: radial-gradient(circle at 50% 35%, #655784, #292a4c); border: 1px solid #bda274; font-size: 52px; color: #f6d99e; }
+.extra-station-art span { margin-top: 7px; font-size: 8px; font-weight: 900; letter-spacing: .12em; }
+.extra-station-status { display: inline-block; font-size: 11px; letter-spacing: .12em; font-weight: 900; color: #8a6837; }
+.extra-station.is-cleared .extra-station-status { color: #61864d; }
+.extra-station h3 { margin: 5px 0; font-size: 23px; color: var(--navy); }
+.extra-station-info p { margin: 4px 0 12px; font-size: 13px; color: var(--ink-soft); }
+.extra-station-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.extra-station-actions .btn { min-height: 44px; font-size: 15px; padding: 9px 16px; }
+.extra-station-actions .extra-restart { font-size: 12px; background: transparent; box-shadow: none; border-color: #cdbb9a; }
+.extra-main-return { display: block; margin: 20px auto 0; max-width: 100%; font-size: 13px; }
+.extra-clear-stamp, .extra-unlock-message { border-top: 1px dashed #bd9c66; border-bottom: 1px dashed #bd9c66; padding: 12px 0; margin: 12px 0; color: #8b692f; font-size: 13px; font-weight: 900; line-height: 1.8; }
+@media (max-width: 520px) {
+  .extra-panel { padding: 18px 16px; }
+  .extra-passport { padding: 14px 18px; }
+  .extra-passport b { font-size: 21px; letter-spacing: .06em; }
+  .extra-passport::before, .extra-passport::after { font-size: 18px; }
+  .extra-passport::before { left: 9px; } .extra-passport::after { right: 9px; }
+  .extra-station { grid-template-columns: 66px minmax(0, 1fr); gap: 0 12px; padding: 14px 12px; }
+  .extra-station-art { grid-row: 1; min-height: 86px; font-size: 36px; }
+  .extra-station-art span { font-size: 6px; letter-spacing: 0; }
+  .extra-station h3 { font-size: 19px; }
+  .extra-station-info p { font-size: 12px; line-height: 1.7; }
+  .extra-station-actions { grid-column: 1 / -1; margin-top: 12px; }
+  .extra-station-actions .primary { flex: 1; }
+}
+@media (max-height: 560px) {
+  .extra-passport { padding: 10px 24px; gap: 2px; }
+  .extra-passport b { font-size: 21px; }
+  .extra-intro { margin: 10px 0; }
+  .extra-station { padding: 12px; }
+  .extra-station-art { min-height: 100px; }
+}
 @media (max-width: 520px) {
   .stage-card.cleared::after { top: 4px; right: 4px; font-size: 8px; padding: 1px 4px; }
   .stage-card.cleared .sc-no { margin-top: 10px; }
@@ -634,6 +681,8 @@ body.rpg .clear-panel { background: var(--rpg-bg); }
 body.rpg .clear-main { color: #ffd84a; }
 body.rpg .clear-stats b, body.rpg .clear-msg { color: #ffffff; }
 body.rpg .clear-stats span { color: #c8d0f0; }
+body.rpg .extra-panel { background: linear-gradient(135deg, #fffaf0, #f6ecd6); color: var(--ink); border: 2px solid #bda274; border-radius: 18px; font-family: 'Zen Maru Gothic', sans-serif; }
+body.rpg .extra-panel .panel-title { color: var(--navy); font-weight: 900; }
 .uk-foot { display: flex; flex-direction: column; align-items: center; gap: 8px; }
 .recipe { background: #f4e6c4; color: #3a2414; border: 3px solid #a87a4a; border-radius: 4px; padding: 10px 14px; text-align: left; }
 .rc-head { text-align: center; font-size: 18px; border-bottom: 2px dashed #a87a4a; padding-bottom: 4px; margin-bottom: 8px; }

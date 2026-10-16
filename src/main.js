@@ -1,7 +1,8 @@
 import { Game } from './core/game.js';
 import { el } from './core/ui.js';
-import { STAGES } from './stages/registry.js';
-import { ROUTE, stageByPass } from './data/route.js';
+import { STAGES, ALL_STAGES } from './stages/registry.js';
+import { ROUTE, stageByPass, stageLabel, nextStop, isExtraStage } from './data/route.js';
+import { extrasUnlocked } from './core/save-state.js';
 
 const $ = (s) => document.querySelector(s);
 
@@ -27,24 +28,25 @@ async function main() {
 
   // セーブされているステージの箱庭を作る（無ければ はざま駅）
   let saved0 = game.loadSave();
+  if (saved0) game.state = saved0;
   // クリアした駅のセーブ（出発後）なら、次の駅から再開する
   if (saved0?.flags?.departed && saved0.cleared?.includes(saved0.stage)) {
-    const i = STAGES.findIndex((x) => x.id === saved0.stage);
-    const next = STAGES[i + 1];
-    game.state = saved0;
-    game.resetState(next?.Stage ? next.id : saved0.stage);
-    saved0 = game.loadSave();
+    const next = nextStop(saved0.stage);
+    if (next) {
+      game.resetState(next.id);
+      saved0 = game.loadSave();
+    }
   }
   let autostart = null;
   try { autostart = sessionStorage.getItem('hoshimawari-autostart'); sessionStorage.removeItem('hoshimawari-autostart'); } catch (e) { /* ignore */ }
   // ?stage=onsen のように指定すると、そのステージから始められる（動作確認用）
   const jump = new URLSearchParams(location.search).get('stage');
-  if (jump && STAGES.some((x) => x.id === jump && x.Stage) && saved0?.stage !== jump) {
+  if (!autostart && jump && ALL_STAGES.some((x) => x.id === jump && x.Stage) && saved0?.stage !== jump) {
     game.resetState(jump);
     saved0 = game.loadSave();
   }
   const stageId = autostart || saved0?.stage || 'station';
-  const entry = STAGES.find((x) => x.id === stageId && x.Stage) || STAGES[0];
+  const entry = ALL_STAGES.find((x) => x.id === stageId && x.Stage) || STAGES[0];
   if (saved0) game.state = saved0;
   if (game.state.stage !== entry.id) game.resetState(entry.id);
   await game.loadStage(entry.Stage);
@@ -52,9 +54,15 @@ async function main() {
 
   // タイトル画面：箱庭をゆっくり回す
   const c = game.controls;
-  if (innerWidth < innerHeight) game.camera.position.set(34, 30, 52);
-  else game.camera.position.set(24, 20, 36);
-  c.target.set(0, 0.5, 0);
+  const titleView = entry.extra && game.stage.homeView?.(innerWidth < innerHeight);
+  if (titleView) {
+    game.camera.position.copy(titleView[0]);
+    c.target.copy(titleView[1]);
+  } else {
+    if (innerWidth < innerHeight) game.camera.position.set(34, 30, 52);
+    else game.camera.position.set(24, 20, 36);
+    c.target.set(0, 0.5, 0);
+  }
   c.autoRotate = true;
   c.autoRotateSpeed = 0.35;
   game.playing = false;
@@ -69,11 +77,17 @@ async function main() {
   const cleared = game.loadSave()?.cleared || [];
   if (cleared.length) {
     const badge = title.querySelector('.title-badge');
-    badge.textContent = '★ ' + STAGES.filter((x) => cleared.includes(x.id)).map((x) => x.name).join('・') + ' クリア';
+    badge.textContent = extrasUnlocked(game.state)
+      ? `★ 本編クリア${cleared.some(isExtraStage) ? ' ＋ 追加の旅' : ''}`
+      : '★ ' + STAGES.filter((x) => cleared.includes(x.id)).map((x) => x.name).join('・') + ' クリア';
     badge.classList.remove('hidden');
   }
   // いまの箱庭のステージ名
-  title.querySelector('.title-stage').textContent = `STAGE ${entry.no}　${entry.name}`;
+  title.querySelector('.title-stage').textContent = `${stageLabel(entry.id)}　${entry.name}`;
+  const extraBtn = title.querySelector('[data-act="extras"]');
+  extraBtn.textContent = extrasUnlocked(game.state) ? '✦ 追加の旅を選ぶ' : '🔒 追加の旅';
+  extraBtn.classList.toggle('unlocked', extrasUnlocked(game.state));
+  extraBtn.onclick = () => { game.audio.init(); game.audio.play('click'); game.openExtraJourneys(); };
 
   const enterGame = () => {
     game.audio.init();
@@ -94,12 +108,28 @@ async function main() {
     game.stage.opening();
   };
 
+  const resumeStage = async () => {
+    const saved = game.loadSave();
+    if (!saved) return;
+    game.state = saved;
+    game.stage.applyState(true);
+    await game.ui.fade(1, 0.5);
+    enterGame();
+    if (!game.flags.introDone) {
+      game.stage.opening();
+      return;
+    }
+    game.cameraHome();
+    await game.ui.fade(0, 0.8);
+    game.ui.toast('つづきから再開しました', 2000);
+  };
+
   title.querySelector('[data-act="new"]').onclick = async () => {
     game.audio.init();
     game.audio.play('click');
     if (entry.id !== 'station') {
       // いまの駅を最初からか、はざま駅からかを選ぶ
-      const note = game.hasSave() ? '<br><small>（いまの進行は消えます）</small>' : '';
+      const note = game.hasSave() ? '<br><small>（選んだ旅の進行を最初からにします）</small>' : '';
       const i = await game.ui.choose(`どこからはじめますか？${note}`, [`「${entry.name}」を最初から`, 'はざま駅（STAGE 1）から', 'やめる']);
       if (i === 0) startStage();
       else if (i === 1) game.goToStage('station');
@@ -117,7 +147,7 @@ async function main() {
   if (autostart) {
     title.classList.add('hidden');
     const gate = el('div', 'depart-gate', `
-      <div class="dg-sub">STAGE ${entry.no}</div>
+      <div class="dg-sub">${stageLabel(entry.id)}</div>
       <div class="dg-main">${entry.name}</div>
       <button class="btn primary">▶ 出発する</button>`);
     document.body.appendChild(gate);
@@ -126,25 +156,14 @@ async function main() {
       game.audio.init();
       game.audio.play('click');
       gate.remove();
-      startStage();
+      resumeStage();
     };
   }
 
   contBtn.onclick = async () => {
     game.audio.init();
     game.audio.play('click');
-    const s = game.loadSave();
-    if (!s) return;
-    game.state = s;
-    game.stage.applyState(true);
-    await game.ui.fade(1, 0.5);
-    const portrait = innerWidth < innerHeight;
-    // スマホ縦は真上寄りから見下ろして、箱庭を画面いっぱいに
-    if (portrait) { game.camera.position.set(10, 37, 29); c.target.set(0, 0.5, 0); }
-    else { game.camera.position.set(10, 16, 26); c.target.set(-1, 1, -0.5); }
-    enterGame();
-    await game.ui.fade(0, 0.8);
-    game.ui.toast('つづきから再開しました', 2000);
+    resumeStage();
   };
 
   // 路線図：通った駅と次の駅だけ見える（まだ見ぬ駅は「？？？」）
@@ -260,11 +279,12 @@ async function main() {
     let panel;
     mk('あそびかた', () => { panel.close(); showHowTo(game); });
     mk('カメラを全体にもどす', () => { panel.close(); game.cameraHome(); });
+    mk(extrasUnlocked(game.state) ? '✦ 追加の旅を選ぶ' : '🔒 追加の旅', () => { panel.close(); game.openExtraJourneys(); });
     mk('タイトルにもどる', () => { game.save(); location.reload(); });
     mk('この駅を最初からやりなおす', async () => {
       panel.close();
       const i = await game.ui.choose('この駅の進行状況を消して、最初からやりなおしますか？', ['やりなおす', 'やめる']);
-      if (i === 0) { game.resetState(game.state.stage); location.reload(); }
+      if (i === 0) game.goToStage(game.state.stage);
     }, 'danger');
     const pass = ROUTE.find((x) => x.id === game.state.stage)?.pass;
     if (pass) body.appendChild(el('p', 'panel-note', `この駅のあいことば：<b class="pass-word">${pass}</b><br><small>タイトルの「あいことば」で、ほかの端末でも来られます。</small>`));

@@ -1,0 +1,167 @@
+/* 星あかりの博物館：紙・真鍮・夜の青。ほかの駅のパネルには適用しない。 */
+body.museum .banner-main { font-size: clamp(26px, 6.8vw, 66px); letter-spacing: .12em; }
+.museum-scope-view { max-width: 360px; margin: auto; }
+.museum-scope-view svg { display: block; width: 100%; height: auto; }
+.museum-scope-tabs { display: flex; justify-content: center; gap: 10px; }
+.museum-scope-caption { color: #405959; text-align: center; font-size: 14px; line-height: 1.8; }
+.panel.museum-panel {
+  --mu-ink: #354b47;
+  --mu-muted: #64716a;
+  --mu-brass: #a87532;
+  --mu-line: #c6b58c;
+  max-width: 620px;
+  padding: 22px 26px 24px;
+  color: var(--mu-ink);
+  background: radial-gradient(ellipse at top, #fffdf1 0, #f4edda 75%);
+  border: 2px solid #ab8b56;
+  border-radius: 16px;
+  box-shadow: 0 0 0 4px #e8dab4, 0 0 0 5px #746343, 0 24px 70px #121d2d99;
+  max-height: calc(100dvh - 32px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-color: #aa9160 #e9dfc7;
+}
+.panel.museum-panel-wide { max-width: 680px; }
+.museum-panel .panel-title { margin: 0 18px 10px; color: #354b47; letter-spacing: .07em; font-size: 21px; line-height: 1.5; }
+.museum-panel .panel-close { color: #626b59; }
+.museum-puzzle { font-size: 14px; line-height: 1.7; }
+.museum-puzzle * { box-sizing: border-box; }
+.mu-kicker { display: flex; justify-content: space-between; gap: 8px; color: #7c6a47; font-size: 10px; font-weight: 700; letter-spacing: .13em; border-top: 1px solid #c6b58c; padding-top: 8px; }
+.mu-intro { margin: 10px 0 14px; text-align: center; }
+.mu-workspace { min-width: 0; }
+.mu-actions { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 9px; margin: 16px 0 12px; }
+.museum-panel .btn { min-height: 43px; padding: 9px 12px; border: 1px solid #a18b60; border-radius: 7px; background: linear-gradient(#fffaf0, #eae0c7); color: #3c514c; font-size: 13px; line-height: 1.4; box-shadow: 0 2px 0 #b1a07c; }
+.museum-panel .btn.primary { color: #fff9e9; background: linear-gradient(#526f69, #344f4c); border-color: #2d4844; box-shadow: 0 2px 0 #273e38; text-shadow: none; }
+.museum-panel button:focus-visible, .mu-reference summary:focus-visible { outline: 3px solid #396e8b; outline-offset: 3px; }
+.museum-panel button:disabled { opacity: .45; }
+.mu-reference { margin: 10px 0 0; padding: 9px 12px; border: 1px solid #c9bb96; border-radius: 8px; background: #fffaf066; }
+.mu-reference summary { cursor: pointer; font-weight: 700; font-size: 13px; color: #52634f; min-height: 26px; }
+.museum-clue { color: #354b47; line-height: 1.85; font-size: 14px; overflow-wrap: anywhere; }
+.museum-clue h3 { margin: 6px 0 10px; font-size: 16px; font-weight: 800; letter-spacing: .04em; }
+.museum-clue p { margin: 8px 0; }
+.museum-clue ul { padding-left: 1.35em; margin: 8px 0; }
+.museum-clue li + li { margin-top: 5px; }
+.museum-clue b { color: #784f20; }
+.mu-message { margin: 12px 0 0; min-height: 2.8em; border-top: 1px solid #d6c9a9; padding-top: 10px; color: #596756; font-size: 13px; text-align: center; overflow-wrap: anywhere; }
+.mu-strata-guide { display: flex; gap: 12px; align-items: center; }
+.mu-strata-guide svg { width: 145px; flex: 0 0 145px; height: auto; font: 11px sans-serif; }
+.mu-strata-guide p { margin: 0; }
+.mu-fossil-strata { border: 1px solid #b6a17a; border-radius: 10px; padding: 9px; background: repeating-linear-gradient(0deg, #d2c39d 0, #d2c39d 38px, #c2b08b 39px, #c2b08b 78px); box-shadow: inset 0 2px 5px #70624922; }
+.mu-fossil-row { display: grid; grid-template-columns: 66px 1fr; align-items: center; gap: 7px; }
+.mu-fossil-row + .mu-fossil-row { margin-top: 6px; }
+.mu-layer-age { color: #554c36; font-size: 12px; text-align: center; font-weight: 700; }
+.mu-fossil-tile { display: flex; align-items: center; justify-content: flex-start; gap: 16px; width: 100%; min-height: 54px; border: 1px solid #9e8d68; border-radius: 6px; padding: 6px 14px; background: #fff8e7; box-shadow: 0 2px 0 #98886c; color: #66533b; cursor: pointer; }
+.mu-fossil-tile > span { font-size: 17px; font-weight: 700; }
+.mu-fossil-tile small { margin-left: auto; color: #736950; font-size: 11px; }
+.mu-fossil-tile.selected { outline: 3px solid #486e79; outline-offset: -3px; background: #e6eff0; }
+.mu-reflection-guide { display: block; width: 100%; max-width: 360px; margin: 0 auto; }
+.mu-light-board { max-width: 360px; margin: 0 auto; }
+.mu-light-exit { height: 37px; display: flex; align-items: center; gap: 5px; margin-left: 20%; width: 100px; color: #866022; font-size: 12px; font-weight: 700; }
+.mu-light-grid { position: relative; width: 100%; aspect-ratio: 1; border: 3px solid #8e7955; border-radius: 7px; background: radial-gradient(ellipse at center, #2d4d5a, #1a323e); box-shadow: inset 0 0 20px #101f2e99, 0 4px 0 #c5b282; }
+.mu-light-svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: hidden; border-radius: 4px; }
+.mu-light-lines { fill: none; stroke: #d8e6d62a; stroke-width: 1; }
+.mu-light-path { fill: none; stroke: #ffd875; stroke-width: 5; stroke-linejoin: round; stroke-linecap: round; filter: drop-shadow(0 0 4px #ffde9488); }
+.mu-source-arrow { fill: none; stroke: #fff2c2; stroke-width: 3; }
+.mu-mirror { display: flex; align-items: center; justify-content: center; position: absolute; transform: translate(-50%, -50%); width: 45px; height: 45px; border: 1px solid #9db8ba; border-radius: 8px; background: #1f3b48; color: #caedf1; box-shadow: 0 2px 3px #0d253c66; cursor: pointer; }
+.mu-mirror > span { font: 32px/1 sans-serif; }
+.mu-mirror small { position: absolute; right: 2px; bottom: 0; width: 12px; font: 9px/12px sans-serif; background: #1f3b48; color: #e2efec; border-radius: 3px; }
+.mu-mirror.lit { border: 2px solid #f5d789; }
+.mu-light-caption { display: flex; justify-content: space-between; gap: 8px; margin-top: 10px; font-size: 12px; }
+.mu-light-board.connected .mu-light-exit { color: #346c50; }
+.mu-light-board.connected .mu-light-path { stroke: #fff2a8; }
+.mu-book-key { display: flex; flex-direction: column; gap: 6px; padding: 9px 12px; background: #e6ddc6; border-radius: 7px; }
+.mu-book-key span { display: flex; align-items: center; gap: 9px; }
+.mu-archive-map { position: relative; width: 100%; max-width: 500px; aspect-ratio: 4 / 3; margin: 10px auto 0; border: 1px solid #c7b990; border-radius: 10px; background: repeating-linear-gradient(0deg, #fff8e833 0, #fff8e833 19px, #bdab7c22 20px), #ece4d0; }
+.mu-archive-map > svg { display: block; width: 100%; height: 100%; }
+.mu-map-passages { fill: none; stroke: #af9d75; stroke-width: 9; stroke-linecap: round; }
+.mu-map-passages .stairs { stroke: #aa9290; stroke-width: 5; stroke-dasharray: 3 6; }
+.mu-archive-route { fill: none; stroke: #4a716c; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+.mu-stair-labels { fill: #805e55; font: 12px sans-serif; }
+.mu-map-node { position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; min-width: 58px; min-height: 43px; transform: translate(-50%, -50%); padding: 4px 7px; color: #514e3b; background: #fbf7e9; border: 1px solid #a89569; border-radius: 7px; box-shadow: 0 2px 0 #bdab86; font-family: inherit; font-size: 12px; line-height: 1.35; cursor: pointer; }
+.mu-map-node.shelf { min-width: 61px; }
+.mu-map-node.reachable { border: 2px solid #66837a; }
+.mu-map-node.here { color: #fffaf0; background: #3a615a; border-color: #223f3a; box-shadow: 0 0 0 3px #e5c77b; }
+.mu-map-node.visited:not(.here)::after { content: '✓'; position: absolute; right: -6px; top: -9px; border-radius: 50%; background: #3e7161; color: white; width: 18px; height: 18px; font: bold 12px/18px sans-serif; }
+.mu-archive-status { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 10px 0; padding: 7px 12px; border-bottom: 1px solid #c9b88f; color: #496450; font-size: 13px; }
+.mu-route-history { font-size: 12px; line-height: 1.8; color: #665d45; padding: 5px 9px; max-height: 72px; overflow: auto; background: #e3dac133; border-radius: 5px; }
+.mu-vessels { max-width: 390px; margin: 0 auto; }
+.mu-vessels > svg { display: block; width: 100%; height: auto; overflow: visible; }
+.mu-vessel-outline { fill: #e8ead8; stroke: #5a746c; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.mu-water-a, .mu-water-b { fill: #8bc7d0; fill-opacity: .86; }
+.mu-volume-tick { fill: none; stroke: #385f64; stroke-width: 1.5; }
+.mu-volume-label { fill: #34595b; font: 11px sans-serif; }
+.mu-vessel-name { fill: #496153; font: bold 15px sans-serif; }
+.mu-water-readings { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; text-align: center; padding: 0 7%; margin: 5px 0 16px; font-size: 23px; font-variant-numeric: tabular-nums; color: #345e60; }
+.mu-water-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.mu-orrery-compass { max-width: 320px; margin: 0 auto 8px; }
+.mu-orrery-compass svg { width: 100%; height: auto; display: block; overflow: visible; }
+.mu-compass-edge { fill: #e8dfc4; stroke: #ab8a4f; stroke-width: 2; }
+.mu-orbit { fill: none; opacity: .55; stroke-width: 1.5; }
+.mu-compass-tick { stroke: #86734c; stroke-width: 2; }
+.mu-compass-label { fill: #4c5f51; font: bold 14px sans-serif; }
+.mu-compass-hub { fill: #3b5852; stroke: #b4995c; stroke-width: 2; }
+.mu-orrery-controls { display: flex; flex-direction: column; gap: 9px; }
+.mu-ring-control { display: grid; grid-template-columns: 38px 1fr auto; align-items: center; gap: 10px; border: 1px solid #cabb95; border-radius: 9px; padding: 10px; background: #fffaf099; }
+.mu-ring-icon { color: var(--seal-color); line-height: 0; }
+.mu-ring-icon svg { width: 36px; height: 36px; }
+.mu-ring-info b { font-size: 13px; }
+.mu-ring-info p { margin: 3px 0 0; font-size: 12px; line-height: 1.6; }
+.mu-ring-dial { display: flex; align-items: center; gap: 7px; }
+.mu-ring-dial .btn { min-width: 40px; min-height: 42px; padding: 5px 8px; font-size: 20px; }
+.mu-ring-dial output { display: flex; flex-direction: column; text-align: center; min-width: 60px; line-height: 1.4; }
+.mu-ring-dial output b { font-size: 17px; color: #3e5c53; }
+.mu-ring-dial output small { font-size: 10px; color: #726b55; }
+.mu-ring-control.locked { opacity: .65; }
+.museum-guide { color: #354b47; line-height: 1.8; font-size: 14px; }
+.museum-guide > p { margin: 7px 0 14px; }
+.museum-guide-map { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 12px 0 18px; padding: 11px; background: #e8e1cc; border: 1px solid #b8a77d; border-radius: 10px; }
+.museum-guide-map > span { display: flex; align-items: center; justify-content: center; min-height: 47px; padding: 7px; background: #fff9e7; color: #50634e; border: 1px solid #c4b28b; border-radius: 6px; text-align: center; font-size: 13px; font-weight: 700; }
+.museum-guide-entry { padding: 12px 0; border-top: 1px solid #cfc2a0; }
+.museum-guide-entry > b { display: flex; align-items: center; gap: 9px; color: #486054; font-size: 15px; }
+.museum-guide-entry > b svg { width: 30px; height: 30px; flex: 0 0 30px; }
+.museum-guide-entry > p { margin: 6px 0 9px; }
+.museum-guide-entry.stamped > b::after { content: 'しるし入手'; margin-left: auto; flex: 0 0 auto; border: 1px solid #78917c; border-radius: 4px; padding: 2px 5px; color: #45684d; font-size: 10px; font-weight: 500; }
+.museum-guide-entry details { padding: 7px 10px; border: 1px solid #cbbd98; border-radius: 7px; background: #fffaf077; }
+.museum-guide-entry summary { color: #54654f; cursor: pointer; font-size: 13px; font-weight: 700; }
+.museum-note { color: #635f48; background: #eee5ca; padding: 10px 12px; border-left: 3px solid #aa8f55; border-radius: 0 6px 6px 0; line-height: 1.85; font-size: 13px; }
+@media (max-width: 600px) {
+  .panel.museum-panel { padding: 18px 16px 20px; border-radius: 13px; }
+  .museum-panel .panel-title { font-size: 18px; margin: 0 16px 9px; letter-spacing: .025em; }
+  .mu-intro { font-size: 13px; margin: 9px 0 12px; }
+  .mu-kicker { font-size: 9px; letter-spacing: .08em; }
+  .mu-fossil-row { grid-template-columns: 57px 1fr; gap: 5px; }
+  .mu-fossil-tile { gap: 10px; padding: 5px 9px; }
+  .mu-fossil-tile > span { font-size: 16px; }
+  .mu-fossil-tile small { font-size: 10px; }
+  .mu-layer-age { font-size: 11px; }
+  .mu-strata-guide { flex-direction: column; gap: 6px; }
+  .mu-strata-guide svg { flex-basis: auto; width: 170px; }
+  .mu-actions .btn { flex: 1 1 130px; }
+  .mu-reference { padding: 8px 10px; }
+  .museum-clue { font-size: 13px; }
+  .mu-ring-control { grid-template-columns: 34px 1fr; gap: 8px; padding: 9px; }
+  .mu-ring-dial { grid-column: 1 / -1; justify-content: center; }
+  .mu-ring-dial output { min-width: 90px; }
+  .mu-ring-dial .btn { min-width: 55px; }
+  .mu-water-controls .btn { padding: 9px 6px; font-size: 12px; }
+  .museum-guide { font-size: 13px; }
+  .museum-guide-map { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; padding: 9px; }
+  .museum-guide-map > span { font-size: 12px; min-height: 44px; }
+}
+@media (max-height: 580px) and (min-width: 601px) {
+  .panel.museum-panel { padding: 16px 22px; }
+  .mu-intro { margin: 7px 0 10px; }
+  .mu-light-board { max-width: 275px; }
+  .mu-archive-map { max-width: 390px; }
+  .mu-orrery-compass { max-width: 245px; }
+  .mu-vessels { max-width: 300px; }
+}
+@media (max-width: 359px) {
+  .panel.museum-panel { padding: 16px 12px; }
+  .mu-fossil-tile { gap: 7px; }
+  .mu-fossil-tile svg { width: 29px; }
+  .mu-fossil-tile small { font-size: 9px; }
+  .mu-map-node { min-width: 53px; font-size: 11px; padding: 4px 5px; }
+  .mu-map-node.shelf { min-width: 55px; }
+  .mu-mirror { width: 42px; height: 42px; }
+}

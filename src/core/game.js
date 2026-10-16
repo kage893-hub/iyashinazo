@@ -12,8 +12,7 @@ import { AudioSys } from './audio.js';
 import { ITEMS } from '../data/items.js';
 import { clamp } from '../lib/util.js';
 import { liveTime } from '../lib/livefx.js';
-
-const SAVE_KEY = 'hoshimawari-save-v1';
+import { SAVE_KEY, freshState, normalizeSave, rememberState, switchJourney } from './save-state.js';
 
 /**
  * ゲーム本体：描画・カメラ・入力・状態・アイテム・会話をまとめる。
@@ -44,7 +43,7 @@ export class Game {
   }
 
   _freshState(stage = 'station') {
-    return { stage, flags: {}, inventory: [], counts: {}, elapsed: 0, hints: 0, cleared: [] };
+    return freshState(stage);
   }
 
   // =========================================================
@@ -606,13 +605,16 @@ export class Game {
   // セーブ／ロード
   // =========================================================
   save() {
+    const saved = rememberState(this.state, this.loadSave());
+    // ステージが参照している flags などのオブジェクトを差し替えない。
+    this.state.cleared = saved.cleared;
+    this.state.journeys = saved.journeys;
     try { localStorage.setItem(SAVE_KEY, JSON.stringify(this.state)); } catch (e) { /* ignore */ }
   }
 
   loadSave() {
     try {
-      const s = JSON.parse(localStorage.getItem(SAVE_KEY));
-      if (s && s.flags) return s;
+      return normalizeSave(JSON.parse(localStorage.getItem(SAVE_KEY)));
     } catch (e) { /* ignore */ }
     return null;
   }
@@ -688,20 +690,25 @@ export class Game {
 
   /** 進行をリセット（クリア済みの記録は残す） */
   resetState(stage = 'station') {
-    const cleared = this.loadSave()?.cleared || this.state.cleared || [];
-    this.state = this._freshState(stage);
-    this.state.cleared = cleared;
+    this.state = switchJourney(rememberState(this.state, this.loadSave()), stage, { restart: true });
     this.save();
   }
 
   /** 次のステージへ（ページを読み直して箱庭を作りなおす） */
-  goToStage(stage, { autostart = true } = {}) {
-    const cleared = [...new Set([...(this.state.cleared || []), ...(this.loadSave()?.cleared || [])])];
-    this.state = this._freshState(stage);
-    this.state.cleared = cleared;
+  goToStage(stage, { autostart = true, resume = false } = {}) {
+    this.state = switchJourney(rememberState(this.state, this.loadSave()), stage, { restart: !resume });
     this.save();
     try { if (autostart) sessionStorage.setItem('hoshimawari-autostart', stage); } catch (e) { /* ignore */ }
+    // 動作確認用の ?stage を次の移動に持ち越さない。
+    const url = new URL(location.href);
+    url.searchParams.delete('stage');
+    history.replaceState(null, '', url);
     location.reload();
+  }
+
+  async openExtraJourneys() {
+    const { showExtraJourneys } = await import('./extra-journeys.js');
+    return showExtraJourneys(this);
   }
 
   // =========================================================

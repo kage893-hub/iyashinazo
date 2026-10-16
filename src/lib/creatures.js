@@ -53,7 +53,7 @@ export class Creature {
       let s = 1;
       if (this.blinkT < 0.12) s = Math.abs(this.blinkT - 0.06) / 0.06;
       if (this.blinkT < 0) this.blinkT = 2 + Math.random() * 3.5;
-      for (const e of this.eyes) e.scale.y = Math.max(0.08, s);
+      for (const e of this.eyes) e.scale.y = Math.min(1, Math.max(0.08, s));
     }
     // おしゃべり・ジャンプ
     let y = 0;

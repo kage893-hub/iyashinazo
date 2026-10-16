@@ -9,7 +9,8 @@ Codex・Claude Code など、このリポジトリで作業するエージェン
 - three.js（r169・`vendor/` に同梱）で作った、ビルド不要の箱庭謎解きゲーム。
 - 路線（`src/data/route.js`）：1 station はざま駅 → 2 sky 天空の街 → 3 edo 江戸の宿場町 → 4 port 潮の港町 →
   5 hero 勇者の城下町 → 6 maou 魔王城 → 7 onsen 寂れた温泉街 → 8 kinoko 巨大キノコの森 →
-  9 toy からくりおもちゃの街 → 10 japan 現代日本（終点）。**全 10 ステージ実装ずみ**。
+  9 toy からくりおもちゃの街 → 10 japan 現代日本（終点）。**本編10＋追加1ステージ実装ずみ**。
+- 本編クリア後は、追加の旅 `museum`「星あかりの博物館」を自由に選べる。60×44の島、5種類の謎。追加は `EXTRA_ROUTE` / `EXTRA_STAGES` に登録し、本編 `ROUTE` の終点は変えない。
 - 1 ステージ 15〜20 分の想定。箱庭の大きさは標準。ただし hero と toy は 1.5 倍、japan は 2 倍。
 - japan は「江戸の宿場町の二百年後」。江戸の区画（座標）を残し、まわりに東京らしさを足している。
   持ち物の「むかし目」（koBell）を使うと江戸の箱庭が半透明で重なる。
@@ -24,7 +25,8 @@ npm run serve            # = python3 -m http.server 8123（リポジトリ直下
 #   ?low           … 軽量モード（重い端末向けの簡略化。テスト時も使う）
 ```
 
-- セーブは localStorage の `hoshimawari-save-v1`（`{stage, flags, inventory, counts, elapsed, hints, cleared}`）。
+- セーブは localStorage の `hoshimawari-save-v1`（`{stage, flags, inventory, counts, elapsed, hints, cleared, journeys}`）。旧形式を後方互換で読み込み、`journeys.main` と `journeys.extras[id]` に各旅の進行を保存する。`Game.save()` では使用中の flags の参照を差し替えない。
+- `cleared` に `japan` があれば追加の旅を解放（旧セーブも尊重）。`g.goToStage(id, {resume:true})` で続きから、既定は最初から。`g.openExtraJourneys()` がタイトル・メニュー・クリア画面共通の入口。
 - デバッグ用に `window.__game`（Game）が見える。`__game.stage` が今のステージ。
 - ステージ切り替えはページの読み直し。
 
@@ -85,6 +87,10 @@ npm install              # 初回だけ（playwright。ブラウザ本体は入�
 npm run check            # 全 JS の構文チェック + アイテム id の重複チェック
 npm run serve &          # 8123 番で配信しておく
 node tools/regressions.mjs # 時間計測・パネル操作・低い画面の回帰確認（CHROMIUM も指定可）
+node tools/save-regressions.mjs # ブラウザ不要：旧セーブ・旅の往復・再開・やり直し
+node tools/museum-logic-regressions.mjs # ブラウザ不要：地層の一意性・光路・配送・水量
+node tools/extra-regressions.mjs # 選択画面と実Gameの保存・導入・復帰（箱庭だけ仮の駅）
+node tools/museum-regressions.mjs # 5つの謎の正誤・途中再開・縦横画面
 
 # カメラ位置ごとのスクリーンショット → shots/name0.png …
 ST=kinoko node tools/shot.mjs '{"introDone":true}' '[[[0,16,26],[0,0.5,0]]]' name
@@ -99,6 +105,7 @@ ST=japan FLAGS='{"introDone":true}' node tools/flow.mjs "$(cat tools/examples/ja
   `/opt/pw-browsers/chromium-1194/chrome-linux/chrome`。`npx playwright install chromium` で入れてもよい）。
 - WebGL は swiftshader で描くので遅い（1 ステージの読み込みに数十秒）。
 - 撮った画像は必ず目で見て確認する（`shots/` は .gitignore 済み）。
+- ブラウザ確認は1個ずつ実行する。`?stage=museum` で本編未クリアでも追加の箱庭を個別に検証できる。
 - サーバーが止まることがあるので、つながらないときは起動し直す。
 
 ## 6. ユーザーの方針（必ず守る）

@@ -181,6 +181,19 @@ function silentWav() {
   return 'data:audio/wav;base64,' + btoa(bin);
 }
 
+// 星あかりの博物館：ゆっくり上がる星の音形と、余白の多い夜のワルツ。
+const MUSEUM_MELODY = [
+  [0, 74, 1.5], [1.5, 78, 0.5], [2, 81, 1], [3, 85, 0.75],
+  [4, 83, 1.5], [5.5, 81, 0.5], [6, 78, 1.5],
+  [8, 76, 1], [9, 79, 1], [10, 83, 1.5], [11.5, 81, 0.5],
+  [12, 78, 2.5], [15, 76, 0.5],
+  [16, 74, 1.5], [17.5, 78, 0.5], [18, 81, 1], [19, 86, 0.75],
+  [20, 85, 1], [21, 83, 0.5], [21.5, 81, 0.5], [22, 78, 1.5],
+  [24, 79, 1.5], [25.5, 78, 0.5], [26, 76, 1], [27, 73, 0.75],
+  [28, 74, 3],
+];
+const MUSEUM_CHORDS = [[50, 57, 61], [54, 61, 66], [55, 62, 66], [50, 57, 62], [47, 54, 62], [55, 59, 66], [57, 61, 64], [50, 57, 62]];
+
 export const SONGS = {
   station: { melody: MELODY, chords: CHORDS, tempo: 74 },
   sky: { melody: SKY_MELODY, chords: SKY_CHORDS, tempo: 88 },
@@ -192,6 +205,7 @@ export const SONGS = {
   kinoko: { melody: KINOKO_MELODY, chords: KINOKO_CHORDS, tempo: 84 },
   toy: { melody: TOY_MELODY, chords: TOY_CHORDS, tempo: 90 },
   japan: { melody: JAPAN_MELODY, chords: JAPAN_CHORDS, tempo: 78 },
+  museum: { melody: MUSEUM_MELODY, chords: MUSEUM_CHORDS, tempo: 66 },
 };
 
 export class AudioSys {

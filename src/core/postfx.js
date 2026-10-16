@@ -116,6 +116,8 @@ export const GRADES = {
   japan: { lift: [0.0, 0.01, 0.05], gain: [0.98, 0.96, 1.0], sat: 0.9, contrast: 1.04, warmth: 0.0, vignette: 0.48 },
   japanNight: { lift: [0.0, 0.006, 0.04], gain: [1.08, 1.0, 0.96], sat: 1.15, contrast: 1.08, warmth: 0.01, vignette: 0.42 },
   japanEdo: { lift: [0.04, 0.025, 0.0], gain: [1.08, 0.98, 0.82], sat: 0.55, contrast: 1.02, warmth: 0.05, vignette: 0.55 },
+  museum: { lift: [0.0, 0.014, 0.03], gain: [0.98, 1.04, 1.04], sat: 0.96, contrast: 1.04, warmth: -0.005, vignette: 0.34 },
+  museumOpen: { lift: [0.01, 0.018, 0.028], gain: [1.08, 1.05, 0.98], sat: 1.1, contrast: 1.05, warmth: 0.018, vignette: 0.3 },
   portFog: { lift: [0.035, 0.04, 0.05], gain: [0.98, 1.0, 1.02], sat: 0.88, contrast: 0.93, warmth: 0.0, vignette: 0.3 },
   port: { lift: [0.0, 0.006, 0.025], gain: [0.99, 1.01, 1.04], sat: 1.12, contrast: 1.05, warmth: -0.005, vignette: 0.28 },
 };
