@@ -26,3 +26,40 @@ export function bistroMenuPanel(ui, { tasted, onTaste, onTalk, onView }) {
   body.innerHTML = `<div class="sa-visit-kicker">BISTRO · 翠の泡</div><h3 class="sa-dish-name">畑のサラダと、<br>苦い泡のドレッシング</h3><div class="sa-menu-art">${salad}</div><p class="sa-dish-caption">みずみずしい葉。ふわりと消える、小さな泡。</p><p>口に入れると香りがほどけて、<br>あとから、ほろ苦さが残る。</p><p class="sa-visit-quote">「苦さも、ちゃんとおいしくなるんです。」</p>${tasted ? '<p class="sa-visit-done">✓ 旅のメモに、この一皿の味が残っている。</p>' : ''}`;
   return visitPanel(ui, 'ビストロ 翠の泡', body, [[tasted ? 'もう一度、味わう' : '苦い泡のサラダを味わう', onTaste, true], ['キツネに料理の話を聞く', onTalk], ['テラスを眺める', onView]]);
 }
+
+export function cityVisitPanel(ui, id, { recorded, onExperience, onView }) {
+  const data = {
+    roundone: ['ラウンドワンスタジアム 佐賀店', '🎳', '空に伸びる、大きなピン。', '黒と橙の外壁を見上げると、屋上の防球網が空に細い線を描いている。', 'ミニボウリングで遊ぶ'],
+    ide: ['井手ちゃんぽん 大和店', '🍜', '赤い入口と、野菜の山。', '横長の看板の先には、ちゃんぽんの大きな丼。まち歩きの途中に、おなかもひと休み。', 'ちゃんぽんを味わう'],
+    tadakane: ['忠兼総本社', '🫙', '黄色いひさしの、ものづくりの街角。', '木枠の戸と小さな窓。窓辺に並ぶ容器を眺めると、この街のもうひとつの表情が見えてくる。', '窓辺の容器を眺める'],
+  }[id];
+  const body = el('div', 'sa-visit-card');
+  body.innerHTML = `<div class="sa-visit-kicker">佐賀・まちの寄り道</div><div class="sa-spa-mark" aria-hidden="true">${data[1]}</div><h3>${data[2]}</h3><p>${data[3]}</p>${recorded ? '<p class="sa-visit-done">✓ 旅のメモに、この寄り道が残っている。</p>' : ''}`;
+  return visitPanel(ui, data[0], body, [[data[4], onExperience, true], ['外観を眺める', onView]]);
+}
+
+export function bowlingPanel(ui, { best = 0, onResult }) {
+  const body=el('div','sa-bowling');
+  const pins=Array.from({length:10},(_,i)=>{const row=Math.floor((Math.sqrt(8*i+1)-1)/2),col=i-row*(row+1)/2;return `<g class="sa-pin" data-pin="${i}" transform="translate(${160+(col-row/2)*21} ${89-row*17})"><path d="M-3 0q-4-6-2-9q1-2 2-4v-5q-3-5 0-8q3-2 6 0q3 3 0 8v5q1 2 2 4q2 3-2 9z" fill="#f9f7df" stroke="#52695e"/><path d="M-3-17h6m-6 3h6" stroke="#b95749" stroke-width="2"/></g>`;}).join('');
+  body.innerHTML=`<p class="panel-note">狙う位置を選んで、ゆっくり一投。<br>旅の途中の、小さなボウリング。</p><svg viewBox="0 0 320 280" role="img" aria-label="十本のピンとボウリングのレーン"><path d="M98 13h124l58 254H40z" fill="#c8ab78" stroke="#8c825f" stroke-width="3"/>${Array.from({length:7},(_,i)=>`<path d="M${106+i*18} 15L${58+i*34} 266" stroke="#a89569" fill="none"/>`).join('')}${pins}<path id="sa-bowl-aim" d="M160 245L160 110" stroke="#607c78" stroke-width="2" stroke-dasharray="5 5"/><circle class="sa-bowl-ball" cx="160" cy="246" r="10" fill="#497d85"/><circle cx="157" cy="241" r="2" fill="#264d52"/><circle cx="162" cy="240" r="2" fill="#264d52"/></svg><label class="sa-bowl-label">狙う位置 <output>まんなか</output><input aria-label="狙う位置" type="range" min="-2" max="2" step="1" value="0"></label><p class="sa-message" role="status" aria-live="polite">最高記録 ${best}本。何度でも、どうぞ。</p>`;
+  const aim=body.querySelector('input'),out=body.querySelector('output'),message=body.querySelector('.sa-message'),ball=body.querySelector('.sa-bowl-ball');
+  const actions=el('div','sa-actions'),roll=el('button','btn primary','ボールを転がす');actions.appendChild(roll);body.appendChild(actions);
+  const labels=['左の端','少し左','まんなか','少し右','右の端'];
+  aim.oninput=()=>{out.textContent=labels[Number(aim.value)+2];body.querySelector('#sa-bowl-aim').setAttribute('d',`M160 245L${160+Number(aim.value)*20} 85`);};
+  let localBest=best,run=0,closed=false,flight;
+  const panel=ui.openPanel({title:'🎳 旅のミニボウリング',body,cls:'saga-panel sa-visit-panel',onClose:()=>{closed=true;run++;flight?.cancel();}});
+  roll.onclick=async()=>{
+    if(roll.disabled)return;
+    const token=++run,angle=Number(aim.value),score=[4,8,10,8,4][angle+2];roll.disabled=true;aim.disabled=true;
+    for(const p of body.querySelectorAll('.sa-pin'))p.style.opacity='1';
+    ball.style.transition='none';ball.style.transform='translate(0, 0)';
+    // CSSだけに完了を依存せず、動きを減らす設定でも操作を戻す。
+    flight?.cancel();
+    const anim=flight=ball.animate([{transform:'translate(0,0)'},{transform:`translate(${angle*20}px,-157px)`}],{duration:650,easing:'ease-in',fill:'forwards'});
+    await anim.finished.catch(()=>{});if(closed||token!==run)return;
+    for(const [i,p]of [...body.querySelectorAll('.sa-pin')].entries())if(i<score)p.style.opacity='.15';
+    localBest=Math.max(localBest,score);message.textContent=`${score===10?'ストライク！':`${score}本たおれた。`} 最高記録 ${localBest}本。`;
+    onResult(score,localBest);roll.disabled=false;aim.disabled=false;roll.textContent='もう一度、転がす';
+  };
+  return panel;
+}

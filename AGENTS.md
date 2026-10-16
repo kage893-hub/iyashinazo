@@ -12,8 +12,9 @@ Codex・Claude Code など、このリポジトリで作業するエージェン
   9 toy からくりおもちゃの街 → 10 japan 現代日本（終点）。**本編10＋追加2ステージ実装ずみ**。
 - 本編クリア後は、`museum`「星あかりの博物館」（60×44、5種類の謎）と `saga`「佐賀のまち」（160×156、五つの寄り道）を順不同に選べる。追加は `EXTRA_ROUTE` / `EXTRA_STAGES` に登録し、本編 `ROUTE` の終点は変えない。
 - saga は佐賀駅・モラージュ佐賀・指定された川久保の建物を写真・地図から再現。施設の模型は駅0.45、モール0.16、川久保0.95の異なる縮尺で配置し、地域間の距離を圧縮している。共通縮尺の市街地図ではない。資料は [docs/saga-references.md](docs/saga-references.md) と施設ごとの参照資料にある。
-- saga の住人はカササギ・ネコ・ウサギ・ツル・モモンガ・カエル・カピバラの湯案内・キツネの料理人。旅程・買物・水門・風読み・外観観察を好きな順に進め、最後は駅前のカササギへ。「佐賀の旅ノート」（sagaGuide）から各施設・北西地区・川久保の3方向・全景へ移れる。謎の入力途中は `flags.saDrafts`、達成は `sa*Done` に保存する。
+- saga の住人はカササギ・ネコ・ウサギ・ツル・モモンガ・カエル・カピバラの湯案内・キツネの料理人。旅程・買物・水門・風読み・外観観察を好きな順に進め、最後は駅前のカササギへ。「佐賀の旅ノート」（sagaGuide）から各施設・北西地区・川久保の6方向・全景へ移れる。謎の入力途中は `flags.saDrafts`、達成は `sa*Done` に保存する。
 - saga 北西には公式資料を参照したアマンディ佐賀と、架空の「ビストロ 翠の泡」、14の街の小景がある。休憩 `saSpaRested` と料理 `saFoamTasted` は任意の記録で、必須5謎の `STOPS` に追加しない。既存セーブ・クリア条件は維持。敷地は `R.northwestLots`、街の操作対象は `R.streetScenes`。建物追加時は地表だけでなくFIELD_RECTSの稲やクリーク護岸も重なりを確認する。
+- saga の駅北東にラウンドワン佐賀店、北側に井手ちゃんぽん大和店と忠兼総本社の写真参照模型を追加。区画は `R.cityLots`、模型は `roundone.js` / `ide-chanpon.js` / `tadakane.js`。`saBowlingPlayed`・`saBowlingBest`（0〜10）、`saChanponTasted`、`saTadakaneSeen` は任意の記録でSTOPSに入れない。新資料は [docs/saga-city-references.md](docs/saga-city-references.md)。忠兼は高木瀬町長瀬の外観で、別住所の直営店と混同しない。現在の営業や工場見学を案内しない。
 - 1 ステージ 15〜20 分の想定。箱庭の大きさは標準。ただし hero と toy は 1.5 倍、japan は 2 倍、saga は複数の実在地点を収める広域の箱庭。
 - japan は「江戸の宿場町の二百年後」。江戸の区画（座標）を残し、まわりに東京らしさを足している。
   持ち物の「むかし目」（koBell）を使うと江戸の箱庭が半透明で重なる。
@@ -52,7 +53,7 @@ src/data/items.js       アイテム定義（SVG アイコン）。id は全ス�
 src/lib/                共通の造形（creatures*.js・backdrop.js・merge.js・pixel.js・util.js など）
 src/stages/registry.js  実装ずみステージの登録（IMPL）
 src/stages/<id>/        index.js（ステージクラス）・diorama.js（箱庭の造形）・panels.js（謎のパネル）
-src/stages/saga/        index・diorama・panels・visits、station・mallage・kawakubo・amandi・bistroの模型
+src/stages/saga/        index・diorama・panels・visits、station・mallage・kawakubo・amandi・bistro・roundone・ide-chanpon・tadakaneの模型
 src/lib/creatures-saga.js 佐賀のカササギ（ほかの住人は既存のCreature）
 docs/saga-*-references.md 施設ごとの写真・公式資料と再現範囲
 tools/                  動作確認用スクリプト（後述）
@@ -104,6 +105,7 @@ node tools/museum-regressions.mjs # 5つの謎の正誤・途中再開・縦横�
 node tools/saga-regressions.mjs # 佐賀の5パネルの正誤・途中再開・縦横画面
 node tools/saga-stage-regressions.mjs # 佐賀の実箱庭・行き先・視界・保存再開・終幕の個別確認
 node tools/saga-northwest-regressions.mjs # 北西の任意体験・旧セーブ保全・街角・縦横UIと既存3施設
+node tools/saga-city-regressions.mjs # 新3施設の実可視遮蔽・縦横UI・任意体験・保存・川久保の6近景
 
 # カメラ位置ごとのスクリーンショット → shots/name0.png …
 ST=kinoko node tools/shot.mjs '{"introDone":true}' '[[[0,16,26],[0,0.5,0]]]' name

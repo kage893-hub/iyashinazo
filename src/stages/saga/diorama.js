@@ -4,6 +4,9 @@ import { waterize, sway } from '../../lib/livefx.js';
 import { createSagaStation } from './station.js';
 import { createMallageSaga } from './mallage.js';
 import { createKawakuboProperty } from './kawakubo.js';
+import { createRoundOneSaga } from './roundone.js';
+import { createIdeChanpon } from './ide-chanpon.js';
+import { createTadakaneCompany } from './tadakane.js';
 
 // 佐賀平野の縮景。北は-z、東は+x。地域間の距離だけを圧縮し、
 // 写真を参照する3施設の形状・敷地内の配置はそれぞれのモデルで保つ。
@@ -18,8 +21,8 @@ const dynamic = (g, visible = true) => { g.userData.dynamic = true; g.visible = 
 const noPick = (g) => { g.traverse((o) => { o.userData.noPick = true; }); return g; };
 const FIELD_RECTS = [
   // 北西はアマンディ・ビストロの街区。植生も同じ区画定義から生成する。
-  [-73, -33, -58, -15], [-49, -33, -29, -15], [-25, -33, -11, -15],
-  [45, -67, 72, -52], [46, -48, 72, -34], [48, -29, 72, -15], [49, -11, 72, 5],
+  [-73, -33, -58, -15],
+  [45, -67, 72, -52], [46, -48, 72, -34],
 ];
 
 function rod(parent, a, b, r, material, sides = 8) {
@@ -76,6 +79,22 @@ function groundTexture() {
     rect(-31, -73, -12, -64.2, '#b9bda6');
     road(-71.5, -44.2, 7.4, -39.8);
     road(-57.0, -39.8, -53.9, -12.0, false);
+    // 北側の食事処・ものづくりの街角と、駅北東の娯楽施設。
+    rect(-51, -30, -31, -14, '#b9b7a2');
+    rect(-25.5, -32, -10.5, -15, '#b4b8a3');
+    rect(8.5, -23.2, 40.5, 3.5, '#b8bba9');
+    rect(47.5,-27.3,75.5,3.5,'#b8bba9');
+    road(-52, -23.4, -49, -12.0, false);
+    road(-55.45, -24.0, -47, -21.3, false);
+    road(-29.5, -12.0, -8.0, -9.8, false);
+    road(-10.2, -30.7, -7.8, -9.8, false);
+    road(-12.5, -27.0, -2.0, -24.8, false);
+    road(2.6, -26.8, 78.0, -23.8);
+    road(40.8, -26.8, 43.1, 7.0, false);
+    road(75.5,-26.8,78.0,7.0,false);
+    road(46.5,3,78,6);
+    road(60,6,64.5,16);
+    road(2.6,-12.2,42.0,-10.0,false);
     // 駅・商業地を結ぶ幹線は建物の西側を通す。
     road(-2.6, -29.0, 2.6, 75.5);
     road(-63.5, 29.0, 2.6, 34.0);
@@ -310,7 +329,7 @@ function buildStreetQuarter(root) {
   for(const yy of [1.1,2.8])for(const xx of [-1,1])add(courtyard,G.box(.88,.8,.06),mat('#6c8174'),xx,yy,2.54);
   add(courtyard,G.box(3.7,.5,.13),mat('#a8b09b'),0,2.26,2.75);add(courtyard,G.box(3.7,.1,.6),mat('#a8b09b'),0,2.03,2.55);
   for(const [xx,col]of[[-.9,'#b6a489'],[-.2,'#b7bfaa'],[.5,'#c9c7af']])add(courtyard,G.box(.45,.57,.025),mat(col),xx,2.55,2.88);
-  const garage=group(g,-6.8,0,-24);add(garage,G.box(3.7,2.3,4.2),mat('#b8baa5'),0,1.15,0);
+  const garage=group(g,-6.8,0,-3);add(garage,G.box(3.7,2.3,4.2),mat('#b8baa5'),0,1.15,0);
   add(garage,G.box(3.95,.12,4.5),mat('#919b86'),0,2.4,0,{rot:[.04,0,0]});
   for(let i=0;i<8;i++)add(garage,G.box(2.6,.025,.045),mat('#8f9c85'),0,.25+i*.23,2.13);
   const bikes=group(g,-56.7,0,19.7);for(let i=0;i<3;i++)bicycle(bikes,0,-.75+i*.75,['#a18c72','#8d9c87','#b6ab89'][i],Math.PI/2);
@@ -516,6 +535,7 @@ function mapBoard(parent) {
     const labels = [[-28,8,'佐賀駅',-44,-15],[22,-45,'川久保',40,-17],[31,38,'モラージュ佐賀',10,-20],[-39,-36,'田んぼ',-2,36],[-35,48,'バルーン広場',0,43],[-52,-60,'アマンディ佐賀',-8,-18],[-22,-52,'翠の泡',28,27]];
     labels.forEach(([x,z,t,dx,dy],i)=>{const p=point(x,z);c.fillStyle=i===0?'#bf825f':'#6d9176';c.beginPath();c.arc(...p,12,0,Math.PI*2);c.fill();c.fillStyle='#3d5c4e';c.font=`700 ${i===2?31:33}px ${FONT}`;c.fillText(t,p[0]+dx,p[1]+dy);});
     c.fillStyle='#6f8066';c.font=`600 23px ${FONT}`;c.fillText('北 ↑　　旅の箱庭案内',W-210,112);
+    c.fillStyle='#627366';c.font=`600 22px ${FONT}`;c.fillText('ラウンドワン・井手ちゃんぽん・忠兼総本社へは旅ノートから',W/2,610);
   });
   const art = add(g, G.plane(4.21, 2.51), new THREE.MeshBasicMaterial({ map: texture }), 0, 2.0, 0.122, { cast: false });
   art.userData.keep = true;
@@ -534,11 +554,28 @@ export function buildSagaDiorama(scene) {
   R.mallage = createMallageSaga(root); R.mallage.root.position.set(31, 0, 30); R.mallage.root.scale.setScalar(0.16);
   R.property = createKawakuboProperty(root); R.property.root.position.set(22, 0, -45); R.property.root.scale.setScalar(0.95);
 
+  // 回転後の実寸で区画へ収める。独立モデル内の比率は保ち、街の空地を使う。
+  const placeSite = (model, x, z, w, d, ry) => {
+    model.root.rotation.y = ry; model.root.updateMatrixWorld(true);
+    const box = new THREE.Box3().setFromObject(model.root), size = box.getSize(new THREE.Vector3()), c = box.getCenter(new THREE.Vector3());
+    const scale = Math.min(w / size.x, d / size.z);
+    model.root.scale.setScalar(scale); model.root.position.set(x - c.x * scale, -box.min.y * scale, z - c.z * scale);
+    return model;
+  };
+  R.roundone = placeSite(createRoundOneSaga(root), 61.5, -11.5, 27, 27, 0);
+  R.ide = placeSite(createIdeChanpon(root), -42, -22, 19, 14, -Math.PI / 2);
+  R.tadakane = placeSite(createTadakaneCompany(root), -18, -24, 13.2, 15, Math.PI / 2);
+  R.cityLots = {
+    roundone: { x: [48, 75], z: [-25, 2] }, ide: { x: [-51.5,-32.5], z: [-29,-15] }, tadakane: {x:[-24.6,-11.4],z:[-31.5,-16.5]},
+  };
+
   const rural = group(root), water = waterize(mat(C.creek, { roughness: 0.33 }), { strength: 0.13, scale: 0.5 });
   creek(rural, -74, -73, -74, -36, 1.35, water);
   creek(rural, -53, -36, -53, -10, 1.35, water);
   creek(rural, -75, -36, -13, -36, 1.35, water, [[-54.0,-52.0],[-27.8,-26.4]]);
-  creek(rural, 44, -69, 44, 10, 1.0, water);
+  creek(rural, 44, -69, 44, 10, 1.0, water, [[-26.8,-23.8]]);
+  add(rural,G.box(4.0,.15,3.3),mat('#b1b7a0'),44,.045,-25.3);
+  for(const z of [-26.85,-23.75])add(rural,G.box(3.95,.45,.09),mat('#8b9c88'),44,.36,z);
   // 北西の田園を横断する小橋。住宅を囲む広場は設けない。
   for (const [x,z,ry] of [[-53,-12.5,Math.PI/2]]) {
     const bridge = noPick(group(rural,x,0,z,ry));
@@ -557,8 +594,10 @@ export function buildSagaDiorama(scene) {
     [-69,5,6.1,7.0,4.4,12],[-70,20,7.0,5.5,3.8,13],
     [-70,41,5.8,6.2,4.4,14],[-70,56,5.3,6.1,3.6,15],[-4,-63,4.4,5.0,3.6,19],
     [-4,-48,4.4,5.8,4.0,20],[-4,-37,4.7,5.5,3.4,21],
-    [57,-74,5.2,5.0,3.6,22],[70,-74,6.0,5.1,3.8,23],[69,13,5.0,5.4,4.0,24],
+    [57,-74,5.2,5.0,3.6,22],[70,-74,6.0,5.1,3.8,23],[-73,65,5.0,5.4,4.0,24],
     [-50,63,5.0,5.0,3.2,28],[-21,64,4.5,5.2,3.6,29],
+    [16,-18,6.0,5.2,2.4,30],[28,-18,6.8,5.0,2.3,31],[36,-18,4.0,4.6,2.2,32],
+    [15,-4,5.8,5.0,2.2,33],[25,-4,6.2,5.0,2.3,34],[36,-4,5.6,5.0,2.3,35],
   ];
   buildings.forEach(([x,z,w,d,h,seed])=>plainHouse(town,x,z,w,d,h,seed,seed%3===0?Math.PI/2:0));
   const quarter = buildStreetQuarter(root); R.streetQuarter = quarter.root; R.streetScenes = quarter.scenes;
@@ -569,7 +608,13 @@ export function buildSagaDiorama(scene) {
   };
   for (const [x,z] of [[-55,25.8],[-42,26.0],[-24,26.5],[-5,25.8],[-56,36.5],[-56,49],[-56,60],
     [-5,38],[-5,52],[-5,64],[5.5,52],[5.5,65],[59,25],[59,42],
-    [-75,-69],[-76,-14],[-10,-73],[1,-72],[40,-68],[40,-57],[73,-6]]) tree(root,x,z,Math.round((x+80)*99+z),0.75+(Math.abs(z)%3)*0.06);
+    [-75,-69],[-76,-14],[-10,-73],[1,-72],[40,-68],[40,-57],[74,50]]) tree(root,x,z,Math.round((x+80)*99+z),0.75+(Math.abs(z)%3)*0.06);
+  // 新しい施設への道端も、小さな生活の景色でつなぐ。
+  for (const [x,z] of [[-31,-20],[-29,-25],[-8,-19],[7,-26.8],[39,-24],[41,5]]) flowerBox(root,x,z,1.7,Math.round(x*73+z));
+  for (const [x,z] of [[11,-15],[24,-14],[34,-14],[12,-.6],[30,-.6],[73,-28]]) flowerBox(root,x,z,1.5,Math.round(2700+x*19+z));
+  bench(root,31,-8);
+  bench(root,-30,-18,Math.PI/2); bench(root,-10,-15,-Math.PI/2);
+  for(const [x,z] of [[7,-20],[7,-8],[-31,-14],[-9,-33]]) tree(root,x,z,Math.round(1000+x*19+z),.66);
   // 西側道路の白い欄干と街灯は主な建築の前へ置かない。
   for (const [x,z] of [[-57,26],[-4,27],[-5.2,43],[-5.2,60],[57.5,48],[57.5,64]]) {
     const pole=noPick(group(root,x,0,z));

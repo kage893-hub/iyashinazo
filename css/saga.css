@@ -192,3 +192,9 @@
   .saga-panel .sa-quantity output { font-size: 14px; }
   .saga-panel .sa-bus-options b { font-size: 13px; }
 }
+.saga-panel .sa-bowling > svg { display: block; width: min(100%, 300px); max-height: 32dvh; margin: 0 auto; }
+.saga-panel .sa-bowl-label { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin: 12px 0; font-size: 14px; }
+.saga-panel .sa-bowl-label output { text-align: right; }
+.saga-panel .sa-bowl-label input { width: 100%; min-height: 44px; grid-column: 1 / -1; accent-color: #517f82; }
+.saga-panel .sa-bowling .sa-message { min-height: 2em; }
+@media (prefers-reduced-motion: reduce) { .saga-panel .sa-pin { transition: none; } }

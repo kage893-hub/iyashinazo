@@ -6,8 +6,8 @@ import { add, G, group, mat, rng, canvasTex } from '../../lib/util.js';
 // 玄関・サッシ・瓦・波板の標準寸法を基準に比率を合わせた外観模型であり、
 // 測量図ではない。写真のない背面に部屋や看板などの情報は追加しない。
 const C = {
-  plaster: '#e6e4d9', cream: '#d5c9a2', wood: '#766753', bronze: '#8d8068',
-  tile: '#777b76', tileLight: '#969a90', tileDark: '#535a55', concrete: '#888880',
+  plaster: '#efede2', cream: '#e0d3ad', wood: '#766753', bronze: '#8d8068',
+  tile: '#80817c', tileLight: '#969a90', tileDark: '#535a55', concrete: '#888880',
   stone: '#7c7a6a', wall: '#d8c48a', bark: '#554c3b', iron: '#615d50',
 };
 const UP = new THREE.Vector3(0, 1, 0);
@@ -41,7 +41,8 @@ function noiseTexture(seed, base, { w = 512, h = 512, grain = 7000 } = {}) {
 }
 
 function textured(color, seed, opts = {}) {
-  return new THREE.MeshStandardMaterial({ color: '#ffffff', map: noiseTexture(seed, color), roughness: 0.98, ...opts });
+  const map = noiseTexture(seed, color);
+  return new THREE.MeshStandardMaterial({ color: '#ffffff', map, bumpMap: map, bumpScale: seed === 3 ? .035 : .012, roughness: 0.98, ...opts });
 }
 
 function instances(parent, geometry, material, transforms) {
@@ -137,27 +138,35 @@ function tiledRoof(parent, { w, d, eave, rise, x = 0, z = 0, color = C.tile, see
       { scale: [0.82, 1.2, 0.7] });
   }
   instances(root, G.cyl(0.072, 0.072, 0.13, 10), mat('#94988e'), caps);
+  for (const end of [-1, 1]) {
+    const ornament = group(root, 0, eave + rise + .10, end * (d / 2 + .12));
+    add(ornament, G.box(.25, .06, .15), mat('#8c9088'), 0, -.025, 0);
+    add(ornament, G.sphere(.11, 12, 8), mat('#858a80'), 0, .07, 0, { scale: [1, 1.35, .62] });
+    for (const side of [-1, 1]) curveRod(ornament, [[0,.04,.07*end],[side*.13,.07,.07*end],[side*.14,-.03,.07*end],[side*.08,-.04,.07*end]], .018, mat('#afb1a5'), 12);
+  }
+
   root.userData.roof = true;
   return root;
 }
 
-function wovenTileMaterial() {
-  const map = canvasTex(768, 384, (ctx, w, h) => {
-    ctx.fillStyle = '#a5ada6'; ctx.fillRect(0, 0, w, h);
-    const cell = 24;
+function wovenTileMaterial(width = 3.45, height = 1.05) {
+  // 実物は白灰の大きな網代タイル。面の縦横比に合わせ、模様を横に伸ばさない。
+  const map = canvasTex(Math.round(384 * width / height), 384, (ctx, w, h) => {
+    ctx.fillStyle = '#a8b0aa'; ctx.fillRect(0, 0, w, h);
+    const cell = 48;
     for (let row = -1; row < h / cell + 1; row++) for (let col = -1; col < w / cell + 1; col++) {
-      const x = col * cell, y = row * cell;
-      ctx.save(); ctx.translate(x + cell / 2, y + cell / 2); ctx.rotate(Math.PI / 4);
-      ctx.fillStyle = (row + col) % 2 ? '#d8ddd4' : '#7c8981';
-      ctx.fillRect(-cell * 0.55, -cell * 0.16, cell * 1.1, cell * 0.32);
-      ctx.fillStyle = (row + col) % 2 ? '#aab5aa' : '#c1c9bb';
-      ctx.fillRect(-cell * 0.16, -cell * 0.55, cell * 0.32, cell * 1.1);
-      ctx.strokeStyle = 'rgba(47,64,56,.24)'; ctx.lineWidth = 0.8;
-      ctx.strokeRect(-cell * 0.55, -cell * 0.16, cell * 1.1, cell * 0.32);
+      ctx.save(); ctx.translate(col * cell + cell / 2, row * cell + cell / 2); ctx.rotate(Math.PI / 4);
+      ctx.fillStyle = (row + col) % 2 ? '#e0e3da' : '#8d9790';
+      ctx.fillRect(-cell * .56, -cell * .18, cell * 1.12, cell * .36);
+      ctx.fillStyle = (row + col) % 2 ? '#afb8ad' : '#d8ddd2';
+      ctx.fillRect(-cell * .18, -cell * .56, cell * .36, cell * 1.12);
+      ctx.strokeStyle = 'rgba(67,77,69,.28)'; ctx.lineWidth = 1.0;
+      ctx.strokeRect(-cell * .56, -cell * .18, cell * 1.12, cell * .36);
+      ctx.fillStyle = 'rgba(250,252,235,.42)'; ctx.fillRect(-cell * .55, -cell * .17, cell * 1.1, 1.2);
       ctx.restore();
     }
   });
-  return new THREE.MeshStandardMaterial({ map, roughness: 0.8 });
+  return new THREE.MeshStandardMaterial({ map, bumpMap: map, bumpScale: .012, roughness: .73 });
 }
 
 function curtainMaterial(seed, tint = '#dddcd0') {
@@ -184,7 +193,7 @@ function makeHouse(parent, M) {
   add(house, triangle(9.75, 1.27, D + 0.22), M.plaster, 0, 3.08, 0);
   const lowerRoof = tiledRoof(house, { w: 10.65, d: 7.25, eave: 3.08, rise: 1.40, z: 0.02, seed: 3243 });
   // 2階は1階の奥へ退き、細い白い妻壁が下屋の上に重なる。
-  const upper = group(house, 0.85, 0, -1.1), upperW = 5.5, upperD = 4.4;
+  const upper = group(house, 0.85, -0.52, -1.1), upperW = 5.5, upperD = 4.4;
   add(upper, G.sharpBox(upperW, 1.48, upperD), M.plaster, 0, 4.64, 0);
   add(upper, triangle(upperW, 1.15, upperD + 0.04), M.plaster, 0, 5.38, 0);
   tiledRoof(upper, { w: 6.2, d: 5.0, eave: 5.37, rise: 1.30, color: '#7d8174', seed: 1303 });
@@ -232,7 +241,7 @@ function makeHouse(parent, M) {
   add(house, G.plane(3.45, 1.05), wovenTileMaterial(), windowX, 0.93, front + 0.12);
   add(house, G.box(3.52, 0.075, 0.14), mat('#4a5c53'), windowX, 1.47, front + 0.12);
   // 同じ腰壁を玄関右端にも残す。
-  add(house, G.plane(0.7, 1.00), wovenTileMaterial(), 3.36, 0.91, front + 0.13);
+  add(house, G.plane(0.7, 1.00), wovenTileMaterial(0.7, 1), 3.36, 0.91, front + 0.13);
   add(house, G.box(9.25, 0.11, 0.14), M.wood, 0, 2.92, front + 0.13);
   add(house, G.box(9.15, 0.045, 0.14), mat('#b1a480'), 0, 2.79, front + 0.13);
   // 右の黄土色の小さな差し掛け。写真で見える範囲だけ。
@@ -250,7 +259,7 @@ function makeHouse(parent, M) {
     porchTiles.push({ p: [x, 0.413, z], color: (Math.round(x * 100) + Math.round(z * 100)) % 3 ? '#aaa99b' : '#bab9a9' });
   instances(porch, G.sharpBox(0.255, 0.012, 0.228), mat('#ffffff'), porchTiles);
   // アンテナの縦棒とVHF横棒。白壁の前に暗い太線を置かない。
-  const antenna = group(house, -0.50, 6.15, -0.25);
+  const antenna = group(house, -0.50, 5.68, -0.25);
   rod(antenna, [0, 0, 0], [0.04, 1.30, 0], 0.014, mat('#7c8079'), 6);
   rod(antenna, [-0.48, 1.03, 0], [0.48, 1.03, 0], 0.012, mat('#676f68'), 6);
   for (const x of [-0.35, -0.14, 0.08, 0.3]) rod(antenna, [x, 1.03, -0.22], [x, 1.03, 0.22], 0.009, mat('#737970'), 5);
@@ -469,10 +478,10 @@ function makeWall(parent, M) {
   return { wall, gate };
 }
 
-function foliage(parent, center, scale, seed, color, count = 45, { leafMin = 0.12, leafRange = 0.15 } = {}) {
+function foliage(parent, center, scale, seed, color, count = 45, { leafMin = 0.12, leafRange = 0.15, verticalSpread = .65 } = {}) {
   const r = rng(seed), transforms = [];
   for (let i = 0; i < count; i++) {
-    const a = r() * Math.PI * 2, radius = Math.sqrt(r()), yy = (r() - 0.5) * 0.65;
+    const a = r() * Math.PI * 2, radius = Math.sqrt(r()), yy = (r() - 0.5) * verticalSpread;
     const s = leafMin + r() * leafRange;
     transforms.push({ p: [center[0] + Math.cos(a) * radius * scale[0], center[1] + yy * scale[1],
       center[2] + Math.sin(a) * radius * scale[2]],
@@ -487,10 +496,10 @@ function pine(parent, x, z) {
   p.name = '玄関前の段造りの松';
   curveRod(p, [[0, 0, 0], [-0.03, 0.8, 0.01], [0.12, 1.75, -0.01], [0.01, 2.66, 0.02], [0.16, 3.65, 0.02]], 0.085, bark);
   const pads = [
-    { c: [-0.16, 1.05, 0.0], s: [0.78, 0.16, 0.42], count: 260 },
-    { c: [0.26, 1.61, 0.02], s: [0.66, 0.15, 0.39], count: 220 },
-    { c: [-0.13, 2.14, -0.02], s: [1.00, 0.18, 0.47], count: 340 },
-    { c: [0.10, 2.74, -0.01], s: [1.05, 0.18, 0.47], count: 360 },
+    { c: [-0.24, 1.02, 0.0], s: [0.63, 0.17, 0.39], count: 260 },
+    { c: [0.21, 1.60, 0.02], s: [0.70, 0.15, 0.40], count: 300 },
+    { c: [-0.12, 2.12, -0.02], s: [0.80, 0.17, 0.44], count: 340 },
+    { c: [0.04, 2.69, -0.01], s: [0.98, 0.18, 0.47], count: 420 },
     { c: [-0.43, 3.40, 0.02], s: [0.28, 0.73, 0.29], count: 145 },
     { c: [0.35, 3.49, 0.02], s: [0.41, 0.66, 0.33], count: 180 },
   ];
@@ -498,7 +507,7 @@ function pine(parent, x, z) {
     rod(p, [0.04, c[1] - 0.29, 0], [c[0], c[1] - 0.05, c[2]], 0.038, bark, 7);
     // 小さな葉で薄い水平の段を作り、段の間には幹と枝が見える空隙を残す。
     foliage(p, c, s, 188 + i, i % 2 ? '#62823a' : '#6a873b', count,
-      { leafMin: 0.050, leafRange: 0.055 });
+      { leafMin: 0.041, leafRange: 0.049, verticalSpread: i > 3 ? 1.20 : .65 });
   });
   // 写真の松の根元にある赤茶色の煉瓦の縁。
   for (const side of [-1, 1]) for (let xx = -0.9; xx < 0.9; xx += 0.28)
@@ -627,9 +636,12 @@ function makeNeighbor(parent, M) {
 function utilityPole(parent) {
   const pole = group(parent, -11.45, 0, 6.10), concrete = mat('#aaa99b');
   add(pole, G.cyl(0.105, 0.15, 8.6, 14), concrete, 0, 4.30, 0);
-  for (let i = 0; i < 8; i++) {
-    add(pole, G.cyl(0.156, 0.156, 0.13, 12), mat(i % 2 ? '#d1b943' : '#43493e'), 0, 0.15 + i * 0.13, 0);
+  // 写真の根元は横縞ではなく、縦の黒黄の注意帯。
+  add(pole, G.cyl(.156, .156, 1.12, 16), mat('#ceb442'), 0, .65, 0);
+  for (let i = 0; i < 5; i++) {
+    add(pole, new THREE.CylinderGeometry(.159, .159, 1.12, 3, 1, true, i * Math.PI * 2 / 5, .24), mat('#343b35'), 0, .65, 0);
   }
+  for (const y of [.12, 1.18]) add(pole, G.cyl(.163, .163, .035, 16), mat('#aaa991'), 0, y, 0);
   for (const y of [6.85, 7.7]) {
     rod(pole, [-0.60, y, 0.0], [0.60, y, 0.0], 0.032, mat('#707768'));
     for (const x of [-0.48, 0.0, 0.48]) add(pole, G.cyl(0.055, 0.048, 0.19, 8), mat('#bbc0ad'), x, y + 0.10, 0);
@@ -674,6 +686,9 @@ export function createKawakuboProperty(parent) {
       front: { position: new THREE.Vector3(-2.0, 3.0, 22), target: new THREE.Vector3(0.5, 2.8, 1.5) },
       left: { position: new THREE.Vector3(-20, 3.0, 15), target: new THREE.Vector3(-5.5, 3.1, 2.4) },
       right: { position: new THREE.Vector3(9.5, 3.2, 21), target: new THREE.Vector3(2.8, 2.4, 2.7) },
+      porch: { position: new THREE.Vector3(1.8, 3.1, 14), target: new THREE.Vector3(2.3, 1.7, 2.5) },
+      wall: { position: new THREE.Vector3(3.8, 2.3, 15), target: new THREE.Vector3(3.3, 1.0, 8.3) },
+      shed: { position: new THREE.Vector3(-18, 3.6, 14), target: new THREE.Vector3(-7.6, 3.0, 3.8) },
     },
   };
 }
