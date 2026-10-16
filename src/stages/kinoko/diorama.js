@@ -472,8 +472,8 @@ export function buildKinokoDiorama(scene) {
     // Y字のつの（下が太く、上でふたまた）
     s.moveTo(-0.16, -0.9); s.lineTo(0.16, -0.9);
     s.quadraticCurveTo(0.14, -0.1, 0.1, 0.15);
-    s.quadraticCurveTo(0.35, 0.4, 0.55, 0.85); s.lineTo(0.42, 0.9);
-    s.quadraticCurveTo(0.22, 0.55, 0.02, 0.38);
+    s.quadraticCurveTo(0.33, 0.4, 0.53, 0.84); s.lineTo(0.4, 0.9);
+    s.quadraticCurveTo(0.18, 0.55, 0, 0.38);
     s.quadraticCurveTo(-0.18, 0.55, -0.4, 0.9); s.lineTo(-0.53, 0.84);
     s.quadraticCurveTo(-0.33, 0.4, -0.1, 0.15);
     s.quadraticCurveTo(-0.14, -0.1, -0.16, -0.9);
@@ -501,12 +501,14 @@ export function buildKinokoDiorama(scene) {
   R.shadow.scale.setScalar(1.25);
   R.shadow.userData.keep = true;
   R.shadow.userData.noPick = true;
-  // 影絵の台（Y字の小枝が立ててある）
+  // 影絵の台（二つの曲がった小枝を重ねて、つのをつくる）
   const stand = (R.stand = group(web, 0, 0, 1.6));
   add(stand, G.cyl(0.3, 0.36, 0.2, 12), mat('#9a9488', { flatShading: true }), 0, 0.1, 0);
   const tw = mat('#7a5a3a');
-  add(stand, G.cyl(0.035, 0.045, 0.5, 6), tw, 0, 0.45, 0);
-  for (const s of [-1, 1]) add(stand, G.cyl(0.025, 0.035, 0.32, 6), tw, s * 0.08, 0.8, 0, { rot: [0, 0, -s * 0.5] });
+  for (const s of [-1, 1]) {
+    add(stand, G.cyl(0.025, 0.035, 0.5, 6), tw, s * 0.025, 0.45, 0);
+    add(stand, G.cyl(0.025, 0.035, 0.32, 6), tw, s * 0.08, 0.8, 0, { rot: [0, 0, -s * 0.5] });
+  }
 
   // ---------------- 線路をふさぐ枯れ枝 ----------------
   const branch = (R.branch = group(root, 9.2, 0, -6.0));

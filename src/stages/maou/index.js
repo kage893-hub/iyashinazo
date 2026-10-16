@@ -510,13 +510,19 @@ export class MaouStage {
   // =========================================================
   async talkBat() {
     const g = this.g, f = g.flags;
-    await this.focus(this.bat.root, 14, { dist: 14, polar: 1.12, theta: -Math.PI / 2, keepAngle: true });
+    if (f.gateOpen && !f.insideTalked) return this.batInside();
+    await this.focusBat();
     g.audio.play('squeak');
     if (!f.introDone) return this.batIntro();
     if (!f.gateOpen) return this.say([{ who: 'bat', text: '合言葉は、門の上に魔界文字で……。ランタンで照らせば見えるはずでございます。読みかたは、駅前の石碑に。' }]);
-    if (!f.insideTalked) return this.batInside();
     if (f.stewDone && f.bookGot && f.ghostsDone) return this.say([{ who: 'bat', text: '準備はととのいました。どうか、魔王さまのもとへ。' }]);
     return this.say([{ who: 'bat', text: 'シチューは台所の魔女ネコ、絵本は宝物庫のミミック、飾りつけはゴーストたち。どうか、よろしくおねがいいたします。' }]);
+  }
+
+  focusBat() {
+    // 入城後は塔のある西側からでなく、中庭の正面から映す。
+    return this.focus(this.bat.root, 14, { dist: this.g.flags.gateOpen ? 12 : 14,
+      polar: 1.12, theta: this.g.flags.gateOpen ? -0.25 : -Math.PI / 2, keepAngle: true });
   }
 
   async batIntro() {
@@ -539,6 +545,7 @@ export class MaouStage {
 
   async batInside() {
     const g = this.g;
+    await this.focusBat();
     g.flag('insideTalked');
     await this.say([
       { who: 'bat', text: 'ようこそ魔王城へ。……実は、ひとつ考えがございます。' },

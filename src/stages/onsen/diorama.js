@@ -414,7 +414,13 @@ export function buildOnsenDiorama(scene) {
   const shop = wahouse(root, 9.0, 5.0, { w: 3.6, d: 2.6, h: 2.2, open: true, wall: '#d8c8a8' });
   R.shop = shop.g;
   add(R.shop, G.box(2.6, 0.7, 0.6), darkWood, 0, 0.7, 0.9);
-  add(R.shop, G.box(1.8, 0.5, 0.08), new THREE.MeshStandardMaterial({ map: signTex('ちょうちん', { w: 320, h: 80, bg: '#c8382e', fg: '#fff6dc', border: '#f4dc9a', size: 46 }) }), 0, 2.85, 1.35);
+  // 軒先より前へ張り出した吊り看板。屋根と積雪に文字を埋めない。
+  for (const x of [-0.7, 0.7]) {
+    add(R.shop, G.cyl(0.03, 0.03, 0.65, 8), darkWood, x, 3.2, 1.15);
+    add(R.shop, G.box(0.07, 0.07, 0.9), darkWood, x, 3.5, 1.55);
+    add(R.shop, G.cyl(0.025, 0.025, 0.2, 8), darkWood, x, 3.4, 1.94);
+  }
+  R.shopSign = add(R.shop, G.box(1.8, 0.5, 0.08), new THREE.MeshStandardMaterial({ map: signTex('ちょうちん', { w: 320, h: 80, bg: '#c8382e', fg: '#fff6dc', border: '#f4dc9a', size: 46 }) }), 0, 3.05, 1.94);
   R.shopLanterns = [];
   for (let i = 0; i < 5; i++) {
     const L = chochin(R.shop, -1.3 + i * 0.65, 2.15, 1.2, { s: 0.8, color: i % 2 ? '#f4ead2' : '#d8402e', mats: R.shopLanterns });
@@ -488,7 +494,8 @@ export function buildOnsenDiorama(scene) {
     add(j, G.cyl(0.18, 0.18, 0.07, 12), snowM, 0, 0.88, 0, { cast: false });
   }
   const bare = ['#6a5a4a', '#7a6a5a', '#5a4a3a'];
-  [[-13.2, 7.8, 0.85], [13.6, -1.8, 0.7], [-13.6, -0.6, 0.75], [-9.6, 9.8, 0.6]].forEach(([x, z, s], i) => tree(root, x, z, { scale: s, seed: 60 + i, colors: ['#e8eef6', '#dfe8f2', '#f4f8ff'] }));
+  // 宿の正面は会話カメラの通り道。雪の木は左右へ寄せ、顔を隠さない。
+  [[-14.9, 8.7, 0.85], [13.6, -1.8, 0.7], [-13.6, -0.6, 0.75], [-7.5, 10.0, 0.6]].forEach(([x, z, s], i) => tree(root, x, z, { scale: s, seed: 60 + i, colors: ['#e8eef6', '#dfe8f2', '#f4f8ff'] }));
   void bare;
   bush(root, -2.6, 8.6, 0.8, 71, '#4a7a4a');
   bush(root, 3.2, 8.8, 0.9, 72, '#4a7a4a');

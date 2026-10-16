@@ -736,6 +736,17 @@ body.rpg .extra-panel .panel-title { color: var(--navy); font-weight: 900; }
 .sh-screen { width: min(280px, 72vw); height: auto; display: block; margin: 10px auto 6px; }
 .sh-row { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-bottom: 6px; }
 .sh-row .btn.on { background: var(--navy); color: #fff8e6; }
+.panel.shadow-panel { max-width: 760px; }
+.sh-controls { min-width: 0; }
+.sh-objs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.sh-choice { display: flex; align-items: center; justify-content: center; gap: 4px; min-width: 0; padding: 6px; font-size: 12px; white-space: normal; }
+.sh-choice svg { width: 20px; height: 20px; fill: currentColor; flex-shrink: 0; }
+.sh-slots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.sh-slots .btn { min-width: 0; max-width: 100%; padding: 6px; white-space: normal; }
+@media (min-width: 700px) {
+  .sh-layout { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 14px; align-items: start; }
+  .sh-layout .sh-screen { width: 210px; margin: 0 auto; }
+}
 .sh-rail { position: relative; height: 26px; margin: 4px auto; width: min(320px, 80vw); background: linear-gradient(90deg, #d8ccb0 0 10%, #ede4cc 10%); border-radius: 13px; font-size: 12px; font-weight: 700; color: #6a4a2e; text-align: left; padding-left: 6px; line-height: 26px; }
 .sh-rail i { position: absolute; top: 0; font-style: normal; transform: translateX(-50%); transition: left 0.1s; }
 .sh-obj { color: #6a4a2e; }

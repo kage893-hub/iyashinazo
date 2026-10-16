@@ -238,7 +238,7 @@ export class OnsenStage {
     reg('tanuki', this.tanuki.root, 'タヌキの番頭', () => this.talkTanuki());
     reg('fox', this.fox.root, 'キツネの提灯屋', () => this.talkFox());
     reg('monkey', this.monkey.root, '子ザル', () => this.talkMonkey());
-    reg('guest', this.guest.root, 'ウサギの旅人', () => this.say([{ who: 'rabbit', text: 'あら、また会ったわね！ ここのお湯、最高よ。あなたもゆっくりしていってね。' }]));
+    reg('guest', this.guest.root, 'ウサギの旅人', () => this.talkGuest());
     reg('bather0', this.bathers[0].root, 'サル', () => this.say(['サルたちが、気持ちよさそうに湯につかっている。']));
     reg('bather1', this.bathers[1].root, 'サル', () => this.say(['頭に手ぬぐいをのせて、うっとりしている。']));
     reg('bath', R.bath, '共同浴場', () => this.clickBath());
@@ -361,7 +361,9 @@ export class OnsenStage {
     R.roof.traverse((o) => { if (o.isMesh) o.castShadow = this.roofT < 0.3; });
     // 上からのぞいているときは、正面の梁と看板を消す
     const look = g.camera.position.clone().sub(tgt);
-    R.ryokanFront.visible = !(this.roofT > 0.5 && look.y / look.length() > 0.62 && g.camera.position.z > 3.4);
+    const talkingToClerk = g.lookSubject === this.tanuki.root && (g.ui.dialogueActive || g.time < g.lookUntil);
+    R.ryokanFront.visible = !(this.roofT > 0.5 && ((look.y / look.length() > 0.62 && g.camera.position.z > 3.4) || talkingToClerk));
+    R.ryNoren.visible = !talkingToClerk;
 
     // 雪
     const sp = this.snowPts.geometry.attributes.position;
@@ -434,9 +436,9 @@ export class OnsenStage {
     }
   }
 
-  /** 旅館の中を見ているときは、真上寄りから見下ろす */
+  /** 旅館は屋根が上がるので、室内でも住人の顔を正面から見られる。 */
   interiorAt(p) {
-    if (p.x > -12.9 && p.x < -7.5 && p.z > 1.4 && p.z < 5.4) return { polar: 0.55, maxDist: 26 };
+    if (p.x > -12.9 && p.x < -7.5 && p.z > 1.4 && p.z < 5.4) return { polar: 1.22, maxDist: 26 };
     return null;
   }
 
@@ -646,7 +648,7 @@ export class OnsenStage {
 
   async talkTanuki() {
     const g = this.g, f = g.flags;
-    this.focus(this.tanuki.root, 16);
+    await this.focus(this.tanuki.root, 9, { dist: 9, polar: 1.18, theta: 0, keepAngle: true });
     if (!f.iroriLit) {
       const lines = ['タヌキの番頭は、帳場でまるくなって眠っている。', { who: 'tanuki', text: 'Zzz……さむい……冬眠しちゃう……ぽん……' }];
       g.note('on-tanuki', 'タヌキの番頭', '寒くて眠っている。<b>部屋があたたまれば</b> 目をさますかも。');
@@ -664,6 +666,14 @@ export class OnsenStage {
       return;
     }
     await this.say([{ who: 'tanuki', text: f.thawed ? '湯がもどって、うちの宿にもお客さんが戻ってきたよ。ぽんぽこ♪' : '湯がもどれば、うちの宿にもお客さんが戻るんだがねえ。' }]);
+  }
+
+  async talkGuest(reunion = false) {
+    if (!this.guest.root.visible) return;
+    await this.focus(this.guest.root, 8, { dist: 8, polar: 1.16, theta: 0, keepAngle: true });
+    return this.say([{ who: 'rabbit', text: reunion
+      ? 'あら、あなた！ はざま駅で会ったわね。わたしも湯治に来ちゃった。'
+      : 'あら、また会ったわね！ ここのお湯、最高よ。あなたもゆっくりしていってね。' }]);
   }
 
   async talkMonkey() {
@@ -1030,8 +1040,8 @@ export class OnsenStage {
     await this.say([
       '氷がとけて、トンネルの口がぽっかりとひらいた。',
       '雪もとけ、湯けむりの中に、湯につかりにくるお客さんたちの姿が見える。',
-      { who: 'rabbit', text: 'あら、あなた！ はざま駅で会ったわね。わたしも湯治に来ちゃった。' },
     ]);
+    await this.talkGuest(true);
     await this.soak();
     await g.moveCamera(new V(5.5, 3.5, -1.2), new V(1.0, 1.0, -4.0), 1.8);
     await this.say([

@@ -27,32 +27,36 @@ export function makeCapybara() {
   const fur = mat('#a8794a');
   const furD = mat('#8a5f38');
   const yukata = mat('#5a7ab8');
-  for (const [x, z] of [[-0.2, 0.15], [0.2, 0.15]]) add(b, G.cyl(0.08, 0.09, 0.25, 10), furD, x, 0.12, z);
-  // 浴衣の胴
-  add(b, G.box(0.66, 0.62, 0.52), yukata, 0, 0.55, 0, { scale: [1, 1, 1] });
-  add(b, G.sphere(0.36, 18, 12), yukata, 0, 0.55, 0, { scale: [0.95, 0.95, 0.75] });
-  add(b, G.box(0.68, 0.12, 0.54), mat('#e8c25a'), 0, 0.5, 0);
-  // 襟（白いV）
-  for (const s of [-1, 1]) add(b, G.box(0.06, 0.4, 0.02), mat('#f4f0e6'), s * 0.07, 0.7, 0.27, { rot: [0, 0, -s * 0.45], cast: false });
+  for (const x of [-0.2, 0.2]) add(b, G.sphere(0.11, 16, 12), furD, x, 0.09, 0.13, { scale: [0.8, 0.8, 1.2] });
+  // 丸い胴に沿う浴衣と帯。箱を重ねず、輪郭をなめらかにつなぐ。
+  add(b, G.sphere(0.39, 28, 20), yukata, 0, 0.55, 0, { scale: [0.95, 1, 0.8] });
+  add(b, G.cyl(0.38, 0.38, 0.12, 32), mat('#e8c25a'), 0, 0.5, 0, { scale: [1, 1, 0.85] });
   for (const s of [-1, 1]) {
-    const arm = group(b, s * 0.36, 0.7, 0.05);
-    arm.rotation.z = s * 0.25;
-    add(arm, G.capsule(0.09, 0.2), yukata, 0, -0.15, 0);
-    add(arm, G.sphere(0.075), fur, 0, -0.3, 0.02);
+    const collar = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(s * 0.16, 0.85, 0.17),
+      new THREE.Vector3(s * 0.1, 0.73, 0.28),
+      new THREE.Vector3(0, 0.57, 0.32),
+    ]);
+    add(b, new THREE.TubeGeometry(collar, 12, 0.025, 6, false), mat('#f4f0e6'), 0, 0, 0, { cast: false });
+    const arm = group(b, s * 0.33, 0.72, 0.04);
+    arm.rotation.z = s * 0.2;
+    add(arm, G.capsule(0.105, 0.18, 8, 20), yukata, 0, -0.13, 0);
+    add(arm, G.sphere(0.08, 16, 12), fur, 0, -0.29, 0.02);
   }
-  // 大きくて四角っぽい頭
+  // カピバラらしい長い鼻先と小さな丸耳。頭から鼻へ、丸みをつないでいく。
   const head = (c.head = group(b, 0, 1.08, 0.08));
-  add(head, G.box(0.46, 0.4, 0.56), fur, 0, 0, 0.02);
-  add(head, G.sphere(0.25, 16, 12), fur, 0, 0.0, -0.08, { scale: [0.95, 0.85, 1] });
-  add(head, G.box(0.42, 0.3, 0.2), furD, 0, -0.05, 0.27);
-  add(head, G.box(0.16, 0.04, 0.02), mat('#3a2418'), 0, 0.03, 0.375, { cast: false });
-  for (const s of [-1, 1]) add(head, G.sphere(0.035, 8, 6), mat('#3a2418'), s * 0.08, 0.02, 0.37, { scale: [1, 0.6, 0.5], cast: false });
-  for (const s of [-1, 1]) c.eyes.push(beadEye(head, s * 0.2, 0.1, 0.12, 0.04));
-  for (const s of [-1, 1]) add(head, G.sphere(0.06, 10, 8), furD, s * 0.21, 0.2, -0.08, { scale: [1, 0.8, 0.5] });
-  cheeks(head, 0.2, -0.03, 0.2, 0.04);
+  add(head, G.sphere(0.28, 32, 24), fur, 0, 0, -0.04, { scale: [1.05, 0.86, 1.22] });
+  add(head, G.sphere(0.25, 32, 24), fur, 0, -0.065, 0.2, { scale: [1.04, 0.72, 1.22] });
+  add(head, G.sphere(0.07, 18, 12), furD, 0, -0.015, 0.49, { scale: [1.35, 0.65, 0.4], cast: false });
+  for (const s of [-1, 1]) {
+    add(head, G.sphere(0.018, 12, 8), mat('#3a2418'), s * 0.045, 0, 0.516, { scale: [1, 0.7, 0.5], cast: false });
+    c.eyes.push(beadEye(head, s * 0.235, 0.085, 0.18, 0.035));
+    add(head, G.sphere(0.075, 18, 12), furD, s * 0.23, 0.19, -0.14, { scale: [1, 0.95, 0.65] });
+    add(head, G.sphere(0.043, 14, 10), mat('#c59c7b'), s * 0.23, 0.2, -0.1, { scale: [1, 0.85, 0.35], cast: false });
+  }
+  cheeks(head, 0.22, -0.04, 0.24, 0.045);
   towel(head, 0, 0.23, -0.02, 0.34);
-  // ゆず
-  add(head, G.sphere(0.06, 10, 8), mat('#f2b31a'), 0.08, 0.3, 0.02);
+  add(head, G.sphere(0.06, 16, 12), mat('#f2b31a'), 0.08, 0.3, 0.02);
   c.extra = (dt, t) => { head.rotation.x = Math.sin(t * 0.6 + c.phase) * 0.05; };
   return c;
 }

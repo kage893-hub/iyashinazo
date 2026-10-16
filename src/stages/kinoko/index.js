@@ -521,7 +521,10 @@ export class KinokoStage {
     if (!f.beetleAwake) {
       if (!f.spiderTalked) steps.push(H('spider', '右の、クモの機織りに話を聞いてみよう。'));
       else if (!f.fireflyAwake) steps.push(size === 0 ? H('bell', '右手前の『釣鐘草』を調べて、ホタルを起こそう。') : H('bellSmall', 'ホタルは、右手前の『釣鐘草』の中で眠っている。せまい花の中に入るには、' + need(0)));
-      else steps.push(H('shadow', 'クモの巣を調べて、影絵をしよう。型と同じ形の物をえらび、ホタルの位置で大きさを合わせる。', '影は、ホタルが物に近いほど大きくなる。型の形は「ふたまたの小枝」。'));
+      else steps.push(H('shadow', 'クモの巣で、二つの物の影を重ねて大きなつのを作ろう。',
+        '型を左右に分けて見てみよう。上へ伸びる二本と、下へ伸びる軸は、どんな小枝を組み合わせるとできるかな。',
+        '影①・影②を切り替えて、それぞれを回したり上下反転できる。形ができたら灯りの距離を調整しよう。ホタルが物に近いほど影は大きくなる。',
+        '曲がった小枝とかぎ形の小枝を選び、枝先が左右上方を向き、軸が下で重なる向きにする。灯りを小枝に近づけて型の大きさに合わせよう。'));
     }
     return steps.filter(Boolean)[0] || H('none', 'あちこち調べてみよう。');
   }
@@ -1066,9 +1069,9 @@ export class KinokoStage {
       await this.focus(this.R.web, 9);
       await this.say([
         'クモが、巣のまんなかに、ふたまたのつのの形を編みこんだ。',
-        { who: 'spider', text: 'この型に、ぴったり重なる影をうつすの。灯りは……ホタルの坊やにたのむといいわ。たしか、釣鐘草で寝てるはず。' },
+        { who: 'spider', text: '小さな物を二つ選んで、影を重ねるの。それぞれの向きも工夫して、この型に重なるつのを作ってね。灯りは……釣鐘草で寝ているホタルの坊やにたのむといいわ。' },
       ]);
-      g.note('ki-shadow', '影絵', 'クモの巣の<b>型</b>に、ぴったり重なる影をうつすと、カブトムシが飛び起きる。<br>灯りは、釣鐘草で寝ている<b>ホタル</b>にたのむ。');
+      g.note('ki-shadow', '影絵', '<b>二つの物の影</b>を重ねて、クモの巣の型と同じ<b>つの</b>を作る。それぞれの向きと、灯りの距離を調整する。<br>灯りは、釣鐘草で寝ている<b>ホタル</b>にたのむ。');
       return;
     }
     if (f.shadowDone) {
@@ -1092,9 +1095,9 @@ export class KinokoStage {
     const g = this.g, R = this.R;
     let pending = false;
     shadowPanel(g.ui, g.audio, {
-      onChange: ({ s, obj }) => {
-        // 箱庭の巣にも、うっすら影をうつす（形はつのだけ見せる）
-        R.shadow.material.opacity = obj === 'ytwig' ? 0.35 : 0.15;
+      onChange: ({ s, ready }) => {
+        // 二つの影がつのになったときだけ、箱庭の巣にも姿をうつす。
+        R.shadow.material.opacity = ready ? 0.35 : 0;
         R.shadow.scale.setScalar(s);
       },
       onSolved: async (panel) => {
