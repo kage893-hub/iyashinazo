@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "status": "paused-by-user",
+  "implemented": false,
+  "planned_count": 82,
+  "generated": [
+    {
+      "id": "marble",
+      "name": "ビー玉",
+      "category": "items",
+      "path": "items/marble.png",
+      "source_file": "exec-7f0a83d0-23fd-40c8-821e-b2eeade12528.png",
+      "status": "generated-not-integrated"
+    },
+    {
+      "id": "sagaGuide",
+      "name": "佐賀の旅ノート",
+      "category": "items",
+      "path": "items/sagaGuide.png",
+      "source_file": "exec-d0ca0360-e3e1-4916-92a2-8f565edabfee.png",
+      "status": "generated-not-integrated"
+    },
+    {
+      "id": "museumGuide",
+      "name": "夜の観覧手帳",
+      "category": "items",
+      "path": "items/museumGuide.png",
+      "source_file": "exec-eb1fab94-98d6-4eca-87ec-4c905953c0fd.png",
+      "status": "generated-not-integrated"
+    },
+    {
+      "id": "springKey",
+      "name": "ゼンマイ鍵",
+      "category": "items",
+      "path": "items/springKey.png",
+      "source_file": "exec-278fe231-32a6-4a9f-a659-ddcaa1f0e8f2.png",
+      "status": "generated-not-integrated"
+    },
+    {
+      "id": "brooch",
+      "name": "月のブローチ",
+      "category": "items",
+      "path": "items/brooch.png",
+      "source_file": "exec-a438ad06-d94b-457a-ab0f-eda921fb0453.png",
+      "status": "generated-not-integrated"
+    }
+  ],
+  "interrupted_requests": [
+    "starCoin",
+    "ticket"
+  ],
+  "resume_rule": "ユーザーの再開指示まで生成しない。すべての画像が完成してから実装する。再開時に生成原本フォルダも確認し、完了済みIDを除いて再開する。"
+}

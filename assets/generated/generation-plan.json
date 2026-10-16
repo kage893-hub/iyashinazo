@@ -1,0 +1,416 @@
+{
+  "style": "Create exactly ONE isolated inventory asset for Hoshimawari Express, a cozy Japanese miniature-diorama puzzle adventure. Premium hand-crafted storybook 3D illustration: softly rounded crafted forms, warm cream and restrained jewel tones, detailed believable tactile materials, tasteful upper-left studio lighting, exceptional silhouette legibility at 64 pixels. One complete centered object occupies about 72% of square canvas, generous transparent padding on every side. Transparent background with real alpha; no ground, pedestal, floor shadow, text labels, captions, border, interface, collage, contact sheet, multiple angles, spare objects, or decorative objects floating outside the subject. This must be one self-contained inventory item, not a collection. No human hands. No readable writing or puzzle solutions; keep writing areas blank unless the subject explicitly requires a single large symbol. Render as a polished high-resolution PNG.",
+  "textureStyle": "Generate exactly ONE square seamless tileable diffuse albedo texture for a cozy premium Japanese miniature-diorama adventure game. Orthographic straight-on top-down surface scan; fill image edge to edge with ONLY the specified one material. No perspective, horizon, frame, objects, collage, split panels, labels, letters or color charts. Refined tactile detail with restrained storybook miniature craftsmanship. Absolutely flat neutral diffuse lighting; no baked directional light, vignette, cast shadows, dark edges or glossy highlights. Opposite edges visually match for seamless repeated tiling. One material only. Opaque background. High resolution production texture.",
+  "jobs": [
+    {
+      "id": "marble",
+      "category": "items",
+      "subject": "One translucent blue glass marble with pale gold light inside."
+    },
+    {
+      "id": "sagaGuide",
+      "category": "items",
+      "subject": "One folded cream accordion travel notebook, sage-green cloth edges, embossed tiny train emblem, pale blue river line. No writing or extra pen."
+    },
+    {
+      "id": "museumGuide",
+      "category": "items",
+      "subject": "One closed navy cloth museum guidebook, antique gold trim, a single embossed five-pointed gold star, ivory page edges."
+    },
+    {
+      "id": "springKey",
+      "category": "items",
+      "subject": "One brass clock winding key with butterfly-shaped two-loop open bow and short square-ended winding stem. Warm worn brass."
+    },
+    {
+      "id": "brooch",
+      "category": "items",
+      "subject": "One golden crescent-moon brooch with one small pale-blue cabochon embedded in the lower curve, finely engraved metal rim."
+    },
+    {
+      "id": "starCoin",
+      "category": "items",
+      "subject": "One antique gold coin face-on with one raised five-pointed star and concentric engraved rim. No numerals or writing."
+    },
+    {
+      "id": "ticket",
+      "category": "items",
+      "subject": "One horizontal cream antique stiff-paper railway ticket, fine faded-blue border, one star-shaped punched hole. Central writing area completely blank."
+    },
+    {
+      "id": "tongs",
+      "category": "items",
+      "subject": "One long dark iron fireplace tongs tool, its two narrow arms joined at a hinge, slightly open jaws. Whole diagonal tool."
+    },
+    {
+      "id": "fireStone",
+      "category": "items",
+      "subject": "One softly faceted orange-red ember stone with subtle internal amber light glowing through hairline cracks. No separate flame."
+    },
+    {
+      "id": "valveHandle",
+      "category": "items",
+      "subject": "One red-painted metal valve handwheel, six radial spokes, silver central hub, real open spaces between spokes. Near-front view."
+    },
+    {
+      "id": "signalKey",
+      "category": "items",
+      "subject": "One antique silver skeleton key, round bow and two teeth, one small BLANK cream tag tied directly to its bow."
+    },
+    {
+      "id": "konpeito",
+      "category": "items",
+      "subject": "One closed translucent sky-blue cellophane gift pouch containing pastel Japanese star-shaped konpeito candies, tied with red ribbon. No loose sweets outside."
+    },
+    {
+      "id": "oilCan",
+      "category": "items",
+      "subject": "One small brass engineer's oil can, stout reservoir, attached loop handle, elegant long narrow angled spout. Warm worn golden metal."
+    },
+    {
+      "id": "cotton",
+      "category": "items",
+      "subject": "One cohesive fluffy pearly white tuft of cloud cotton, rounded volume, cool pale-blue shading, delicately visible soft fibers."
+    },
+    {
+      "id": "sail",
+      "category": "items",
+      "subject": "One folded piece of ivory woven sail canvas, pale-blue stitched bands and reinforced corner eyelets. No mast or boat."
+    },
+    {
+      "id": "letter",
+      "category": "items",
+      "subject": "One closed ivory envelope, neatly folded flap, attached small pale-blue stamp with gold star, single red wax seal. No writing."
+    },
+    {
+      "id": "letterOpen",
+      "category": "items",
+      "subject": "One cream letter-paper sheet unfolded with natural fold creases and small faint blue star watermark at a corner. Central area BLANK."
+    },
+    {
+      "id": "gear",
+      "category": "items",
+      "subject": "One broad golden brass cogwheel, evenly spaced teeth, one clean central circular mounting hole. Near-front view, subtle machine-cut highlights."
+    },
+    {
+      "id": "lantern",
+      "category": "items",
+      "subject": "One UNLIT Japanese handheld ivory washi paper lantern, round-oval form, bamboo ribs, black lacquer caps, attached carrying loop. No writing or glow."
+    },
+    {
+      "id": "lanternLit",
+      "category": "items",
+      "subject": "One LIT Japanese handheld ivory washi paper lantern, round-oval form, bamboo ribs, black lacquer caps, attached carrying loop. Warm internal amber glow. No writing."
+    },
+    {
+      "id": "poker",
+      "category": "items",
+      "subject": "One long dark iron fireplace poker, slim rod, short bent hook at tip, integral loop grip at opposite end. Whole diagonal tool."
+    },
+    {
+      "id": "amazake",
+      "category": "items",
+      "subject": "One handmade ivory ceramic cup, cobalt-blue rim, filled with creamy white warm amazake, one delicate integral steam wisp. No saucer or spoon."
+    },
+    {
+      "id": "gateKey",
+      "category": "items",
+      "subject": "One old brass key with gentle stylized monkey-face bow and two key teeth, tiny blank cartouche. No writing."
+    },
+    {
+      "id": "masu",
+      "category": "items",
+      "subject": "One open empty Japanese hinoki square wooden masu measuring cup, meticulous finger-jointed corners, pale grain. Three-quarter view, blank front."
+    },
+    {
+      "id": "kawaraban",
+      "category": "items",
+      "subject": "One folded Edo-era warm washi newspaper sheet, gently worn edges, faint red round stamp at one corner. Actual printing area BLANK."
+    },
+    {
+      "id": "cucumber",
+      "category": "items",
+      "subject": "One fresh curved Japanese cucumber, dark emerald green bumpy skin, tiny attached stem, subtle dew highlights. No slices."
+    },
+    {
+      "id": "rope",
+      "category": "items",
+      "subject": "One continuous sturdy tan hemp mooring rope coiled into a compact round hank, clearly braided fibers, one short attached trailing end."
+    },
+    {
+      "id": "dango",
+      "category": "items",
+      "subject": "One assembled bamboo skewer holding three connected mitarashi dango, ivory toasted dumplings with glossy amber glaze. No plate or loose dumplings."
+    },
+    {
+      "id": "jitte",
+      "category": "items",
+      "subject": "One Edo-period iron jitte truncheon with one side-catching hook, dark brown wrapped handle, short attached red cord loop. No sword."
+    },
+    {
+      "id": "tegata",
+      "category": "items",
+      "subject": "One pale cedar wooden travel-pass tablet, gently aged edges, one tiny red stamp-like mark in bottom corner. Central panel BLANK."
+    },
+    {
+      "id": "moonGear",
+      "category": "items",
+      "subject": "One antique gold tidal-clock gear with exactly twenty-eight evenly spaced teeth and one crescent-shaped cutout at center. Near-front view."
+    },
+    {
+      "id": "parcel",
+      "category": "items",
+      "subject": "One small kraft-paper wrapped lighthouse parcel, attached ivory cotton string crosses its top, attached blank cream address label."
+    },
+    {
+      "id": "net",
+      "category": "items",
+      "subject": "One neatly folded tan knotted fishing-net bundle with small ochre-yellow floats attached along upper edge. No fish or loose floats."
+    },
+    {
+      "id": "fish",
+      "category": "items",
+      "subject": "One intact fresh Japanese horse mackerel (aji), silver-blue back, pearly sides, fine scales, clear dark eye. No gore or plate."
+    },
+    {
+      "id": "oil",
+      "category": "items",
+      "subject": "One small squat clear-glass bottle filled with pale-gold lamp oil, cork stopper, single attached blank ivory label."
+    },
+    {
+      "id": "maletter",
+      "category": "items",
+      "subject": "One closed muted-purple envelope with ivory folded edges and one deep-purple wax seal embossed with a decorative star. No writing."
+    },
+    {
+      "id": "moonflower",
+      "category": "items",
+      "subject": "One softly luminous white five-petal moonflower on a single short sage-green stem with two attached leaves. No bouquet."
+    },
+    {
+      "id": "gold",
+      "category": "items",
+      "subject": "One closed soft tan leather coin pouch tied by gold drawstring, small embossed gold medallion on front. No loose coins."
+    },
+    {
+      "id": "sword",
+      "category": "items",
+      "subject": "One friendly heroic fantasy sword, straight pale silver-blue blade, gold crossguard, navy wrapped grip, blue pommel gem. No sheath."
+    },
+    {
+      "id": "potions-healing",
+      "category": "items",
+      "subject": "ONE recovery potion bottle only: round clear glass, rosy-red liquid, small cork, short cream neck ribbon, attached simple heart emblem."
+    },
+    {
+      "id": "potions-antidote",
+      "category": "items",
+      "subject": "ONE antidote potion bottle only: round clear glass, emerald-green liquid, small cork, short cream neck ribbon, attached simple leaf emblem."
+    },
+    {
+      "id": "potions-energy",
+      "category": "items",
+      "subject": "ONE energy potion bottle only: round clear glass, honey-gold liquid, small cork, short cream neck ribbon, attached simple sun emblem."
+    },
+    {
+      "id": "purpleLantern",
+      "category": "items",
+      "subject": "One dark plum-black iron lantern, one carrying ring, four clear glass panes, one violet magical flame contained INSIDE. No exterior sparkles."
+    },
+    {
+      "id": "tomato",
+      "category": "items",
+      "subject": "One squat scarlet-red fantasy lava tomato, subtle internal amber fissures, one attached green calyx. Restrained glow, no loose leaves."
+    },
+    {
+      "id": "mushroom",
+      "category": "items",
+      "subject": "One small shadow mushroom, broad deep-purple cap, delicate lavender speckles, short cream-lilac stem, subtle gills. No cluster or ground."
+    },
+    {
+      "id": "salt",
+      "category": "items",
+      "subject": "One small clear-glass jar of glittering star-dust salt, cork stopper, attached tiny blank label with one gold star. No spilled salt."
+    },
+    {
+      "id": "stew",
+      "category": "items",
+      "subject": "One dark handmade ceramic bowl filled with comforting smooth orange-red stew and a few integral ingredient pieces, delicate steam. No spoon or plate."
+    },
+    {
+      "id": "picturebook",
+      "category": "items",
+      "subject": "One closed worn burgundy children's picturebook, rounded corners, ivory page edges, small embossed gold crescent moon. Main cover panel and title BLANK."
+    },
+    {
+      "id": "goen",
+      "category": "items",
+      "subject": "One Japanese five-yen brass coin, near-front single face, real transparent round central hole, rice stalk engraving above, water below, raised 五 円. No other coins."
+    },
+    {
+      "id": "button",
+      "category": "items",
+      "subject": "One pastel sky-blue sewing button, exactly FOUR real open holes arranged in a square, gently concave face, raised circular rim. No thread."
+    },
+    {
+      "id": "oldLetter",
+      "category": "items",
+      "subject": "One closed century-old ivory envelope, browned intact corners, worn fold creases, one dull red wax seal, faded violet stamp. No writing."
+    },
+    {
+      "id": "antMap",
+      "category": "items",
+      "subject": "One small unfolded treasure-map parchment sheet, warm ochre tone, gentle creases, slightly worn edges. Central surface COMPLETELY BLANK for accurate later clues."
+    },
+    {
+      "id": "thimble",
+      "category": "items",
+      "subject": "One silver sewing thimble, short domed closed-top cap, neat rows of small round dimples, softly flared open bottom rim. Side three-quarter view."
+    },
+    {
+      "id": "thimbleWater",
+      "category": "items",
+      "subject": "One silver sewing thimble used as bucket, inverted dome below and open rim facing UP, dimpled silver sides, filled with pale-blue rainwater."
+    },
+    {
+      "id": "nectar",
+      "category": "items",
+      "subject": "One tiny round clear-glass nectar bottle, cork stopper, single attached leaf-shaped collar, filled with rich amber nectar. No flowers or drips."
+    },
+    {
+      "id": "silkRope",
+      "category": "items",
+      "subject": "One continuous pearly white spider-silk rope in a neat oval coil, fine luminous fibers and short attached trailing end. No spider or web."
+    },
+    {
+      "id": "toyKey",
+      "category": "items",
+      "subject": "One cheerful large toy winding key, rounded brass double-oval open bow, thick square stem, small red inset in center. No toy."
+    },
+    {
+      "id": "gearBox",
+      "category": "items",
+      "subject": "One CLOSED muted-teal vintage tin gear box, softly rounded edges, one embossed brass cogwheel emblem on lid, attached red latch. No loose gears."
+    },
+    {
+      "id": "crankHandle",
+      "category": "items",
+      "subject": "One vermilion-red L-shaped metal winding crank, attached dark wooden turning grip at one end, silver square mounting socket at other end."
+    },
+    {
+      "id": "koBell",
+      "category": "items",
+      "subject": "One antique round gold shrine suzu bell, characteristic sounding slit and small round apertures, short attached red cord loop. No shrine."
+    },
+    {
+      "id": "ningyoyaki",
+      "category": "items",
+      "subject": "One closed cream-paper parcel of Japanese ningyoyaki sweets, tied by red-and-white string, attached small blank ochre label. No loose cakes."
+    },
+    {
+      "id": "tenugui",
+      "category": "items",
+      "subject": "One folded ivory-and-indigo Japanese cotton tenugui, fine woven fibers, indigo border, generous completely BLANK ivory panel for precise time marks later."
+    },
+    {
+      "id": "ramune",
+      "category": "items",
+      "subject": "One pale-green classic Codd-neck ramune bottle, single glass marble trapped inside pinched neck, cucumber-green soda, attached blank cream label with tiny cucumber emblem."
+    },
+    {
+      "id": "grass",
+      "category": "materials",
+      "subject": "short soft sage-green meadow grass, delicate evenly sized blades, subtle natural variation, no flowers or objects"
+    },
+    {
+      "id": "moss",
+      "category": "materials",
+      "subject": "dark olive and sage velvety moss, fine small micro-cushions, subtle moist variation, no stones or twigs"
+    },
+    {
+      "id": "soil",
+      "category": "materials",
+      "subject": "warm cocoa-brown fine garden soil, small granular grain, no stones, plants, roots or footprints"
+    },
+    {
+      "id": "gravel",
+      "category": "materials",
+      "subject": "small compact warm-gray railway ballast gravel, uniform fine scale with muted gray and brown stones, no rails or grass"
+    },
+    {
+      "id": "sand",
+      "category": "materials",
+      "subject": "fine warm pale-beige sand, extremely subtle soft ripples, no shells, stones or footprints"
+    },
+    {
+      "id": "cobblestone",
+      "category": "materials",
+      "subject": "small rounded warm-gray cobblestone paving, orderly lightly irregular pattern, narrow low-contrast joints"
+    },
+    {
+      "id": "stoneBlocks",
+      "category": "materials",
+      "subject": "warm pale limestone masonry in neat rectangular staggered blocks, shallow narrow mortar and fine subtle stone grain"
+    },
+    {
+      "id": "woodPlanks",
+      "category": "materials",
+      "subject": "honey-brown floorboards, straight parallel planks, fine restrained natural wood grain and gentle worn polish"
+    },
+    {
+      "id": "agedBoards",
+      "category": "materials",
+      "subject": "weathered dark cedar vertical boards, gray-brown and umber fine wood grain, fine straight seams, no heavy rot"
+    },
+    {
+      "id": "plaster",
+      "category": "materials",
+      "subject": "warm ivory lime plaster, fine tactile trowel grain, clean subtle off-white variation, no stains or cracks"
+    },
+    {
+      "id": "roofTiles",
+      "category": "materials",
+      "subject": "Japanese blue-gray curved ceramic kawara roof tiles, orderly horizontal overlapping rows filling image, no building silhouette"
+    },
+    {
+      "id": "indigoCloth",
+      "category": "materials",
+      "subject": "deep muted indigo cotton weave, fine warp and weft, subtle dyed variation, flat cloth with no folds or lettering"
+    },
+    {
+      "id": "washi",
+      "category": "materials",
+      "subject": "warm ivory handmade washi paper, delicate pale embedded fibers, clean fine grain, no stains, writing or borders"
+    },
+    {
+      "id": "corrugatedMetal",
+      "category": "materials",
+      "subject": "pale-gray aged zinc corrugated sheet metal, fine evenly spaced vertical ridges, subtle clean wear, no bolts or letters"
+    },
+    {
+      "id": "rustedMetal",
+      "category": "materials",
+      "subject": "muted gray painted metal with restrained scattered ochre oxidation, continuous fine patina, no hardware or holes"
+    },
+    {
+      "id": "paintedToyWood",
+      "category": "materials",
+      "subject": "muted vermilion-red painted toy wood, very fine underlying grain, gentle lacquer wear, one red color family only"
+    },
+    {
+      "id": "heroPixelStone",
+      "category": "materials",
+      "subject": "16-bit PIXEL ART warm-gray castle masonry, tidy staggered rectangular blocks, sparse olive pixel patina, crisp square pixels, no smooth gradients"
+    },
+    {
+      "id": "maouPixelStone",
+      "category": "materials",
+      "subject": "16-bit PIXEL ART dark aubergine-purple castle masonry, tidy rectangular blocks, restrained lavender edge highlights, crisp square pixels, no smooth gradients"
+    },
+    {
+      "id": "museumFloor",
+      "category": "materials",
+      "subject": "refined warm charcoal-gray terrazzo floor, very fine low-contrast cream and gray inclusions, no large tile joints or decoration"
+    }
+  ]
+}
