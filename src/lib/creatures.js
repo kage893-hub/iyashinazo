@@ -296,7 +296,7 @@ export function makeFrog() {
   for (const s of [-1, 1]) add(b, G.sphere(0.16), green, s * 0.24, 0.07, 0.18, { scale: [1.3, 0.45, 1.5] });
   // 胴（作業着）
   add(b, G.sphere(0.45, 24, 18), mat('#3d5f8f'), 0, 0.45, 0, { scale: [1.05, 0.95, 0.95] });
-  add(b, G.box(0.36, 0.3, 0.1), mat('#3d5f8f'), 0, 0.62, 0.36, { rot: [-0.2, 0, 0] });
+  const bib = add(b, G.box(0.36, 0.3, 0.1), mat('#3d5f8f'), 0, 0.62, 0.36, { rot: [-0.2, 0, 0], name: 'frog-bib' });
   for (const s of [-1, 1]) add(b, G.box(0.06, 0.4, 0.06), mat('#2c4670'), s * 0.15, 0.78, 0.25, { rot: [-0.3, 0, 0] });
   // 腕
   for (const s of [-1, 1]) {
@@ -337,15 +337,17 @@ export function makeFrog() {
   add(cap, new THREE.CylinderGeometry(0.27, 0.27, 0.025, 20, 1, false, -Math.PI / 2, Math.PI), mat('#2a3a6a'), 0, -0.06, 0.08, { scale: [1, 1, 1.1] });
   // 赤いスカーフ
   const scarf = (c.scarf = group(b));
-  add(scarf, G.cyl(0.36, 0.43, 0.12, 24), red, 0, 0.74, 0);
-  // 結び目と垂れる布を胸当ての表へ。服と交差せず、布らしい薄い形にする。
-  add(scarf, G.sphere(0.065, 16, 12), red, 0.12, 0.745, 0.5, { scale: [1, 0.85, 0.65] });
+  add(scarf, G.cyl(0.36, 0.43, 0.12, 24), red, 0, 0.74, 0, { scale: [1, 1, 0.92] });
+  // 結び目を首の帯につなぎ、垂れる布は胸当てと同じ傾きで表面に沿わせる。
+  add(scarf, G.sphere(0.05, 16, 12), red, 0.09, 0.75, 0.378, { scale: [1, 0.8, 0.6], name: 'frog-scarf-knot' });
   const scarfEnd = new THREE.Shape();
-  scarfEnd.moveTo(-0.045, 0.08); scarfEnd.lineTo(0.045, 0.08);
-  scarfEnd.lineTo(0.065, -0.14); scarfEnd.lineTo(0, -0.19);
-  scarfEnd.lineTo(-0.055, -0.14); scarfEnd.closePath();
-  add(scarf, new THREE.ExtrudeGeometry(scarfEnd, { depth: 0.018, bevelEnabled: true, bevelSize: 0.005, bevelThickness: 0.005, bevelSegments: 2, steps: 1 }), red,
-    0.12, 0.66, 0.48, { rot: [0, 0, 0.08], name: 'frog-scarf-end' });
+  scarfEnd.moveTo(-0.04, 0.135); scarfEnd.lineTo(0.04, 0.135);
+  scarfEnd.lineTo(0.055, -0.08); scarfEnd.lineTo(0, -0.125);
+  scarfEnd.lineTo(-0.05, -0.08); scarfEnd.closePath();
+  const cloth = new THREE.ExtrudeGeometry(scarfEnd, { depth: 0.008, bevelEnabled: true, bevelSize: 0.002, bevelThickness: 0.002, bevelSegments: 2, steps: 1 });
+  cloth.translate(0.09, 0, 0.052); // 胸当ての厚さ0.1。その表面から布一枚だけ出す。
+  const end = add(scarf, cloth, red, bib.position.x, bib.position.y, bib.position.z, { name: 'frog-scarf-end' });
+  end.rotation.copy(bib.rotation);
 
   c.extra = (dt, t) => {
     // のどをふくらませる
