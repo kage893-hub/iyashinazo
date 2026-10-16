@@ -65,9 +65,17 @@ export function passwordPanel(ui, audio, { onSolved }) {
 }
 
 // ---------------------------------------------------------------
-// ほのおのシチュー：黒板のとおりに、材料を入れる順番と、まぜる回数
-// 黒板「トマト → キノコ → 塩　そして 三回まぜる」
+// ほのおのシチュー：材料の呼び名・前後関係・隣接から順番と回数を推理する。
 // ---------------------------------------------------------------
+export const RECIPE_CLUES = [
+  '星のすぐ前に 影のかさ',
+  '赤い実は 星より先に',
+  'まぜる数は 材料の数',
+];
+export const RECIPE_RULE = '材料はそれぞれ一度だけ。全部入れてから、まぜること。';
+export function stewRecipeHTML() {
+  return `<b>ほのおのシチュー</b><br>${RECIPE_CLUES.join('<br>')}<br><small>${RECIPE_RULE}</small>`;
+}
 export const STEW = ['tomato', 'mushroom', 'salt', 'stir', 'stir', 'stir'];
 const ING = { tomato: '🍅 溶岩トマト', mushroom: '🍄 かげキノコ', salt: '✨ 星くず塩', stir: '🥄 まぜる' };
 
@@ -76,12 +84,12 @@ export function stewPanel(ui, audio, { onSolved, onStep }) {
   let done = false;
   const body = el('div', 'stewp');
   body.innerHTML = `
-    <div class="plaque">ほのおのシチュー<br><small>黒板のレシピのとおりに、材料を入れて、まぜよう。</small></div>
+    <div class="plaque">ほのおのシチュー<br><small>黒板のことばから、入れる順番とまぜる回数を考えよう。<br>${RECIPE_RULE}</small></div>
     <div class="tk-seq st-seq"></div>
     <div class="tk-btns">
+      <button class="btn st-b" data-k="salt">${ING.salt}</button>
       <button class="btn st-b" data-k="tomato">${ING.tomato}</button>
       <button class="btn st-b" data-k="mushroom">${ING.mushroom}</button>
-      <button class="btn st-b" data-k="salt">${ING.salt}</button>
     </div>
     <div class="tk-btns"><button class="btn primary st-b" data-k="stir">${ING.stir}</button></div>
     <button class="btn small-btn st-reset">はじめから</button>

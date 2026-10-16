@@ -4,6 +4,7 @@ import { add, group, rng } from '../../lib/util.js';
 import { lightPool } from '../../lib/livefx.js';
 import { mats, box, plane, roof, tower, wall, chest, crestTex } from '../hero/diorama.js';
 import { GLYPHS } from '../hero/panels.js';
+import { RECIPE_CLUES } from './panels.js';
 
 // ---------------------------------------------------------------
 // 魔王城（HD-2D 風）
@@ -343,8 +344,8 @@ export function buildMaouDiorama(scene) {
   box(bb, 2.14, 1.54, 0.1, M.wood, 0, 1.6, -0.06);
   R.recipeGlow = group(bb, 0, 0, 0.05);
   R.recipeGlow.userData.dynamic = true;
-  ['ほのおのシチュー', 'トマト → キノコ → 塩', 'さいごに 3回 まぜる'].forEach((text, i) => {
-    const line = add(R.recipeGlow, new THREE.PlaneGeometry(1.9, 0.32), new THREE.MeshBasicMaterial({ map: pixText(text, { w: 256, h: 40, size: 18, bg: '#1a2a22', fg: '#e8d8ff', border: '#1a2a22' }) }), 0, 2.05 - i * 0.43, 0, { cast: false });
+  ['ほのおのシチュー', ...RECIPE_CLUES].forEach((text, i) => {
+    const line = add(R.recipeGlow, new THREE.PlaneGeometry(1.9, 0.28), new THREE.MeshBasicMaterial({ map: pixText(text, { w: 256, h: 40, size: 18, bg: '#1a2a22', fg: '#e8d8ff', border: '#1a2a22' }) }), 0, 2.1 - i * 0.32, 0, { cast: false });
     line.userData.noPick = true;
     line.userData.keep = true;
   });

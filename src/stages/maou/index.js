@@ -13,7 +13,7 @@ import { buildPortRails } from '../port/diorama.js';
 import { buildMaouDiorama, TRACK_Z, HILL, ISLAND, GATE_X } from './diorama.js';
 import { makeHero, makeDragon, makePixelFrog, makeSlime } from '../../lib/sprites-hero.js';
 import { maouSheet, skeletonSheet, makeMaou, makeSkeleton, makeBat, makeWitchCat, makeMimic, makeGhost, mimicSheet } from '../../lib/sprites-maou.js';
-import { passwordPanel, stewPanel, quizPanel, steleHTML, picturebookHTML } from './panels.js';
+import { passwordPanel, stewPanel, quizPanel, steleHTML, picturebookHTML, RECIPE_CLUES, RECIPE_RULE, stewRecipeHTML } from './panels.js';
 
 const V = THREE.Vector3;
 
@@ -261,6 +261,9 @@ export class MaouStage {
 
   applyState() {
     const f = this.g.flags, R = this.R;
+    // 更新前に読んだメモも、黒板と同じ手がかりへそろえる（進行は変えない）。
+    const recipeNote = this.g.state.notes?.find(n => n.id === 'mo-recipe' && n.stage === 'maou');
+    if (recipeNote) recipeNote.html = stewRecipeHTML();
     // 門の外／中で、なかまの立ち位置が変わる
     const inside = !!f.gateOpen;
     this.bat.root.position.set(...(inside ? [1.2, 0, 2.6] : [-12.4, 0, 0.8]));
@@ -413,7 +416,11 @@ export class MaouStage {
       if (!f.mushroomGot) need.push('かげキノコ（地下牢。ランタンを消すと見える）');
       if (!f.saltGot) need.push('星くず塩（図書室の本棚の上。ゴーストがとってくれる）');
       if (need.length) return H('ingredients', `材料をあつめよう：${need.join('、')}`);
-      return H('cook', '魔女ネコに話しかけてシチューをつくろう。', 'トマト → キノコ → 塩、そして3回まぜる。');
+      return H('cook',
+        '黒板の「赤い実」「影のかさ」「星」は、どの材料を表しているかな。',
+        '「すぐ前」は、間にほかの材料を入れないということ。二つをひと組にして、残った材料の場所を考えよう。',
+        '材料を全部入れたあと、使った材料の種類と同じ回数まぜよう。',
+        '溶岩トマト → かげキノコ → 星くず塩。材料は3種類なので、最後に3回まぜる。');
     }
     if (!f.bookGot) {
       if (!f.mimicTalked) return H('mimic', '中庭の右奥、宝物庫のミミックに話しかけよう。');
@@ -685,7 +692,7 @@ export class MaouStage {
     }
     const need = [['tomato', '溶岩トマト'], ['mushroom', 'かげキノコ'], ['salt', '星くず塩']].filter(([id]) => !g.has(id)).map(([, n]) => n);
     if (need.length) return this.say([{ who: 'witch', text: `あとは【${need.join('】と【')}】があればつくれるニャ。` }]);
-    await this.say([{ who: 'witch', text: '材料がそろったニャ！ さあ、黒板のとおりにつくってみて。' }]);
+    await this.say([{ who: 'witch', text: '材料がそろったニャ！ 黒板のことばから、入れる順番とまぜる回数を考えてみて。材料はそれぞれ一度ずつ使うニャ。' }]);
     let pending = false;
     stewPanel(g.ui, g.audio, { onSolved: async (panel) => { pending = true; panel.close(); await this.stewReady(); pending = false; } });
     return this.waitPanel(() => pending);
@@ -710,9 +717,9 @@ export class MaouStage {
     if (!this.lit) return this.say(['台所の黒板。なにも書いていない……ように見える。', '（魔界のチョークは、紫の光でしか読めないらしい）']);
     if (!g.flags.recipeSeen) {
       g.flag('recipeSeen');
-      g.note('mo-recipe', 'ほのおのシチューのつくりかた（黒板）', '<b>溶岩トマト → かげキノコ → 星くず塩</b>の順に入れる。<br>そして<b>3回まぜる</b>。');
+      g.note('mo-recipe', 'ほのおのシチューのつくりかた（黒板）', stewRecipeHTML());
     }
-    return this.say(['紫の光をあてると、黒板に文字がうかびあがった。', '「ほのおのシチュー：溶岩トマト → かげキノコ → 星くず塩。入れおわったら、3回まぜること」']);
+    return this.say(['紫の光をあてると、黒板に文字がうかびあがった。', `「ほのおのシチュー\n${RECIPE_CLUES.join('\n')}」`, RECIPE_RULE]);
   }
 
   async clickTomato() {
