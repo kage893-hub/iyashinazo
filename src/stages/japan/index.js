@@ -47,7 +47,7 @@ export const SPEAKERS = {
   hint: { name: 'ヒント', icon: '💡', color: '#c9952a' },
 };
 
-const FROG_HOME = new V(-2.4, FLOOR, -3.3);
+const FROG_HOME = new V(-7.8, FLOOR, -3.3);
 const LOCO_X = -1.6; // 浅草駅に止まる位置
 const END_X = 27.2; // 終点・東京駅
 
@@ -309,7 +309,7 @@ export class JapanStage {
   _placeCreatures(scene) {
     const R = this.R;
     const put = (c, x, y, z, ry = 0) => { c.root.position.copy(cityPoint(x, y, z)); c.root.rotation.y = ry; return c; };
-    this.frog = put(makeFrog(), FROG_HOME.x, FROG_HOME.y, FROG_HOME.z, -0.3);
+    this.frog = put(makeFrog(), FROG_HOME.x, FROG_HOME.y, FROG_HOME.z, 0.25);
     this.koma = put(makeKomainu({ open: true }), -11.7, 0, 2.9, 0.15);
     this.koma2 = put(makeKomainu({ open: false }), -9.5, 0, 2.9, -0.15);
     // 参道の門の両脇に立つ。正面の店の屋根に顔を隠されない場所。
@@ -320,7 +320,7 @@ export class JapanStage {
     this.risu = put(dressWagashi(makeSquirrel()), -6.7, 0, 3.6, -0.15);
     this.risu.root.position.copy(R.wagashi.getWorldPosition(new V())).add(new V(0, 0, 1.4));
     this.risu.root.rotation.y = 0;
-    this.neko = put(dressCaster(makeKawarabanCat()), 1.0, 0, 3.3, 0.2);
+    this.neko = put(dressCaster(makeKawarabanCat()), 1.0, 0, 3.3, 0);
     this.inu = put(dressPolice(makeShiba()), 10.8, 0, -0.9, -0.3);
     this.kappa = put(dressCaptain(makeKappa()), 8.9, 0.45, 7.75, -0.4);
     // 船上と展望台の住人は、模型に対する立ち位置の寸法を保つ。
@@ -374,7 +374,9 @@ export class JapanStage {
     reg('hondo', R.hondo, '浅草寺の本堂', () => this.say(['浅草寺の本堂。江戸のころと同じように、大きな屋根がそびえている。']));
     reg('pagoda', R.pagoda, '五重塔', () => this.say(['五重塔。むかしと同じ、本堂の左に立っている。']));
     reg('ramen', R.ramen, 'ラーメン屋', () => this.say(['赤ちょうちんのラーメン屋。しょうゆのいいにおい。', 'のれんに、小さく「創業　団子のころより」と書いてある。']));
-    reg('fashion', R.fashion, 'ファッションビル', () => this.say(['銀色の円筒のファッションビル。「109」の看板が光る。', '入口の銘板に「元・呉服 つる屋」とある。']));
+    reg('fashion', R.fashion, 'MAGNET', () => this.say(['赤い壁と広告が目をひく、MAGNET。屋上には交差点を見渡す展望デッキがある。', '入口の銘板に「元・呉服 つる屋」とある。']));
+    reg('shibuya109', R.shibuya109, 'SHIBUYA109', () => this.say(['丸い塔のような、SHIBUYA109。銀色の壁に大きな広告、てっぺんには赤い「109」の文字。']));
+    reg('shibuyaEntry', R.shibuyaEntry, '渋谷駅の入口', () => this.say(['交差点のそばの、渋谷駅の入口。ハチ公口には、待ち合わせをする旅人たちが集まる。']));
     reg('cafe', R.cafe, '喫茶店', () => this.say(['レンガの純喫茶「つる」。ナポリタンとクリームソーダが名物らしい。']));
     reg('conbini', R.conbini, 'コンビニ', () => this.say(['24時間あいているコンビニ。……ここは、江戸のころは原っぱだったらしい。']));
     reg('panda', this.panda.root, 'パンダ', () => this.talkPanda());
@@ -688,7 +690,7 @@ export class JapanStage {
     const portrait = innerWidth < innerHeight;
     if (portrait) { this.g.ui.questsCollapsed = true; this.g.refreshQuests(); }
     // 参道では高速道路より内側から映し、道路や欄干で画面を埋めない。
-    const radius = c === this.koma ? 4.2 : c === this.risu ? 4.8 : (dist ?? 9) * (portrait ? 1.15 : 1);
+    const radius = c === this.koma ? 4.2 : c === this.risu ? 4.8 : c === this.neko ? 6.5 : (dist ?? 9) * (portrait ? 1.15 : 1);
     const target = c.root.getWorldPosition(new V());
     target.y = c === this.koma ? c.head.getWorldPosition(new V()).y - 0.15 : Math.min(8, Math.max(0.6, target.y + 0.5));
     return this.g.focusOn(target, { dist: radius, subject: c.root, duration: 0.8, theta: c.root.rotation.y, polar: c === this.koma ? 1.08 : 1.13, keepAngle: true });

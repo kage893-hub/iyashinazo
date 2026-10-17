@@ -237,9 +237,11 @@ GitHub Pages などにそのまま置いても動きます。three.js は `vendo
 番所は交番に、町木戸は踏切に、火の見やぐらは東京タワーに、井戸は自動販売機に、茶店は喫茶店に、渡し場は水上バス乗り場になっています。
 まわりには、渋谷のスクランブル交差点とセンター街、秋葉原の電気街、上野公園とパンダ、下町の銭湯、首都高、山手線の高架と高架下の飲み屋、
 新宿の高層ビルと都庁、東京駅の赤レンガ駅舎、お台場とレインボーブリッジ、遠くに富士山とスカイツリー。
+渋谷は左に109、中央にQFRONTの大型ビジョン、右にMAGNETを配置し、5本の横断歩道が集まる交差点とハチ公口の広場を作り込んでいます。
+高層ビル街は都庁の双塔やコクーン型など13棟の輪郭を作り分け、外壁の桟、屋上の設備、昼夜で位置のそろった窓を加えています。
 東京駅には白い石の窓枠、アーチの玄関、扇形の高窓や扉の桟を加えています。
 
-ゲーム内メニューの「東京のエリアを選ぶ」から、浅草寺・仲見世、渋谷・時の鐘、秋葉原、東京タワー・船着き場、東京駅、上野公園、下町の路地、お台場の8地区へ視点を移せます。
+ゲーム内メニューの「東京のエリアを選ぶ」から、浅草寺・仲見世、渋谷・時の鐘、秋葉原、東京タワー・船着き場、東京駅、上野公園、下町の路地、お台場、新宿・高層ビル街の9地区へ視点を移せます。
 
 街の灯りが消え、時計はすべて夜8時で止まっています。終点・東京駅の手前の信号も赤のまま。
 **狛犬の鈴**を鳴らすと「むかし目」になり、二百年前の江戸の町が半透明に重なって見えます。
@@ -333,8 +335,11 @@ src/stages/kinoko/coins.js 五円玉・百円玉の表裏と縁の模型（郵�
 src/stages/toy/         STAGE 9 からくりおもちゃの街（src/lib/creatures-toy.js）
 src/stages/japan/       STAGE 10 現代日本（src/lib/creatures-japan.js。むかし目は江戸の箱庭を重ねて使う）
 src/stages/japan/layout.js 現代とむかし目に共通の配置変換（模型の寸法は維持）
-src/stages/japan/guide.js 東京8地区のカメラ案内
+src/stages/japan/guide.js 東京9地区のカメラ案内
 src/stages/japan/station-details.js 東京駅の窓枠・アーチ玄関・扇形窓
+src/stages/japan/shibuya-buildings.js 渋谷の109・QFRONT・MAGNET・ラーメン屋・センター街の門
+src/stages/japan/shibuya-streets.js 5本の横断歩道の地面図とハチ公口の駅前広場
+src/stages/japan/skyline.js 高層13棟の外観・屋上・昼夜の窓
 src/stages/museum/      追加の旅 星あかりの博物館（src/lib/creatures-museum.js・css/museum.css）
 src/stages/saga/        追加の旅 佐賀のまち（index・diorama・panels）
 src/stages/saga/station.js 佐賀駅の模型
@@ -370,6 +375,7 @@ node tools/save-regressions.mjs        # ブラウザ不要：旧保存・本編
 node tools/japan-layout-logic-regressions.mjs # ブラウザ不要：現代とむかし目の配置・模型寸法・道路・電線・二重変換の防止
 node tools/saga-logic-regressions.mjs  # ブラウザ不要：佐賀の五つの謎の条件と答え
 npm run serve                         # ブラウザ確認用。別のターミナルで起動しておく
+node tools/japan-city-regressions.mjs # 通常画質の実箱庭：縦横の構図・模型の非交差・旧アンカー・9地区・保存再読込（通しプレイなし）
 node tools/extra-regressions.mjs       # 追加旅の選択・保存・復帰（箱庭は軽い仮実装）
 node tools/saga-regressions.mjs        # 佐賀のパネル個別操作・途中再開・縦横画面
 node tools/saga-stage-regressions.mjs  # 佐賀の実箱庭・視界・行き先・保存・終幕の個別確認

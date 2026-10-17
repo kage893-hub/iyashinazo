@@ -5,6 +5,9 @@ import { hipRoof, gableRoof } from '../edo/diorama.js';
 import { stoneTex, planksTex } from '../station/textures.js';
 import { layoutX, layoutZ, applyJapanLayout } from './layout.js';
 import { addTokyoStationDetails } from './station-details.js';
+import { buildTokyoSkyline } from './skyline.js';
+import { buildShibuyaBuildings } from './shibuya-buildings.js';
+import { drawShibuyaGround, buildShibuyaPlaza } from './shibuya-streets.js';
 
 // ---------------------------------------------------------------
 // 現代日本（とうきょう）の箱庭：江戸の宿場町の二百年後。
@@ -64,29 +67,17 @@ const legacyGroundTex = () => canvasTex(2400, 1760, (ctx, w, h) => {
   road(-17.3, -8.6, -14.9, 6.2);      // 中央通り（浅草寺と秋葉原のあいだ）
   road(-30, 10.6, 4.0, 12.6);         // 手前の通り（下町・上野）
   road(-17.3, 12.6, -14.9, 22);
-  // 歩行者天国のスクランブル交差点（江戸の宿場の四つ角）
-  ctx.fillStyle = '#f2f0e8';
   const zebra = (cx, cz, len, wid, vertical) => {
+    ctx.fillStyle = '#f2f0e8';
     for (let i = 0; i < 9; i++) {
       if (vertical) ctx.fillRect(X(cx - wid / 2) + i * (wid * K / 9) + 3, Z(cz - len / 2), wid * K / 18, len * K);
       else ctx.fillRect(X(cx - len / 2), Z(cz - wid / 2) + i * (wid * K / 9) + 3, len * K, wid * K / 18);
     }
   };
-  zebra(2.0, -0.2, 0.65, 3.4, true); zebra(2.0, 2.0, 0.65, 3.4, true);
-  zebra(-0.05, 0.9, 0.65, 1.5, false); zebra(4.05, 0.9, 0.65, 1.5, false);
-  ctx.save(); ctx.translate(X(2.0), Z(0.9));
-  for (const a of [0.42, -0.42]) {
-    ctx.save(); ctx.rotate(a);
-    for (let i = 0; i < 13; i++) ctx.fillRect(-74 + i * 12, -8, 5, 16);
-    ctx.restore();
-  }
-  ctx.restore();
   // ほかの横断歩道
   for (const [cx, cz] of [[-16.1, -1.0], [-16.1, 2.8], [10.2, -1.0], [-16.1, 13.2], [-16.1, 10.1]]) zebra(cx, cz, 0.9, 2.4, true);
   for (const [cx, cz] of [[-18.0, 0.9], [-13.6, 0.9], [12.0, 0.9], [-18.0, 11.6], [-13.6, 11.6]]) zebra(cx, cz, 0.9, 2.0, false);
-  // 渋谷の駅前広場（江戸の井戸と茶店のあたり）
-  rect(-0.6, 2.3, 4.6, 6.2, '#c8c0b0');
-  for (let i = 0; i < 12; i++) for (let j = 0; j < 8; j++) { ctx.fillStyle = (i + j) % 2 ? '#bcb4a4' : '#d0c8b8'; ctx.fillRect(X(-0.6) + i * 17.3, Z(2.3) + j * 19.5, 17, 19); }
+  drawShibuyaGround(ctx, X, Z, K);
   // 東京駅の駅前広場
   rect(15.6, 0.5, 29.6, 6.2, '#c4beb4');
   ctx.strokeStyle = '#f2f0e8'; ctx.lineWidth = 4;
@@ -326,7 +317,7 @@ export function buildJapanDiorama(scene) {
     for (let i = 0; i < uv.count; i++) uv.setXY(i, (p.getX(i) + ISLAND.w / 2) / ISLAND.w, 1 - (-p.getY(i) + ISLAND.d / 2) / ISLAND.d);
   }
   // 歩道のふち石（大通り）
-  for (const z of [-0.6, 2.4]) for (const [a, b] of [[-29.7, -17.3], [-5.8, 29.7]]) {
+  for (const z of [-0.6, 2.4]) for (const [a, b] of [[-29.7, -17.3], [-5.8, -2.02], [5.36, 29.7]]) {
     add(root, G.box(b - a, 0.08, 0.12), mat('#d8d4cc'), (a + b) / 2, 0.04, z, { cast: false });
   }
 
@@ -386,55 +377,20 @@ export function buildJapanDiorama(scene) {
   }
 
   // ---------------- 奥：新宿の高層ビルと都庁 ----------------
-  const sky = (R.skyline = group(root));
-  const sk = [
-    [-27, -15.5, 4, 4, 11, '#c8ccd4', '#5a7aa0'], [-22.5, -18.5, 3.6, 3.6, 15, '#a8b0bc', '#4a6a90'], [-17.5, -15.0, 3.2, 3.2, 9, '#d8d0c4', '#7a8aa0'],
-    [-6.2, -15.5, 3.4, 3.0, 12, '#bcc4cc', '#5a7a9a'], [0.2, -18.6, 4.2, 3.6, 18, '#c0c8d0', '#3a5a80'], [4.6, -15.2, 3.0, 3.0, 10, '#d4ccc0', '#6a7a90'],
-    [16.0, -16.0, 4.2, 3.6, 14, '#c8ccd4', '#4a6a90'], [21.4, -19.2, 3.6, 3.6, 17, '#b0b8c4', '#4a6a8a'], [26.6, -15.4, 4, 3.6, 12, '#d0c8bc', '#6a7a9a'],
-    [-25.6, -20.4, 3, 2.4, 8, '#c8c4bc', '#7a8a9a'], [10.4, -20.0, 3.0, 2.8, 9, '#c8c4bc', '#7a8a9a'],
-  ];
-  sk.forEach(([x, z, w, d, h, wall, glass], i) => building(sky, x, z, w, d, h, { wall, glass, seed: 300 + i, lit: 0.6, R }));
-  // 都庁（ふたごの塔）
-  const tocho = (R.tocho = group(sky, -12.0, 0, -17.0));
-  const tm = windowTex('#c8c4bc', '#6a7a90', 341, 0.5);
-  const tmat = new THREE.MeshStandardMaterial({ map: tm.day, emissive: '#ffffff', emissiveMap: tm.night, emissiveIntensity: 0, roughness: 0.6 });
-  tm.day.wrapS = tm.day.wrapT = THREE.RepeatWrapping; tm.night.wrapS = tm.night.wrapT = THREE.RepeatWrapping;
-  tm.day.repeat.set(2, 4); tm.night.repeat.set(2, 4);
-  R.winMats.push(tmat);
-  add(tocho, G.box(6.0, 9.0, 3.6), tmat, 0, 4.5, 0);
-  for (const s of [-1, 1]) {
-    add(tocho, G.box(2.4, 8.0, 2.8), tmat, s * 1.6, 13.0, 0);
-    add(tocho, G.box(2.0, 2.4, 2.4), tmat, s * 1.6, 18.2, 0, { rot: [0, Math.PI / 4, 0] });
-    add(tocho, G.box(1.4, 0.3, 1.4), mat('#8a8680'), s * 1.6, 19.5, 0, { rot: [0, Math.PI / 4, 0] });
-  }
-  add(tocho, G.box(1.0, 1.4, 2.6), tmat, 0, 9.8, 0);
-  // とんがり屋根の時計の塔（代々木のあの塔のような）
-  const yoyo = group(sky, 9.6, 0, -15.6);
-  add(yoyo, G.box(3.0, 12, 3.0), new THREE.MeshStandardMaterial({ map: windowTex('#c0c4cc', '#4a5a80', 351).day, emissive: '#ffffff', emissiveMap: windowTex('#c0c4cc', '#4a5a80', 351).night, emissiveIntensity: 0 }), 0, 6, 0);
-  R.winMats.push(yoyo.children[0].material);
-  add(yoyo, G.box(2.4, 3.0, 2.4), mat('#b8bcc4'), 0, 13.5, 0);
-  add(yoyo, G.circle(0.7, 24), new THREE.MeshStandardMaterial({ color: '#fbf6e8', emissive: '#fff0c0', emissiveIntensity: 0.2 }), 0, 13.6, 1.21, { cast: false });
-  add(yoyo, G.cone(0.9, 4.5, 4), mat('#a8acb4', { metalness: 0.3 }), 0, 17.2, 0, { rot: [0, Math.PI / 4, 0] });
-  // 屋上の赤い航空灯
-  R.beacons = [];
-  for (const [x, y, z] of [[-13.6, 19.8, -17], [-10.4, 19.8, -17], [0.2, 18.8, -18.6], [21.4, 17.2, -19.2], [9.6, 19.6, -15.6]]) {
-    const bm = glow('#ff2a1a', 1.2);
-    R.beacons.push(bm);
-    add(sky, G.sphere(0.14, 8, 6), bm, x, y, z, { cast: false });
-  }
+  buildTokyoSkyline(root, R);
 
   // ---------------- 浅草駅（江戸のホームの場所） ----------------
   const platTile = new THREE.MeshStandardMaterial({ map: stoneTex('#c8c4bc', [8, 1]), roughness: 0.9 });
-  add(root, G.box(10, FLOOR, 2.35), platTile, -7.6, FLOOR / 2, -3.78);
-  add(root, G.box(10.1, 0.06, 0.32), mat('#f0d040'), -7.6, FLOOR + 0.03, -4.75);
-  for (let i = 0; i < 3; i++) add(root, G.box(1.5, FLOOR * (3 - i) / 3, 0.35), platTile, -3.9, FLOOR * (3 - i) / 6, -2.42 + i * 0.35);
+  add(root, G.box(8.8, FLOOR, 2.35), platTile, -9.0, FLOOR / 2, -3.78);
+  add(root, G.box(8.9, 0.06, 0.32), mat('#f0d040'), -9.0, FLOOR + 0.03, -4.75);
+  for (let i = 0; i < 3; i++) add(root, G.box(1.5, FLOOR * (3 - i) / 3, 0.35), platTile, -6.9, FLOOR * (3 - i) / 6, -2.42 + i * 0.35);
   // ホームの屋根
-  const canopy = group(root, -7.6, FLOOR, -3.6);
-  for (let i = 0; i < 4; i++) add(canopy, G.cyl(0.07, 0.07, 2.4, 8), mat('#5a6a7a'), -4 + i * 2.7, 1.2, 0.5);
-  add(canopy, G.box(10, 0.12, 2.2), mat('#7a8a9a', { metalness: 0.3 }), 0, 2.45, 0.1, { rot: [0.06, 0, 0] });
+  const canopy = group(root, -9.0, FLOOR, -3.6);
+  for (let i = 0; i < 4; i++) add(canopy, G.cyl(0.07, 0.07, 2.4, 8), mat('#5a6a7a'), -3.45 + i * 2.3, 1.2, 0.5);
+  add(canopy, G.box(8.6, 0.12, 2.2), mat('#7a8a9a', { metalness: 0.3 }), 0, 2.45, 0.1, { rot: [0.06, 0, 0] });
   const pl = glow('#f4f8ff', 0.15);
   R.lampMats.push(pl);
-  for (let i = 0; i < 4; i++) add(canopy, G.box(1.4, 0.05, 0.12), pl, -3.6 + i * 2.4, 2.36, 0.1, { cast: false });
+  for (let i = 0; i < 4; i++) add(canopy, G.box(1.4, 0.05, 0.12), pl, -3.15 + i * 2.1, 2.36, 0.1, { cast: false });
   // 駅名標
   const sign = (R.stationSign = group(root, -10.4, FLOOR, -4.45));
   for (const s of [-1, 1]) add(sign, G.cyl(0.05, 0.05, 1.9, 8), mat('#5a6a7a'), s * 1.0, 0.95, -0.07);
@@ -451,7 +407,7 @@ export function buildJapanDiorama(scene) {
   R.lampMats.push(sgm);
   add(sign, G.box(2.3, 0.9, 0.06), sgm, 0, 1.5, 0.02);
   // ホームの時計（午後8時で止まっている）
-  const clk = (R.platformClock = group(root, -4.6, FLOOR, -4.5));
+  const clk = (R.platformClock = group(root, -8.1, FLOOR, -4.5));
   add(clk, G.cyl(0.05, 0.05, 2.2, 8), mat('#5a6a7a'), 0, 1.1, 0);
   add(clk, G.cyl(0.36, 0.36, 0.12, 24), mat('#2a2a30'), 0, 2.4, 0, { rot: [Math.PI / 2, 0, 0] });
   const clockFace = canvasTex(256, 256, (ctx, w, h) => {
@@ -577,55 +533,8 @@ export function buildJapanDiorama(scene) {
   add(bt, G.box(0.9, 0.36, 0.04), plq, 0, 0.75, 1.55, { cast: false });
 
   // ---------------- 渋谷（江戸の宿場の通り） ----------------
-  const shib = (R.shibuya = group(root));
-  // 1) 大型ビジョンのビル（瓦版屋のあと）
-  const qf = (R.visionBldg = building(shib, -0.6, -2.5, 3.0, 2.4, 8.0, { wall: '#d8dce4', glass: '#5a7a9a', seed: 401, R }));
-  R.visionCanvas = document.createElement('canvas');
-  R.visionCanvas.width = 512; R.visionCanvas.height = 320;
-  R.visionTex = new THREE.CanvasTexture(R.visionCanvas);
-  R.visionTex.colorSpace = THREE.SRGBColorSpace;
-  R.visionMat = new THREE.MeshStandardMaterial({ color: '#111', emissive: '#ffffff', emissiveMap: R.visionTex, emissiveIntensity: 1.0, roughness: 0.4 });
-  R.vision = add(qf, G.box(2.7, 1.7, 0.08), R.visionMat, 0, 5.2, 1.25, { cast: false });
-  add(qf, G.box(2.9, 1.9, 0.06), mat('#2a2a30'), 0, 5.2, 1.21);
-  // 2) ラーメン屋（団子屋のあと）
-  const ramen = (R.ramen = group(shib, 2.9, 0, -2.45));
-  add(ramen, G.box(2.8, 2.6, 2.2), mat('#e8dcc8'), 0, 1.3, 0);
-  add(ramen, G.box(3.0, 1.2, 2.3), mat('#8a3a2a'), 0, 3.2, -0.05);
-  add(ramen, G.box(3.0, 0.14, 0.6), mat('#c8302a'), 0, 2.2, 1.35, { rot: [0.25, 0, 0] });
-  add(ramen, G.box(2.4, 1.3, 0.06), new THREE.MeshStandardMaterial({ color: '#ffd8a0', emissive: '#ffb860', emissiveIntensity: 0.3, roughness: 0.4 }), 0, 0.95, 1.11, { cast: false });
-  R.lampMats.push(ramen.children[ramen.children.length - 1].material);
-  const rn = new THREE.MeshStandardMaterial({ map: neonTex('ラーメン', { fg: '#ffffff', bg: '#c8302a', vertical: false, w: 100, h: 340 }), emissive: '#ffffff', emissiveIntensity: 0.3 });
-  rn.emissiveMap = rn.map;
-  R.neonMats.push(rn);
-  add(ramen, G.box(2.4, 0.6, 0.06), rn, 0, 3.2, 1.11, { cast: false });
-  for (const s of [-1, 1]) {
-    const lm = glow('#ff4a2a', 0.4);
-    R.lampMats.push(lm);
-    add(ramen, G.sphere(0.2, 10, 8), lm, s * 1.15, 1.95, 1.4, { scale: [1, 1.35, 1], cast: false });
-  }
-  // のれん
-  add(ramen, G.box(1.2, 0.5, 0.02), mat('#2a2a3a'), 0, 1.6, 1.16, { cast: false });
-  // 3) ファッションビル（呉服屋のあと）：銀色の円筒に「109」
-  const f109 = (R.fashion = group(shib, 6.6, 0, -2.5));
-  add(f109, G.cyl(1.3, 1.3, 9.0, 28), mat('#c8ccd4', { roughness: 0.3, metalness: 0.3 }), 0, 4.5, 0);
-  for (let i = 0; i < 8; i++) add(f109, G.cyl(1.32, 1.32, 0.12, 28), mat('#a8acb4', { metalness: 0.4 }), 0, 1 + i * 1.05, 0);
-  const n109 = new THREE.MeshStandardMaterial({ map: neonTex('109', { fg: '#ffffff', bg: '#c83a6a', vertical: true, w: 128, h: 384, size: 100 }), emissive: '#ffffff', emissiveIntensity: 0.3 });
-  n109.emissiveMap = n109.map;
-  R.neonMats.push(n109);
-  add(f109, G.box(0.6, 3.2, 0.1), n109, 0, 7.0, 1.33, { cast: false });
-  // そのほかのビル（通りの奥・左右）
-  building(shib, -4.2, -2.5, 2.4, 2.2, 5.0, { wall: '#c8bcb0', glass: '#6a7a8a', seed: 404, R });
-  // ネオン看板
-  neon(qf, 'カラオケ', -1.6, 3.2, 1.25, { fg: '#5ae0ff', R });
-  neon(shib, 'ゲーム', 4.95, 3.6, -1.25, { fg: '#ffd84a', R, h: 1.4 });
-  neon(shib, 'くすり', -2.95, 3.0, -1.35, { fg: '#ff6a5a', R, h: 1.3 });
-  // センター街のゲート
-  const cg = (R.centerGate = group(shib, -2.2, 0, 0.9));
-  for (const s of [-1, 1]) add(cg, G.cyl(0.08, 0.08, 4.0, 8), mat('#8a8e96', { metalness: 0.4 }), 0, 2.0, s * 1.6);
-  const cgm = new THREE.MeshStandardMaterial({ map: neonTex('センター街', { fg: '#ffffff', bg: '#c83a3a', vertical: false, w: 96, h: 384 }), emissive: '#ffffff', emissiveIntensity: 0.2 });
-  cgm.emissiveMap = cgm.map;
-  R.neonMats.push(cgm);
-  add(cg, G.box(0.1, 0.6, 3.4), cgm, 0, 3.8, 0, { cast: false, rot: [0, Math.PI / 2, 0], scale: [1, 1, 1] });
+  buildShibuyaBuildings(root, R);
+  buildShibuyaPlaza(root, R);
   // ハチ公の像（犬の銅像。駅前広場）
   const hachi = (R.hachiko = group(root, -0.1, 0, 3.4, 0.3));
   add(hachi, G.box(0.9, 0.9, 0.7), mat('#9a948a', { flatShading: true }), 0, 0.45, 0);
@@ -662,7 +571,7 @@ export function buildJapanDiorama(scene) {
   add(cafe, G.box(1.6, 0.36, 0.05), kn, 0, 2.0, 0.92, { cast: false });
   for (const s of [-1, 1]) { add(cafe, G.cyl(0.3, 0.3, 0.05, 14), mat('#f4f0e6'), s * 0.7, 0.7, 1.8); add(cafe, G.cyl(0.03, 0.03, 0.7, 6), mat('#5a5e66'), s * 0.7, 0.35, 1.8); }
   // 信号（スクランブル交差点の四すみ）
-  for (const [x, z, ry] of [[-0.8, -0.8, 0], [4.8, -0.8, -Math.PI / 2], [-0.8, 2.6, Math.PI / 2], [4.8, 2.6, Math.PI]]) trafficLight(root, x, z, ry, R);
+  for (const [x, z, ry] of [[-2.12, -.9, 0], [5.46, -.9, -Math.PI / 2], [-2.12, 2.85, Math.PI / 2], [5.46, 2.85, Math.PI]]) trafficLight(root, x, z, ry, R);
 
   // ---------------- 交番（江戸の番所のあと）と踏切・信号（町木戸のあと） ----------------
   const koban = (R.koban = group(root, 11.6, 0, -2.4));
@@ -851,7 +760,7 @@ export function buildJapanDiorama(scene) {
     const c = car(far, 0, 0, lane, lane > 1 ? Math.PI : 0, i === 0 || i === 3 ? '#f0c030' : carCols[(i + 2) % 6], i === 0 || i === 3);
     c.scale.setScalar(0.85);
     c.userData.dynamic = true;
-    const minX = i < 2 ? -29 : -4.6, maxX = i < 2 ? -18 : 29;
+    const minX = i < 2 ? -29 : 7.3, maxX = i < 2 ? -18 : 29;
     R.roadCars.push({ g: c, dir: lane > 1 ? -1 : 1, x: minX + (i + 0.5) / 5 * (maxX - minX), minX, maxX, v: 2.2 });
   }
 
