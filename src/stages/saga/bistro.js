@@ -1,11 +1,12 @@
 import * as THREE from 'three';
 import { add, mat, G, group, rng, canvasTex, FONT } from '../../lib/util.js';
 
-// 架空のビストロ。特定の実在店の意匠・名称を使わない。
+// 山カフェレストランKUREHA。公式の玄関・室内写真と街道側の門の写真を参照。
+// 参照先と、箱庭へ収めるための圧縮範囲は docs/saga-shops-references.md。
 // 足元が原点、+zが正面。入口前とテラスの間を広く空けておく。
 const C = {
-  plaster: '#eee6d4', sage: '#6d8978', dark: '#365649', wood: '#947452',
-  timber: '#715b43', brick: '#af795b', cream: '#f3e9cf', brass: '#b49c64',
+  plaster: '#e6dfc4', sage: '#454f3e', dark: '#493a29', wood: '#8b6440',
+  timber: '#55402d', cream: '#f3e9cf', brass: '#b49c64',
 };
 
 function rod(parent, a, b, radius, material) {
@@ -160,149 +161,164 @@ function salad(parent, x = 0, z = 0) {
   return { dish, foam };
 }
 
-function roof(parent) {
-  const g = group(parent), material = mat('#74867b', { roughness: 0.88 }), seam = mat('#91a092');
-  const half = 3.80, rise = 1.00, slope = Math.hypot(half, rise), angle = Math.atan2(rise, half);
-  for (const s of [-1, 1]) {
-    add(g, G.box(12.5, 0.10, slope), material, 0, 3.75, s * half / 2, { rot: [s * angle, 0, 0] });
-    for (let x = -6.0; x <= 6.0; x += 0.42) {
-      rod(g, [x, 4.28, 0], [x, 3.28, s * half], 0.015, seam);
-    }
-    add(g, G.cyl(0.048, 0.048, 12.6, 10), mat('#718373'), 0, 3.19, s * 3.85, { rot: [0, 0, Math.PI / 2] });
+// 寄棟の薄い銅板屋根。面を一枚ずつ作り、軒先と棟を立体で縁取る。
+function copperRoof(parent) {
+  const green = mat('#638a7c', { roughness: .78 }), edge = mat('#82988a');
+  const a = [-6.3, 3.45, -3.75], b = [6.3, 3.45, -3.75];
+  const c = [6.3, 3.45, 3.75], d = [-6.3, 3.45, 3.75];
+  const p = [-4.45, 4.5, 0], q = [4.45, 4.5, 0];
+  const faces = [[a, p, q, a, q, b], [b, q, c], [c, q, p, c, p, d], [d, p, a]];
+  for (const face of faces) {
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(face.flat(), 3)); geo.computeVertexNormals();
+    add(parent, geo, mat('#638a7c', { roughness: .78, side: THREE.DoubleSide }));
   }
-  add(g, G.box(12.6, 0.075, 0.13), seam, 0, 4.30, 0);
-  for (const x of [-6.20, 6.20]) {
-    for (const s of [-1, 1]) rod(g, [x, 4.25, 0], [x, 3.25, s * half], 0.045, mat('#d3ceba'));
+  for (const [u, v] of [[a, b], [b, c], [c, d], [d, a], [p, q], [p, a], [p, d], [q, b], [q, c]])
+    rod(parent, u, v, .045, edge);
+  for (const s of [-1, 1]) for (let x = -4.4; x <= 4.4; x += .48)
+    rod(parent, [x, 4.51, 0], [x, 3.46, s * 3.75], .010, green);
+}
+
+function stoneStair(parent) {
+  const stones = [], r = rng(945);
+  for (let row = 0; row < 5; row++) {
+    const z = 1.55 + row * .43, top = .58 - row * .08;
+    add(parent, G.box(2.45, top, .45), mat('#75776c'), -3.0, top / 2, z);
+    for (let col = 0; col < 9; col++) stones.push({
+      p: [-4.1 + col * .275, top + .008, z],
+      color: r() > .6 ? '#858a6d' : r() > .5 ? '#777e6c' : '#898c78',
+    });
   }
+  instanced(parent, G.box(.263, .015, .41), mat('#ffffff', { roughness: 1 }), stones);
+}
+
+function garden(parent, x, z, seed, s = 1) {
+  const g = group(parent, x, .15, z), r = rng(seed), leaves = [];
+  add(g, G.sphere(1, 14, 8), mat('#77826a'), 0, .08, 0, { scale: [1.0 * s, .28 * s, .8 * s] });
+  for (let i = 0; i < 45; i++) {
+    const a = i * 2.4, radius = Math.sqrt(r()) * .85 * s;
+    leaves.push({ p: [Math.cos(a) * radius, .17 + r() * .65 * s, Math.sin(a) * radius],
+      s: [.21 * s, .08 * s, .10 * s], r: [r() * .6, a, r() * .4],
+      color: ['#6c8350', '#7e935d', '#576e43', '#849966'][i % 4] });
+  }
+  instanced(g, G.sphere(1, 8, 6), mat('#ffffff', { roughness: 1 }), leaves);
   return g;
 }
 
-/** 全体18×14m以内の、温かな食堂と小さなテラス。 */
-export function createFoamBistro(parent, { name = 'ビストロ 翠の泡' } = {}) {
+/** 18×14mの箱庭区画。門と石段、木枠の館、景色を眺めるダイニング。 */
+export function createFoamBistro(parent, { name = '山カフェレストランKUREHA' } = {}) {
   const root = group(parent); root.name = name;
-  const plaster = plasterMaterial(), sage = mat(C.sage), timber = mat(C.timber), brass = mat(C.brass, { metalness: 0.16, roughness: 0.53 });
-  const building = group(root, 0, 0, -1.55), w = 11.6, d = 6.6, front = d / 2;
-  add(root, G.box(16.0, 0.16, 12.7), mat('#b2ac94'), 0, 0.02, -0.25);
-  add(root, G.box(15.6, 0.06, 12.3), mat('#ccc2a8'), 0, 0.13, -0.25);
-  add(building, G.box(w, 0.22, d), mat('#a99377'), 0, 0.24, 0);
-  // 木床は窓から奥まで見える。正面には透明な壁を重ねない。
-  const floorboards = [];
-  for (let x = -5.65; x < 5.7; x += 0.23) floorboards.push({ p: [x, 0.36, 0], color: x % 0.46 > 0.23 ? '#b89b72' : '#c3a67f' });
-  instanced(building, G.box(0.221, 0.045, d - 0.2), mat('#ffffff'), floorboards);
-  add(building, G.box(w, 2.97, 0.18), plaster, 0, 1.82, -d / 2);
-  for (const x of [-w / 2, w / 2]) add(building, G.box(0.18, 2.97, d), plaster, x, 1.82, 0);
-  add(building, G.box(w, 0.48, 0.18), plaster, 0, 3.06, front);
-  add(building, G.box(w, 0.42, 0.18), plaster, 0, 0.55, front);
-  for (const [x, width] of [[-5.66, 0.30], [-3.05, 0.32], [-0.72, 0.43], [5.64, 0.32]])
-    add(building, G.box(width, 2.65, 0.22), plaster, x, 1.77, front);
-  // 低いレンガの腰壁は1個ずつ目地をあけ、色を少しだけ変える。
-  const bricks = [], r = rng(815);
-  for (let row = 0; row < 3; row++) for (let i = 0; i < 38; i++) {
-    const x = -5.7 + i * 0.30 + (row % 2) * 0.15;
-    if (x > -2.85 && x < -0.96) continue;
-    bricks.push({ p: [x, 0.39 + row * 0.105, front + 0.12], color: new THREE.Color(C.brick).multiplyScalar(0.90 + r() * 0.20) });
-  }
-  instanced(building, G.box(0.286, 0.093, 0.095), mat('#ffffff', { roughness: 1 }), bricks);
+  const plaster = plasterMaterial(), timber = mat(C.timber), wood = mat(C.wood);
+  const copper = mat('#6a9484'), stone = mat('#979b8d'), dark = mat('#39392d');
+  add(root, G.box(16, .16, 12.7), mat('#a8ad94'), 0, .02, -.25);
+  add(root, G.box(15.6, .07, 12.3), mat('#c2c0a9'), 0, .135, -.25);
+  const building = group(root, 0, 0, -2.4), w = 11.6, d = 6.6, front = 3.3;
+  add(building, G.box(w, .44, d), mat('#7a7767'), 0, .30, 0);
+  add(building, G.box(w - .18, .055, d - .18), wood, 0, .55, 0);
+  for (let z = -3.1; z <= 3.1; z += .22)
+    add(building, G.box(w - .2, .008, .012), mat('#624b33'), 0, .582, z, { cast: false });
+  add(building, G.box(w, 2.9, .16), plaster, 0, 1.99, -d / 2);
+  for (const x of [-w / 2, w / 2]) add(building, G.box(.16, 2.9, d), plaster, x, 1.99, 0);
+  add(building, G.box(w, .47, .18), plaster, 0, 3.20, front);
+  add(building, G.box(6.42, .34, .18), plaster, 2.38, .76, front);
+  add(building, G.box(2.10, 2.45, .18), plaster, -4.75, 1.78, front);
+  add(building, G.box(.79, 2.45, .18), plaster, -1.34, 1.78, front);
+  for (const x of [-5.75, -.80, 2.36, 5.75]) add(building, G.box(.15, 2.75, .24), timber, x, 1.87, front + .04);
+  for (const y of [.94, 2.96]) add(building, G.box(6.6, .13, .24), timber, 2.45, y, front + .05);
+  // 大窓は奥まで見通せる開口にする。反射面を壁として重ねない。
+  for (const x of [.65, 3.95]) add(building, G.box(.065, 1.95, .12), timber, x, 1.94, front + .05);
+  add(building, G.box(6.7, .10, .34), wood, 2.43, .91, front + .12);
+  copperRoof(building);
 
-  const entrance = group(root, -1.92, 0, 1.82); entrance.name = 'ビストロ入口';
-  // 入口はガラスの両脇を木枠で囲む。中央の通り道を塞がない。
-  for (const x of [-0.855, 0.855]) add(entrance, G.box(0.11, 2.43, 0.10), timber, x, 1.57, 0);
-  for (const y of [0.355, 2.785]) add(entrance, G.box(1.82, 0.11, 0.10), timber, 0, y, 0);
-  for (const x of [-0.744, 0.744]) add(entrance, G.box(0.105, 2.23, 0.11), sage, x, 1.57, 0.02);
-  add(entrance, G.plane(1.35, 1.63), mat('#788c7c', { roughness: 0.18, transparent: true, opacity: 0.27, depthWrite: false }),
-    0, 1.79, 0.075, { cast: false });
-  add(entrance, G.box(1.39, 0.43, 0.10), sage, 0, 0.69, 0.05);
-  add(entrance, G.box(0.045, 1.80, 0.10), sage, 0, 1.79, 0.065);
-  for (const y of [0.99, 2.60]) add(entrance, G.box(1.40, 0.065, 0.10), sage, 0, y, 0.065);
-  rod(entrance, [0.53, 1.25, 0.145], [0.53, 1.58, 0.145], 0.018, brass);
-  add(entrance, G.box(2.07, 0.13, 0.77), mat('#b1a88e'), 0, 0.22, 0.26);
-  // 窓は開口に枠だけを作り、室内のペンダント灯とテーブルを見せる。
-  for (const [cx, ww] of [[-4.38, 2.20], [2.42, 5.85]]) {
-    for (const x of [-ww / 2, ww / 2]) add(building, G.box(0.085, 2.05, 0.14), sage, cx + x, 1.79, front + 0.055);
-    for (const y of [0.77, 2.82]) add(building, G.box(ww + 0.14, 0.085, 0.14), sage, cx, y, front + 0.055);
-    const panes = Math.round(ww / 1.15);
-    for (let i = 1; i < panes; i++) add(building, G.box(0.050, 2.03, 0.11), sage,
-      cx - ww / 2 + ww * i / panes, 1.79, front + 0.06);
-    add(building, G.box(ww + 0.25, 0.085, 0.36), timber, cx, 0.75, front + 0.12);
+  const entrance = group(root, -2.9, 0, 1.0); entrance.name = 'KUREHAの木枠の玄関';
+  for (const x of [-.89, .89]) add(entrance, G.box(.12, 2.45, .14), timber, x, 1.79, 0);
+  for (const y of [.57, 3.01]) add(entrance, G.box(1.90, .12, .14), timber, 0, y, 0);
+  add(entrance, G.plane(1.62, 2.21), mat('#5e6251', { roughness: .27, transparent: true, opacity: .23, depthWrite: false }),
+    0, 1.79, .08, { cast: false });
+  add(entrance, G.box(.045, 2.22, .075), timber, .18, 1.79, .10);
+  rod(entrance, [.66, 1.45, .17], [.66, 1.85, .17], .017, mat('#bcac71'));
+  for (const x of [-1.38, 1.38]) {
+    add(entrance, G.box(.34, .34, .13), timber, x, 2.35, .02);
+    add(entrance, G.sphere(.10, 12, 9), new THREE.MeshBasicMaterial({ color: '#ffe4ab' }), x, 2.35, .13);
+    add(entrance, G.cyl(.11, .11, .15, 12), timber, x, 2.48, .13);
   }
-  // 屋根は室内を見るために消す必要がない。南面の窓と軒下が主役。
-  roof(building);
-  // 前後の妻壁（三角）も白漆喰で閉じ、屋根裏を開口にしない。
-  const gable = new THREE.Shape(); gable.moveTo(-3.3, 0); gable.lineTo(3.3, 0); gable.lineTo(0, 0.88); gable.closePath();
-  for (const x of [-w / 2, w / 2]) add(building, new THREE.ShapeGeometry(gable), plaster, x, 3.28, 0,
-    { rot: [0, x < 0 ? -Math.PI / 2 : Math.PI / 2, 0] });
-  add(building, G.box(0.57, 1.14, 0.55), mat('#a9866c'), 3.9, 4.00, -1.3);
-  add(building, G.box(0.72, 0.10, 0.70), mat('#b6aa90'), 3.9, 4.61, -1.3);
+  // 公式の玄関写真に見える、わずかに反った破風と太い丸柱。
+  for (const x of [-1.83, 1.83]) add(entrance, G.cyl(.115, .14, 2.98, 16), timber, x, 2.04, .66);
+  const profile = [[-2.12, 3.28], [-1.5, 3.42], [-.7, 3.75], [0, 3.91], [.7, 3.75], [1.5, 3.42], [2.12, 3.28]];
+  const pos = [], indices = [];
+  profile.forEach(([x, y]) => { pos.push(x, y, -.14, x, y, 1.13); });
+  for (let i = 0; i < profile.length - 1; i++) { const j = i * 2; indices.push(j, j + 2, j + 1, j + 1, j + 2, j + 3); }
+  const canopy = new THREE.BufferGeometry(); canopy.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  canopy.setIndex(indices); canopy.computeVertexNormals();
+  add(entrance, canopy, mat('#688a77', { side: THREE.DoubleSide }));
+  curve(entrance, profile.map(([x, y]) => [x, y - .08, 1.13]), .075, timber, 32);
+  add(entrance, G.box(3.7, .17, .15), timber, 0, 3.31, .68);
+  stoneStair(root);
 
-  // セージ色と生成りの布庇。入口左には庇を付けず店名を隠さない。
-  const awning = group(root, 2.40, 2.79, 2.22);
-  for (let i = 0; i < 14; i++) add(awning, G.box(0.43, 0.033, 1.12), mat(i % 2 ? '#dedbc4' : '#809583'),
-    -2.795 + i * 0.43, 0, 0.26, { rot: [0.17, 0, 0] });
-  for (let i = 0; i < 14; i++) add(awning, G.box(0.43, 0.17, 0.035), mat(i % 2 ? '#dedbc4' : '#809583'),
-    -2.795 + i * 0.43, -0.18, 0.81);
-  for (const x of [-2.85, 2.85]) rod(awning, [x, -0.55, -0.23], [x, -0.14, 0.75], 0.017, brass);
-  // 軒の手前へ張り出す銘板。高い正面カメラでも上半分が屋根に隠れず、
-  // 下端は入口・窓枠より上、右端は布庇の左端より左に収める。
-  for (const x of [-3.38, -0.96]) rod(root, [x, 3.11, 1.88], [x, 3.11, 2.50], 0.023, timber);
-  add(root, G.box(3.50, 0.45, 0.075), timber, -2.17, 3.11, 2.53);
-  add(root, G.plane(3.37, 0.33), textMaterial(name, [], { w: 1280, h: 200 }), -2.17, 3.11, 2.576, { cast: false });
+  // 白壁の街道側の門。店名は小さな銘板だけにし、案内看板は置かない。
+  const gateway = group(root, -3, .18, 4.76); gateway.name = 'KUREHAの白壁と緑青の門';
+  for (const x of [-2.42, 2.42]) {
+    add(gateway, G.box(1.55, 1.58, .27), mat('#e4e4d9'), x, .87, -.05);
+    add(gateway, G.box(1.55, .29, .33), stone, x, .20, -.05);
+    for (const y of [.71, 1.25]) add(gateway, G.box(1.56, .015, .012), mat('#bbbeaf'), x, y, .092);
+    add(gateway, G.box(1.64, .08, .38), mat('#d1d5c5'), x, 1.70, -.05);
+  }
+  for (const x of [-3.02, 3.02]) {
+    add(gateway, G.box(.22, 2.37, .25), timber, x, 1.25, .36);
+    add(gateway, G.box(.31, .29, .35), stone, x, .15, .36);
+  }
+  add(gateway, G.box(6.64, .11, 1.7), copper, 0, 2.57, .30);
+  add(gateway, G.box(6.31, .07, 1.5), mat('#b4a68b'), 0, 2.48, .30);
+  add(gateway, G.box(5.93, .20, .20), timber, 0, 2.34, .76);
+  for (let x = -2.8; x <= 2.8; x += .34) add(gateway, G.box(.035, .055, 1.48), timber, x, 2.43, .30);
+  const sign = group(gateway, 2.15, 1.32, .103); sign.scale.x = .8; sign.name = 'KUREHAの銘板';
+  add(sign, G.box(1.18, .35, .05), timber);
+  add(sign, G.plane(1.08, .27), textMaterial('KUREHA', [], { w: 640, h: 160, background: '#e4ded0', ink: '#67563b' }),
+    0, 0, .030, { cast: false });
 
-  // 窓の奥。長いカウンター、温かい吊り灯、素朴な器と植物。
-  add(building, G.box(6.5, 0.84, 0.70), sage, 1.36, 0.80, -2.20);
-  add(building, G.box(6.65, 0.09, 0.85), timber, 1.36, 1.27, -2.20);
-  for (let i = 0; i < 4; i++) {
-    add(building, G.box(0.55, 0.055, 0.28), timber, -3.8 + i * 1.6, 2.13, -3.12);
-    herbPot(building, -3.8 + i * 1.6, 2.16, -3.10, 0.62, 960 + i);
+  // 窓から見える木梁・ハイバックの椅子。室内の雰囲気は公式写真を参照。
+  for (let x = -5.3; x <= 5.3; x += 1.06) add(building, G.box(.08, .08, 6.2), timber, x, 3.30, 0);
+  for (const [x, z] of [[.6, .8], [3.8, .8]]) {
+    diningTable(building, x, z, { w: 1.6, d: 1, y: 1.25 });
+    for (const side of [-1, 1]) {
+      const ch = chair(building, x, z + side * .9, side < 0 ? 0 : Math.PI); ch.position.y = .58;
+      add(ch, G.box(.42, .58, .07), dark, 0, .85, -.22);
+    }
   }
-  for (const x of [-3.2, 0.8, 3.8]) {
-    rod(building, [x, 3.20, 0.18], [x, 2.48, 0.18], 0.012, brass);
-    add(building, G.cone(0.25, 0.22, 24), mat('#c5ac77'), x, 2.42, 0.18);
-    add(building, G.sphere(0.075, 12, 8), new THREE.MeshBasicMaterial({ color: '#ffe9b6' }), x, 2.33, 0.18);
+  for (const x of [-3.0, .6, 3.8]) {
+    rod(building, [x, 3.27, 0], [x, 2.71, 0], .012, timber);
+    add(building, G.sphere(.085, 12, 8), new THREE.MeshBasicMaterial({ color: '#ffe6b2' }), x, 2.65, 0);
   }
-  for (const [x, z] of [[-4.1, -0.8], [1.2, -0.25], [3.8, -0.25]]) {
-    diningTable(building, x, z, { w: 1.45, d: 0.9, y: 0.98 });
-    herbPot(building, x, 1.02, z, 0.45, Math.round(x * 60 + 1400));
-    chair(building, x, z + 0.77, Math.PI); chair(building, x, z - 0.77, 0);
-  }
-  for (const x of [-1.0, 0.0, 2.6, 3.6]) {
-    add(building, G.cyl(0.13, 0.11, 0.055, 20), mat('#ede1c9'), x, 1.34, -2.12);
-    add(building, G.cyl(0.08, 0.065, 0.15, 16), mat('#cbd1b8'), x, 1.43, -2.12);
-  }
-  // 壁面の明るさを保つ温かな内壁。点光源を増やしすぎない。
-  const indoor = new THREE.PointLight('#ffe4ab', 3.2, 9.5, 2); indoor.position.set(0.7, 2.6, -0.2); building.add(indoor);
+  const indoor = new THREE.PointLight('#ffe4ab', 2.7, 9.5, 2); indoor.position.set(1.5, 2.6, .4); building.add(indoor);
 
-  // テラスは入口の南正面を空け、料理の前に椅子を置かない。
-  const table = diningTable(root, 3.56, 4.67); table.name = '泡のサラダのテラステーブル';
+  // 料理の任意体験の位置・APIは以前のセーブと操作対象のまま保つ。
+  const table = diningTable(root, 3.56, 4.67); table.name = 'KUREHAのテラステーブル';
   chair(root, 3.56, 3.65, 0); chair(root, 4.88, 4.67, Math.PI / 2);
-  herbPot(table, 0.62, 0.863, -0.30, 0.42, 610, true);
-  const { dish: platedDish, foam } = salad(table, 0.29, 0.025);
-  platedDish.name = '苦い泡のドレッシングのサラダ';
-  const { dish: servedDish } = salad(table, -0.43, 0.025);
-  servedDish.visible = false; servedDish.name = '出来上がった一皿';
-  // 空の席に清潔な布とカトラリー。皿の上には重ねない。
-  add(table, G.box(0.16, 0.015, 0.23), mat('#e5dfca'), -0.68, 0.868, -0.25, { rot: [0, 0.10, 0] });
-  for (const x of [-0.71, -0.65]) add(table, G.capsule(0.008, 0.15), brass, x, 0.883, -0.25,
+  herbPot(table, .62, .863, -.30, .42, 610, true);
+  const { dish: platedDish, foam } = salad(table, .29, .025);
+  platedDish.name = 'KUREHAのサラダ';
+  const { dish: servedDish } = salad(table, -.43, .025); servedDish.visible = false; servedDish.name = '出来上がった一皿';
+  add(table, G.box(.16, .015, .23), mat('#e5dfca'), -.68, .868, -.25);
+  for (const x of [-.71, -.65]) add(table, G.capsule(.008, .15), mat('#b8b49d'), x, .883, -.25,
     { rot: [Math.PI / 2, 0, 0], cast: false });
-  for (const [x, z, s, seed] of [[-5.9, 2.8, 1.6, 11], [6.4, 2.8, 1.55, 12], [6.35, 5.9, 1.3, 13], [-6.8, -3.8, 1.35, 14]])
-    herbPot(root, x, 0.18, z, s, seed, true);
-
-  const sign = group(root, -4.14, 0.18, 3.72); sign.name = 'ビストロのメニュー看板';
-  for (const x of [-0.67, 0.67]) {
-    add(sign, G.box(0.065, 1.77, 0.065), timber, x, 0.89, -0.05, { rot: [-0.14, 0, 0] });
-    add(sign, G.box(0.065, 1.77, 0.065), timber, x, 0.89, -0.43, { rot: [0.14, 0, 0] });
+  for (const [x, z, s, seed] of [[-6.8, 2.2, 1.15, 21], [-5.6, 2.9, .8, 22], [.6, 2.8, .72, 23],
+    [6.6, .4, 1.05, 24], [6.65, -3.7, 1.1, 25], [-6.8, -3.8, 1.1, 26]]) garden(root, x, z, seed, s);
+  for (const [x, z] of [[-6.5, -4.0], [6.5, -4.3]]) {
+    rod(root, [x, .18, z], [x + .16, 3.45, z], .09, timber);
+    const crowns = [];
+    for (let i = 0; i < 16; i++) { const a = i * 2.4; crowns.push({ p: [Math.sin(a) * .65, 2.35 + i * .07, Math.cos(a) * .55],
+      s: [.62, .22, .48], color: i % 2 ? '#68814e' : '#7b925c' }); }
+    instanced(group(root, x, 0, z), G.sphere(1, 10, 6), mat('#ffffff', { roughness: 1 }), crowns);
   }
-  add(sign, G.box(1.73, 1.35, 0.09), timber, 0, 1.16, 0);
-  add(sign, G.plane(1.59, 1.21), textMaterial(name,
-    ['地元野菜のサラダ', '苦い泡のドレッシング', '畑の香りと、軽いくちどけ']), 0, 1.16, 0.053, { cast: false });
 
   return {
     root, entrance, sign, table, platedDish, foam, servedDish,
-    focusTarget: new THREE.Vector3(0.0, 1.65, 2.5),
+    focusTarget: new THREE.Vector3(0, 1.65, 2.5),
     views: {
-      front: { position: new THREE.Vector3(-6.8, 5.8, 15.5), target: new THREE.Vector3(0, 1.7, -0.10) },
-      terrace: { position: new THREE.Vector3(3.0, 2.8, 8.4), target: new THREE.Vector3(3.72, 0.97, 4.67) },
-      entrance: { position: new THREE.Vector3(-1.6, 2.55, 9.0), target: new THREE.Vector3(-1.9, 1.7, 1.9) },
+      front: { position: new THREE.Vector3(8.2, 6.8, 16.7), target: new THREE.Vector3(0, 1.8, -.15) },
+      terrace: { position: new THREE.Vector3(3.0, 2.8, 8.4), target: new THREE.Vector3(3.72, .97, 4.67) },
+      entrance: { position: new THREE.Vector3(-2.7, 2.8, 4.15), target: new THREE.Vector3(-2.9, 2.0, 1.0) },
     },
-    bounds: { x: [-8, 8], z: [-6.6, 6.2], height: 4.66 },
+    bounds: { x: [-8, 8], z: [-6.6, 6.2], height: 4.6 },
   };
 }

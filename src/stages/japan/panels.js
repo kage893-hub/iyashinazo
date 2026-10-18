@@ -237,29 +237,41 @@ export function subwayPanel(ui, audio, { onSolved }) {
 }
 
 // ---------------------------------------------------------------
-// ④ 自動販売機：井戸の札の番号（江戸の横がきは右から）
+// ④ 自動販売機：見出しが読める向きに、井戸の札の番号を読む
 // ---------------------------------------------------------------
+export const VEND_PLAQUE = Object.freeze({
+  heading: '札の戸井',
+  numbers: '四 七 弐',
+  caption: '見出しと同じ向きに読む',
+});
 export const VEND = [2, 7, 4];
 const DRINKS = ['お茶', 'ラムネ', 'コーヒー', 'サイダー', 'みず', 'ココア', 'いちご牛乳', 'むぎ茶', 'オレンジ'];
 export function vendingPanel(ui, audio, { onSolved }) {
   let seq = [];
-  let done = false;
+  let done = false, lock = false;
   const body = el('div', 'vendp');
   body.innerHTML = `
     <div class="plaque">自動販売機<br><small>番号のボタンが9つ。……どこかに「ひみつの押しかた」がありそうだ。</small></div>
     <div class="vd-grid"></div>
-    <div class="vd-seq"></div>
+    <div class="vd-seq" role="status" aria-live="polite" aria-label="押した番号"></div>
+    <div class="ml-foot"><button class="btn small-btn vd-reset">押した番号を消す</button></div>
     <p class="panel-note small vd-msg">ボタンを3つ押すと、何かが出てくる……かもしれない。</p>`;
   const grid = body.querySelector('.vd-grid');
   const msg = body.querySelector('.vd-msg');
   const seqEl = body.querySelector('.vd-seq');
+  const paint = () => { seqEl.textContent = Array.from({ length: 3 }, (_, i) => seq[i] ?? '—').join(' · '); };
+  body.querySelector('.vd-reset').onclick = () => {
+    if (done || lock) return;
+    seq = []; audio.play('click'); paint();
+  };
   DRINKS.forEach((d, i) => {
     const b = el('button', 'vd-b', `<i class="vd-can c${i}"></i><small>${d}</small><b>${i + 1}</b>`);
+    b.setAttribute('aria-label', `${i + 1} ${d}`);
     b.onclick = () => {
-      if (done) return;
+      if (done || lock) return;
       seq.push(i + 1);
       audio.play('dial');
-      seqEl.textContent = seq.join(' - ');
+      paint();
       if (seq.length < 3) return;
       if (seq.every((v, k) => v === VEND[k])) {
         done = true;
@@ -269,13 +281,17 @@ export function vendingPanel(ui, audio, { onSolved }) {
         setTimeout(() => onSolved(panel), 1400);
         return;
       }
+      lock = true;
       audio.play('wrong');
-      msg.textContent = 'ピピッ……何も出てこない。';
-      setTimeout(() => { seq = []; seqEl.textContent = ''; }, 700);
+      msg.textContent = seq.join('') === '472'
+        ? 'ピピッ……何も出てこない。札の見出しが読める向きに、数字もたどってみよう。'
+        : 'ピピッ……何も出てこない。むかしの札に、数字と読む向きの手がかりがありそうだ。';
+      setTimeout(() => { seq = []; lock = false; paint(); }, 700);
     };
     grid.appendChild(b);
   });
   const panel = ui.openPanel({ title: '自動販売機', body });
+  paint();
   return panel;
 }
 

@@ -160,7 +160,6 @@ function platform(parent, z, numbers) {
     face(board, tex, 0.68, 0.68, -0.38, 9.35, 0.041);
     const tex2 = textTexture(String(numbers[1]), '', { w: 128, h: 128, size: 92 });
     face(board, tex2, 0.68, 0.68, 0.38, 9.35, 0.041);
-    face(board, textTexture('さ が', 'SAGA', { w: 512, h: 128, size: 56 }), 2.5, 0.62, 0, 8.35, 0.06);
   }
   return g;
 }
@@ -212,10 +211,7 @@ export function createSagaStation(parent) {
   // 北面は写真で未確認の広告・店名を創作せず、高架の構造と防護面だけに留める。
   add(root, G.box(92, 2.15, 0.2), mat('#a8b0a2'), 0, 6.13, -15.8);
 
-  // 佐賀駅の文字は黒色の二段組。JR赤ロゴは壁の駅名横に置かない（資料では駅名帯にない）。
-  face(R.sign, textTexture('佐 賀 駅', 'SAGA Station', { w: 1024, h: 256, size: 125 }),
-    10.2, 2.1, 0, 5.55, 16.39);
-  R.sign.userData.keep = true;
+  // 地名の看板は置かず、駅名帯の壁と中央入口の構造を残す。
   const machi = canvasTex(512, 256, (ctx, W, H) => {
     ctx.fillStyle = '#f3f0e6'; ctx.fillRect(0, 0, W, H);
     ctx.strokeStyle = C.red; ctx.lineWidth = 20; ctx.lineCap = 'round';

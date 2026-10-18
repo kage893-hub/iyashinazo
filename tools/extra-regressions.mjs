@@ -212,7 +212,7 @@ try {
     await page.goto(`${base}/index.html?low&stage=saga`);
     await ready();
     assert.equal(await page.evaluate(() => __game.state.stage), 'saga');
-    assert.match(await page.locator('.title-stage').innerText(), /佐賀のまち/);
+    assert.match(await page.locator('.title-stage').innerText(), /田舎の寄り道/);
     await page.evaluate(() => __game.goToStage('station'));
     await page.waitForSelector('.depart-gate.show', { timeout: 60000 });
     await depart();

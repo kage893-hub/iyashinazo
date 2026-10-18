@@ -162,7 +162,7 @@ export function sketchClueHTML() {
 
 function puzzleBody(kind, number, intro, clue) {
   const body = el('div', `saga-puzzle saga-${kind}`);
-  body.innerHTML = `<div class="sa-kicker"><span>佐賀のまち・旅の便り</span><span>${number} / 05</span></div><p class="sa-intro">${intro}</p><div class="sa-workspace"></div><details class="sa-reference"><summary>手がかりを読み返す</summary>${clue}</details><p class="sa-message" role="status" aria-live="polite"></p>`;
+  body.innerHTML = `<div class="sa-kicker"><span>田舎の寄り道・旅の便り</span><span>${number} / 05</span></div><p class="sa-intro">${intro}</p><div class="sa-workspace"></div><details class="sa-reference"><summary>手がかりを読み返す</summary>${clue}</details><p class="sa-message" role="status" aria-live="polite"></p>`;
   return body;
 }
 function actions(body, label, reset = '最初から考える') {

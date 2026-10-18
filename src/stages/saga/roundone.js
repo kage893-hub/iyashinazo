@@ -15,8 +15,10 @@ export function createRoundOneSaga(parent) {
   const root = group(parent); root.name = 'ラウンドワンスタジアム佐賀店';
   const orange = mat('#bc7351'), black = mat('#303a3d'), glass = mat('#405a65', { roughness: .32, metalness: .05 }), metal = mat('#87908d');
   parking(root, 100, 27, 0, 48, { rows: 2 });
-  add(root, G.box(88, 24, 61), orange, 0, 12, 0);
-  add(root, G.box(29, 24.15, 61.3), black, -29.5, 12.075, 0);
+  // 黒い左棟を橙色の箱で下敷きにしない。以前は両方の西壁が x=-44
+  // に重なり、横から見ると深度の競合でちらついていた。壁を接する2区画にする。
+  add(root, G.sharpBox(59, 24, 61), orange, 14.5, 12, 0, { name: 'roundone-orange-wing' });
+  add(root, G.sharpBox(29, 24.15, 61.3), black, -29.5, 12.075, 0, { name: 'roundone-black-wing' });
   add(root, G.box(88.6, .4, 61.6), mat('#a0a49b'), 0, 24.22, 0);
   // 入口まで連続する縦長のガラス面。写真の橙の横帯を両脇に残す。
   add(root, G.box(15.6, 23.2, .3), glass, -13, 11.9, 30.68);
@@ -25,7 +27,7 @@ export function createRoundOneSaga(parent) {
   for (const x of [-24.4, -1.8]) for (let y = 4.3; y < 22; y += 3.3) add(root, G.box(6.3, 1.1, .17), black, x, y, 30.71);
   sign(root, 'ROUND1', 17, 3.7, -30, 20.9, 30.85, { bg: '#303a3d', color: '#fffbea', sub: 'STADIUM' });
   sign(root, 'ROUND1', 24, 5.1, 20.5, 17.7, 30.72, { bg: '#bc7351', color: '#f6eee0', sub: 'BOWLING · SPO-CHA · KARAOKE' });
-  for (let xx = -42; xx < 44; xx += 4) add(root, G.box(.035, 23.7, .045), mat('#986143'), xx, 12, 30.58);
+  for (let xx = -14; xx < 44; xx += 4) add(root, G.box(.035, 23.7, .045), mat('#986143'), xx, 12, 30.58);
   // 屋上のスポーツエリア。防球網は抜ける線の面で囲う。
   add(root, G.box(60, .13, 51), mat('#74897c'), 10, 24.51, -1);
   const lines = [];

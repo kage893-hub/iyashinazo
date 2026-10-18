@@ -54,7 +54,7 @@ try{
   await page.evaluate(()=>__game.stage.showPropertyViews());assert.equal(await page.locator('.sa-property-guide button').count(),7);await close();
   for(const viewport of [{width:390,height:844},{width:820,height:520}]) {
    await page.setViewportSize(viewport);await page.waitForFunction(()=>Math.abs(__game.camera.aspect-innerWidth/innerHeight)<.0001);
-   for(const [view,point]of [['front',[2.82,1.9,2.05]],['left',[-6.88,4.6,5.28]],['right',[2.82,1.9,2.05]],['porch',[2.82,1.9,2.05]],['wall',[3.3,.94,8.4]],['shed',[-6.88,4.6,5.28]]]){
+   for(const [view,point]of [['front',[2.82,1.9,2.05]],['left',[-8.05,4.6,5.455]],['right',[2.82,1.9,2.05]],['porch',[2.82,1.9,2.05]],['wall',[3.3,.94,8.4]],['shed',[-5.20,4.6,1.18]]]){
     await run('propertyView',view);
     const visible=await page.evaluate(async point=>{const T=await import('three'),g=__game,root=g.stage.R.property.root;g.scene.updateMatrixWorld(true);g.camera.updateMatrixWorld(true);const target=root.localToWorld(new T.Vector3(...point)),ray=new T.Raycaster(g.camera.position,target.clone().sub(g.camera.position).normalize()),meshes=[];g.scene.traverse(o=>{if(!o.isMesh)return;let p=o;while(p){if(!p.visible)return;p=p.parent;}meshes.push(o);});let hit=ray.intersectObjects(meshes,false)[0]?.object;while(hit&&hit!==root)hit=hit.parent;const screen=target.project(g.camera);return{property:hit===root,onScreen:Math.abs(screen.x)<1&&Math.abs(screen.y)<1&&screen.z<1};},point);
     assert.equal(visible.property,true,`${viewport.width} ${view}: 他施設の屋根が家の視界を遮らない`);assert.equal(visible.onScreen,true,`${view}: 注目する部分が画面内`);

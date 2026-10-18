@@ -100,7 +100,7 @@ function mainBuilding(root) {
   window(entrance, 0, 1.75, 0.05, 7.0, 3.2);
   for (const x of [-1.6, 1.6]) box(entrance, 0.05, 0.7, 0.05, '#d8d0ae', x, 1.4, 0.2);
   // えんじの正面帯と屋上の大きな Amandi 看板。
-  const logo = textTexture('Amandi', { title: '佐賀大和温泉＆ホテル', sub: 'one day Spa resort', script: true });
+  const logo = textTexture('Amandi', { title: '温泉＆ホテル', sub: 'one day Spa resort', script: true });
   box(hotel, 14.8, 5.3, 0.25, '#363d38', 26, 7.1, 16.27);
   signFace(hotel, logo, 14.2, 4.7, 26, 7.1, 16.43);
   const sign = group(hotel, -8, 0, -1.7);
@@ -234,7 +234,7 @@ function grounds(root) {
   const roadSign = group(root, -39, 0, 41.2);
   for (const x of [-1.7, 1.7]) box(roadSign, 0.15, 6.4, 0.15, '#a6aea1', x, 3.2, 0);
   box(roadSign, 6.2, 4.3, 0.35, C.burgundy, 0, 6.3, 0);
-  signFace(roadSign, textTexture('Amandi', { script: true, title: '佐賀大和温泉ホテル', sub: 'アマンディ' }), 6.0, 4.1, 0, 6.3, 0.2);
+  signFace(roadSign, textTexture('Amandi', { script: true, title: '温泉ホテル', sub: 'アマンディ' }), 6.0, 4.1, 0, 6.3, 0.2);
   return { parking: noPick(parking), roadSign };
 }
 

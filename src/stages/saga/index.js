@@ -50,8 +50,8 @@ function trainPath() {
 /** 実在の外観をたどる、距離を圧縮した佐賀の箱庭。 */
 export class SagaStage {
   constructor(game) {
-    this.g = game; this.id = 'saga'; this.title = '佐賀のまち';
-    this.questTitle = '🪶 佐賀の五つの寄り道';
+    this.g = game; this.id = 'saga'; this.title = '田舎の寄り道';
+    this.questTitle = '🪶 五つの寄り道';
     this.solving = false; this.departing = false;
   }
 
@@ -98,7 +98,7 @@ export class SagaStage {
     sun.shadow.bias = -.0003; sun.shadow.normalBias = .055; scene.add(this.hemi, sun, sun.target);
     this.island = makeIslandBase({ ...ISLAND, seed: 869, grass: '#9aaa7a' }); this.island.position.y = -.18; scene.add(this.island);
     this.clouds = makeClouds(869); this.clouds.scale.setScalar(3.2); this.clouds.position.y = -5; scene.add(this.clouds);
-    await g.loadingStep(.25, '佐賀駅と、街の道をつないでいます…');
+    await g.loadingStep(.25, '駅と、街の道をつないでいます…');
     this.R = buildSagaDiorama(scene);
     this._buildNorthwest();
     this.path = trainPath(); this.stopS = this.path.getCurveLengths()[0] + 57;
@@ -107,7 +107,7 @@ export class SagaStage {
     for (const car of this.train.cars) { car.part.g.scale.setScalar(.59); car.offset *= .59; }
     this.train.s = this.stopS; this.train.place();
     this.smoke = new Puffs(scene, { count: 22, color: '#eef1e7', opacity: .4 });
-    await g.loadingStep(.57, '川久保の屋根と、庭の影を整えています…');
+    await g.loadingStep(.57, '瓦屋根と、庭の影を整えています…');
     this._placeCreatures(scene); this._registerInteractables();
     await g.loadingStep(.78, '五つの寄り道を、旅ノートにまとめています…');
     this._optimize();
@@ -176,15 +176,14 @@ export class SagaStage {
       reg(id, R[stop.object], stop.name, () => this.openPuzzle(id));
       reg(`${id}Clue`, R[stop.clue], `${stop.name}のメモ`, () => this.readClue(id));
     }
-    reg('sagaMap', R.mapBoard, '佐賀のまちあるき案内', () => this.showGuide());
-    reg('northwestMap', R.northwestBoard, '北西のよりみち案内', () => this.showGuide());
     reg('sagaStation', R.station?.root, '佐賀駅', () => this.visit('station'));
     reg('mallageSaga', R.mallage?.root, 'モラージュ佐賀', () => this.visit('mallage'));
     reg('kawakubo', R.property?.root, '川久保の街角', () => this.showPropertyViews());
     reg('amandi', R.amandi.root, 'アマンディ佐賀', () => this.openAmandi());
-    reg('bistro', R.bistro.root, 'ビストロ 翠の泡', () => this.openBistro());
+    reg('bistro', R.bistro.root, '山カフェレストランKUREHA', () => this.openBistro());
     for (const [id, name] of [['roundone', 'ラウンドワンスタジアム 佐賀店'], ['ide', '井手ちゃんぽん 大和店'], ['tadakane', '忠兼総本社']]) reg(id, R[id].root, name, () => this.openCity(id));
     reg('ideDish', R.ide.dish, 'ちゃんぽんの食品見本', () => this.openCity('ide'));
+    reg('yoshinogari', R.yoshinogari?.root, '吉野ヶ里遺跡', () => this.visit('yoshinogari'));
     reg('bistroDish', R.bistro.platedDish, '苦い泡のドレッシングのサラダ', () => this.openBistro());
     for (const [id, place] of Object.entries(R.streetScenes || {})) reg(`street_${id}`, place.root, place.name, () => this.inspectStreet(id));
     reg('loco', this.train.loco.g, 'ほしまわり号', () => this.talkFrog());
@@ -257,9 +256,9 @@ export class SagaStage {
     if (!g.flags.saGuideMet) {
       g.flag('saGuideMet'); g.give('sagaGuide');
       g.refreshQuests();
-      g.note('sa-welcome', '佐賀のまちあるき', '佐賀駅、モラージュ佐賀、川久保の街角。<b>五つの寄り道</b>を好きな順で巡ろう。<br>持ち物の<b>佐賀の旅ノート</b>から行き先を選べる。<br>五つのスタンプが集まったら、駅前のカササギへ。');
+      g.note('sa-welcome', 'まちあるきのはじまり', '駅、モール、瓦屋根の街角。<b>五つの寄り道</b>を好きな順で巡ろう。<br>持ち物の<b>旅のノート</b>から行き先を選べる。<br>五つのスタンプが集まったら、駅前のカササギへ。');
       this.residents.magpie.wave = 2;
-      return this.say([{ who: 'magpie', text: '佐賀へ、ようこそ。屋根の向こうまで平らな空。今日は、歩くのにいい日だね。' }, { who: 'magpie', text: '駅とモールを巡って、クリークの水や、空の風にも会ってきて。川久保では、街角の形をゆっくり眺めてほしいな。' }, { who: 'magpie', text: '五つの寄り道のスタンプを、この【佐賀の旅ノート】に集めよう。順番は自由。行き先のボタンを押せば、その場所の近くへ移れるよ。' }, { who: 'magpie', text: '北西にはアマンディ佐賀と、小さなビストロもあるよ。お風呂の話や、不思議な泡のサラダ。休みながら、歩いておいで。' }, { who: 'magpie', text: '全部そろったら、この駅前へ。君の見つけた佐賀を、一枚の便りにしよう。' }]);
+      return this.say([{ who: 'magpie', text: 'ようこそ。屋根の向こうまで平らな空。今日は、歩くのにいい日だね。' }, { who: 'magpie', text: '駅とモールを巡って、クリークの水や、空の風にも会ってきて。瓦屋根の街角も、ゆっくり眺めてほしいな。' }, { who: 'magpie', text: '五つの寄り道のスタンプを、この【旅のノート】に集めよう。順番は自由。行き先のボタンを押せば、その場所の近くへ移れるよ。' }, { who: 'magpie', text: '全部そろったら、この駅前へ。君の見つけた景色を、一枚の便りにしよう。' }]);
     }
     return this.say([{ who: 'magpie', text: `スタンプは${this.stamps.length}つ。急がなくていいよ。ノートの行き先から、気になる景色へどうぞ。` }]);
   }
@@ -268,7 +267,7 @@ export class SagaStage {
     const id = Object.keys(STOPS).find(k => STOPS[k].who === who), stop = STOPS[id];
     await this.view(this.residents[who].root, { height: who === 'crane' ? 2 : who === 'rabbit' ? .65 : 1.5, dist: who === 'rabbit' ? 10 : 16 });
     const lines = {
-      cat: ['ここは佐賀駅。長い駅名の帯と、東側の大きな白い屋根が目印だニャ。', '今日は、ほしまわりの臨時便でまちあるき。乗り継ぎと買物の時間を考えて、川久保までの旅程を作ってほしいニャ。'],
+      cat: ['ここは佐賀駅。横に長い高架と、東側の大きな白い屋根が目印だニャ。', '今日は、ほしまわりの臨時便でまちあるき。乗り継ぎと買物の時間を考えて、川久保までの旅程を作ってほしいニャ。'],
       rabbit: ['モラージュ佐賀へようこそ。北館も南館も、のんびり見ていってね。', 'こちらは今日だけのおみやげ市。買物メモに合うように、四つのおみやげの個数を考えてくれる？'],
       crane: ['クリークは、田んぼと暮らしを結ぶ道。水にも、ちゃんと行き先があるのです。', '三つの田には水を届けて、住宅側には流さない。上流から順に、水門を確かめてみてください。'],
       momonga: ['広い空は大好き。でも、バルーンは翼で曲がれないんだ。高さを変えて、違う風に乗るんだよ。', 'この飛行盤で、三つの目印を通って着地点へ。予報は一回ごとに変わるから、先の風も読んでね。'],
@@ -317,9 +316,9 @@ export class SagaStage {
 
   showGuide() {
     const body = el('div', 'sa-guide');
-    body.innerHTML = '<p class="panel-note">五つの寄り道を、好きな順に。<br>湯どころ、ちゃんぽん、ボウリング。<br>街の寄り道も、好きな順にどうぞ。</p><div class="sa-destinations"></div><p class="sa-map-caption">北 ↑　アマンディと翠の泡は北西。<br>川久保は北東、モールは南東にあります。</p>';
+    body.innerHTML = '<p class="panel-note">五つの寄り道を、好きな順に。<br>湯どころ、ちゃんぽん、ボウリング。<br>街の寄り道も、好きな順にどうぞ。</p><div class="sa-destinations"></div><p class="sa-map-caption">北 ↑　アマンディとKUREHAは北西。<br>瓦屋根の街角は北東、モールは南東。<br>吉野ヶ里遺跡はラウンドワンの北側にあります。</p>';
     let panel;
-    for (const [id, name, sub] of [['station', '🚉 佐賀駅', '南口と木組みの大屋根'], ['mallage', '🛍 モラージュ佐賀', '北館の入口'], ['cinema', '🎬 モラージュ南館', 'シネマ側の外観'], ['mallageWhole', '🏬 モール全体', '北館・南館と駐車場'], ['kawakubo', '🏡 川久保の街角', '屋根・作業場・庭・瓦塀'], ['amandi', '♨ アマンディ佐賀', '北西の湯どころでひと休み'], ['bistro', '🌿 ビストロ 翠の泡', '苦い泡のドレッシング'], ['roundone', '🎳 ラウンドワン佐賀店', '大きなピンとミニボウリング'], ['ide', '🍜 井手ちゃんぽん 大和店', '赤い入口と、野菜の山'], ['tadakane', '🫙 忠兼総本社', '黄色いひさしの街角'], ['northwest', '🚶 北西の散歩道', '商店とクリークの小橋'], ['sluice', '🌾 クリーク', '水と田んぼの寄り道'], ['balloon', '🎈 バルーン広場', '風読みの寄り道'], ['whole', '🗺 まち全体', '箱庭を見渡す']]) {
+    for (const [id, name, sub] of [['station', '🚉 佐賀駅', '南口と木組みの大屋根'], ['mallage', '🛍 モラージュ佐賀', '北館の入口'], ['cinema', '🎬 モラージュ南館', 'シネマ側の外観'], ['mallageWhole', '🏬 モール全体', '北館・南館と駐車場'], ['kawakubo', '🏡 川久保の街角', '屋根・作業場・庭・瓦塀'], ['amandi', '♨ アマンディ佐賀', '北西の湯どころでひと休み'], ['bistro', '🌿 山カフェレストランKUREHA', '木々に囲まれたレストラン'], ['bakery', '🍞 嵜本ベーカリー', 'おすすめはいちごミルク食パン'], ['roundone', '🎳 ラウンドワン佐賀店', '大きなピンとミニボウリング'], ['yoshinogari', '🏛 吉野ヶ里遺跡', '環濠と物見やぐらの集落'], ['ide', '🍜 井手ちゃんぽん 大和店', '赤い入口と、野菜の山'], ['tadakane', '🫙 忠兼総本社', '黄色いひさしの街角'], ['northwest', '🚶 北西の散歩道', '商店とクリークの小橋'], ['sluice', '🌾 クリーク', '水と田んぼの寄り道'], ['balloon', '🎈 バルーン広場', '風読みの寄り道'], ['whole', '🗺 まち全体', '箱庭を見渡す']]) {
       const b = el('button', 'btn sa-destination', `<b>${name}</b><small>${sub}</small>`);
       b.onclick = () => { panel.close(); this.visit(id); }; body.querySelector('.sa-destinations').appendChild(b);
     }
@@ -332,17 +331,21 @@ export class SagaStage {
       const clue = el('button', 'btn', 'メモを読む'); clue.onclick = () => { panel.close(); this.recordClue(id); this.showClue(id); }; buttons.appendChild(clue);
       row.appendChild(buttons); body.appendChild(row);
     }
-    body.appendChild(el('p', 'sa-side-memories', `よりみち日記　♨ ${this.g.flags.saSpaRested ? '湯どころでひと休み ✓' : '湯どころは、まだこれから'}<br>🌿 ${this.g.flags.saFoamTasted ? '苦い泡のサラダを味わった ✓' : '翠の泡の看板メニューもどうぞ'}`));
+    body.appendChild(el('p', 'sa-side-memories', `よりみち日記　♨ ${this.g.flags.saSpaRested ? '湯どころでひと休み ✓' : '湯どころは、まだこれから'}<br>🌿 ${this.g.flags.saFoamTasted ? 'KUREHAで一皿を味わった ✓' : 'KUREHAのテラスでひと休みもどうぞ'}`));
     body.querySelector('.sa-side-memories').innerHTML += `<br>🎳 ボウリングの最高記録 ${this.g.flags.saBowlingBest || 0}本<br>🍜 ${this.g.flags.saChanponTasted ? '大和店のちゃんぽんを味わった ✓' : '赤い入口の先で、おなかもひと休み'}<br>🫙 ${this.g.flags.saTadakaneSeen ? '忠兼総本社の窓辺を眺めた ✓' : 'ものづくりの街角を訪ねて'}`;
-    panel = this.g.ui.openPanel({ title: `佐賀の旅ノート　${this.stamps.length}/5`, body, cls: 'saga-panel' });
+    panel = this.g.ui.openPanel({ title: `旅のノート　${this.stamps.length}/5`, body, cls: 'saga-panel' });
     return panel;
   }
 
   async visit(id) {
     const g = this.g, R = this.R;
-    if (['roundone', 'ide', 'tadakane'].includes(id)) {
+    if (['roundone', 'ide', 'tadakane', 'yoshinogari'].includes(id)) {
       const model = R[id], v = model.views.front;
-      return this.modelView(model, v.position, v.target, { roundone: 122, ide: 28, tadakane: 15 }[id]);
+      return this.modelView(model, v.position, v.target, { roundone: 122, ide: 28, tadakane: 15, yoshinogari: 40 }[id]);
+    }
+    if (id === 'bakery') {
+      const place = R.streetScenes.bakery;
+      return g.focusOn(place.target, { dist: (place.dist || 16) * (innerWidth < innerHeight ? 1.5 : 1), polar: place.polar || 1.05, theta: place.theta || 0, subject: place.root, frameHigh: id !== 'bakery', keepAngle: true, duration: .9 });
     }
     if (id === 'whole') return g.moveCamera(...this.homeView(innerWidth < innerHeight), 1.2);
     if (id === 'amandi') {
@@ -351,7 +354,9 @@ export class SagaStage {
     }
     if (id === 'bistro') {
       const v = R.bistro.views.front;
-      return this.modelView(R.bistro, v.position, v.target, 20);
+      const position = v.position.clone();
+      if (innerWidth < innerHeight) position.y = 13.8;
+      return this.modelView(R.bistro, position, v.target, 26);
     }
     if (id === 'northwest') return g.focusOn(new V(-38, 1.5, -54), { dist: innerWidth < innerHeight ? 185 : 86, polar: .72, theta: .25, duration: 1.1 });
     if (id === 'kawakubo') { await this.propertyView('front'); return this.showPropertyViews(); }
@@ -387,7 +392,7 @@ export class SagaStage {
     if (view === 'front') { position.y = 5.7; target.y = 2.5; }
     // 縦画面は全幅を収めるために後退する。途中の駅舎や施設の屋根を越す高さを確保する。
     if (portrait && ['left', 'right'].includes(view)) position.y = target.y + Math.hypot(position.x - target.x, position.z - target.z) * .45;
-    return this.modelView(model, position, target, {front:17,porch:6.8,wall:4.6,shed:13}[view] || (portrait ? 22 : 29));
+    return this.modelView(model, position, target, {front:portrait ? 24 : 28,porch:6.8,wall:4.6,shed:13}[view] || (portrait ? 22 : 29));
   }
 
   showPropertyViews() {
@@ -411,7 +416,7 @@ export class SagaStage {
 
   async talkSpaHost() {
     await this.view(this.residents.spaHost.root, { height: 1.35, dist: 14, theta: .25 });
-    await this.say([{ who: 'spaHost', text: 'アマンディ佐賀へようこそ。ずいぶん、歩いてこられましたね。' }, { who: 'spaHost', text: '旅の途中には、何も数えない時間も大切です。スタンプのことは、少しだけ横に置いて。' }, { who: 'spaHost', text: 'ひと休みしてから、またお好きな道へ。北西のビストロも、よい香りがしていますよ。' }]);
+    await this.say([{ who: 'spaHost', text: 'アマンディ佐賀へようこそ。ずいぶん、歩いてこられましたね。' }, { who: 'spaHost', text: '旅の途中には、何も数えない時間も大切です。スタンプのことは、少しだけ横に置いて。' }, { who: 'spaHost', text: 'ひと休みしてから、またお好きな道へ。KUREHAのテラスから眺める緑も、きれいですよ。' }]);
     return this.openAmandi();
   }
 
@@ -438,17 +443,17 @@ export class SagaStage {
 
   async talkChef() {
     await this.view(this.residents.chef.root, { height: 1.4, dist: 13, theta: -.18 });
-    await this.say([{ who: 'chef', text: 'いらっしゃいませ。ここは「翠の泡」。畑から届く野菜を、一皿ずつお出ししています。' }, { who: 'chef', text: '看板は、苦い泡のドレッシング。ふわっと消えたあと、葉の甘さと、ほろ苦い香りが残るんです。' }, { who: 'chef', text: 'ひと口目は、泡と野菜をいっしょに。二口目には、また違う味が見つかりますよ。' }]);
+    await this.say([{ who: 'chef', text: 'いらっしゃいませ。山カフェレストランKUREHAへようこそ。木々を眺めながら、ゆっくりしていってください。' }, { who: 'chef', text: '今日の一皿には、色とりどりの野菜を。歩いてきた景色も思い出しながら、どうぞ。' }]);
     return this.openBistro();
   }
 
   async tasteFoamSalad() {
     const g = this.g, tasted = !!g.flags.saFoamTasted;
     g.flag('saFoamTasted'); this.applyState();
-    g.note('sa-side-bistro', '🌿 翠の泡の、苦い泡のドレッシング', '白い皿に盛られた、畑のサラダ。<br>ふわりと消える泡のドレッシングは、ほろ苦く、そのあとに野菜の甘さが残る。<br>キツネの料理人は「二口目には、また違う味が見つかりますよ」と笑った。');
+    g.note('sa-side-bistro', '🌿 KUREHAで味わった一皿', '木々を眺めながら、白い皿に盛られたサラダを味わった。<br>ふわりと消える泡のドレッシングは、ほろ苦く、そのあとに野菜の甘さが残る。');
     await this.view(this.R.bistro.platedDish, { height: .15, dist: 7.5, polar: .7, theta: .25 });
     g.audio.play('pop');
-    await this.say([{ who: 'chef', text: tasted ? 'おかえりなさい。今日も、泡はできたてです。' : 'お待たせしました。畑のサラダと、苦い泡のドレッシングです。' }, '細かな泡が、舌の上ですっと消えた。ほろ苦い香りのあとに、野菜の甘さがゆっくり広がる。', { who: 'frog', text: '苦いのに、もうひと口ほしくなるケロ。ふしぎな泡だケロ！' }]);
+    await this.say([{ who: 'chef', text: tasted ? 'おかえりなさい。どうぞ、ゆっくり召し上がってください。' : 'お待たせしました。こちらが、今日の一皿です。' }, '細かな泡が、舌の上ですっと消えた。ほろ苦い香りのあとに、野菜の甘さがゆっくり広がる。']);
   }
 
   sideScene(action) {
@@ -459,9 +464,9 @@ export class SagaStage {
 
   async inspectStreet(id) {
     const place = this.R.streetScenes[id];
-    await this.g.focusOn(place.target, { dist: place.dist || 16, polar: 1.05, theta: place.theta || 0, subject: place.root, keepAngle: true, duration: .9 });
+    await this.g.focusOn(place.target, { dist: (place.dist || 16) * (innerWidth < innerHeight ? 1.5 : 1), polar: place.polar || 1.05, theta: place.theta || 0, subject: place.root, frameHigh: id !== 'bakery', keepAngle: true, duration: .9 });
     const lines = {
-      bakery: ['焼きたてのパンの香りが、通りにこぼれている。ガラスの向こうでは、小さな丸パンがきれいに並んでいた。', '窓辺の札には「歩いたあとには、ひとつおやつ」。'],
+      bakery: ['嵜本ベーカリーから、焼きたてのパンの香り。ガラスの向こうには、角のそろった食パンが並んでいる。', 'おすすめは「いちごミルク食パン」。白といちご色のやわらかな層に、甘い香りがふわりと重なる。'],
       florist: ['花屋の軒先で、葉の形の違う鉢が、風に揺れている。小さな花束の横に、今日の水やりのじょうろ。', '同じ緑でも、日向と日陰で、少しずつ色が違って見える。'],
       bridge: ['小橋の下を、水が静かに通り抜けていく。向こうの岸には、散歩の途中の自転車。', '少し立ち止まると、水音の間に、遠い踏切の音が聞こえた。'],
       park: ['木陰のベンチには、誰かが休んだあとの、やさしい静けさが残っている。', '街角の小さな公園にも、空はちゃんと広がっていた。'],
@@ -516,7 +521,7 @@ export class SagaStage {
     await g.moveCamera(new V(-58, 17, 38), new V(-30, 3, 13), 1.2);
     let travelled = 0;
     await g.tweens.add({ duration: 2.8, ease: Ease.inOut, onUpdate: k => { const d = 17 * k; this.train.advance(d - travelled); travelled = d; } });
-    g.audio.play('steam'); await g.ui.banner('佐賀のまち', 'EXTRA JOURNEY　屋根とクリークと、広い空', 2200);
+    g.audio.play('steam'); await g.ui.banner('田舎の寄り道', 'EXTRA JOURNEY　屋根とクリークと、広い空', 2200);
     await this.say(['青い空の下、白い大屋根が近づいてきた。ほしまわり号は、佐賀駅に小さく汽笛を響かせた。', { who: 'frog', text: '空がひろいケロ！ あのカササギさん、こっちに手を振ってるケロ。' }]);
     g.flag('introDone'); g.cinematic = false; await this.talkGuide();
     await this.visit('station');

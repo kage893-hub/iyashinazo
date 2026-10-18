@@ -23,8 +23,8 @@ export function amandiVisitPanel(ui, { rested, onRest, onTalk, onView }) {
 
 export function bistroMenuPanel(ui, { tasted, onTaste, onTalk, onView }) {
   const body = el('div', 'sa-visit-card sa-bistro-card');
-  body.innerHTML = `<div class="sa-visit-kicker">BISTRO · 翠の泡</div><h3 class="sa-dish-name">畑のサラダと、<br>苦い泡のドレッシング</h3><div class="sa-menu-art">${salad}</div><p class="sa-dish-caption">みずみずしい葉。ふわりと消える、小さな泡。</p><p>口に入れると香りがほどけて、<br>あとから、ほろ苦さが残る。</p><p class="sa-visit-quote">「苦さも、ちゃんとおいしくなるんです。」</p>${tasted ? '<p class="sa-visit-done">✓ 旅のメモに、この一皿の味が残っている。</p>' : ''}`;
-  return visitPanel(ui, 'ビストロ 翠の泡', body, [[tasted ? 'もう一度、味わう' : '苦い泡のサラダを味わう', onTaste, true], ['キツネに料理の話を聞く', onTalk], ['テラスを眺める', onView]]);
+  body.innerHTML = `<div class="sa-visit-kicker">山カフェレストランKUREHA</div><h3 class="sa-dish-name">緑を眺めて、<br>ひと皿をゆっくり</h3><div class="sa-menu-art">${salad}</div><p class="sa-dish-caption">みずみずしい葉。ふわりと消える、小さな泡。</p><p>木々の間から届く光と、<br>彩り野菜を盛りつけた一皿。</p>${tasted ? '<p class="sa-visit-done">✓ 旅のメモに、この一皿の味が残っている。</p>' : ''}`;
+  return visitPanel(ui, '山カフェレストランKUREHA', body, [[tasted ? 'もう一度、味わう' : 'サラダを味わう', onTaste, true], ['キツネに料理の話を聞く', onTalk], ['テラスを眺める', onView]]);
 }
 
 export function cityVisitPanel(ui, id, { recorded, onExperience, onView }) {
@@ -34,7 +34,7 @@ export function cityVisitPanel(ui, id, { recorded, onExperience, onView }) {
     tadakane: ['忠兼総本社', '🫙', '黄色いひさしの、ものづくりの街角。', '木枠の戸と小さな窓。窓辺に並ぶ容器を眺めると、この街のもうひとつの表情が見えてくる。', '窓辺の容器を眺める'],
   }[id];
   const body = el('div', 'sa-visit-card');
-  body.innerHTML = `<div class="sa-visit-kicker">佐賀・まちの寄り道</div><div class="sa-spa-mark" aria-hidden="true">${data[1]}</div><h3>${data[2]}</h3><p>${data[3]}</p>${recorded ? '<p class="sa-visit-done">✓ 旅のメモに、この寄り道が残っている。</p>' : ''}`;
+  body.innerHTML = `<div class="sa-visit-kicker">まちの寄り道</div><div class="sa-spa-mark" aria-hidden="true">${data[1]}</div><h3>${data[2]}</h3><p>${data[3]}</p>${recorded ? '<p class="sa-visit-done">✓ 旅のメモに、この寄り道が残っている。</p>' : ''}`;
   return visitPanel(ui, data[0], body, [[data[4], onExperience, true], ['外観を眺める', onView]]);
 }
 

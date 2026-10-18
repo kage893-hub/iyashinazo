@@ -95,7 +95,7 @@ try {
   await page.evaluate(() => { for (const flag of ['saBusDone','saShoppingDone','saSluiceDone','saBalloonDone','saSketchDone']) __game.flag(flag); __game.stage.applyState(); });
   await runScene('g.stage.finale()');
   assert.equal(await page.evaluate(() => __game.flags.finaleDone && __game.state.cleared.includes('saga')), true);
-  assert.equal(await page.locator('.clear-panel .clear-main').innerText(), '佐賀のまち');
+  assert.equal(await page.locator('.clear-panel .clear-main').innerText(), '田舎の寄り道');
   assert.equal(await page.getByRole('button', { name: /追加の旅を選ぶ/ }).count(), 1);
   const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('hoshimawari-save-v1')));
   assert.equal(saved.flags.finaleDone, true); assert.ok(saved.cleared.includes('japan') && saved.cleared.includes('saga'));

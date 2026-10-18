@@ -6,7 +6,7 @@ import { layoutPoint } from './layout.js';
 export const JAPAN_AREAS = [
   { id: 'asakusa', name: '浅草寺・仲見世', icon: '🏯', sub: '参道と本堂、五重塔', at: [-10.8, 1.3, 2.5], dist: 29, portraitScale: 1.5, polar: .72, theta: .18 },
   { id: 'shibuya', name: '渋谷・時の鐘', icon: '📺', sub: 'スクランブル交差点とハチ公口', at: [1.35, 3.4, .7], dist: 37, portraitScale: 1.55, polar: .98, theta: -.12 },
-  { id: 'akiba', name: '秋葉原', icon: '🎮', sub: '電気街とゲームセンター', at: [-23.3, 1.3, 1.1], dist: 28, polar: .94, theta: -.18 },
+  { id: 'platform', name: '浅草駅・ホーム', icon: '🚂', sub: 'ほしまわり号と、ホームの時計', at: [-21.5, 1.7, -3.6], dist: 25, portraitScale: 1.7, polar: 1.04, theta: .08 },
   { id: 'tower', name: '東京タワー・船着き場', icon: '🗼', sub: 'タワーの庭と隅田川', at: [12.2, 9, 3.4], dist: 66, polar: 1.18, theta: .25 },
   { id: 'station', name: '東京駅', icon: '🚉', sub: '赤レンガの駅舎と駅前広場', at: [22.5, 2.0, 0], dist: 29, portraitScale: 1.5, polar: 1.06, theta: .12 },
   { id: 'ueno', name: '上野公園', icon: '🌳', sub: '池と夏まつりのやぐら', at: [-23.4, .8, 16.1], dist: 28, polar: .85, theta: .12 },

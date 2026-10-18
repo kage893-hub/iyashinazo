@@ -7,6 +7,8 @@ import { createKawakuboProperty } from './kawakubo.js';
 import { createRoundOneSaga } from './roundone.js';
 import { createIdeChanpon } from './ide-chanpon.js';
 import { createTadakaneCompany } from './tadakane.js';
+import { buildYoshinogari } from './yoshinogari.js';
+import { buildSakimoto } from './sakimoto.js';
 
 // 佐賀平野の縮景。北は-z、東は+x。地域間の距離だけを圧縮し、
 // 写真を参照する3施設の形状・敷地内の配置はそれぞれのモデルで保つ。
@@ -22,7 +24,7 @@ const noPick = (g) => { g.traverse((o) => { o.userData.noPick = true; }); return
 const FIELD_RECTS = [
   // 北西はアマンディ・ビストロの街区。植生も同じ区画定義から生成する。
   [-73, -33, -58, -15],
-  [45, -67, 72, -52], [46, -48, 72, -34],
+  [45, -67, 72, -58],
 ];
 
 function rod(parent, a, b, r, material, sides = 8) {
@@ -84,6 +86,8 @@ function groundTexture() {
     rect(-25.5, -32, -10.5, -15, '#b4b8a3');
     rect(8.5, -23.2, 40.5, 3.5, '#b8bba9');
     rect(47.5,-27.3,75.5,3.5,'#b8bba9');
+    rect(47.0, -56.0, 75.0, -30.0, '#a8ad80');
+    rect(59.8, -31.5, 62.2, -26.8, '#c0b591');
     road(-52, -23.4, -49, -12.0, false);
     road(-55.45, -24.0, -47, -21.3, false);
     road(-29.5, -12.0, -8.0, -9.8, false);
@@ -231,15 +235,8 @@ function neighborhoodShop(parent, x, z, { kind, name, color, awning, w = 6.4, d 
   g.name = `saga-neighborhood-${kind}`;
   add(g, G.box(w, 2.85, d), wall, 0, 1.48, 0);
   add(g, G.box(w + 0.14, 0.3, d + 0.14), mat('#9c9d86'), 0, 0.15, 0);
-  if (kind === 'bakery') {
-    const roofSlope = Math.atan2(0.9, w / 2), len = Math.hypot(w / 2 + 0.2, 0.9);
-    for (const side of [-1, 1]) add(g, G.box(len, 0.1, d + 0.5), mat('#8e7861'), side * w / 4, 3.3, 0,
-      { rot: [0, 0, -side * roofSlope] });
-    for (let i = 0; i < 6; i++) add(g, G.box(w + 0.02, 0.07, 0.07), mat('#b49b78'), 0, 0.48 + i * 0.32, front + 0.02);
-  } else {
-    add(g, G.box(w + 0.35, 0.16, d + 0.5), mat(kind === 'florist' ? '#8a9a82' : '#919b8c'), 0, 3.02, 0);
-    add(g, G.box(w + 0.2, 0.3, 0.16), mat('#a9b09a'), 0, 3.17, d / 2 + 0.12);
-  }
+  add(g, G.box(w + 0.35, 0.16, d + 0.5), mat(kind === 'florist' ? '#8a9a82' : '#919b8c'), 0, 3.02, 0);
+  add(g, G.box(w + 0.2, 0.3, 0.16), mat('#a9b09b'), 0, 3.17, d / 2 + 0.12);
   // 左のショーウィンドーと右の入口。内側に棚があり、反射だけの箱にしない。
   add(g, G.box(w * 0.57, 1.45, 0.08), mat('#667e70'), -w * 0.13, 1.42, front + 0.03);
   for (const xx of [-w * 0.415, -w * 0.13, w * 0.155]) add(g, G.box(0.055, 1.55, 0.14), mat('#d2cfb3'), xx, 1.42, front + 0.07);
@@ -254,16 +251,7 @@ function neighborhoodShop(parent, x, z, { kind, name, color, awning, w = 6.4, d 
     add(g, G.box((w + 0.2) / 10, 0.08, 1.05), mat(stripe), -w / 2 + (i + 0.5) * (w / 10), 2.17, front + 0.5, { rot: [-0.13, 0, 0] });
     add(g, G.box((w + 0.2) / 10, 0.22, 0.055), mat(stripe), -w / 2 + (i + 0.5) * (w / 10), 1.99, front + 1.0);
   }
-  if (kind === 'bakery') {
-    const display = group(g, -0.95, 0, front + 1.1);
-    add(display, G.box(2.4, 0.15, 0.72), mat('#aa8c61'), 0, 0.77, 0);
-    for (const xx of [-0.9, 0.9]) add(display, G.box(0.07, 0.7, 0.43), mat('#847752'), xx, 0.35, 0);
-    for (let i = 0; i < 6; i++) {
-      add(display, G.capsule(0.13, 0.17, 4, 8), mat(i % 2 ? '#c4a16a' : '#b78e5c'), -0.9 + i * 0.35, 0.98, 0, { rot: [0, 0, Math.PI / 2] });
-      for (const dx of [-0.05, 0.05]) add(display, G.box(0.018, 0.02, 0.2), mat('#ddbf85'), -0.9 + i * 0.35 + dx, 1.11, 0, { rot: [0, 0.15, 0] });
-    }
-    flowerBox(g, w * 0.36, front + 1.15, 0.7, 901);
-  } else if (kind === 'florist') {
+  if (kind === 'florist') {
     for (let i = 0; i < 5; i++) {
       const xx = -w * 0.35 + i * w * 0.14;
       add(g, G.cyl(0.22, 0.17, 0.4, 9), mat(i % 2 ? '#ad8a6c' : '#8d9f7f'), xx, 0.22, front + 1.25);
@@ -320,7 +308,8 @@ function neighborhoodPark(parent) {
 
 function buildStreetQuarter(root) {
   const g = group(root), scenes = {};g.name='saga-neighborhood-life';
-  const bakery=neighborhoodShop(g,-51,-8,{kind:'bakery',name:'まちのパン屋',color:'#d6c8a4',awning:'#a68d69',w:7.2,d:5.0});
+  const sakimoto = buildSakimoto(g, { x: -51, z: -8 });
+  const bakery = sakimoto.root;
   const florist=neighborhoodShop(g,-70,-8,{kind:'florist',name:'花と緑',color:'#d4d6bd',awning:'#7f9e83',w:6.6,d:5.0,ry:Math.PI/2});
   neighborhoodShop(g,-70,31,{kind:'books',name:'本と文具',color:'#c4c6ad',awning:'#889684',w:6.2,d:5.1,ry:Math.PI/2});
   neighborhoodShop(g,-70,13,{kind:'laundry',name:'まちの洗たく室',color:'#cbd0ba',awning:'#94a8a0',w:5.4,d:4.9,ry:Math.PI/2});
@@ -350,7 +339,7 @@ function buildStreetQuarter(root) {
   const corner=group(g,-52.3,0,36.2);bench(corner,0,0);flowerBox(corner,1.9,0,1.1,820);
   const veg=group(g,-10.2,0,-65);for(let i=0;i<4;i++){add(veg,G.box(.55,.08,3.1),mat('#a28e6d'),i*.7,0,0);for(let k=0;k<5;k++)add(veg,G.sphere(.15,7,5),mat(k%2?'#819568':'#9ca16d'),i*.7,.15,-1.2+k*.6,{scale:[1,.65,1]});}
   const scenesData={
-    bakery:{root:bakery,name:'まちのパン屋',target:new THREE.Vector3(-51,1.55,-5.5),theta:-.5,dist:14},
+    bakery:{root:bakery,name:'嵜本ベーカリー',...sakimoto.view},
     florist:{root:florist,name:'花と緑の店',target:new THREE.Vector3(-67.5,1.4,-8),theta:Math.PI/2,dist:12},
     bridge:{root:bridge,name:'クリークの小橋',target:new THREE.Vector3(-55.45,.8,-36),theta:-.2,dist:14},
     park:{root:park,name:'まちかどの小さな公園',target:new THREE.Vector3(-17,.7,-8),theta:Math.PI,dist:14},
@@ -404,7 +393,7 @@ function busStop(parent) {
   add(g, G.cyl(0.45, 0.55, 0.16, 12), mat('#aaa994'), 0, 0.08, 0);
   add(g, G.cyl(0.055, 0.055, 2.9, 8), metal, 0, 1.55, 0);
   add(g, G.cyl(0.48, 0.48, 0.09, 24), mat('#e6e9d5'), 0, 2.8, 0, { rot: [Math.PI / 2, 0, 0] });
-  const sign = group(g, 0, 0, 0.06); textFace(sign, '佐賀駅', '臨時便', 0.87, 0.68, 2.8, '#f2f1d9', '#4c7e67');
+  const sign = group(g, 0, 0, 0.06); textFace(sign, '臨時便', 'のりば', 0.87, 0.68, 2.8, '#f2f1d9', '#4c7e67');
   add(g, G.box(0.78, 1.1, 0.08), metal, 0, 1.65, 0);
   const table = canvasTex(256, 384, (c, W, H) => {
     c.fillStyle = '#f7f2df'; c.fillRect(0, 0, W, H); c.fillStyle = '#456258';
@@ -433,7 +422,7 @@ function makeBus(parent) {
   add(g, G.box(0.03, 0.9, 1.98), mat('#597979'), 3.02, 2.02, 0);
   for (const side of [-1, 1]) add(g, G.box(0.04, 0.24, 0.45), mat('#e4dfb6'), 3.04, 1.03, side * 0.77);
   const destination = group(g, 3.05, 0, 0, Math.PI / 2);
-  textFace(destination, '佐賀めぐり', '', 1.72, 0.3, 2.51, '#2f4941', '#e5e1bd');
+  textFace(destination, 'まちめぐり', '', 1.72, 0.3, 2.51, '#2f4941', '#e5e1bd');
   g.userData.parkedPosition = g.position.clone();
   return g;
 }
@@ -512,34 +501,11 @@ function makeSketchDesk(parent) {
     c.fillStyle = '#e4d8ae'; c.fillRect(155, 176, 315, 126);
     c.fillStyle = '#7f8674'; c.beginPath(); c.moveTo(113, 179); c.lineTo(296, 108); c.lineTo(501, 179); c.closePath(); c.fill();
     c.fillStyle = '#8b9579'; c.fillRect(67, 306, 502, 15);
-    c.fillStyle = '#5d6d57'; c.font = `700 35px ${FONT}`; c.textAlign = 'center'; c.fillText('佐賀の旅だより', W / 2, 390);
+    c.fillStyle = '#5d6d57'; c.font = `700 35px ${FONT}`; c.textAlign = 'center'; c.fillText('田舎の旅だより', W / 2, 390);
   });
   add(complete, G.plane(1.15, 0.81), new THREE.MeshBasicMaterial({ map: texture }), 0, 1.318, 0,
     { rot: [-Math.PI / 2 - 0.1, 0, 0], cast: false });
   return { desk: g, complete };
-}
-
-function mapBoard(parent) {
-  const g = board(parent, -43, 26.7, '佐賀のよりみち', '', { w: 4.3, h: 2.6, y: 2.0 });
-  const texture = canvasTex(1024, 640, (c, W, H) => {
-    c.fillStyle = '#eee9d6'; c.fillRect(0, 0, W, H);
-    c.strokeStyle = '#c1c8ac'; c.lineWidth = 8; c.strokeRect(7, 7, W - 14, H - 14);
-    c.textAlign = 'center'; c.fillStyle = '#3d6259'; c.font = `800 52px ${FONT}`; c.fillText('佐賀のよりみち', W / 2, 72);
-    const point = (x, z) => [(x + 78) / 156 * 850 + 80, (z + 76) / 142 * 430 + 125];
-    c.strokeStyle = '#c3c5ad'; c.lineWidth = 22; c.lineJoin = 'round';
-    c.beginPath(); [[-28, 8], [0, 8], [0, -31], [22, -31], [22, -45]].forEach(([x,z], i) => { const p=point(x,z); if(i)c.lineTo(...p);else c.moveTo(...p); }); c.stroke();
-    c.beginPath(); [[0,8],[0,45],[31,45]].forEach(([x,z],i)=>{const p=point(x,z);if(i)c.lineTo(...p);else c.moveTo(...p);});c.stroke();
-    c.beginPath(); [[0,45],[-35,45],[-35,48]].forEach(([x,z],i)=>{const p=point(x,z);if(i)c.lineTo(...p);else c.moveTo(...p);});c.stroke();
-    c.beginPath(); [[0,-31],[-22,-42],[-52,-42],[-52,-60]].forEach(([x,z],i)=>{const p=point(x,z);if(i)c.lineTo(...p);else c.moveTo(...p);});c.stroke();
-    c.beginPath(); [[-22,-42],[-22,-52]].forEach(([x,z],i)=>{const p=point(x,z);if(i)c.lineTo(...p);else c.moveTo(...p);});c.stroke();
-    const labels = [[-28,8,'佐賀駅',-44,-15],[22,-45,'川久保',40,-17],[31,38,'モラージュ佐賀',10,-20],[-39,-36,'田んぼ',-2,36],[-35,48,'バルーン広場',0,43],[-52,-60,'アマンディ佐賀',-8,-18],[-22,-52,'翠の泡',28,27]];
-    labels.forEach(([x,z,t,dx,dy],i)=>{const p=point(x,z);c.fillStyle=i===0?'#bf825f':'#6d9176';c.beginPath();c.arc(...p,12,0,Math.PI*2);c.fill();c.fillStyle='#3d5c4e';c.font=`700 ${i===2?31:33}px ${FONT}`;c.fillText(t,p[0]+dx,p[1]+dy);});
-    c.fillStyle='#6f8066';c.font=`600 23px ${FONT}`;c.fillText('北 ↑　　旅の箱庭案内',W-210,112);
-    c.fillStyle='#627366';c.font=`600 22px ${FONT}`;c.fillText('ラウンドワン・井手ちゃんぽん・忠兼総本社へは旅ノートから',W/2,610);
-  });
-  const art = add(g, G.plane(4.21, 2.51), new THREE.MeshBasicMaterial({ map: texture }), 0, 2.0, 0.122, { cast: false });
-  art.userData.keep = true;
-  return g;
 }
 
 export function buildSagaDiorama(scene) {
@@ -563,9 +529,11 @@ export function buildSagaDiorama(scene) {
     return model;
   };
   R.roundone = placeSite(createRoundOneSaga(root), 61.5, -11.5, 27, 27, 0);
+  R.yoshinogari = buildYoshinogari(root, { x: 61, z: -43 });
   R.ide = placeSite(createIdeChanpon(root), -42, -22, 19, 14, -Math.PI / 2);
   R.tadakane = placeSite(createTadakaneCompany(root), -18, -24, 13.2, 15, Math.PI / 2);
   R.cityLots = {
+    yoshinogari: { x: [47.5, 74.5], z: [-55.5, -30.5] },
     roundone: { x: [48, 75], z: [-25, 2] }, ide: { x: [-51.5,-32.5], z: [-29,-15] }, tadakane: {x:[-24.6,-11.4],z:[-31.5,-16.5]},
   };
 
@@ -601,7 +569,6 @@ export function buildSagaDiorama(scene) {
   ];
   buildings.forEach(([x,z,w,d,h,seed])=>plainHouse(town,x,z,w,d,h,seed,seed%3===0?Math.PI/2:0));
   const quarter = buildStreetQuarter(root); R.streetQuarter = quarter.root; R.streetScenes = quarter.scenes;
-  R.northwestBoard = board(root,-7.8,-38.0,'北西の寄り道','アマンディ・翠の泡',{w:3.5,h:1.25,y:1.3});
   R.northwestLots = {
     amandi:{center:new THREE.Vector3(-52,0,-60),w:35,d:24},
     bistro:{center:new THREE.Vector3(-22,0,-52),w:18,d:14},
@@ -624,17 +591,16 @@ export function buildSagaDiorama(scene) {
   }
 
   R.busStop = busStop(root);
-  R.busClue = board(root,-9.5,26,'佐賀の臨時便','のりかえ案内',{w:2.6,h:1.1,y:1.35});
-  R.mapBoard = mapBoard(root);
+  R.busClue = board(root,-9.5,26,'まちの臨時便','のりかえ案内',{w:2.6,h:1.1,y:1.35});
   R.marketBoard = group(root,35.4,0,41.0);
   for(const x of [-0.9,0.9])for(const z of [-0.32,0.32])add(R.marketBoard,G.box(0.07,0.9,0.07),mat(C.wood),x,0.45,z);
   add(R.marketBoard,G.box(2.3,0.12,1.0),mat('#c2ab7b'),0,0.95,0);
   const baskets=mat('#8f9471');
   for(const x of [-0.72,0,0.72]){add(R.marketBoard,G.box(0.58,0.25,0.65),baskets,x,1.12,0);for(let i=0;i<3;i++)add(R.marketBoard,G.sphere(0.12,7,5),mat(['#c18c65','#c8b775','#809d6a'][i]),x+(i-1)*0.13,1.31,0);}
-  R.shoppingClue = board(root,35.4,43.6,'佐賀のよりみち市','ならべかえ案内',{w:2.6,h:1.1,y:1.35});
-  R.sluiceClue = board(root,-34,-32.6,'佐賀平野のクリーク','水の道しるべ',{w:3.0,h:1.15,y:1.4});
+  R.shoppingClue = board(root,35.4,43.6,'よりみち市','ならべかえ案内',{w:2.6,h:1.1,y:1.35});
+  R.sluiceClue = board(root,-34,-32.6,'クリークの水門','水の道しるべ',{w:3.0,h:1.15,y:1.4});
   R.balloonPad = makeBalloonPad(root); R.balloon = makeBalloon(root);
-  R.balloonClue = board(root,-23.2,51,'佐賀の空へ','気球の出発案内',{w:2.8,h:1.15,y:1.4});
+  R.balloonClue = board(root,-23.2,51,'気球で空へ','気球の出発案内',{w:2.8,h:1.15,y:1.4});
   const sketch = makeSketchDesk(root); R.sketchDesk=sketch.desk;R.sketchComplete=sketch.complete;
   R.sketchClue = board(root,22.5,-27.6,'川久保の風景','旅だよりの机',{w:2.6,h:1.05,y:1.3});
   R.marketFlags = dynamic(group(root), false);

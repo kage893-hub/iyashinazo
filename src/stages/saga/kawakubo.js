@@ -331,8 +331,10 @@ function netPanel(parent, w, h, x, y, z, ry = 0) {
 }
 
 function makeShed(parent, M) {
-  // 南を向く長い軒下。道路（西）側だけが切妻、棟は東西方向。
-  const shed = group(parent, -7.5, 0, 2.35);
+  // 写真の道路は模型の +z、母屋の庭は +x。錆の強い妻壁を道路へ、
+  // 窓と車庫のある長い軒下を庭へ向ける。母屋と同じ向きには並べない。
+  // 部材は元の正面 +z で組み、敷地上で90度回す。妻側の門柱よりも奥に収める。
+  const shed = group(parent, -8.05, 0, 1.80, Math.PI / 2);
   shed.name = '川久保・白い波板の作業場';
   const w = 7.3, d = 5.7, wallTop = 5.72, front = d / 2;
   const sheet = corrugatedMaterial(249), rusty = corrugatedMaterial(869, { heavy: true });
@@ -358,11 +360,11 @@ function makeShed(parent, M) {
     rod(shed, [x, 5.38, front + 0.045], [x + 0.14, 5.63, front + 0.045], 0.018, M.woodDark, 5);
     rod(shed, [x + 0.14, 5.63, front + 0.045], [x + 0.28, 5.38, front + 0.045], 0.018, M.woodDark, 5);
   }
-  // 道路側の広い、錆筋の強い妻壁。下側は張り替えた淡い波板。
+  // 局所 -x の妻壁は回転後に道路側 +z を向く。下側は張り替えた淡い波板。
   face(shed, corrugatedGeometry(d, 3.18), sheet, -w / 2, 1.77, 0, -Math.PI / 2);
   face(shed, corrugatedGeometry(d, wallTop - 3.36), rusty, -w / 2 - 0.005, (wallTop + 3.36) / 2, 0, -Math.PI / 2);
   add(shed, triangle(d, 1.03, 0.06), rusty, -w / 2, wallTop, 0, { rot: [0, -Math.PI / 2, 0] });
-  // 背面と右側面は写真で確かめられないため無地に近い中立な波板。
+  // 回転後の左側面・奥の妻壁は未確認なので無地に近い中立な波板。
   face(shed, corrugatedGeometry(w, wallTop - 0.18), sheet, 0, (wallTop + 0.18) / 2, -d / 2, Math.PI);
   face(shed, corrugatedGeometry(d, wallTop - 0.18), sheet, w / 2, (wallTop + 0.18) / 2, 0, Math.PI / 2);
   add(shed, triangle(d, 1.03, 0.06), sheet, w / 2, wallTop, 0, { rot: [0, Math.PI / 2, 0] });
@@ -411,6 +413,7 @@ function makeShed(parent, M) {
   curveRod(shed, [[-3.45, 2.23, 2.99], [-3.45, 2.76, 3.0], [-3.5, 3.50, 2.98], [-3.51, 5.50, 2.97]],
     0.012, mat('#656d5c'));
   shed.userData.dimensions = { width: w, depth: d + 1.02, height: 6.95 };
+  shed.userData.referenceFacing = { roadGable: '+z', garageOpening: '+x' };
   return shed;
 }
 
@@ -550,6 +553,8 @@ function makeGarden(parent, M) {
     }
     const rect = (x, z, w, d, color) => { ctx.fillStyle = color; ctx.fillRect(X(x), Z(z), w / 23 * W, d / 15.4 * H); };
     rect(-11.6, 5.1, 7.8, 4.5, '#aaa693');
+    // 庭を向いた車庫の軒下と門の間は、建物沿いの細いコンクリートの通路。
+    rect(-5.2, -1.9, 1.65, 9.25, '#a8a58f');
     rect(-3.6, 6.1, 13.5, 2.05, '#b7aa8b');
     rect(-3.4, 3.3, 7.7, 0.85, '#709348');
     rect(-3.0, 2.25, 2.25, 1.20, '#6e8f46');
@@ -564,9 +569,9 @@ function makeGarden(parent, M) {
     }
     // 左の車庫前へ伸びる灰色の細い排水溝。
     ctx.strokeStyle = '#7d806e'; ctx.lineWidth = 8;
-    ctx.beginPath(); ctx.moveTo(X(-8.7), Z(9.0)); ctx.lineTo(X(-3.9), Z(5.5)); ctx.lineTo(X(-3.6), Z(2.2)); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(X(-8.7), Z(9.0)); ctx.lineTo(X(-4.65), Z(5.5)); ctx.lineTo(X(-4.65), Z(-1.6)); ctx.stroke();
     ctx.strokeStyle = '#c6c1ac'; ctx.lineWidth = 3;
-    ctx.beginPath(); ctx.moveTo(X(-8.72), Z(9.0)); ctx.lineTo(X(-3.92), Z(5.5)); ctx.lineTo(X(-3.62), Z(2.2)); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(X(-8.72), Z(9.0)); ctx.lineTo(X(-4.67), Z(5.5)); ctx.lineTo(X(-4.67), Z(-1.6)); ctx.stroke();
   });
   add(garden, G.plane(23, 15.4), new THREE.MeshStandardMaterial({ map: groundMap, roughness: 1 }),
     -0.5, 0.012, 2.1, { rot: [-Math.PI / 2, 0, 0], cast: false });
@@ -684,11 +689,12 @@ export function createKawakuboProperty(parent) {
     bounds: { x: [-12.1, 16.5], z: [-5.6, 9.8], height: 8.6 },
     views: {
       front: { position: new THREE.Vector3(-2.0, 3.0, 22), target: new THREE.Vector3(0.5, 2.8, 1.5) },
-      left: { position: new THREE.Vector3(-20, 3.0, 15), target: new THREE.Vector3(-5.5, 3.1, 2.4) },
+      left: { position: new THREE.Vector3(-20, 3.0, 15), target: new THREE.Vector3(-6.9, 3.1, 3.2) },
       right: { position: new THREE.Vector3(9.5, 3.2, 21), target: new THREE.Vector3(2.8, 2.4, 2.7) },
       porch: { position: new THREE.Vector3(1.8, 3.1, 14), target: new THREE.Vector3(2.3, 1.7, 2.5) },
       wall: { position: new THREE.Vector3(3.8, 2.3, 15), target: new THREE.Vector3(3.3, 1.0, 8.3) },
-      shed: { position: new THREE.Vector3(-18, 3.6, 14), target: new THREE.Vector3(-7.6, 3.0, 3.8) },
+      // 庭側から、妻壁・窓・車庫の開口を一緒に見る。母屋の軒を手前にかぶせない。
+      shed: { position: new THREE.Vector3(-1.4, 3.6, 15), target: new THREE.Vector3(-6.3, 3.0, 2.2) },
     },
   };
 }

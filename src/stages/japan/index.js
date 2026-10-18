@@ -22,10 +22,10 @@ import { Ease } from '../../core/tween.js';
 import { el } from '../../core/ui.js';
 import { Train, RAIL_Y } from '../station/train.js';
 import { buildEdoDiorama } from '../edo/diorama.js';
-import { buildJapanDiorama, TRACK_Z, ISLAND, FLOOR, TOWER, STATION, VIA, HW, RIVER_Z0, RIVER_Z1 } from './diorama.js';
+import { buildJapanDiorama, TRACK_Z, ISLAND, FLOOR, TOWER, STATION, ASAKUSA, VIA, RIVER_Z0, RIVER_Z1 } from './diorama.js';
 import { layoutX, layoutZ, layoutPoint, applyJapanLayout } from './layout.js';
 import { showAreaGuide } from './guide.js';
-import { meishoPanel, MEISHO, tenuguiHTML, bellPanel2, subwayPanel, vendingPanel, tidePanel, pierBoardHTML } from './panels.js';
+import { meishoPanel, MEISHO, tenuguiHTML, bellPanel2, subwayPanel, vendingPanel, tidePanel, pierBoardHTML, VEND_PLAQUE } from './panels.js';
 
 const V = THREE.Vector3;
 // 演出で使う旧市街の座標も、模型と同じ配置へそろえる。
@@ -47,8 +47,8 @@ export const SPEAKERS = {
   hint: { name: 'ヒント', icon: '💡', color: '#c9952a' },
 };
 
-const FROG_HOME = new V(-7.8, FLOOR, -3.3);
-const LOCO_X = -1.6; // 浅草駅に止まる位置
+const FROG_HOME = new V(ASAKUSA.frogX, FLOOR, ASAKUSA.frogZ);
+const LOCO_X = ASAKUSA.locoX; // 浅草駅に止まる位置
 const END_X = 27.2; // 終点・東京駅
 
 function makeTokyoPath() {
@@ -120,7 +120,7 @@ class Fireworks {
 }
 
 /**
- * ステージ：現代日本（とうきょう）— 江戸の宿場町の二百年後
+ * ステージ：東京— 江戸の宿場町の二百年後
  * 目的：街の灯りをとりもどし、通行手形で終点・東京駅へ入る
  * しかけ：狛犬の鈴で「むかし目」になると、二百年前の江戸の町が重なって見える
  */
@@ -128,13 +128,12 @@ export class JapanStage {
   constructor(game) {
     this.g = game;
     this.id = 'japan';
-    this.title = '現代日本';
+    this.title = '東京';
     this.questTitle = '🗼 東京の灯りと、終点への道';
     this.departing = false;
     this.trainSpeed = 0;
     this.ghostK = 0;
     this.visionT = 0;
-    this.ledX = 0;
   }
 
   homeView(portrait) {
@@ -218,7 +217,6 @@ export class JapanStage {
     await this.g.loadingStep(0.75, '仕上げをしています…');
     this._optimize();
     this._drawVision(0);
-    this._drawLED();
 
     g.ui.onLine = (who) => {
       const c = this.speakerCreature(who);
@@ -261,16 +259,17 @@ export class JapanStage {
     mergeStatic(ghost);
     ghost.traverse((o) => { if (o.isMesh) { o.material = this.ghostMat; o.renderOrder = 50; o.userData.noPick = true; } });
     // 井戸の札（むかし目でしか見えない）
-    const plate = canvasTex(256, 160, (ctx, w, h) => {
+    const plate = canvasTex(512, 320, (ctx, w, h) => {
       ctx.fillStyle = 'rgba(250,240,210,0.95)'; ctx.fillRect(0, 0, w, h);
       ctx.strokeStyle = '#5a3a24'; ctx.lineWidth = 8; ctx.strokeRect(4, 4, w - 8, h - 8);
       ctx.fillStyle = '#3a2418'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.font = `700 26px ${FONT}`; ctx.fillText('井戸の札', w / 2, 30);
-      ctx.font = `900 64px ${FONT}`; ctx.fillText('四七弐', w / 2, 100);
+      ctx.font = `700 44px ${FONT}`; ctx.fillText(VEND_PLAQUE.heading, w / 2, 55);
+      ctx.font = `900 100px ${FONT}`; ctx.fillText(VEND_PLAQUE.numbers, w / 2, 161);
+      ctx.font = `700 30px ${FONT}`; ctx.fillText(VEND_PLAQUE.caption, w / 2, 266);
     });
     this.plateMat = new THREE.MeshBasicMaterial({ map: plate, transparent: true, opacity: 0, depthWrite: false, depthTest: false, fog: false });
-    this.plate = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 0.56), this.plateMat);
-    this.plate.position.copy(cityPoint(2.1, 1.35, 5.25));
+    this.plate = new THREE.Mesh(new THREE.PlaneGeometry(1.4, .9), this.plateMat);
+    this.plate.position.copy(cityPoint(2.1, 1.65, 5.25));
     this.plate.renderOrder = 51;
     this.plate.userData.noPick = true;
     scene.add(this.plate);
@@ -309,7 +308,7 @@ export class JapanStage {
   _placeCreatures(scene) {
     const R = this.R;
     const put = (c, x, y, z, ry = 0) => { c.root.position.copy(cityPoint(x, y, z)); c.root.rotation.y = ry; return c; };
-    this.frog = put(makeFrog(), FROG_HOME.x, FROG_HOME.y, FROG_HOME.z, 0.25);
+    this.frog = put(makeFrog(), FROG_HOME.x, FROG_HOME.y, FROG_HOME.z, 0);
     this.koma = put(makeKomainu({ open: true }), -11.7, 0, 2.9, 0.15);
     this.koma2 = put(makeKomainu({ open: false }), -9.5, 0, 2.9, -0.15);
     // 参道の門の両脇に立つ。正面の店の屋根に顔を隠されない場所。
@@ -327,7 +326,7 @@ export class JapanStage {
     this.kappa.root.position.copy(R.waterBus.getWorldPosition(new V())).add(new V(0.9, 0.37, 0));
     this.ekicho = put(makeCat(), 21.0, 0, 1.2, -0.1);
     this.panda = put(makePanda(), -24.4, 0, 13.3, 0.35);
-    this.karasu = put(makeCrow(), -24.5, 3.9, 2.8, 0.3);
+    this.karasu = put(makeCrow(), -27.3, FLOOR, -2.5, 0.12);
     if (this.karasu.key) this.karasu.key.visible = false;
     this.suzume = put(makeSparrow(), TOWER.x + 0.5, 9.75, TOWER.z + 1.2, 0);
     this.suzume.root.position.copy(R.tower.getWorldPosition(new V())).add(new V(0.5, 9.75, 1.2));
@@ -367,7 +366,7 @@ export class JapanStage {
     reg('crossing', R.crossing, '踏切', () => this.say(['線路の踏切。江戸のころは、ここに町木戸があった。', this.g.flags.finaleDone ? '' : '奥の信号は、赤のまま。']));
     reg('vending', R.vending, '自動販売機', () => this.clickVending());
     reg('tower', R.tower, '東京タワー', () => this.clickTower());
-    reg('platformClock', R.platformClock, 'ホームの時計', () => this.say(['浅草駅のホームの時計。針は「夜8時」をさしたまま、止まっている。', { who: 'frog', text: '街じゅうの時計が、夜8時で止まってるケロ……。' }]));
+    reg('platformClock', R.platformClock, 'ホームの時計', () => this.readPlatformClock());
     reg('hachiko', R.hachiko, '犬の銅像', () => this.say(['駅前広場の、犬の銅像。台座に「待つ」と彫ってある。', { who: 'inu', text: 'ご先祖さまの友だちだったそうです。いまも、だれかを待っているんですって。' }]));
     reg('incense', R.incense, '常香炉', () => this.say(['浅草寺の常香炉。けむりを頭にかけると、かしこくなるらしい。', { who: 'frog', text: 'ぼくも、かけとくケロ……ケホッ。' }]));
     reg('kaminarimon', R.kaminarimon, '雷門', () => this.say(['朱ぬりの雷門と、大きな赤い提灯。', '二百年前と、まったく同じ場所に立っている。']));
@@ -381,14 +380,13 @@ export class JapanStage {
     reg('conbini', R.conbini, 'コンビニ', () => this.say(['24時間あいているコンビニ。……ここは、江戸のころは原っぱだったらしい。']));
     reg('panda', this.panda.root, 'パンダ', () => this.talkPanda());
     reg('karasu', this.karasu.root, 'カラス', () => this.talkKarasu());
-    reg('akiba', R.gameCenter, 'ゲームセンター', () => this.say(['秋葉原のゲームセンター。UFOキャッチャーの中に、カエルのぬいぐるみが……！', { who: 'frog', text: 'ぼく、あんなにかわいくないケロ！ ……ちょっとほしいケロ。' }]));
     reg('yagura', R.yagura, '盆おどりのやぐら', () => this.say(['上野公園の夏まつりのやぐら。ちょうちんが、ぐるりとかかっている。']));
     reg('rainbow', R.odaiba, 'お台場', () => this.say(['海の向こうの、白いつり橋と、丸い展望台のビル。']));
-    reg('highway', R.highway, '首都高', () => this.say(['川ぞいにのびる首都高。江戸の太鼓橋のすぐわきを、高架が通っている。']));
-    reg('bridge', R.bridge, '太鼓橋', () => this.say(['朱色の太鼓橋。首都高の高架のわきに、江戸のころのまま残っている。', this.g.flags.jitteSeen && !this.g.flags.jitteGot ? '橋の下の川底で、何かがきらりと光った。' : '']));
+    reg('bridge', R.bridge, '太鼓橋', () => this.say(['朱色の太鼓橋。江戸のころの姿で、隅田川に架かっている。', this.g.flags.jitteSeen && !this.g.flags.jitteGot ? '橋の下の川底で、何かがきらりと光った。' : '']));
     reg('yamanote', R.yamanote, '山手線', () => this.say(['緑の帯の電車が、高架をぐるぐる走っている。']));
     reg('tocho', R.tocho, '高層ビル', () => this.say(['奥にそびえる、ふたごの高層ビル。']));
-    reg('sign', R.stationSign, '駅名標', () => this.say(['駅名標。『あさくさ』……右は『とうきょう（終点）』。', { who: 'frog', text: 'ここは……江戸の宿場の駅と、同じ場所ケロ。' }]));
+    reg('sign', R.stationSign, '駅名標', () => this.say(['駅名標。『あさくさ』……右は『とうきょう（終点）』。', { who: 'frog', text: '江戸で見た、あさくさの名前が、いまも残ってるケロ。' }]));
+    reg('zoo', R.zoo, '上野どうぶつえん', () => { this.focus(R.zooSign, 9, { theta: 0, polar: 1.15, keepAngle: true }); return this.say(['上野公園の動物園。門の上に、どうぶつたちを迎える看板がある。']); });
     reg('loco', this.train.loco.g, '機関車', () => this.say(['ほしまわり号の機関車。長い旅の最後の駅まで、あと少し。']));
     reg('coach', this.train.coach.g, '客車', () => this.say(['ほしまわり号の客車。']));
   }
@@ -493,19 +491,6 @@ export class JapanStage {
     R.visionTex.needsUpdate = true;
   }
 
-  _drawLED() {
-    const R = this.R, f = this.g.flags;
-    const c = R.ledCanvas, ctx = c.getContext('2d');
-    ctx.fillStyle = '#050505'; ctx.fillRect(0, 0, c.width, c.height);
-    const msg = f.finaleDone ? '★ 隅田川花火大会　開催中 ★　ほしまわり号　終点・東京駅に到着' : f.towerLit ? '隅田川　水上バス　夜の便　運航中　―　乗り場の時刻表をごらんください' : '停電のため　一部の灯りが消えています　―　安全運転で';
-    ctx.font = `900 54px ${FONT}`; ctx.textBaseline = 'middle';
-    ctx.fillStyle = f.finaleDone ? '#ffd84a' : '#ff8a2a';
-    const w = ctx.measureText(msg).width;
-    const x = c.width - (this.ledX % (w + c.width));
-    ctx.fillText(msg, x, c.height / 2);
-    R.ledTex.needsUpdate = true;
-  }
-
   // =========================================================
   // 毎フレーム
   // =========================================================
@@ -522,15 +507,6 @@ export class JapanStage {
     this.motes.update(dt, t);
     for (const s of this.smallIslands) s.o.position.y = s.y + Math.sin(t * 0.3 + s.ph) * 0.8;
 
-    // 首都高：手前の低いところから街をのぞくときは、うっすら透ける
-    {
-      const cam = g.camera.position, tg = g.controls.target;
-      const block = cam.z > layoutZ(HW.z) + 0.5 && tg.z < layoutZ(HW.z) - 0.5 && cam.y < 24 && !this.departing;
-      this.hwK = (this.hwK ?? 1) + ((block ? 0.2 : 1) - (this.hwK ?? 1)) * Math.min(1, dt * 6);
-      for (const m of R.hwMats) { m.opacity = this.hwK; m.depthWrite = this.hwK > 0.9; }
-      R.highway.traverse((o) => { if (o.isMesh) o.castShadow = this.hwK > 0.9; });
-      for (const c of R.hwCars) c.g.visible = !!this.carsOn && this.hwK > 0.6;
-    }
     // 重い端末では、遠くの車などを省く（作りこみはそのまま）
     if (!this.simple && g.bloom && g.bloom.enabled === false) { this.simple = true; R.far.visible = false; }
 
@@ -541,9 +517,8 @@ export class JapanStage {
       R.yamanote.position.x = layoutX(this.yamaX);
     }
     R.yamanote.visible = !!this.yamanoteOn;
-    // 首都高と大通りの車
+    // 大通りの車
     if (this.carsOn && R.far.visible) {
-      for (const c of R.hwCars) { c.x += c.dir * c.v * dt; if (c.x > 31) c.x = -31; if (c.x < -31) c.x = 31; c.g.position.x = layoutX(c.x); }
       for (const c of R.roadCars) {
         const min = c.minX ?? -31, max = c.maxX ?? 31;
         c.x += c.dir * c.v * dt;
@@ -568,12 +543,9 @@ export class JapanStage {
     // 常香炉のけむり
     if (Math.random() < dt * 2) this.incense.emit(R.incense.getWorldPosition(new V()).add(new V((Math.random() - 0.5) * 0.4, 1.4, 0)), { vel: new V(0.05, 0.6, 0), spread: 0.2, life: 3, size0: 0.3, size1: 1.4 });
     this.incense.update(dt);
-    // 大型ビジョン・電光掲示板
+    // 大型ビジョン
     this.visionT -= dt;
     if (this.visionT < 0) { this.visionT = f.meishoDone || f.finaleDone ? 0.5 : 0.25; this._drawVision(t); }
-    this.ledX += dt * 140;
-    this.ledT = (this.ledT || 0) - dt;
-    if (this.ledT < 0) { this.ledT = 0.08; this._drawLED(); }
     // 花火
     if (this.fireworksOn) {
       this.fwT = (this.fwT || 0) - dt;
@@ -649,7 +621,7 @@ export class JapanStage {
       else steps.push(H('bellRing', '時の鐘のツルに話しかけて、いまの時刻を江戸の数えかたで撞こう。いまは、ホームの時計のとおり「夜8時」。', '手ぬぐいによると、夜8時は「五つ」。捨て鐘を3つ、間をおいて、5つ。'));
     }
     // 自販機
-    if (!f.ramuneGot) steps.push(H('vend', '渋谷の駅前広場の自動販売機は、江戸の井戸のあった場所。『むかし目』で見ると、井戸の札が見える。', '江戸の横がきは、右から読む。「四七弐」は、右から「弐・七・四」。', '答え：2 → 7 → 4'));
+    if (!f.ramuneGot) steps.push(H('vend', '渋谷の駅前広場の自動販売機は、江戸の井戸のあった場所。『むかし目』で井戸の札を見て、見出しと数字を比べよう。', 'この札の見出し『札の戸井』は、右から『井戸の札』と読む。数字も同じ向きにたどろう。', '答え：2 → 7 → 4'));
     // 十手
     if (!f.tegataGot) {
       if (has('jitte')) steps.push(H('jitteBack', '持ち物の『十手』を、交番の柴犬のおまわりさんに使おう。'));
@@ -689,10 +661,10 @@ export class JapanStage {
   talkCam(c, dist) {
     const portrait = innerWidth < innerHeight;
     if (portrait) { this.g.ui.questsCollapsed = true; this.g.refreshQuests(); }
-    // 参道では高速道路より内側から映し、道路や欄干で画面を埋めない。
-    const radius = c === this.koma ? 4.2 : c === this.risu ? 4.8 : c === this.neko ? 6.5 : (dist ?? 9) * (portrait ? 1.15 : 1);
+    // 参道とホームは、住人の顔を正面から見せる近景にする。
+    const radius = c === this.frog ? 5.8 : c === this.karasu ? 5.5 : c === this.koma ? 4.2 : c === this.risu ? 4.8 : c === this.neko ? 6.5 : (dist ?? 9) * (portrait ? 1.15 : 1);
     const target = c.root.getWorldPosition(new V());
-    target.y = c === this.koma ? c.head.getWorldPosition(new V()).y - 0.15 : Math.min(8, Math.max(0.6, target.y + 0.5));
+    target.y = c === this.koma ? c.head.getWorldPosition(new V()).y - 0.15 : Math.min(8, Math.max(0.6, target.y + (c === this.frog ? .85 : .5)));
     return this.g.focusOn(target, { dist: radius, subject: c.root, duration: 0.8, theta: c.root.rotation.y, polar: c === this.koma ? 1.08 : 1.13, keepAngle: true });
   }
 
@@ -939,8 +911,11 @@ export class JapanStage {
     if (!f.vendTalked) {
       g.flag('vendTalked');
       const lines = ['駅前広場の自動販売機。ボタンに 1〜9 の番号がふってある。', '「ひみつの押しかたで、ひみつの一本」と、小さなシールがはってある。'];
-      if (this.mukashi) lines.push('むかし目で見ると、ここには江戸の井戸があり、ふたに札が掛かっている……。');
       await this.say(lines);
+    }
+    if (this.mukashi) {
+      await this.say([`井戸の札には『${VEND_PLAQUE.heading}』『${VEND_PLAQUE.numbers}』、下には『${VEND_PLAQUE.caption}』と書かれている。`]);
+      g.note('jp-well-plaque', '井戸の札', `見出し：<b>${VEND_PLAQUE.heading}</b><br>数字：<b>${VEND_PLAQUE.numbers}</b><br>${VEND_PLAQUE.caption}`);
     }
     let pending = false;
     vendingPanel(g.ui, g.audio, {
@@ -1039,9 +1014,17 @@ export class JapanStage {
     await this.waitPanel(() => pending);
   }
 
+  async readPlatformClock() {
+    const target = this.R.platformClockFace.getWorldPosition(new V());
+    await this.g.focusOn(target, { dist: 5.5, subject: this.R.platformClock, theta: 0, polar: 1.23, keepAngle: true, duration: .8 });
+    return this.say(['浅草駅のホームの時計。針は「夜8時」をさしたまま、止まっている。', { who: 'frog', text: '街じゅうの時計が、夜8時で止まってるケロ……。' }]);
+  }
+
   readBoard(kind) {
     const g = this.g;
-    this.focus(kind === 'tide' ? this.R.tideBoard : this.R.timetable, 7);
+    const board = kind === 'tide' ? this.R.tideBoard : this.R.timetable;
+    const target = board.localToWorld(new V(0, 1.65, .07));
+    this.g.focusOn(target, { dist: innerWidth < innerHeight ? 7.2 : 6.8, subject: board, theta: 0, polar: 1.18, keepAngle: true, duration: .8 });
     g.note(`jp-board-${kind}`, kind === 'tide' ? '潮見表' : '水上バスの時刻表', kind === 'tide' ? '本日の干潮：<b>夜四つ</b>' : '夜の便：21:00 21:20 21:40 22:00 22:20<br>乗り場 → 太鼓橋の下：<b>20分</b>');
     g.audio.play('paper');
     g.ui.openPanel({ title: kind === 'tide' ? '潮見表' : '時刻表', body: pierBoardHTML(kind) });
@@ -1105,7 +1088,7 @@ export class JapanStage {
     this.g.audio.play('caw');
     const f = this.g.flags;
     if (f.subwayDone) return this.say([{ who: 'karasu', text: 'カァ！ 人形焼うまかった！ 水上バスの時刻表は、乗り場の看板にあるぞ。潮見表は、むかしの書きかたで読みにくいがな！' }]);
-    await this.say([{ who: 'karasu', text: 'カァ！ 電線の上から、街のことは、なんでも見えるぞ。……腹がへった。' }]);
+    await this.say([{ who: 'karasu', text: 'カァ！ ホームでひと休みだ。街のことなら、なんでも聞いてくれ。……腹がへった。' }]);
   }
 
   // =========================================================
@@ -1152,16 +1135,18 @@ export class JapanStage {
       last = s;
       if (Math.random() < 0.15 * (1 - k)) g.audio.play('chuff');
       g.controls.target.lerp(this.train.loco.g.position, 0.08);
-      g.camera.position.lerpVectors(camFrom, cityPoint(6, 10, 14), k);
+      g.camera.position.lerpVectors(camFrom, cityPoint(ASAKUSA.x + 2.5, 10, 10), k);
     } });
     g.audio.play('steam');
-    await g.ui.banner('現代日本', `STAGE ${stageNo('japan')}　終点`, 2600);
+    await g.ui.banner('東京', `STAGE ${stageNo('japan')}　終点`, 2600);
     await g.say([
       'ほしまわり号は、夕やみにしずむ、大きな街に着いた。',
-      'どこまでもつづくビル、高架を走る電車、川ぞいの高速道路……。',
+      'どこまでもつづくビル、高架を走る電車、川に映る夕空……。',
       '……でも、街の灯りは、ほとんど消えている。',
     ]);
     await g.moveCamera(cityPoint(-5, 9, 16), cityPoint(-10.6, 2.0, 3.6), 1.8);
+    await g.wait(.5);
+    await this.talkCam(this.frog);
     g.audio.play('ribbit');
     await g.say([
       { who: 'frog', text: 'ケロ!? あの赤い大提灯……雷門ケロ！ あっちの五重塔も、鐘も……！' },
@@ -1289,7 +1274,7 @@ export class JapanStage {
     await g.wait(1.0);
     // エンドロール
     const body = el('div', 'credits');
-    const stages = ['はざま駅', '天空の街', '江戸の宿場町', '潮の港町', '勇者の城下町', '魔王城', '寂れた温泉街', '巨大キノコの森', 'からくりおもちゃの街', '現代日本'];
+    const stages = ['はざま駅', '天空の街', '江戸の宿場町', '潮の港町', '勇者の城下町', '魔王城', '寂れた温泉街', '巨大キノコの森', 'からくりおもちゃの街', '東京'];
     body.innerHTML = `<div class="cr-roll">
       <div class="cr-t">ほしまわり列車</div>
       ${stages.map((s, i) => `<div class="cr-s"><span>STAGE ${i + 1}</span>${s}</div>`).join('')}

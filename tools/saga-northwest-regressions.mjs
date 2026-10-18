@@ -94,7 +94,7 @@ try {
   };
   const openNotebook = async () => {
     await settle();
-    const notebook = page.locator('.inv-slot[title="佐賀の旅ノート"]');
+    const notebook = page.locator('.inv-slot[title="旅のノート"]');
     await notebook.click(); await notebook.click();
     await page.locator('.panel-wrap.show .sa-guide').waitFor();
     assert.equal(await page.locator('.sa-guide-stop').count(), 5, '必須の寄り道は五つのまま');
@@ -149,7 +149,7 @@ try {
   });
 
   await test('旅ノートの北西3行き先を実クリックし、近景・散歩道へ移れる', async () => {
-    for (const [id, label] of [['amandi', 'アマンディ'], ['bistro', '苦い泡のドレッシング'], ['district', '北西の散歩道']]) {
+    for (const [id, label] of [['amandi', 'アマンディ'], ['bistro', '山カフェレストランKUREHA'], ['district', '北西の散歩道']]) {
       const before = await page.evaluate(() => __game.controls.target.toArray());
       await openNotebook();
       await page.locator('.sa-destination').filter({ hasText: label }).click();
@@ -193,7 +193,7 @@ try {
       await stage('openBistro'); await reachableAndShot('bistro', viewport);
       if (viewport.label === 'portrait') {
         const lines = await page.evaluate(() => __game.ui.log.length);
-        await page.getByRole('button', { name: '苦い泡のサラダを味わう', exact: true }).click();
+        await page.getByRole('button', { name: 'サラダを味わう', exact: true }).click();
         await page.waitForFunction(() => __game.flags.saFoamTasted && !__game.stage.sideBusy && !__game.ui.dialogueActive, null, { timeout: SCENE_TIMEOUT });
         await settle();
         assert.ok(await page.evaluate(before => __game.ui.log.length > before, lines), '料理の会話を終える');
@@ -234,7 +234,7 @@ try {
     await unchangedProgress();
     await openNotebook();
     assert.match(await page.locator('.sa-side-memories').innerText(), /湯どころでひと休み ✓/);
-    assert.match(await page.locator('.sa-side-memories').innerText(), /苦い泡のサラダを味わった ✓/);
+    assert.match(await page.locator('.sa-side-memories').innerText(), /KUREHAで一皿を味わった ✓/);
     await close();
   });
 
