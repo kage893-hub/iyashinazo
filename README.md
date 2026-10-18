@@ -331,7 +331,7 @@ css/saga.css            佐賀のパネル・旅ノート
 src/main.js             タイトル・HUD・起動処理
 src/core/               ゲームエンジン（描画/入力/状態/会話UI/音/ポストエフェクト）
 src/lib/                共通の造形（生き物・空や浮島・ヘルパー・メッシュ結合）
-src/data/items.js       アイテム定義（SVG アイコン）
+src/data/items.js       アイテム定義（生成画像・SVGの代替表示）
 src/stages/registry.js  ステージ一覧
 src/stages/station/     STAGE 1 はざま駅（箱庭・列車・謎解き・パネル）
 src/stages/sky/         STAGE 2 天空の街
@@ -373,7 +373,7 @@ vendor/three/           three.js r169（MIT）
 ステージはページを読み直して切り替えます（セーブの `stage` の箱庭を作る）。
 新しいステージは `src/stages/<id>/` にステージクラス（`build` / `applyState` / `update` /
 `quests` / `hint` / `useItem` / `opening` を持つ）を作り、`registry.js` に登録して追加します。
-グラフィックはすべてコードで生成しており、音も Web Audio で合成しているので外部アセットはありません。
+模型はコードで組み立て、持ち物と表面素材には生成画像82枚を使用しています。生成原本は `assets/generated/`、ゲーム配信用の軽量なWebP版は `assets/runtime/` にあります。[素材の対応と再圧縮の手順](assets/generated/README.md)。音は Web Audio で合成しています。
 
 ## 開発時の確認
 

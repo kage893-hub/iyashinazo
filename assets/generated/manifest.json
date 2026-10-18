@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "status": "all-generated-not-integrated",
-  "implemented": false,
+  "status": "all-integrated",
+  "implemented": true,
   "planned_count": 82,
   "generated": [
     {
@@ -10,13 +10,19 @@
       "category": "items",
       "path": "items/marble.png",
       "source_file": "exec-7f0a83d0-23fd-40c8-821e-b2eeade12528.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "dimensions": [
         1254,
         1254
       ],
       "background": "transparent",
-      "sha256": "8b91cc086c323a8ecb9dc754ee1730160042cebf6ad4d3a4afa32b2185ef5477"
+      "sha256": "8b91cc086c323a8ecb9dc754ee1730160042cebf6ad4d3a4afa32b2185ef5477",
+      "runtime_path": "../runtime/items/marble.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 21362
     },
     {
       "id": "sagaGuide",
@@ -24,13 +30,19 @@
       "category": "items",
       "path": "items/sagaGuide.png",
       "source_file": "exec-d0ca0360-e3e1-4916-92a2-8f565edabfee.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "dimensions": [
         1254,
         1254
       ],
       "background": "transparent",
-      "sha256": "5435cea5bb995cec8c4a4ad8572de502100337eab9ed5430275f2ac48c9ddac7"
+      "sha256": "5435cea5bb995cec8c4a4ad8572de502100337eab9ed5430275f2ac48c9ddac7",
+      "runtime_path": "../runtime/items/sagaGuide.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 25728
     },
     {
       "id": "museumGuide",
@@ -38,13 +50,19 @@
       "category": "items",
       "path": "items/museumGuide.png",
       "source_file": "exec-eb1fab94-98d6-4eca-87ec-4c905953c0fd.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "dimensions": [
         1254,
         1254
       ],
       "background": "transparent",
-      "sha256": "e9d82f7fbc0fdc2d1632645d1530f205f3516613002c6ffcbab58919abddd1d8"
+      "sha256": "e9d82f7fbc0fdc2d1632645d1530f205f3516613002c6ffcbab58919abddd1d8",
+      "runtime_path": "../runtime/items/museumGuide.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 24672
     },
     {
       "id": "springKey",
@@ -52,13 +70,19 @@
       "category": "items",
       "path": "items/springKey.png",
       "source_file": "exec-278fe231-32a6-4a9f-a659-ddcaa1f0e8f2.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "dimensions": [
         1254,
         1254
       ],
       "background": "transparent",
-      "sha256": "7eaad5da0cec76db5bb065a3d2ea71a67630f407a17c5e77196d56402a5f9c0c"
+      "sha256": "7eaad5da0cec76db5bb065a3d2ea71a67630f407a17c5e77196d56402a5f9c0c",
+      "runtime_path": "../runtime/items/springKey.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 21008
     },
     {
       "id": "brooch",
@@ -66,20 +90,26 @@
       "category": "items",
       "path": "items/brooch.png",
       "source_file": "exec-a438ad06-d94b-457a-ab0f-eda921fb0453.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "dimensions": [
         1254,
         1254
       ],
       "background": "transparent",
-      "sha256": "db756ba23f189678f72a5dae97e94441f0035ec48dd6cc6877ba841f844ce551"
+      "sha256": "db756ba23f189678f72a5dae97e94441f0035ec48dd6cc6877ba841f844ce551",
+      "runtime_path": "../runtime/items/brooch.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 25842
     },
     {
       "id": "starCoin",
       "category": "items",
       "path": "items/starCoin.png",
       "source_file": "exec-9c52e856-f842-4716-8120-e968c33f6ad9.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -87,14 +117,20 @@
       ],
       "sha256": "1a917576deeb826542b7f1251074cc37f4bb76991c52b3929264b6d1c8fbf5ae",
       "background": "transparent",
-      "name": "星の硬貨"
+      "name": "星の硬貨",
+      "runtime_path": "../runtime/items/starCoin.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 29218
     },
     {
       "id": "ticket",
       "category": "items",
       "path": "items/ticket.png",
       "source_file": "exec-2535d4af-4d2c-46a1-bba0-ee27d011d8ae.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -102,14 +138,20 @@
       ],
       "sha256": "e58b886ab246ecbcf6d42174b41315a9c0f9d23f47e2acd6a4ccec6fed249454",
       "background": "transparent",
-      "name": "天空の街ゆき切符"
+      "name": "天空の街ゆき切符",
+      "runtime_path": "../runtime/items/ticket.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 18416
     },
     {
       "id": "tongs",
       "category": "items",
       "path": "items/tongs.png",
       "source_file": "exec-dc40aa7e-9d65-442c-bb70-d4daf940a79c.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -117,14 +159,20 @@
       ],
       "sha256": "88ebcb7927fe2fd56a1311862d6468f5ba1cd347df47e2fefab8669d56fc1aa4",
       "background": "transparent",
-      "name": "火ばさみ"
+      "name": "火ばさみ",
+      "runtime_path": "../runtime/items/tongs.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 15378
     },
     {
       "id": "fireStone",
       "category": "items",
       "path": "items/fireStone.png",
       "source_file": "exec-8e6e9fbe-1fa3-475e-983e-3003c9b64dce.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -132,14 +180,20 @@
       ],
       "sha256": "871ec2c6c5cfbc8de853008e93955c5c4640bdcfa1638682d88f00cdf1cca0de",
       "background": "transparent",
-      "name": "ほのお石"
+      "name": "ほのお石",
+      "runtime_path": "../runtime/items/fireStone.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 26212
     },
     {
       "id": "valveHandle",
       "category": "items",
       "path": "items/valveHandle.png",
       "source_file": "exec-0c0df6d0-a80e-44ae-b18f-55ca384d7517.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -147,14 +201,20 @@
       ],
       "sha256": "4131c13b44826a9e7142a2397b68b493622b7170f444b19dfffda308200ffc34",
       "background": "transparent",
-      "name": "バルブハンドル"
+      "name": "バルブハンドル",
+      "runtime_path": "../runtime/items/valveHandle.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 34276
     },
     {
       "id": "signalKey",
       "category": "items",
       "path": "items/signalKey.png",
       "source_file": "exec-cb501d88-8649-4ef4-934c-82a355720fcf.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -162,14 +222,20 @@
       ],
       "sha256": "a3377011f2adb231ec1d4c84136719d51627ffec0981e9c039eddd1499b0bbb3",
       "background": "transparent",
-      "name": "信号所の鍵"
+      "name": "信号所の鍵",
+      "runtime_path": "../runtime/items/signalKey.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 21736
     },
     {
       "id": "konpeito",
       "category": "items",
       "path": "items/konpeito.png",
       "source_file": "exec-8a6ae50f-ecd1-49ec-98c3-30c09dc3ef64.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -177,14 +243,20 @@
       ],
       "sha256": "f532d9dbc825a4bc566010419a1df2a0316d8a528cb2332c90831960d31b0787",
       "background": "transparent",
-      "name": "星のこんぺいとう"
+      "name": "星のこんぺいとう",
+      "runtime_path": "../runtime/items/konpeito.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 31698
     },
     {
       "id": "oilCan",
       "category": "items",
       "path": "items/oilCan.png",
       "source_file": "exec-603ef327-73ab-44fc-a8cb-52c221f4146e.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -192,14 +264,20 @@
       ],
       "sha256": "fb01626236ece89f895610a7bdefc67cbdee2b364a4f714643e36ca9cd835144",
       "background": "transparent",
-      "name": "油さし"
+      "name": "油さし",
+      "runtime_path": "../runtime/items/oilCan.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 21340
     },
     {
       "id": "cotton",
       "category": "items",
       "path": "items/cotton.png",
       "source_file": "exec-3dcb4a99-5f09-497c-961f-080e689a5067.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -207,14 +285,20 @@
       ],
       "sha256": "1aa1736cccc50431a6845c01bb0e4bceee7811134bffb29bacf4c82704ec5ef2",
       "background": "transparent",
-      "name": "雲のわた"
+      "name": "雲のわた",
+      "runtime_path": "../runtime/items/cotton.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 21900
     },
     {
       "id": "sail",
       "category": "items",
       "path": "items/sail.png",
       "source_file": "exec-213e48f7-9fa5-4507-9050-8bfbd218a46c.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -222,14 +306,20 @@
       ],
       "sha256": "e999723b970e16df38b96fd794efc86f25c6a74572cc9a77d062a42c07ba3e0f",
       "background": "transparent",
-      "name": "雲の帆"
+      "name": "雲の帆",
+      "runtime_path": "../runtime/items/sail.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 24512
     },
     {
       "id": "letter",
       "category": "items",
       "path": "items/letter.png",
       "source_file": "exec-1851ac16-f57a-48cc-8f9b-a28b4a989564.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -237,14 +327,20 @@
       ],
       "sha256": "a02a79591a3e67e260114807b2bedbacc3e9a274298e595e3925161f0dbce156",
       "background": "transparent",
-      "name": "風に飛ばされた手紙"
+      "name": "風に飛ばされた手紙",
+      "runtime_path": "../runtime/items/letter.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 18486
     },
     {
       "id": "letterOpen",
       "category": "items",
       "path": "items/letterOpen.png",
       "source_file": "exec-23f13861-315e-4b5e-b7af-a6a7b7206852.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -252,14 +348,20 @@
       ],
       "sha256": "626ded4471d6961484d571013a3ca1d69fa6cd8825981da01a95f184dc43cd2b",
       "background": "transparent",
-      "name": "孫からの手紙"
+      "name": "孫からの手紙",
+      "runtime_path": "../runtime/items/letterOpen.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 13030
     },
     {
       "id": "gear",
       "category": "items",
       "path": "items/gear.png",
       "source_file": "exec-d75e20d5-22cc-4c71-a03c-c32e41b4a9a5.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -267,14 +369,20 @@
       ],
       "sha256": "1f89aca55cb3b98bdb71279f33ff381f1fe3c7d69f37e3be3348d3e6276d8815",
       "background": "transparent",
-      "name": "風車の歯車"
+      "name": "風車の歯車",
+      "runtime_path": "../runtime/items/gear.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 25850
     },
     {
       "id": "lantern",
       "category": "items",
       "path": "items/lantern.png",
       "source_file": "exec-b7d7f577-c5c3-45ab-b0c8-28d01647552d.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -282,14 +390,20 @@
       ],
       "sha256": "116ca9acf01a17ae43b8e3c653dac880325aefc5bb0f70ab3ba3850845dc94e4",
       "background": "transparent",
-      "name": "手さげ提灯"
+      "name": "手さげ提灯",
+      "runtime_path": "../runtime/items/lantern.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 19614
     },
     {
       "id": "lanternLit",
       "category": "items",
       "path": "items/lanternLit.png",
       "source_file": "exec-fa8d6794-8e47-4204-935a-836d4b578da9.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -297,14 +411,20 @@
       ],
       "sha256": "b8fe521fadcef5b4ba6978e7d62c5f56bb0c808fba0a0b03037281bf5fa8711f",
       "background": "transparent",
-      "name": "灯った提灯"
+      "name": "灯った提灯",
+      "runtime_path": "../runtime/items/lanternLit.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 19710
     },
     {
       "id": "poker",
       "category": "items",
       "path": "items/poker.png",
       "source_file": "exec-21d99367-bb72-48c2-8ce0-b9ad52f13165.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -312,14 +432,20 @@
       ],
       "sha256": "ac707b1d3c491c7082258b627ff37fa64e9b2f8b9c6285108c2ffe9e572595b4",
       "background": "transparent",
-      "name": "火かき棒"
+      "name": "火かき棒",
+      "runtime_path": "../runtime/items/poker.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 7188
     },
     {
       "id": "amazake",
       "category": "items",
       "path": "items/amazake.png",
       "source_file": "exec-5fd3c5a0-7001-405b-9d7d-494f63991a48.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -327,14 +453,20 @@
       ],
       "sha256": "5dd052ab670f6be9486519685b4bc1561799b49f2543c1ad5aec7a2572862bf5",
       "background": "transparent",
-      "name": "あったか甘酒"
+      "name": "あったか甘酒",
+      "runtime_path": "../runtime/items/amazake.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 17036
     },
     {
       "id": "gateKey",
       "category": "items",
       "path": "items/gateKey.png",
       "source_file": "exec-bdd8046f-ca28-44c5-a499-8ca2f86f10b3.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -342,14 +474,20 @@
       ],
       "sha256": "cf5b7f63196fe60777e0930afc9050b92a6223ba846c930be8a1716acbd92fbd",
       "background": "transparent",
-      "name": "源泉の門の鍵"
+      "name": "源泉の門の鍵",
+      "runtime_path": "../runtime/items/gateKey.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 20646
     },
     {
       "id": "masu",
       "category": "items",
       "path": "items/masu.png",
       "source_file": "exec-464dcbd0-6db6-42e6-8253-77118a264ce0.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -357,14 +495,20 @@
       ],
       "sha256": "f6b5c8ff4d7b7d92287bacaa38a247e56a58fbedbc6074624b7c5834add66bfa",
       "background": "transparent",
-      "name": "三合升"
+      "name": "三合升",
+      "runtime_path": "../runtime/items/masu.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 16608
     },
     {
       "id": "kawaraban",
       "category": "items",
       "path": "items/kawaraban.png",
       "source_file": "exec-690b868c-cb9d-450e-9c56-b71e261bc44c.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -372,14 +516,20 @@
       ],
       "sha256": "deceecba7f70c6a4025cc4ac278a713893860761568d575a49db893f0af381cd",
       "background": "transparent",
-      "name": "瓦版"
+      "name": "瓦版",
+      "runtime_path": "../runtime/items/kawaraban.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 22474
     },
     {
       "id": "cucumber",
       "category": "items",
       "path": "items/cucumber.png",
       "source_file": "exec-04f5ad4d-24e4-4f1f-8459-ee9e18061af5.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -387,14 +537,20 @@
       ],
       "sha256": "ad6bff99b4b1d42a2bb8763cf39522a0198da4e7b9478ca5ea4ab2440034d45c",
       "background": "transparent",
-      "name": "キュウリ"
+      "name": "キュウリ",
+      "runtime_path": "../runtime/items/cucumber.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 23022
     },
     {
       "id": "rope",
       "category": "items",
       "path": "items/rope.png",
       "source_file": "exec-90030b36-bc39-4c28-a3e2-934e45709a0c.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -402,14 +558,20 @@
       ],
       "sha256": "a8edb3b72d6a71ecbcef70c228648741826748e29f810e1c1fcda7da8b52c2eb",
       "background": "transparent",
-      "name": "舫い綱"
+      "name": "舫い綱",
+      "runtime_path": "../runtime/items/rope.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 34652
     },
     {
       "id": "dango",
       "category": "items",
       "path": "items/dango.png",
       "source_file": "exec-b7eb6b1d-2ae3-4b86-bc92-bef3b2c16dc2.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -417,14 +579,20 @@
       ],
       "sha256": "a584eb2c7f4283cfb16d7a8b4f0256c3506e5cbb9eb8426560d41e4c45a702bd",
       "background": "transparent",
-      "name": "みたらし団子"
+      "name": "みたらし団子",
+      "runtime_path": "../runtime/items/dango.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 16968
     },
     {
       "id": "jitte",
       "category": "items",
       "path": "items/jitte.png",
       "source_file": "exec-65368b9f-39aa-4244-81a7-bfee6726a550.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -432,14 +600,20 @@
       ],
       "sha256": "6b3f589b8683f14b5934e33cba357824505ad6a3741e5330b4dd16951488f8c4",
       "background": "transparent",
-      "name": "十手"
+      "name": "十手",
+      "runtime_path": "../runtime/items/jitte.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 11628
     },
     {
       "id": "tegata",
       "category": "items",
       "path": "items/tegata.png",
       "source_file": "exec-61efbe32-baaf-4a3e-bef3-492b47e04213.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -447,14 +621,20 @@
       ],
       "sha256": "cb976d7631e0a069bda0bc371d1466c278d0e2324f0446cd3f04d56635ab1a86",
       "background": "transparent",
-      "name": "通行手形"
+      "name": "通行手形",
+      "runtime_path": "../runtime/items/tegata.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 22466
     },
     {
       "id": "moonGear",
       "category": "items",
       "path": "items/moonGear.png",
       "source_file": "exec-ff75f73b-a97b-49a8-8d0d-c507745f236b.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -467,14 +647,20 @@
         "exec-7a005ec2-7e33-43ac-9212-1be87fca629a.png"
       ],
       "background": "transparent",
-      "name": "月の歯車"
+      "name": "月の歯車",
+      "runtime_path": "../runtime/items/moonGear.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 36134
     },
     {
       "id": "parcel",
       "category": "items",
       "path": "items/parcel.png",
       "source_file": "exec-05d52d43-1548-4ca9-b611-9980e1d3c78a.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -482,14 +668,20 @@
       ],
       "sha256": "ec40d95f0e7d507c7c6b081fa4b5a127c8811be10030e4e0014c777f1cd25975",
       "background": "transparent",
-      "name": "灯台あての小包"
+      "name": "灯台あての小包",
+      "runtime_path": "../runtime/items/parcel.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 20940
     },
     {
       "id": "net",
       "category": "items",
       "path": "items/net.png",
       "source_file": "exec-b1909f2c-825f-41c6-9d21-dd04f1c66298.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -497,14 +689,20 @@
       ],
       "sha256": "a8e8c3f584ccb05048ee0454cb9e1ae6c734a46897d72b6f8a91a44002381c4f",
       "background": "transparent",
-      "name": "漁網"
+      "name": "漁網",
+      "runtime_path": "../runtime/items/net.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 34714
     },
     {
       "id": "fish",
       "category": "items",
       "path": "items/fish.png",
       "source_file": "exec-dfb08108-83d0-4cd6-923f-7f2553fa1394.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -512,14 +710,20 @@
       ],
       "sha256": "75fef4c63aa127006d05b9691e0641e92cbe651bfb3283a4669380fecd32fa4b",
       "background": "transparent",
-      "name": "朝どれのアジ"
+      "name": "朝どれのアジ",
+      "runtime_path": "../runtime/items/fish.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 21420
     },
     {
       "id": "oil",
       "category": "items",
       "path": "items/oil.png",
       "source_file": "exec-af464124-db19-4aad-966b-6a1c9bcf8d2f.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -527,14 +731,20 @@
       ],
       "sha256": "ae85fb94a5d21c731da0aa004a5cce1427479492cfa3e2ee4145b5db4164c289",
       "background": "transparent",
-      "name": "灯台の油"
+      "name": "灯台の油",
+      "runtime_path": "../runtime/items/oil.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 28024
     },
     {
       "id": "maletter",
       "category": "items",
       "path": "items/maletter.png",
       "source_file": "exec-017f7ac1-71ae-43d5-a102-e3a0a35d3961.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -542,14 +752,20 @@
       ],
       "sha256": "eb2ac5bf27686499b9ea69f86680438705c3b13833ef81fcd41b9fd53f21fdcb",
       "background": "transparent",
-      "name": "魔界の手紙"
+      "name": "魔界の手紙",
+      "runtime_path": "../runtime/items/maletter.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 19078
     },
     {
       "id": "moonflower",
       "category": "items",
       "path": "items/moonflower.png",
       "source_file": "exec-266b8c88-11a5-481b-8bd0-300d81bd1901.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -557,14 +773,20 @@
       ],
       "sha256": "6091f2417839556486cdbc44338fc5fbe4c86ed6cc8396c6cae1aff4897981b8",
       "background": "transparent",
-      "name": "月光草"
+      "name": "月光草",
+      "runtime_path": "../runtime/items/moonflower.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 20642
     },
     {
       "id": "gold",
       "category": "items",
       "path": "items/gold.png",
       "source_file": "exec-5ee4f921-0070-4a8e-b7e9-3f34096bf694.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -572,14 +794,20 @@
       ],
       "sha256": "09fc6f5cf3f1841d1a8c9f1e84ccf6322573f8ed7d63bd08b95304de27ca10f6",
       "background": "transparent",
-      "name": "ゴールド袋"
+      "name": "ゴールド袋",
+      "runtime_path": "../runtime/items/gold.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 25288
     },
     {
       "id": "sword",
       "category": "items",
       "path": "items/sword.png",
       "source_file": "exec-ed728593-b660-4fa5-bc9e-9fab225dc13f.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -587,14 +815,20 @@
       ],
       "sha256": "a2694659aa42bc049c45c8f8cf95602df91e0d96a7a3b60505ac4bb1da0e90b5",
       "background": "transparent",
-      "name": "勇者の剣"
+      "name": "勇者の剣",
+      "runtime_path": "../runtime/items/sword.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 15312
     },
     {
       "id": "potions-healing",
       "category": "items",
       "path": "items/potions-healing.png",
       "source_file": "exec-f8b51bee-e6b4-4fba-935e-93d3a78f930a.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -602,14 +836,20 @@
       ],
       "sha256": "301c239e9e901ae83244b7359be3b2ddbb60b51f5b9500ba839266e077c5b28e",
       "background": "transparent",
-      "name": "回復薬"
+      "name": "回復薬",
+      "runtime_path": "../runtime/items/potions-healing.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 25584
     },
     {
       "id": "potions-antidote",
       "category": "items",
       "path": "items/potions-antidote.png",
       "source_file": "exec-8a908a42-8565-4f5f-bf87-95ea9fe1dfde.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -617,14 +857,20 @@
       ],
       "sha256": "8b6ba9a082df2803511f720a12ee5b267c97b77dd6d4a889cd0417ec8cc4d9b8",
       "background": "transparent",
-      "name": "解毒薬"
+      "name": "解毒薬",
+      "runtime_path": "../runtime/items/potions-antidote.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 25300
     },
     {
       "id": "potions-energy",
       "category": "items",
       "path": "items/potions-energy.png",
       "source_file": "exec-0964396a-1d72-4bbf-b0d0-890298672187.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -632,14 +878,20 @@
       ],
       "sha256": "c58ddc81ce947853449399f6af541d4842ef23994bdc3c1e19559dab1b48113e",
       "background": "transparent",
-      "name": "元気の薬"
+      "name": "元気の薬",
+      "runtime_path": "../runtime/items/potions-energy.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 27634
     },
     {
       "id": "purpleLantern",
       "category": "items",
       "path": "items/purpleLantern.png",
       "source_file": "exec-471a2f30-81d1-4465-99dc-a4c9e6c07e48.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -647,14 +899,20 @@
       ],
       "sha256": "d3f0a47c2f7f783693bd584a26bf41e945ea80744d21529d5376a17106098c93",
       "background": "transparent",
-      "name": "紫の炎のランタン"
+      "name": "紫の炎のランタン",
+      "runtime_path": "../runtime/items/purpleLantern.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 23262
     },
     {
       "id": "tomato",
       "category": "items",
       "path": "items/tomato.png",
       "source_file": "exec-93eef59c-3236-4d80-9dec-107fb95e50b8.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -662,14 +920,20 @@
       ],
       "sha256": "a5f7e51f19d439236df29377e817401edeb5484c2370040044dd01dd87b78365",
       "background": "transparent",
-      "name": "溶岩トマト"
+      "name": "溶岩トマト",
+      "runtime_path": "../runtime/items/tomato.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 31148
     },
     {
       "id": "mushroom",
       "category": "items",
       "path": "items/mushroom.png",
       "source_file": "exec-11d0c08d-38f6-40e8-aa6d-12724380f014.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -677,14 +941,20 @@
       ],
       "sha256": "111586107b010d81a3382d057d91c9dd839f8c40691e0b74a9f839ca900578ef",
       "background": "transparent",
-      "name": "かげキノコ"
+      "name": "かげキノコ",
+      "runtime_path": "../runtime/items/mushroom.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 25398
     },
     {
       "id": "salt",
       "category": "items",
       "path": "items/salt.png",
       "source_file": "exec-5bf2b7c9-f6f7-4f64-be99-c7a2ac671bac.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -692,14 +962,20 @@
       ],
       "sha256": "ded9a7bc80c19e8de2ed9bef5daf3fce32343f2ade5847ed11dad372bd206b67",
       "background": "transparent",
-      "name": "星くず塩"
+      "name": "星くず塩",
+      "runtime_path": "../runtime/items/salt.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 32356
     },
     {
       "id": "stew",
       "category": "items",
       "path": "items/stew.png",
       "source_file": "exec-54b2211d-6233-4488-b0c5-4338407e7b69.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -707,14 +983,20 @@
       ],
       "sha256": "443d9b79f506fbc610cf509a6fa5ad2d17b222444511f40b0ba633706147a071",
       "background": "transparent",
-      "name": "ほのおのシチュー"
+      "name": "ほのおのシチュー",
+      "runtime_path": "../runtime/items/stew.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 31618
     },
     {
       "id": "picturebook",
       "category": "items",
       "path": "items/picturebook.png",
       "source_file": "exec-a44fb0b6-26cf-446f-963c-007b5126a375.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -722,14 +1004,20 @@
       ],
       "sha256": "75efc68a26749d4424d3785653b62fc178c182d8ebe7020982a323f34444dcd3",
       "background": "transparent",
-      "name": "兄弟の絵本"
+      "name": "兄弟の絵本",
+      "runtime_path": "../runtime/items/picturebook.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 27860
     },
     {
       "id": "goen",
       "category": "items",
       "path": "items/goen.png",
       "source_file": "exec-fc2bdb63-1783-492c-b486-e55d8754cfe5.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -737,14 +1025,20 @@
       ],
       "sha256": "719c50a9933849bb1f3b7700c57112ef9fae69e02d423bb4f7210ee2756a8371",
       "background": "transparent",
-      "name": "5円玉"
+      "name": "5円玉",
+      "runtime_path": "../runtime/items/goen.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 35638
     },
     {
       "id": "button",
       "category": "items",
       "path": "items/button.png",
       "source_file": "exec-00cf01ab-f38d-4b5c-9898-23fe2e606d96.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -752,14 +1046,20 @@
       ],
       "sha256": "8cbb04460f297106823c9990c985dff0b83950e43a1d454e921b72e0897e7fcc",
       "background": "transparent",
-      "name": "ボタン"
+      "name": "ボタン",
+      "runtime_path": "../runtime/items/button.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 20750
     },
     {
       "id": "oldLetter",
       "category": "items",
       "path": "items/oldLetter.png",
       "source_file": "exec-93b02092-6f51-4460-83fc-b8ba5d733e4a.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -767,14 +1067,20 @@
       ],
       "sha256": "7c80672ecfe2a970d18c7cf4d6dbc35d2ef1ed830395478cab5f8552a9601f4f",
       "background": "transparent",
-      "name": "百年前の手紙"
+      "name": "百年前の手紙",
+      "runtime_path": "../runtime/items/oldLetter.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 21356
     },
     {
       "id": "antMap",
       "category": "items",
       "path": "items/antMap.png",
       "source_file": "exec-619ea972-bd74-4300-844b-db88e8cc187b.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -782,14 +1088,20 @@
       ],
       "sha256": "787e46fcf5c754b35a03f2ab6fad96a1944eb7572657cb0bbda54644820cd212",
       "background": "transparent",
-      "name": "宝の地図"
+      "name": "宝の地図",
+      "runtime_path": "../runtime/items/antMap.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 20840
     },
     {
       "id": "thimble",
       "category": "items",
       "path": "items/thimble.png",
       "source_file": "exec-cfe6a922-8067-4add-b22f-a1c5b5e59d3c.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -797,14 +1109,20 @@
       ],
       "sha256": "8bba1fde27db4390ff3b1fc1b43d932a03ed3dd2304b381e67ea53ec0362b372",
       "background": "transparent",
-      "name": "ゆびぬき"
+      "name": "ゆびぬき",
+      "runtime_path": "../runtime/items/thimble.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 21924
     },
     {
       "id": "thimbleWater",
       "category": "items",
       "path": "items/thimbleWater.png",
       "source_file": "exec-62458d01-78f6-40f6-a3ed-e92e94a9566d.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -816,14 +1134,20 @@
       ],
       "review_notes": "口を上へ向けた、下へ細く丸くすぼまる指ぬきの形に修正済み。",
       "background": "transparent",
-      "name": "しずく入りのゆびぬき"
+      "name": "しずく入りのゆびぬき",
+      "runtime_path": "../runtime/items/thimbleWater.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 20374
     },
     {
       "id": "nectar",
       "category": "items",
       "path": "items/nectar.png",
       "source_file": "exec-033cf42f-4433-468b-860f-116ef81fc2ff.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -831,14 +1155,20 @@
       ],
       "sha256": "79a9308688f2afaca59552f1250010bd2d149a21fbb554515506eb19446a5ba6",
       "background": "transparent",
-      "name": "あまつゆ草の蜜"
+      "name": "あまつゆ草の蜜",
+      "runtime_path": "../runtime/items/nectar.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 22078
     },
     {
       "id": "silkRope",
       "category": "items",
       "path": "items/silkRope.png",
       "source_file": "exec-5efe04df-9f58-4b21-9f35-f0b29f8f6dae.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -846,14 +1176,20 @@
       ],
       "sha256": "46c5cac3482a97929f597e3f71d04293e626f1c17633c53833bfd5cc88ba7aab",
       "background": "transparent",
-      "name": "クモの糸の綱"
+      "name": "クモの糸の綱",
+      "runtime_path": "../runtime/items/silkRope.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 32072
     },
     {
       "id": "toyKey",
       "category": "items",
       "path": "items/toyKey.png",
       "source_file": "exec-dd70dd65-ad8f-4d4b-b528-0d50d33a3c3b.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -861,14 +1197,20 @@
       ],
       "sha256": "713c43fdcd29910088499802394ffc7416159f05a2ef91c4017cb664290e6701",
       "background": "transparent",
-      "name": "ゼンマイ鍵"
+      "name": "ゼンマイ鍵",
+      "runtime_path": "../runtime/items/toyKey.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 22684
     },
     {
       "id": "gearBox",
       "category": "items",
       "path": "items/gearBox.png",
       "source_file": "exec-b3abaaea-eb3a-4be8-86ec-79e7d7a6b308.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -876,14 +1218,20 @@
       ],
       "sha256": "b3d845fe52b81f64692f45dd54ccb8cc94b6d9b38b8458e784535ed142ff11d2",
       "background": "transparent",
-      "name": "歯車箱"
+      "name": "歯車箱",
+      "runtime_path": "../runtime/items/gearBox.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 25836
     },
     {
       "id": "crankHandle",
       "category": "items",
       "path": "items/crankHandle.png",
       "source_file": "exec-41bd4f60-f00c-454a-83ac-53645ea7aa1f.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -891,14 +1239,20 @@
       ],
       "sha256": "3b9e23fede3f8979bef696292c6e27234e2bd9f801ea55dead53a886834dcd7e",
       "background": "transparent",
-      "name": "巻きハンドル"
+      "name": "巻きハンドル",
+      "runtime_path": "../runtime/items/crankHandle.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 16126
     },
     {
       "id": "koBell",
       "category": "items",
       "path": "items/koBell.png",
       "source_file": "exec-d0177a5d-e05d-4b65-b8ca-550e78f1dc26.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -906,14 +1260,20 @@
       ],
       "sha256": "25e5c6f0d854e30045228f9dd75ad12cb5feaa0e86bd0c771ec020830a917530",
       "background": "transparent",
-      "name": "狛犬の鈴"
+      "name": "狛犬の鈴",
+      "runtime_path": "../runtime/items/koBell.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 29818
     },
     {
       "id": "ningyoyaki",
       "category": "items",
       "path": "items/ningyoyaki.png",
       "source_file": "exec-924e9e0a-ff30-46f3-9269-bb2f485a0a1a.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -921,14 +1281,20 @@
       ],
       "sha256": "21e18aee662b28beb9682a2ddd44eb9131e85ffe676231f04d0931495112e05e",
       "background": "transparent",
-      "name": "人形焼の包み"
+      "name": "人形焼の包み",
+      "runtime_path": "../runtime/items/ningyoyaki.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 26502
     },
     {
       "id": "tenugui",
       "category": "items",
       "path": "items/tenugui.png",
       "source_file": "exec-e2243f8d-d2ac-4716-a481-0e6af7770c4f.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -936,14 +1302,20 @@
       ],
       "sha256": "b78e242a6a8d445a2360cf076a46aef95947de0d2fe8f3a25df619e303011f81",
       "background": "transparent",
-      "name": "江戸の時刻の手ぬぐい"
+      "name": "江戸の時刻の手ぬぐい",
+      "runtime_path": "../runtime/items/tenugui.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 22690
     },
     {
       "id": "ramune",
       "category": "items",
       "path": "items/ramune.png",
       "source_file": "exec-e3ac5f57-97da-42ab-87a6-a911f73c1f77.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -951,14 +1323,20 @@
       ],
       "sha256": "678726427c09b9db098cdefd6498819c069ca11826c3d257204b8ca8afec731d",
       "background": "transparent",
-      "name": "キュウリ味ラムネ"
+      "name": "キュウリ味ラムネ",
+      "runtime_path": "../runtime/items/ramune.webp",
+      "runtime_dimensions": [
+        320,
+        320
+      ],
+      "runtime_bytes": 15762
     },
     {
       "id": "grass",
       "category": "materials",
       "path": "materials/grass.png",
       "source_file": "exec-e1ebf84c-049f-4e03-a467-2106912c571b.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -966,14 +1344,20 @@
       ],
       "sha256": "f6fd1f64b67b86768201cc14a73f70e861517efce2bf0997b93c494661ad40a1",
       "background": "opaque",
-      "name": "草地"
+      "name": "草地",
+      "runtime_path": "../runtime/materials/grass.webp",
+      "runtime_dimensions": [
+        512,
+        512
+      ],
+      "runtime_bytes": 130956
     },
     {
       "id": "moss",
       "category": "materials",
       "path": "materials/moss.png",
       "source_file": "exec-2b13af6f-d175-4615-a993-060c27d46fca.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -981,14 +1365,20 @@
       ],
       "sha256": "0ebf12fb7ff7cc742e7ad74c67eb41ecc501771f323175a84d97562914fd030c",
       "background": "opaque",
-      "name": "苔"
+      "name": "苔",
+      "runtime_path": "../runtime/materials/moss.webp",
+      "runtime_dimensions": [
+        512,
+        512
+      ],
+      "runtime_bytes": 133042
     },
     {
       "id": "soil",
       "category": "materials",
       "path": "materials/soil.png",
       "source_file": "exec-f7f98dae-5000-4be5-bc2a-f9d898b44b89.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -996,14 +1386,20 @@
       ],
       "sha256": "c1a2322d3cc7825e750242010fa8aed3456d329cce11eb2a529eff9d4e8bac72",
       "background": "opaque",
-      "name": "土"
+      "name": "土",
+      "runtime_path": "../runtime/materials/soil.webp",
+      "runtime_dimensions": [
+        512,
+        512
+      ],
+      "runtime_bytes": 139074
     },
     {
       "id": "gravel",
       "category": "materials",
       "path": "materials/gravel.png",
       "source_file": "exec-8a5e0aa7-ec6f-4ae9-84bd-6e632c99722f.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -1011,14 +1407,20 @@
       ],
       "sha256": "b2f2905b384396eedf8f5ce7eaa9ce0d7e6122ceb46d1547a0ad5a695d85cc6c",
       "background": "opaque",
-      "name": "砂利"
+      "name": "砂利",
+      "runtime_path": "../runtime/materials/gravel.webp",
+      "runtime_dimensions": [
+        512,
+        512
+      ],
+      "runtime_bytes": 127850
     },
     {
       "id": "sand",
       "category": "materials",
       "path": "materials/sand.png",
       "source_file": "exec-b39e63c4-dbd9-4cdc-9862-fa94a8b82595.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -1026,14 +1428,20 @@
       ],
       "sha256": "b62438716755dc8f01c036f332979f7458dc4fe0876b1dbb44409737edfe7d54",
       "background": "opaque",
-      "name": "砂"
+      "name": "砂",
+      "runtime_path": "../runtime/materials/sand.webp",
+      "runtime_dimensions": [
+        512,
+        512
+      ],
+      "runtime_bytes": 77266
     },
     {
       "id": "cobblestone",
       "category": "materials",
       "path": "materials/cobblestone.png",
       "source_file": "exec-85a2ae48-a94a-4c0c-a33a-7195589e5584.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -1041,14 +1449,20 @@
       ],
       "sha256": "0ad25812c551d64e4210540982a0072adc6eaef2ad6f99d1b09ef7687b1562bb",
       "background": "opaque",
-      "name": "石畳"
+      "name": "石畳",
+      "runtime_path": "../runtime/materials/cobblestone.webp",
+      "runtime_dimensions": [
+        512,
+        512
+      ],
+      "runtime_bytes": 93646
     },
     {
       "id": "stoneBlocks",
       "category": "materials",
       "path": "materials/stoneBlocks.png",
       "source_file": "exec-19dca08a-6bf4-4646-86a1-b5b7bde0c3c3.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -1056,14 +1470,20 @@
       ],
       "sha256": "413e9fc8f2e879a2b8e613d995b798ba5b45d6415ae4d37cf12e83534cf8063b",
       "background": "opaque",
-      "name": "石積み"
+      "name": "石積み",
+      "runtime_path": "../runtime/materials/stoneBlocks.webp",
+      "runtime_dimensions": [
+        512,
+        512
+      ],
+      "runtime_bytes": 79814
     },
     {
       "id": "woodPlanks",
       "category": "materials",
       "path": "materials/woodPlanks.png",
       "source_file": "exec-721a7d77-7bca-48d4-b979-e9985a9f9a22.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -1071,14 +1491,20 @@
       ],
       "sha256": "baae9a2a63537d064e75f0a8db7e9602248b03dcdb3c45ade58452d6e548d86e",
       "background": "opaque",
-      "name": "木の床板"
+      "name": "木の床板",
+      "runtime_path": "../runtime/materials/woodPlanks.webp",
+      "runtime_dimensions": [
+        512,
+        512
+      ],
+      "runtime_bytes": 47718
     },
     {
       "id": "agedBoards",
       "category": "materials",
       "path": "materials/agedBoards.png",
       "source_file": "exec-7b6c1d7a-c100-4439-9be7-60a37d625b45.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -1086,14 +1512,20 @@
       ],
       "sha256": "609f1714d1e0735fe527d57d1012750bbe7037ba09e63dde772f8fc2168cc87a",
       "background": "opaque",
-      "name": "古い杉板"
+      "name": "古い杉板",
+      "runtime_path": "../runtime/materials/agedBoards.webp",
+      "runtime_dimensions": [
+        512,
+        512
+      ],
+      "runtime_bytes": 58478
     },
     {
       "id": "plaster",
       "category": "materials",
       "path": "materials/plaster.png",
       "source_file": "exec-2b4fd4f1-9281-486b-895d-580951a07a8e.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -1101,14 +1533,20 @@
       ],
       "sha256": "ae0d81c8655a0d4f3c8569b9ee730c1fc2e8b81410f4871f2f58611e8abdd5f5",
       "background": "opaque",
-      "name": "漆喰"
+      "name": "漆喰",
+      "runtime_path": "../runtime/materials/plaster.webp",
+      "runtime_dimensions": [
+        512,
+        512
+      ],
+      "runtime_bytes": 62270
     },
     {
       "id": "roofTiles",
       "category": "materials",
       "path": "materials/roofTiles.png",
       "source_file": "exec-8cf25a9e-44eb-4676-b223-f7f6bc3a0993.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -1116,14 +1554,20 @@
       ],
       "sha256": "84e41540240fdbfa5af9e0b30d9a1e056fb13a824c7da690a0eac1b206ae16dc",
       "background": "opaque",
-      "name": "青灰色の瓦"
+      "name": "青灰色の瓦",
+      "runtime_path": "../runtime/materials/roofTiles.webp",
+      "runtime_dimensions": [
+        512,
+        512
+      ],
+      "runtime_bytes": 44668
     },
     {
       "id": "indigoCloth",
       "category": "materials",
       "path": "materials/indigoCloth.png",
       "source_file": "exec-30b9e133-361f-4b93-91d5-e65d0c7d3c77.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -1131,14 +1575,20 @@
       ],
       "sha256": "ac435200206d42cbae7bae99830adb70a975d0b3893fdadb5562538d5780a7db",
       "background": "opaque",
-      "name": "藍染めの布"
+      "name": "藍染めの布",
+      "runtime_path": "../runtime/materials/indigoCloth.webp",
+      "runtime_dimensions": [
+        512,
+        512
+      ],
+      "runtime_bytes": 129998
     },
     {
       "id": "washi",
       "category": "materials",
       "path": "materials/washi.png",
       "source_file": "exec-09bc36d3-6a5b-4484-829d-47c676e104f2.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -1146,14 +1596,20 @@
       ],
       "sha256": "421d5151abe4bbf3e5a108bb72050ee2621c040ef5d7c2dd1ff20e32b0d44a70",
       "background": "opaque",
-      "name": "和紙"
+      "name": "和紙",
+      "runtime_path": "../runtime/materials/washi.webp",
+      "runtime_dimensions": [
+        512,
+        512
+      ],
+      "runtime_bytes": 55604
     },
     {
       "id": "corrugatedMetal",
       "category": "materials",
       "path": "materials/corrugatedMetal.png",
       "source_file": "exec-7bad29cd-9d55-4794-98b0-2fec0eb087e1.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -1161,14 +1617,20 @@
       ],
       "sha256": "3dc87127c4dfb0fe9ff7c37016646356c55ebd6f5ac946de4e1317cce834b6dd",
       "background": "opaque",
-      "name": "トタン"
+      "name": "トタン",
+      "runtime_path": "../runtime/materials/corrugatedMetal.webp",
+      "runtime_dimensions": [
+        512,
+        512
+      ],
+      "runtime_bytes": 73614
     },
     {
       "id": "rustedMetal",
       "category": "materials",
       "path": "materials/rustedMetal.png",
       "source_file": "exec-073a4973-30e5-48f7-80e3-5a871793448f.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -1176,14 +1638,20 @@
       ],
       "sha256": "d6631d2634b5c04e2e28849466c8c89827ef7b580662cc0406c3675a3d558cb8",
       "background": "opaque",
-      "name": "錆びた金属"
+      "name": "錆びた金属",
+      "runtime_path": "../runtime/materials/rustedMetal.webp",
+      "runtime_dimensions": [
+        512,
+        512
+      ],
+      "runtime_bytes": 85020
     },
     {
       "id": "paintedToyWood",
       "category": "materials",
       "path": "materials/paintedToyWood.png",
       "source_file": "exec-df97c59d-c99b-42d9-ba2c-50de23d1ace9.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -1191,14 +1659,20 @@
       ],
       "sha256": "5310cd531f747a79f2a52e1e16045249ceacef16d420a90e9bc811b6f3a2bfee",
       "background": "opaque",
-      "name": "赤い塗装の木"
+      "name": "赤い塗装の木",
+      "runtime_path": "../runtime/materials/paintedToyWood.webp",
+      "runtime_dimensions": [
+        512,
+        512
+      ],
+      "runtime_bytes": 43524
     },
     {
       "id": "heroPixelStone",
       "category": "materials",
       "path": "materials/heroPixelStone.png",
       "source_file": "exec-093e44a9-f76b-4ea8-be1b-fea412496dd7.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -1206,14 +1680,20 @@
       ],
       "sha256": "d5710710b1b097ed57461bab50fa0aaba8fdc3b2ca1922a9d86c172f0b9e2187",
       "background": "opaque",
-      "name": "勇者の城のピクセル石壁"
+      "name": "勇者の城のピクセル石壁",
+      "runtime_path": "../runtime/materials/heroPixelStone.webp",
+      "runtime_dimensions": [
+        512,
+        512
+      ],
+      "runtime_bytes": 211918
     },
     {
       "id": "maouPixelStone",
       "category": "materials",
       "path": "materials/maouPixelStone.png",
       "source_file": "exec-b5b44fdd-7b05-484a-b8b1-8f61768306c1.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -1221,14 +1701,20 @@
       ],
       "sha256": "352a3676cb5b879182a2f17199cf3bb66ffd68b868d6e7dc6e5add81ee1747bf",
       "background": "opaque",
-      "name": "魔王城のピクセル石壁"
+      "name": "魔王城のピクセル石壁",
+      "runtime_path": "../runtime/materials/maouPixelStone.webp",
+      "runtime_dimensions": [
+        512,
+        512
+      ],
+      "runtime_bytes": 208542
     },
     {
       "id": "museumFloor",
       "category": "materials",
       "path": "materials/museumFloor.png",
       "source_file": "exec-45186a17-ad91-405b-a52d-b6b237ced22e.png",
-      "status": "generated-not-integrated",
+      "status": "integrated",
       "generated_on": "2026-10-18",
       "dimensions": [
         1254,
@@ -1236,11 +1722,17 @@
       ],
       "sha256": "909747a77dd28e2c12310f732b4cef10988c9b69f3821634f839889294dedf0c",
       "background": "opaque",
-      "name": "博物館のテラゾー床"
+      "name": "博物館のテラゾー床",
+      "runtime_path": "../runtime/materials/museumFloor.webp",
+      "runtime_dimensions": [
+        512,
+        512
+      ],
+      "runtime_bytes": 107430
     }
   ],
   "interrupted_requests": [],
-  "resume_rule": "82枚を生成済み。ゲームには未実装。実装時に文字・謎の記号・表示サイズ・表面素材の色と縮尺と繰り返し境界を調整する。",
+  "resume_rule": "82枚すべて組み込み済み。原本は保持し、配信用WebPを使う。模型の形・謎・セーブ形式は維持。対応と再圧縮はREADME.mdを参照。",
   "resumed_on": "2026-10-18",
   "completed_on": "2026-10-18",
   "counts": {

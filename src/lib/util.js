@@ -1,3 +1,4 @@
+import { surfaceCanvasTex } from './surface-art.js';
 import * as THREE from 'three';
 
 // ---------------------------------------------------------------
@@ -180,9 +181,7 @@ export function canvasTex(w, h, draw, { srgb = true, repeat } = {}) {
 
 /** 看板などのテキスト用テクスチャ */
 export function signTex(text, { w = 512, h = 128, bg = '#f4ead2', fg = '#3b2a1e', border = '#6b4a2e', size = 72, weight = 700, sub } = {}) {
-  return canvasTex(w, h, (ctx) => {
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, w, h);
+  return surfaceCanvasTex('washi', w, h, (ctx) => {
     if (border) {
       ctx.strokeStyle = border;
       ctx.lineWidth = Math.max(4, h * 0.06);
@@ -200,7 +199,7 @@ export function signTex(text, { w = 512, h = 128, bg = '#f4ead2', fg = '#3b2a1e'
       ctx.font = `500 ${Math.round(size * 0.38)}px ${FONT}`;
       ctx.fillText(sub, w / 2, h * 0.8);
     }
-  });
+  }, { base: bg, strength: .35, tiled: true });
 }
 
 /** ふんわり丸いスプライト用テクスチャ */

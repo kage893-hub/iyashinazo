@@ -1,3 +1,4 @@
+import { prepareStageSurfaces } from '../lib/surface-art.js';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
@@ -764,6 +765,7 @@ export class Game {
     this.setGrade(GRADES.neutral, true);
     this.stage = new StageClass(this);
     await this.loadingStep(0.1, '箱庭を組み立てています…');
+    await prepareStageSurfaces(this.stage.id);
     await this.stage.build();
     this.buildPickList();
     this.stage.applyState(true);

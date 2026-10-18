@@ -1,3 +1,4 @@
+import { surfaceTex } from '../../lib/surface-art.js';
 import * as THREE from 'three';
 import { pixTex, pixMat, pixText } from '../../lib/pixel.js';
 import { add, group, rng } from '../../lib/util.js';
@@ -22,14 +23,7 @@ export const ISLAND = { w: 45, d: 33 };
 export const GATE_X = -9.0;
 
 const C = {
-  stone: () => pixTex('mstone', 32, 32, (p) => {
-    p.rect(0, 0, 32, 32, '#4a4458');
-    for (let r = 0; r < 4; r++) for (let c = 0; c < 3; c++) {
-      const x = c * 11 + (r % 2 ? 5 : 0), y = r * 8;
-      const tone = ['#6e6680', '#78708a', '#686078'][(r + c) % 3];
-      for (const k of [-33, 0]) { p.rect(x + k + 1, y + 1, 10, 6, tone); p.rect(x + k + 1, y + 1, 10, 1, '#8a82a0'); }
-    }
-  }, [0.5, 0.5]),
+  stone: () => surfaceTex('maouPixelStone', { base: '#6e6680', repeat: [.25, .25], pixel: true }),
   floor: () => pixTex('mfloor', 32, 32, (p) => {
     const r = rng(5);
     p.rect(0, 0, 32, 32, '#3a3646');

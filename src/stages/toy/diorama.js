@@ -1,3 +1,4 @@
+import { surfaceTex } from '../../lib/surface-art.js';
 import * as THREE from 'three';
 import { waterize } from '../../lib/livefx.js';
 import { add, mat, glow, G, group, rng, canvasTex, roundRectShape, FONT } from '../../lib/util.js';
@@ -61,11 +62,7 @@ const facesTex = (cols) => canvasTex(256, 64, (ctx, w, h) => {
   for (let i = 0; i <= cols.length; i++) { ctx.beginPath(); ctx.moveTo((i * w) / cols.length, 0); ctx.lineTo((i * w) / cols.length, h); ctx.stroke(); }
 }, { repeat: [2, 1] });
 
-const woodTex = (base = '#c8925a', repeat = [1, 1]) => canvasTex(256, 256, (ctx, w, h) => {
-  const r = rng(92);
-  ctx.fillStyle = base; ctx.fillRect(0, 0, w, h);
-  for (let i = 0; i < 40; i++) { ctx.strokeStyle = `rgba(90,50,20,${0.08 + r() * 0.12})`; ctx.lineWidth = 1 + r() * 3; const y = r() * h; ctx.beginPath(); ctx.moveTo(0, y); ctx.bezierCurveTo(w * 0.3, y + 10, w * 0.6, y - 10, w, y + r() * 6); ctx.stroke(); }
-}, { repeat });
+const woodTex = (base = '#c8925a', repeat = [1, 1]) => surfaceTex('paintedToyWood', { base, repeat, strength: .6 });
 
 const clockTex = () => canvasTex(256, 256, (ctx, w, h) => {
   ctx.fillStyle = '#fbf4e2'; ctx.beginPath(); ctx.arc(w / 2, h / 2, 124, 0, Math.PI * 2); ctx.fill();

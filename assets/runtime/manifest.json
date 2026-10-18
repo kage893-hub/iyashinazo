@@ -1,0 +1,825 @@
+{
+  "version": 1,
+  "assets": [
+    {
+      "id": "marble",
+      "category": "items",
+      "path": "items/marble.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 21362
+    },
+    {
+      "id": "sagaGuide",
+      "category": "items",
+      "path": "items/sagaGuide.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 25728
+    },
+    {
+      "id": "museumGuide",
+      "category": "items",
+      "path": "items/museumGuide.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 24672
+    },
+    {
+      "id": "springKey",
+      "category": "items",
+      "path": "items/springKey.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 21008
+    },
+    {
+      "id": "brooch",
+      "category": "items",
+      "path": "items/brooch.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 25842
+    },
+    {
+      "id": "starCoin",
+      "category": "items",
+      "path": "items/starCoin.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 29218
+    },
+    {
+      "id": "ticket",
+      "category": "items",
+      "path": "items/ticket.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 18416
+    },
+    {
+      "id": "tongs",
+      "category": "items",
+      "path": "items/tongs.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 15378
+    },
+    {
+      "id": "fireStone",
+      "category": "items",
+      "path": "items/fireStone.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 26212
+    },
+    {
+      "id": "valveHandle",
+      "category": "items",
+      "path": "items/valveHandle.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 34276
+    },
+    {
+      "id": "signalKey",
+      "category": "items",
+      "path": "items/signalKey.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 21736
+    },
+    {
+      "id": "konpeito",
+      "category": "items",
+      "path": "items/konpeito.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 31698
+    },
+    {
+      "id": "oilCan",
+      "category": "items",
+      "path": "items/oilCan.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 21340
+    },
+    {
+      "id": "cotton",
+      "category": "items",
+      "path": "items/cotton.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 21900
+    },
+    {
+      "id": "sail",
+      "category": "items",
+      "path": "items/sail.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 24512
+    },
+    {
+      "id": "letter",
+      "category": "items",
+      "path": "items/letter.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 18486
+    },
+    {
+      "id": "letterOpen",
+      "category": "items",
+      "path": "items/letterOpen.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 13030
+    },
+    {
+      "id": "gear",
+      "category": "items",
+      "path": "items/gear.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 25850
+    },
+    {
+      "id": "lantern",
+      "category": "items",
+      "path": "items/lantern.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 19614
+    },
+    {
+      "id": "lanternLit",
+      "category": "items",
+      "path": "items/lanternLit.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 19710
+    },
+    {
+      "id": "poker",
+      "category": "items",
+      "path": "items/poker.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 7188
+    },
+    {
+      "id": "amazake",
+      "category": "items",
+      "path": "items/amazake.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 17036
+    },
+    {
+      "id": "gateKey",
+      "category": "items",
+      "path": "items/gateKey.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 20646
+    },
+    {
+      "id": "masu",
+      "category": "items",
+      "path": "items/masu.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 16608
+    },
+    {
+      "id": "kawaraban",
+      "category": "items",
+      "path": "items/kawaraban.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 22474
+    },
+    {
+      "id": "cucumber",
+      "category": "items",
+      "path": "items/cucumber.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 23022
+    },
+    {
+      "id": "rope",
+      "category": "items",
+      "path": "items/rope.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 34652
+    },
+    {
+      "id": "dango",
+      "category": "items",
+      "path": "items/dango.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 16968
+    },
+    {
+      "id": "jitte",
+      "category": "items",
+      "path": "items/jitte.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 11628
+    },
+    {
+      "id": "tegata",
+      "category": "items",
+      "path": "items/tegata.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 22466
+    },
+    {
+      "id": "moonGear",
+      "category": "items",
+      "path": "items/moonGear.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 36134
+    },
+    {
+      "id": "parcel",
+      "category": "items",
+      "path": "items/parcel.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 20940
+    },
+    {
+      "id": "net",
+      "category": "items",
+      "path": "items/net.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 34714
+    },
+    {
+      "id": "fish",
+      "category": "items",
+      "path": "items/fish.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 21420
+    },
+    {
+      "id": "oil",
+      "category": "items",
+      "path": "items/oil.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 28024
+    },
+    {
+      "id": "maletter",
+      "category": "items",
+      "path": "items/maletter.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 19078
+    },
+    {
+      "id": "moonflower",
+      "category": "items",
+      "path": "items/moonflower.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 20642
+    },
+    {
+      "id": "gold",
+      "category": "items",
+      "path": "items/gold.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 25288
+    },
+    {
+      "id": "sword",
+      "category": "items",
+      "path": "items/sword.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 15312
+    },
+    {
+      "id": "potions-healing",
+      "category": "items",
+      "path": "items/potions-healing.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 25584
+    },
+    {
+      "id": "potions-antidote",
+      "category": "items",
+      "path": "items/potions-antidote.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 25300
+    },
+    {
+      "id": "potions-energy",
+      "category": "items",
+      "path": "items/potions-energy.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 27634
+    },
+    {
+      "id": "purpleLantern",
+      "category": "items",
+      "path": "items/purpleLantern.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 23262
+    },
+    {
+      "id": "tomato",
+      "category": "items",
+      "path": "items/tomato.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 31148
+    },
+    {
+      "id": "mushroom",
+      "category": "items",
+      "path": "items/mushroom.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 25398
+    },
+    {
+      "id": "salt",
+      "category": "items",
+      "path": "items/salt.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 32356
+    },
+    {
+      "id": "stew",
+      "category": "items",
+      "path": "items/stew.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 31618
+    },
+    {
+      "id": "picturebook",
+      "category": "items",
+      "path": "items/picturebook.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 27860
+    },
+    {
+      "id": "goen",
+      "category": "items",
+      "path": "items/goen.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 35638
+    },
+    {
+      "id": "button",
+      "category": "items",
+      "path": "items/button.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 20750
+    },
+    {
+      "id": "oldLetter",
+      "category": "items",
+      "path": "items/oldLetter.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 21356
+    },
+    {
+      "id": "antMap",
+      "category": "items",
+      "path": "items/antMap.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 20840
+    },
+    {
+      "id": "thimble",
+      "category": "items",
+      "path": "items/thimble.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 21924
+    },
+    {
+      "id": "thimbleWater",
+      "category": "items",
+      "path": "items/thimbleWater.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 20374
+    },
+    {
+      "id": "nectar",
+      "category": "items",
+      "path": "items/nectar.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 22078
+    },
+    {
+      "id": "silkRope",
+      "category": "items",
+      "path": "items/silkRope.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 32072
+    },
+    {
+      "id": "toyKey",
+      "category": "items",
+      "path": "items/toyKey.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 22684
+    },
+    {
+      "id": "gearBox",
+      "category": "items",
+      "path": "items/gearBox.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 25836
+    },
+    {
+      "id": "crankHandle",
+      "category": "items",
+      "path": "items/crankHandle.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 16126
+    },
+    {
+      "id": "koBell",
+      "category": "items",
+      "path": "items/koBell.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 29818
+    },
+    {
+      "id": "ningyoyaki",
+      "category": "items",
+      "path": "items/ningyoyaki.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 26502
+    },
+    {
+      "id": "tenugui",
+      "category": "items",
+      "path": "items/tenugui.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 22690
+    },
+    {
+      "id": "ramune",
+      "category": "items",
+      "path": "items/ramune.webp",
+      "dimensions": [
+        320,
+        320
+      ],
+      "bytes": 15762
+    },
+    {
+      "id": "grass",
+      "category": "materials",
+      "path": "materials/grass.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "bytes": 130956
+    },
+    {
+      "id": "moss",
+      "category": "materials",
+      "path": "materials/moss.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "bytes": 133042
+    },
+    {
+      "id": "soil",
+      "category": "materials",
+      "path": "materials/soil.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "bytes": 139074
+    },
+    {
+      "id": "gravel",
+      "category": "materials",
+      "path": "materials/gravel.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "bytes": 127850
+    },
+    {
+      "id": "sand",
+      "category": "materials",
+      "path": "materials/sand.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "bytes": 77266
+    },
+    {
+      "id": "cobblestone",
+      "category": "materials",
+      "path": "materials/cobblestone.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "bytes": 93646
+    },
+    {
+      "id": "stoneBlocks",
+      "category": "materials",
+      "path": "materials/stoneBlocks.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "bytes": 79814
+    },
+    {
+      "id": "woodPlanks",
+      "category": "materials",
+      "path": "materials/woodPlanks.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "bytes": 47718
+    },
+    {
+      "id": "agedBoards",
+      "category": "materials",
+      "path": "materials/agedBoards.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "bytes": 58478
+    },
+    {
+      "id": "plaster",
+      "category": "materials",
+      "path": "materials/plaster.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "bytes": 62270
+    },
+    {
+      "id": "roofTiles",
+      "category": "materials",
+      "path": "materials/roofTiles.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "bytes": 44668
+    },
+    {
+      "id": "indigoCloth",
+      "category": "materials",
+      "path": "materials/indigoCloth.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "bytes": 129998
+    },
+    {
+      "id": "washi",
+      "category": "materials",
+      "path": "materials/washi.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "bytes": 55604
+    },
+    {
+      "id": "corrugatedMetal",
+      "category": "materials",
+      "path": "materials/corrugatedMetal.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "bytes": 73614
+    },
+    {
+      "id": "rustedMetal",
+      "category": "materials",
+      "path": "materials/rustedMetal.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "bytes": 85020
+    },
+    {
+      "id": "paintedToyWood",
+      "category": "materials",
+      "path": "materials/paintedToyWood.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "bytes": 43524
+    },
+    {
+      "id": "heroPixelStone",
+      "category": "materials",
+      "path": "materials/heroPixelStone.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "bytes": 211918
+    },
+    {
+      "id": "maouPixelStone",
+      "category": "materials",
+      "path": "materials/maouPixelStone.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "bytes": 208542
+    },
+    {
+      "id": "museumFloor",
+      "category": "materials",
+      "path": "materials/museumFloor.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "bytes": 107430
+    }
+  ]
+}

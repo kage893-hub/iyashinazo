@@ -1,27 +1,10 @@
+import { surfaceTex } from '../../lib/surface-art.js';
 import { canvasTex, rng, FONT } from '../../lib/util.js';
 
 // 天空の街の手描き風テクスチャ
 
 export function cobbleTex(base = '#e6e0d2', repeat = [4, 4]) {
-  return canvasTex(256, 256, (ctx, w, h) => {
-    const r = rng(31);
-    ctx.fillStyle = '#b8ae9c'; ctx.fillRect(0, 0, w, h);
-    const n = 9, cs = w / n;
-    for (let y = 0; y < n; y++) {
-      for (let x = 0; x < n; x++) {
-        const l = 0.9 + r() * 0.15;
-        const c = parseInt(base.slice(1), 16);
-        const R = Math.min(255, ((c >> 16) & 255) * l), Gc = Math.min(255, ((c >> 8) & 255) * l), B = Math.min(255, (c & 255) * l);
-        ctx.fillStyle = `rgb(${R | 0},${Gc | 0},${B | 0})`;
-        const ox = (y % 2) * cs / 2;
-        ctx.beginPath();
-        ctx.ellipse(x * cs + ox + cs / 2, y * cs + cs / 2, cs * 0.44, cs * 0.4, r() * 0.5, 0, 7);
-        ctx.fill();
-        ctx.fillStyle = 'rgba(255,255,255,0.25)';
-        ctx.beginPath(); ctx.ellipse(x * cs + ox + cs * 0.42, y * cs + cs * 0.4, cs * 0.18, cs * 0.1, 0, 0, 7); ctx.fill();
-      }
-    }
-  }, { repeat });
+  return surfaceTex('cobblestone', { base, repeat });
 }
 
 export function stripeTex(a = '#e8574a', b = '#fff4e0', n = 12) {
@@ -32,14 +15,7 @@ export function stripeTex(a = '#e8574a', b = '#fff4e0', n = 12) {
 }
 
 export function plasterTex(base = '#f7f4ee', repeat = [2, 2]) {
-  return canvasTex(128, 128, (ctx, w, h) => {
-    const r = rng(13);
-    ctx.fillStyle = base; ctx.fillRect(0, 0, w, h);
-    for (let i = 0; i < 300; i++) {
-      ctx.fillStyle = r() > 0.5 ? 'rgba(255,255,255,0.25)' : 'rgba(150,140,130,0.08)';
-      ctx.fillRect(r() * w, r() * h, 2 + r() * 4, 2 + r() * 4);
-    }
-  }, { repeat });
+  return surfaceTex('plaster', { base, repeat });
 }
 
 export function clockFace2Tex() {

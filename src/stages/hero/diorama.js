@@ -1,3 +1,4 @@
+import { surfaceTex } from '../../lib/surface-art.js';
 import * as THREE from 'three';
 import { pixTex, pixMat, pixText, Pix } from '../../lib/pixel.js';
 import { add, group, rng } from '../../lib/util.js';
@@ -19,19 +20,7 @@ export const ISLAND = { w: 45, d: 33 };
 
 // ---------------- ドット絵のタイル ----------------
 const T = {
-  brick: () => pixTex('brick', 32, 32, (p) => {
-    p.rect(0, 0, 32, 32, '#6a6a7a');
-    for (let r = 0; r < 4; r++) for (let c = 0; c < 3; c++) {
-      const x = c * 11 + (r % 2 ? 5 : 0), y = r * 8;
-      const tone = ['#9a9aa8', '#a4a2b0', '#8e8e9e'][(r + c) % 3];
-      for (let k = -1; k <= 0; k++) {
-        const xx = x + k * 33;
-        p.rect(xx + 1, y + 1, 10, 6, tone);
-        p.rect(xx + 1, y + 1, 10, 1, '#bcbcca');
-        p.rect(xx + 1, y + 6, 10, 1, '#7e7e8e');
-      }
-    }
-  }, [0.5, 0.5]),
+  brick: () => surfaceTex('heroPixelStone', { base: '#9a9aa8', repeat: [.25, .25], pixel: true }),
   plaster: () => pixTex('plaster', 16, 16, (p) => {
     const r = rng(3);
     p.rect(0, 0, 16, 16, '#f2e6c8');

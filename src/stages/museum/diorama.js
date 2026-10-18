@@ -1,3 +1,4 @@
+import { surfaceTex } from '../../lib/surface-art.js';
 import * as THREE from 'three';
 import { add, mat, glow, G, group, rng, canvasTex, roundRectShape, signTex, FONT } from '../../lib/util.js';
 import { waterize, lightPool } from '../../lib/livefx.js';
@@ -79,7 +80,10 @@ function board(parent, x, z, title, lines, { w = 3.35, h = 2.15, y = 1.85 } = {}
 
 function pad(parent, w, d, color = C.stone) {
   add(parent, G.box(w + 0.28, 0.16, d + 0.28), mat(C.edge), 0, 0.08, 0);
-  add(parent, G.box(w, 0.08, d), mat(color), 0, 0.2, 0);
+  const floor = new THREE.MeshStandardMaterial({
+    map: surfaceTex('museumFloor', { base: color, repeat: [Math.max(1, w / 3), Math.max(1, d / 3)], strength: .55 }), roughness: .65,
+  });
+  add(parent, G.box(w, 0.08, d), floor, 0, 0.2, 0);
   for (const x of [-w / 2 + 0.12, w / 2 - 0.12])
     add(parent, G.box(0.055, 0.015, d - 0.3), mat(C.brass), x, 0.247, 0, { cast: false });
 }

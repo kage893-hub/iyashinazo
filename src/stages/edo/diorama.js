@@ -1,3 +1,4 @@
+import { surfaceCanvasTex } from '../../lib/surface-art.js';
 import * as THREE from 'three';
 import { sway, waterize, lightPool } from '../../lib/livefx.js';
 import { add, mat, glow, G, group, rng, signTex, canvasTex, roundRectShape, FONT } from '../../lib/util.js';
@@ -21,15 +22,14 @@ const vermilion = () => mat('#c8402e', { roughness: 0.7 });
 const tileTex = (c = '#4a4c56', r = [3, 2]) => shinglesTex(c, r);
 
 /** 暖簾のテクスチャ（一文字） */
-const norenTex = (ch, bg = '#2b3a6a', fg = '#fbf4e2') => canvasTex(512, 150, (ctx, w, h) => {
-  ctx.fillStyle = bg; ctx.fillRect(0, 0, w, h);
+const norenTex = (ch, bg = '#2b3a6a', fg = '#fbf4e2') => surfaceCanvasTex('indigoCloth', 512, 150, (ctx, w, h) => {
   // 三枚に分かれたすき間
   ctx.fillStyle = 'rgba(0,0,0,0.25)';
   for (let i = 1; i < 3; i++) ctx.fillRect((i * w) / 3 - 3, h * 0.25, 6, h);
   ctx.fillStyle = fg; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   ctx.font = `900 104px ${FONT}`;
   ctx.fillText(ch, w / 2, h * 0.55);
-});
+}, { base: bg, strength: .45, tiled: true });
 
 /** 縦書きの看板 */
 const tateTex = (text, { bg = '#2a1a14', fg = '#f4dc9a', w = 96, h = 256 } = {}) => canvasTex(w, h, (ctx) => {

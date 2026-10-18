@@ -1,4 +1,5 @@
-// アイテム定義（アイコンはインライン SVG）
+import { itemArt } from '../lib/item-art.js';
+// アイテム定義。末尾で生成画像を重ね、インラインSVGは代替表示として残す。
 const svg = (inner) => `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">${inner}</svg>`;
 
 export const ITEMS = {
@@ -493,3 +494,6 @@ export const ITEMS = {
     icon: svg(`<path d="M26 8 h12 v8 c0 4 6 6 6 14 v22 c0 4 -4 6 -12 6 s-12 -2 -12 -6 v-22 c0 -8 6 -10 6 -14z" fill="#8ad8a0" stroke="#2a6a4a" stroke-width="2.5"/><circle cx="32" cy="22" r="4" fill="#e8f8ff"/><rect x="22" y="36" width="20" height="10" rx="2" fill="#4ab04a"/>`),
   },
 };
+
+// 取得表示・持ち物・使用カーソルは同じ画像を使い、通信失敗時は従来の図を残す。
+for (const [id, item] of Object.entries(ITEMS)) item.icon = itemArt(id, item.icon);

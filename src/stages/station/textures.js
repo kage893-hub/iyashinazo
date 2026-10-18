@@ -1,113 +1,31 @@
+import { surfaceTex } from '../../lib/surface-art.js';
 import * as THREE from 'three';
 import { canvasTex, rng, FONT } from '../../lib/util.js';
 
 // 箱庭で使う手描き風テクスチャ
 
 export function planksTex(base = '#a8754c', lines = '#6e4a2e', n = 8, repeat = [1, 1]) {
-  return canvasTex(256, 256, (ctx, w, h) => {
-    const r = rng(11);
-    ctx.fillStyle = base; ctx.fillRect(0, 0, w, h);
-    const ph = h / n;
-    for (let i = 0; i < n; i++) {
-      ctx.fillStyle = `rgba(${r() > 0.5 ? '255,240,220' : '60,30,10'},${0.05 + r() * 0.08})`;
-      ctx.fillRect(0, i * ph, w, ph);
-      ctx.fillStyle = lines; ctx.fillRect(0, i * ph, w, 2);
-      const off = r() * w;
-      ctx.fillRect(off, i * ph, 2, ph);
-      for (let k = 0; k < 5; k++) {
-        ctx.strokeStyle = 'rgba(70,40,20,0.15)';
-        ctx.beginPath();
-        const yy = i * ph + r() * ph;
-        ctx.moveTo(0, yy); ctx.bezierCurveTo(w * 0.3, yy + 2, w * 0.6, yy - 2, w, yy + 1);
-        ctx.stroke();
-      }
-    }
-  }, { repeat });
+  return surfaceTex('woodPlanks', { base, repeat, rotate: true });
 }
 
 export function boardsTex(base = '#8a5d3b', repeat = [1, 1]) {
-  // 縦板張り
-  return canvasTex(256, 256, (ctx, w, h) => {
-    const r = rng(5);
-    ctx.fillStyle = base; ctx.fillRect(0, 0, w, h);
-    const n = 8, pw = w / n;
-    for (let i = 0; i < n; i++) {
-      ctx.fillStyle = `rgba(${r() > 0.5 ? '255,235,200' : '40,20,10'},${0.06 + r() * 0.1})`;
-      ctx.fillRect(i * pw, 0, pw, h);
-      ctx.fillStyle = 'rgba(40,20,10,0.55)';
-      ctx.fillRect(i * pw, 0, 3, h);
-      ctx.fillStyle = 'rgba(30,20,10,0.6)';
-      ctx.beginPath(); ctx.arc(i * pw + pw / 2, h * 0.15, 2.5, 0, 7); ctx.arc(i * pw + pw / 2, h * 0.85, 2.5, 0, 7); ctx.fill();
-    }
-  }, { repeat });
+  return surfaceTex('agedBoards', { base, repeat });
 }
 
 export function shinglesTex(base = '#3f6177', repeat = [3, 3]) {
-  return canvasTex(256, 256, (ctx, w, h) => {
-    const r = rng(3);
-    ctx.fillStyle = base; ctx.fillRect(0, 0, w, h);
-    const rows = 8, cols = 6, rh = h / rows, cw = w / cols;
-    for (let y = 0; y < rows; y++) {
-      for (let x = -1; x < cols + 1; x++) {
-        const ox = (y % 2) * cw / 2;
-        const l = 0.85 + r() * 0.3;
-        ctx.fillStyle = `rgba(${Math.floor(255 * l * 0.3)},${Math.floor(255 * l * 0.42)},${Math.floor(255 * l * 0.52)},0.55)`;
-        ctx.beginPath();
-        ctx.moveTo(x * cw + ox, y * rh);
-        ctx.lineTo(x * cw + ox, y * rh + rh * 0.6);
-        ctx.quadraticCurveTo(x * cw + ox + cw / 2, y * rh + rh * 1.15, x * cw + ox + cw, y * rh + rh * 0.6);
-        ctx.lineTo(x * cw + ox + cw, y * rh);
-        ctx.fill();
-        ctx.strokeStyle = 'rgba(10,20,30,0.45)';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-      }
-    }
-  }, { repeat });
+  return surfaceTex('roofTiles', { base, repeat, size: 512 });
 }
 
 export function stoneTex(base = '#c9bca4', repeat = [4, 1]) {
-  return canvasTex(256, 128, (ctx, w, h) => {
-    const r = rng(17);
-    ctx.fillStyle = base; ctx.fillRect(0, 0, w, h);
-    const rows = 3, rh = h / rows;
-    for (let y = 0; y < rows; y++) {
-      let x = -r() * 40;
-      while (x < w) {
-        const bw = 40 + r() * 40;
-        const l = 0.9 + r() * 0.2;
-        ctx.fillStyle = `rgba(${Math.floor(200 * l)},${Math.floor(186 * l)},${Math.floor(160 * l)},0.6)`;
-        ctx.fillRect(x + 2, y * rh + 2, bw - 4, rh - 4);
-        x += bw;
-      }
-      ctx.fillStyle = 'rgba(80,70,60,0.5)';
-      ctx.fillRect(0, y * rh, w, 2);
-    }
-  }, { repeat });
+  return surfaceTex('stoneBlocks', { base, repeat });
 }
 
 export function gravelTex(base = '#cdbb98', repeat = [6, 6]) {
-  return canvasTex(256, 256, (ctx, w, h) => {
-    const r = rng(23);
-    ctx.fillStyle = base; ctx.fillRect(0, 0, w, h);
-    for (let i = 0; i < 1400; i++) {
-      const l = r();
-      ctx.fillStyle = l > 0.5 ? `rgba(255,248,230,${0.2 + r() * 0.3})` : `rgba(90,70,50,${0.15 + r() * 0.25})`;
-      const s = 1 + r() * 3;
-      ctx.beginPath(); ctx.ellipse(r() * w, r() * h, s, s * 0.7, r() * 3, 0, 7); ctx.fill();
-    }
-  }, { repeat });
+  return surfaceTex('gravel', { base, repeat });
 }
 
 export function grassTex(base = '#86b35c', repeat = [8, 6]) {
-  return canvasTex(256, 256, (ctx, w, h) => {
-    const r = rng(29);
-    ctx.fillStyle = base; ctx.fillRect(0, 0, w, h);
-    for (let i = 0; i < 900; i++) {
-      ctx.fillStyle = r() > 0.5 ? `rgba(180,220,120,${0.15 + r() * 0.2})` : `rgba(40,80,30,${0.1 + r() * 0.2})`;
-      ctx.fillRect(r() * w, r() * h, 2, 3 + r() * 4);
-    }
-  }, { repeat });
+  return surfaceTex('grass', { base, repeat, strength: .65 });
 }
 
 /** 時計の文字盤 */

@@ -1,3 +1,4 @@
+import { installItemArt } from '../lib/item-art.js';
 // ---------------------------------------------------------------
 // DOM の UI：会話ウィンドウ・持ち物・目的・パネル・トースト
 // ---------------------------------------------------------------
@@ -13,6 +14,7 @@ export function el(tag, cls, html) {
 
 export class UI {
   constructor(audio) {
+    installItemArt();
     this.audio = audio;
     this.speakers = {};
     this.dialogueActive = false;

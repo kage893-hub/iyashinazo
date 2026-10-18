@@ -1,3 +1,4 @@
+import { surfaceCanvasTex } from '../../lib/surface-art.js';
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { add, G, group, mat, rng, canvasTex } from '../../lib/util.js';
@@ -273,9 +274,8 @@ function makeHouse(parent, M) {
 }
 
 function corrugatedMaterial(seed, { heavy = false } = {}) {
-  const r = rng(seed);
-  const map = canvasTex(1024, 1024, (ctx, W, H) => {
-    ctx.fillStyle = '#d7d9d0'; ctx.fillRect(0, 0, W, H);
+  const map = surfaceCanvasTex(heavy ? 'rustedMetal' : 'corrugatedMetal', 512, 512, (ctx, W, H) => {
+    const r = rng(seed);
     for (let x = 0; x < W; x++) {
       const tone = Math.sin(x / W * Math.PI * 2 * 85);
       ctx.fillStyle = tone > 0 ? `rgba(255,255,247,${tone * 0.10})` : `rgba(52,63,57,${-tone * 0.13})`;
@@ -302,7 +302,7 @@ function corrugatedMaterial(seed, { heavy = false } = {}) {
     for (let i = 0; i < 1200; i++) {
       ctx.fillStyle = 'rgba(82,91,77,.035)'; ctx.fillRect(r() * W, r() * H, 1 + r() * 4, 1 + r() * 3);
     }
-  });
+  }, { base: '#d7d9d0', size: 512, strength: heavy ? .75 : .45 });
   return new THREE.MeshStandardMaterial({ map, color: '#ffffff', roughness: 0.94, side: THREE.DoubleSide });
 }
 

@@ -23,7 +23,7 @@ Codex・Claude Code など、このリポジトリで作業するエージェン
 - japan のメニュー「東京のエリアを選ぶ」は、`guide.js` から浅草寺・仲見世／渋谷・時の鐘／浅草駅・ホーム／東京タワー・船着き場／東京駅／上野公園／下町の路地／お台場／新宿・高層ビル街の9地区へ視点を移す。東京駅の窓枠・アーチ玄関・扇形高窓は `station-details.js` で加える。
 - japan の自動販売機は正解274を維持。井戸の札の見出し「札の戸井」を右から読むと「井戸の札」になり、数字「四 七 弐」の向きも見出しから推理する。読み方向を直接教える添え書きは置かない。江戸全体の横書きの慣習を外部知識として要求しない。描画とメモは `panels.js` の `VEND_PLAQUE` を共用する。名所合わせの候補は行ごと・開くたびに並べ替え、答えと同じ順や各行で同一の順序は避ける。
 - japan の渋谷は左109・中央QFRONT・右MAGNET、5本の横断歩道とハチ公口の広場で構成。`shibuya-buildings.js` が名所の建物とセンター街の門、`shibuya-streets.js` が交差点の地面図と駅前広場を担当する。大型ビジョンのAPIと江戸からの調べもののアンカーは維持する。`skyline.js` は双塔・コクーン型・段状など13棟の異なる輪郭、屋上設備、昼夜の位置が一致する窓を作る。
-- 外部アセットはなし。造形はすべてコード、音は Web Audio で合成。
+- 造形はコード、音は Web Audio で合成。生成画像82枚を導入済み（持ち物61種類の63枚＋表面素材19枚）。原本は `assets/generated/`、ゲームは軽量な `assets/runtime/` のWebPだけを読む。対応・再圧縮の手順は [assets/generated/README.md](assets/generated/README.md)。
 - ホーム画面用の `manifest.webmanifest` と `icons/` がある。アプリID `/iyashinazo/` は固定し、scope/start_urlは配信フォルダ内の `./`。同じGitHub Pagesドメインの別ゲームとIDを共有しない。Service Workerやオフラインキャッシュは導入していない。
 
 ## 2. 動かし方
@@ -56,7 +56,9 @@ src/core/audio.js       効果音と曲（SONGS）
 src/core/postfx.js      ポストエフェクト（GRADES：ステージ・場面ごとの色調）
 src/core/tween.js       トゥイーン
 src/data/route.js       路線（順番はここだけ直せばよい）・各駅の「あいことば」（pass）
-src/data/items.js       アイテム定義（SVG アイコン）。id は全ステージで一意
+src/data/items.js       アイテム定義（生成画像＋SVGの代替表示）。id は全ステージで一意
+src/lib/item-art.js     持ち物画像の表示・薬3枚の組み合わせ・読み込み失敗時の代替
+src/lib/surface-art.js  ステージ別の素材読み込み・色合わせ・テクスチャ共有・文字の重ね描き
 src/lib/                共通の造形（creatures*.js・backdrop.js・merge.js・pixel.js・util.js など）
 src/stages/registry.js  実装ずみステージの登録（IMPL）
 src/stages/<id>/        index.js（ステージクラス）・diorama.js（箱庭の造形）・panels.js（謎のパネル）
@@ -108,6 +110,7 @@ hero・maou の HD-2D の住人は `PixelCreature`（`src/lib/pixel.js`）。**�
 ```sh
 npm install              # 初回だけ（playwright。ブラウザ本体は入れなくてよい）
 npm run check            # 全 JS の構文チェック + アイテム id の重複チェック
+node tools/generated-art-regressions.mjs # 82枚の配信画像・所持品・遅延と通信失敗時の表示
 npm run serve &          # 8123 番で配信しておく
 node tools/regressions.mjs # 時間計測・パネル操作・低い画面の回帰確認（CHROMIUM も指定可）
 node tools/save-regressions.mjs # ブラウザ不要：旧セーブ・本編と追加2旅の往復・再開・やり直し

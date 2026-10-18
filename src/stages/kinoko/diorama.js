@@ -1,3 +1,4 @@
+import { surfaceTex } from '../../lib/surface-art.js';
 import * as THREE from 'three';
 import { waterize, sway } from '../../lib/livefx.js';
 import { add, mat, glow, G, group, rng, canvasTex, roundRectShape, FONT } from '../../lib/util.js';
@@ -19,30 +20,9 @@ export const MAP = { cols: 12, rows: 10, x0: -9.75, z0: 3.6, cell: 0.5, stump: [
 export const cellPos = (c, r) => new THREE.Vector3(MAP.x0 + (c + 0.5) * MAP.cell, 0, MAP.z0 + (r + 0.5) * MAP.cell);
 
 // ---------------- テクスチャ ----------------
-const floorTex = () => canvasTex(512, 512, (ctx, w, h) => {
-  const r = rng(81);
-  ctx.fillStyle = '#5e7a44'; ctx.fillRect(0, 0, w, h);
-  // こけのむら
-  for (let i = 0; i < 70; i++) {
-    ctx.fillStyle = r() > 0.5 ? `rgba(130,170,80,${0.18 + r() * 0.2})` : `rgba(70,60,40,${0.12 + r() * 0.15})`;
-    ctx.beginPath(); ctx.ellipse(r() * w, r() * h, 10 + r() * 40, 8 + r() * 30, r() * 3, 0, Math.PI * 2); ctx.fill();
-  }
-  // 落ち葉のかけら・小石
-  for (let i = 0; i < 700; i++) {
-    const c = r();
-    ctx.fillStyle = c > 0.7 ? `rgba(200,180,120,${0.3 + r() * 0.3})` : c > 0.4 ? `rgba(160,200,110,${0.2 + r() * 0.3})` : `rgba(40,50,30,${0.2 + r() * 0.2})`;
-    ctx.fillRect(r() * w, r() * h, 2 + r() * 3, 2 + r() * 5);
-  }
-}, { repeat: [6, 4] });
+const floorTex = () => surfaceTex('moss', { base: '#5e7a44', repeat: [6, 4] });
 
-const soilTex = (repeat = [3, 3]) => canvasTex(256, 256, (ctx, w, h) => {
-  const r = rng(82);
-  ctx.fillStyle = '#6a4a32'; ctx.fillRect(0, 0, w, h);
-  for (let i = 0; i < 900; i++) {
-    ctx.fillStyle = r() > 0.5 ? `rgba(140,100,70,${0.2 + r() * 0.3})` : `rgba(40,26,18,${0.2 + r() * 0.3})`;
-    ctx.beginPath(); ctx.arc(r() * w, r() * h, 1 + r() * 3, 0, Math.PI * 2); ctx.fill();
-  }
-}, { repeat });
+const soilTex = (repeat = [3, 3]) => surfaceTex('soil', { base: '#6a4a32', repeat });
 
 const barkTex = (repeat = [2, 1]) => canvasTex(256, 256, (ctx, w, h) => {
   const r = rng(83);

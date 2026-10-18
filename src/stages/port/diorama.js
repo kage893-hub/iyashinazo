@@ -1,3 +1,4 @@
+import { surfaceTex } from '../../lib/surface-art.js';
 import * as THREE from 'three';
 import { waterize, sway } from '../../lib/livefx.js';
 import { add, mat, glow, G, group, rng, signTex, canvasTex, roundRectShape, FONT } from '../../lib/util.js';
@@ -172,7 +173,7 @@ export function buildPortDiorama(scene) {
   const rock = mat('#8a8478', { flatShading: true, roughness: 1 });
 
   // ---------------- 海の底（砂地） ----------------
-  const sand = new THREE.MeshStandardMaterial({ map: gravelTex('#e2d2a8', [10, 7]), roughness: 1 });
+  const sand = new THREE.MeshStandardMaterial({ map: surfaceTex('sand', { base: '#e2d2a8', repeat: [10, 7] }), roughness: 1 });
   add(root, new THREE.ShapeGeometry(roundRectShape(29.6, 21.6, 2.4), 12), sand, 0, 0.003, 0, { rot: [-Math.PI / 2, 0, 0], cast: false });
   // 海藻と岩（水の中でゆれる）
   const weed = sway(mat('#2a6a4a', { roughness: 0.8 }), { amp: 0.1, speed: 0.6, base: 0 });
