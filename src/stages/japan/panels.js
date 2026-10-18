@@ -19,6 +19,7 @@ export const MODERN = ['東京タワー', '交番', '踏切', '自動販売機',
 export function meishoPanel(ui, audio, { onSolved }) {
   const pick = MEISHO.map(() => null);
   let done = false;
+  const orders = [];
   const body = el('div', 'meishop');
   body.innerHTML = `
     <div class="plaque">大型ビジョン『江戸名所　二百年後』<br><small>江戸の名所があった場所に、いまは何が建っている？</small></div>
@@ -30,11 +31,20 @@ export function meishoPanel(ui, audio, { onSolved }) {
   const rows = MEISHO.map((m, i) => {
     const row = el('div', 'ms-row');
     row.innerHTML = `<span class="ms-edo">${m.icon} ${m.edo}</span><span class="ms-arrow">→</span>`;
+    // 各行の候補は開いた時だけ並べ替え、押している間は順番を固定する。
+    const options = [...MODERN];
+    for (let k = options.length - 1; k > 0; k--) {
+      const j = Math.floor(Math.random() * (k + 1));
+      [options[k], options[j]] = [options[j], options[k]];
+    }
+    const sameOrder = order => order.every((value, k) => value === options[k]);
+    while (sameOrder(MODERN) || orders.some(sameOrder)) options.push(options.shift());
+    orders.push(options);
     const b = el('button', 'btn small-btn ms-pick', '？');
     b.onclick = () => {
       if (done) return;
-      const k = pick[i] == null ? 0 : (MODERN.indexOf(pick[i]) + 1) % (MODERN.length + 1);
-      pick[i] = k === MODERN.length ? null : MODERN[k];
+      const k = pick[i] == null ? 0 : (options.indexOf(pick[i]) + 1) % (options.length + 1);
+      pick[i] = k === options.length ? null : options[k];
       audio.play('click');
       paint();
     };
@@ -242,7 +252,6 @@ export function subwayPanel(ui, audio, { onSolved }) {
 export const VEND_PLAQUE = Object.freeze({
   heading: '札の戸井',
   numbers: '四 七 弐',
-  caption: '見出しと同じ向きに読む',
 });
 export const VEND = [2, 7, 4];
 const DRINKS = ['お茶', 'ラムネ', 'コーヒー', 'サイダー', 'みず', 'ココア', 'いちご牛乳', 'むぎ茶', 'オレンジ'];

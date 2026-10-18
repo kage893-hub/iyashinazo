@@ -28,6 +28,7 @@ import { showAreaGuide } from './guide.js';
 import { meishoPanel, MEISHO, tenuguiHTML, bellPanel2, subwayPanel, vendingPanel, tidePanel, pierBoardHTML, VEND_PLAQUE } from './panels.js';
 
 const V = THREE.Vector3;
+const wellPlaqueHTML = () => `見出し：<b>${VEND_PLAQUE.heading}</b><br>数字：<b>${VEND_PLAQUE.numbers}</b>`;
 // 演出で使う旧市街の座標も、模型と同じ配置へそろえる。
 const cityPoint = (x, y, z) => layoutPoint(new V(x, y, z));
 
@@ -263,9 +264,8 @@ export class JapanStage {
       ctx.fillStyle = 'rgba(250,240,210,0.95)'; ctx.fillRect(0, 0, w, h);
       ctx.strokeStyle = '#5a3a24'; ctx.lineWidth = 8; ctx.strokeRect(4, 4, w - 8, h - 8);
       ctx.fillStyle = '#3a2418'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.font = `700 44px ${FONT}`; ctx.fillText(VEND_PLAQUE.heading, w / 2, 55);
-      ctx.font = `900 100px ${FONT}`; ctx.fillText(VEND_PLAQUE.numbers, w / 2, 161);
-      ctx.font = `700 30px ${FONT}`; ctx.fillText(VEND_PLAQUE.caption, w / 2, 266);
+      ctx.font = `700 44px ${FONT}`; ctx.fillText(VEND_PLAQUE.heading, w / 2, 80);
+      ctx.font = `900 100px ${FONT}`; ctx.fillText(VEND_PLAQUE.numbers, w / 2, 220);
     });
     this.plateMat = new THREE.MeshBasicMaterial({ map: plate, transparent: true, opacity: 0, depthWrite: false, depthTest: false, fog: false });
     this.plate = new THREE.Mesh(new THREE.PlaneGeometry(1.4, .9), this.plateMat);
@@ -401,6 +401,8 @@ export class JapanStage {
 
   applyState() {
     const f = this.g.flags, R = this.R;
+    const plaqueNote = this.g.state.notes?.find(note => note.id === 'jp-well-plaque');
+    if (plaqueNote) plaqueNote.html = wellPlaqueHTML();
     R.jitte.visible = !!f.jitteSeen && !f.jitteGot;
     this._applyLights(f.finaleDone ? 6 : this.progress);
     this._setMukashi(!!f.mukashi, true);
@@ -914,8 +916,8 @@ export class JapanStage {
       await this.say(lines);
     }
     if (this.mukashi) {
-      await this.say([`井戸の札には『${VEND_PLAQUE.heading}』『${VEND_PLAQUE.numbers}』、下には『${VEND_PLAQUE.caption}』と書かれている。`]);
-      g.note('jp-well-plaque', '井戸の札', `見出し：<b>${VEND_PLAQUE.heading}</b><br>数字：<b>${VEND_PLAQUE.numbers}</b><br>${VEND_PLAQUE.caption}`);
+      await this.say([`井戸の札には『${VEND_PLAQUE.heading}』『${VEND_PLAQUE.numbers}』と書かれている。`]);
+      g.note('jp-well-plaque', '井戸の札', wellPlaqueHTML());
     }
     let pending = false;
     vendingPanel(g.ui, g.audio, {

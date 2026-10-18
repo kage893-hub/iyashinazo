@@ -172,7 +172,7 @@ try {
   assert.ok(clue.used); assert.equal([...clue.heading].reverse().join(''), '井戸の札');
   const kanji = { 四: 4, 七: 7, 弐: 2 };
   assert.deepEqual([...clue.numbers.replaceAll(' ', '')].reverse().map(c => kanji[c]), clue.answer);
-  assert.equal(clue.caption, '見出しと同じ向きに読む'); assert.deepEqual(clue.texture, [512, 320]);
+  assert.equal(clue.caption, undefined); assert.deepEqual(clue.texture, [512, 320]);
   await shot('well-plaque-reading-direction');
 
   await page.setViewportSize({ width: 390, height: 844 });
