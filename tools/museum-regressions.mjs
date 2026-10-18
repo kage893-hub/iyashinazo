@@ -42,6 +42,7 @@ try {
     window.clearTimeout = (id) => { __museumTimers.delete(id); originalClearTimeout(id); };
     window.clearInterval = (id) => { __museumTimers.delete(id); originalClearInterval(id); };
   });
+  await page.waitForFunction(() => Number(getComputedStyle(document.querySelector('#fade')).opacity) === 0);
   assert.equal(await page.locator('#fade').evaluate((element) => getComputedStyle(element).opacity), '0', '撮影前に初期フェードが完全に消えている');
 
   const open = async (kind, draft = {}) => {
@@ -144,12 +145,16 @@ try {
         await wrong(/4L/);
         await page.locator('[data-action="fill5"]').click(); await page.locator('[data-action="pour5to3"]').click();
         const saved = await resume(kind);
-        assert.deepEqual(saved, { a: 2, b: 3, moves: 2 });
+        assert.deepEqual(saved, { version: 2, a: 2, b: 3, reserve: 1, watered: [false, false], moves: 2 });
         assert.match(await page.locator('.mu-water-reading-a').innerText(), /^2 \/ 5 L$/);
         assert.match(await page.locator('.mu-water-reading-b').innerText(), /^3 \/ 3 L$/);
         assert.ok(Number(await page.locator('.mu-water-a').getAttribute('height')) > 0, '水位にも保存した量を反映');
-        for (const action of ['empty3', 'pour5to3', 'fill5', 'pour5to3']) await page.locator(`[data-action="${action}"]`).click();
-        assert.match(await page.locator('.mu-water-reading-a').innerText(), /^4 \/ 5 L$/);
+        await page.locator('[data-action="waterDew"]').click();
+        const watered = await resume(kind);
+        assert.deepEqual(watered.watered, [true, false], '一輪の水やりも再開時に保持する');
+        for (const action of ['pour3to5', 'fill5', 'waterMoon']) await page.locator(`[data-action="${action}"]`).click();
+        assert.deepEqual((await draft()).watered, [true, true]);
+        assert.match(await page.locator('.mu-water-reading-a').innerText(), /^0 \/ 5 L$/);
         assert.equal((await draft()).moves, 6);
       } else {
         await wrong(/出発する方位/);

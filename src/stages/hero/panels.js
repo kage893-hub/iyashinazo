@@ -224,9 +224,10 @@ export const ORDERS = [
 const gcd = (a, b) => (b ? gcd(b, a % b) : a);
 const norm = (v) => { const g = v.reduce((a, b) => gcd(a, b), 0) || 1; return v.map((x) => x / g).join(','); };
 
-export function mixPanel(ui, audio, { onSolved }) {
-  let step = 0;
-  let drops = [0, 0, 0];
+export function mixPanel(ui, audio, { onSolved, draft = {}, onChange = () => {} }) {
+  let step = Number.isInteger(draft?.step) && draft.step >= 0 && draft.step < ORDERS.length ? draft.step : 0;
+  let drops = Array.isArray(draft?.drops) && draft.drops.length === 3 && draft.drops.every(n => Number.isInteger(n) && n >= 0) && draft.drops.reduce((a, b) => a + b, 0) <= 3 ? [...draft.drops] : [0, 0, 0];
+  const remember = () => onChange({ step, drops: [...drops] });
   let done = false;
   const body = el('div', 'mixp');
   body.innerHTML = `
@@ -259,11 +260,12 @@ export function mixPanel(ui, audio, { onSolved }) {
       if (done) return;
       if (drops[0] + drops[1] + drops[2] >= 3) { msg.textContent = 'びんは3てきでいっぱい。ちがったら、いちどすてよう。'; return; }
       drops[+b.dataset.i]++;
+      remember();
       audio.play('pop');
       paint();
     };
   });
-  body.querySelector('.mx-empty').onclick = () => { if (done) return; drops = [0, 0, 0]; audio.play('water'); paint(); };
+  body.querySelector('.mx-empty').onclick = () => { if (done) return; drops = [0, 0, 0]; remember(); audio.play('water'); paint(); };
   body.querySelector('.mx-ok').onclick = () => {
     if (done) return;
     if (!drops.some(Boolean)) return;
@@ -279,6 +281,7 @@ export function mixPanel(ui, audio, { onSolved }) {
         setTimeout(() => onSolved(panel), 1200);
         return;
       }
+      remember();
       paint();
       msg.textContent = `${ORDERS[step - 1].name}ができた！ つぎは${ORDERS[step].name}。`;
       return;

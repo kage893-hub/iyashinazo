@@ -24,6 +24,9 @@ Codex・Claude Code など、このリポジトリで作業するエージェン
 - japan の自動販売機は正解274を維持。井戸の札の見出し「札の戸井」を右から読むと「井戸の札」になり、数字「四 七 弐」の向きも見出しから推理する。読み方向を直接教える添え書きは置かない。江戸全体の横書きの慣習を外部知識として要求しない。描画とメモは `panels.js` の `VEND_PLAQUE` を共用する。名所合わせの候補は行ごと・開くたびに並べ替え、答えと同じ順や各行で同一の順序は避ける。
 - japan の渋谷は左109・中央QFRONT・右MAGNET、5本の横断歩道とハチ公口の広場で構成。`shibuya-buildings.js` が名所の建物とセンター街の門、`shibuya-streets.js` が交差点の地面図と駅前広場を担当する。大型ビジョンのAPIと江戸からの調べもののアンカーは維持する。`skyline.js` は双塔・コクーン型・段状など13棟の異なる輪郭、屋上設備、昼夜の位置が一致する窓を作る。
 - 造形はコード、音は Web Audio で合成。生成画像82枚を導入済み（持ち物61種類の63枚＋表面素材19枚）。原本は `assets/generated/`、ゲームは軽量な `assets/runtime/` のWebPだけを読む。対応・再圧縮の手順は [assets/generated/README.md](assets/generated/README.md)。
+- パズルのスマホ操作：地下鉄はパネル内の拡大路線図と隣駅ボタン、宝さがし・オルゴールは44pxのセルと局所スクロールを使う。盤面のためにパネル全体を横にはみ出させない。
+- 薬づくりは `flags.mixDraft`（step/drops）、オルゴールは `flags.musicDraft`（pins）を入力ごとに保存。完成済みの薬・支払いを保持する。縦画面の会話中だけ目標欄を一時的に畳み、会話終了・横戻しで手動設定を復元する。
+- 博物館の温室は雨水6Lを露の花2L・月の花4Lへ分ける。5Lじょうろと3Lバケツを使い、花へはじょうろから一度ずつ注ぐ。水はタンクへ戻せる。`muDrafts.garden` のversion 2で残水・水やり済みも保存し、旧達成フラグは維持。旧版の案内メモは読み込み時に更新する。
 - ホーム画面用の `manifest.webmanifest` と `icons/` がある。アプリID `/iyashinazo/` は固定し、scope/start_urlは配信フォルダ内の `./`。同じGitHub Pagesドメインの別ゲームとIDを共有しない。Service Workerやオフラインキャッシュは導入していない。
 
 ## 2. 動かし方
@@ -120,6 +123,8 @@ node tools/tokyo-visibility-regressions.mjs # 通常画質：ホーム・時計�
 node tools/saga-building-puzzles-regressions.mjs # 看板5枚の撤去・縦横の建物実クリック・手がかりと旧セーブ
 node tools/rural-refresh-regressions.mjs # 通常画質：新店舗・吉野ヶ里・作業場・不要看板と旧セーブ
 node tools/japan-city-regressions.mjs # 通常画質の実箱庭：縦横の構図・模型の非交差・旧アンカー・9地区・保存再読込（通しプレイなし）
+node tools/playtest-improvements-regressions.mjs # 44pxの操作・地下鉄の拡大と隣駅・薬とピンの再読込保存・縦会話の目標欄
+node tools/improvement-scenes.mjs # 通常画質：長老の会話と温室の2輪、旧クリア済みと案内メモの移行
 node tools/museum-logic-regressions.mjs # ブラウザ不要：地層の一意性・光路・配送・水量
 node tools/saga-logic-regressions.mjs # ブラウザ不要：佐賀の旅程・買物・水門・風読み・観察の条件
 node tools/extra-regressions.mjs # 追加2旅の選択と実Gameの保存・導入・復帰（箱庭だけ仮の駅）

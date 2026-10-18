@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import {
   FOSSIL_ANSWER, PRISM_ANSWER, tracePrism, ARCHIVE_RULES, ARCHIVE_EDGES,
-  checkArchiveRoute, gardenStep,
+  checkArchiveRoute, gardenStep, restoreGarden,
 } from '../src/stages/museum/panels.js';
 
 let passed = 0;
@@ -75,29 +75,44 @@ test('書庫: 階段・未返却・切断・距離超過・受付以外からの
   assert.equal(checkArchiveRoute(null).ok, false);
 });
 
-test('温室: 全容量・全操作で境界を守り、移す操作は水の総量を保つ', () => {
-  const operations = ['fill5', 'fill3', 'empty5', 'empty3', 'pour5to3', 'pour3to5'];
-  for (let a = 0; a <= 5; a++) for (let b = 0; b <= 3; b++) for (const action of operations) {
-    const next = gardenStep({ a, b }, action);
-    assert.ok(Number.isInteger(next.a) && next.a >= 0 && next.a <= 5);
-    assert.ok(Number.isInteger(next.b) && next.b >= 0 && next.b <= 3);
-    if (action === 'pour5to3') { assert.equal(next.a + next.b, a + b); assert.ok(next.a === 0 || next.b === 3); }
-    if (action === 'pour3to5') { assert.equal(next.a + next.b, a + b); assert.ok(next.b === 0 || next.a === 5); }
-  }
-  const queue = [{ a: 0, b: 0, path: [] }], seen = new Set(['0,0']);
-  let solution;
+test('温室: 雨水6Lを保存し、ふたつの花へ一度ずつ配分できる', () => {
+  const operations = ['fill5', 'fill3', 'empty5', 'empty3', 'pour5to3', 'pour3to5', 'waterDew', 'waterMoon'];
+  const start = restoreGarden({});
+  const key = s => JSON.stringify(s);
+  const queue = [start], seen = new Map([[key(start), start]]), edges = new Map();
   while (queue.length) {
-    const current = queue.shift();
-    if (current.a === 4) { solution = current; break; }
+    const current = queue.shift(), destinations = [];
     for (const action of operations) {
-      const next = gardenStep(current, action), key = `${next.a},${next.b}`;
-      if (!seen.has(key)) { seen.add(key); queue.push({ ...next, path: [...current.path, action] }); }
+      const next = gardenStep(current, action);
+      assert.ok(next.a >= 0 && next.a <= 5 && next.b >= 0 && next.b <= 3 && next.reserve >= 0);
+      assert.equal(next.a + next.b + next.reserve + (next.watered[0] ? 2 : 0) + (next.watered[1] ? 4 : 0), 6);
+      if (action === 'waterDew' && current.a !== 2) assert.deepEqual(next, current);
+      if (action === 'waterMoon' && current.a !== 4) assert.deepEqual(next, current);
+      const id = key(next); destinations.push(id);
+      if (!seen.has(id)) { seen.set(id, next); queue.push(next); }
     }
+    edges.set(key(current), destinations);
   }
-  assert.equal(solution?.a, 4);
-  assert.equal(solution.path.length, 6, '時間待ちや途中停止なしの6操作で4Lを量れる');
-  assert.deepEqual(gardenStep({ a: 5, b: 2 }, 'pour5to3'), { a: 4, b: 3 });
-  assert.deepEqual(gardenStep({ a: -1, b: 9 }, 'restore'), { a: 0, b: 0 });
+  const winning = new Set([...seen].filter(([,s]) => s.watered.every(Boolean)).map(([id]) => id));
+  assert.ok(winning.size > 0);
+  let changed = true;
+  while (changed) { changed = false; for (const [id, targets] of edges) if (!winning.has(id) && targets.some(t => winning.has(t))) { winning.add(id); changed = true; } }
+  assert.equal(winning.size, seen.size, 'どの到達状態からも水を戻して解き直せる');
+  let solved = start;
+  for (const action of ['fill5', 'pour5to3', 'waterDew', 'pour3to5', 'fill5', 'waterMoon']) solved = gardenStep(solved, action);
+  assert.deepEqual(solved.watered, [true, true]);
+  assert.equal(solved.reserve + solved.a + solved.b, 0);
+  let oldAnswer = start;
+  for (const action of ['fill5', 'pour5to3', 'empty3', 'pour5to3', 'fill5', 'pour5to3']) oldAnswer = gardenStep(oldAnswer, action);
+  assert.equal(oldAnswer.watered.some(Boolean), false, '温泉街の量り方だけでは花は咲かない');
+});
+
+test('温室: 旧セーブの容器は可能な範囲で移行し、不正な量は正常化する', () => {
+  assert.deepEqual(restoreGarden({ a: 2, b: 3, moves: 2 }), { version: 2, a: 2, b: 3, reserve: 1, watered: [false, false] });
+  assert.deepEqual(restoreGarden({ a: 4, b: 3 }), restoreGarden({}));
+  assert.deepEqual(restoreGarden({ version: 2, a: 1, b: 1, reserve: 6, watered: [true, false] }), restoreGarden({}));
+  const saved = { version: 2, a: 0, b: 3, reserve: 1, watered: [true, false] };
+  assert.deepEqual(restoreGarden(JSON.parse(JSON.stringify(saved))), saved);
 });
 
 console.log(`PASS ${passed} checks`);

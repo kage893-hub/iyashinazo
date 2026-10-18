@@ -184,13 +184,21 @@ export function subwayPanel(ui, audio, { onSolved }) {
   const body = el('div', 'subp');
   body.innerHTML = `
     <div class="plaque">地下鉄の路線図<br><small>人形焼を、<b>浅草</b>から<b>渋谷</b>のネコへ。とちゅう<b>秋葉原</b>のカラスと、<b>東京</b>の駅長にも、ひとつずつ。<br>乗りかえは<b>3回まで</b>。</small></div>
-    <svg class="sb-map" viewBox="0 0 380 290"></svg>
+    <button class="btn small-btn sb-zoom" aria-pressed="false">路線図を拡大</button>
+    <div class="sb-mapwrap" tabindex="0" aria-label="路線図・拡大時は縦横にスクロール"><svg class="sb-map" viewBox="-18 -24 416 332"></svg></div>
+    <p class="panel-note small">次の駅を選ぶ</p><div class="sb-neighbors"></div>
     <div class="sb-route"></div>
     <div class="ml-foot"><button class="btn small-btn sb-back">ひとつもどる</button> <button class="btn small-btn sb-reset">はじめから</button> <button class="btn primary sb-go">この道順で行く</button></div>
     <p class="panel-note small sb-msg">となりの駅を順に押して、道順をつくろう。</p>`;
   const svg = body.querySelector('.sb-map');
   const msg = body.querySelector('.sb-msg');
   const routeEl = body.querySelector('.sb-route');
+  const neighbors = body.querySelector('.sb-neighbors');
+  body.querySelector('.sb-zoom').onclick = (e) => {
+    const zoomed = body.querySelector('.sb-mapwrap').classList.toggle('zoomed');
+    e.currentTarget.setAttribute('aria-pressed', String(zoomed));
+    e.currentTarget.textContent = zoomed ? '路線図を全体表示' : '路線図を拡大';
+  };
   const draw = () => {
     let h = '';
     for (const L of Object.values(LINES)) {
@@ -209,6 +217,12 @@ export function subwayPanel(ui, audio, { onSolved }) {
     }
     svg.innerHTML = h;
     svg.querySelectorAll('.sb-st').forEach((g) => { g.onclick = () => tap(g.dataset.s); });
+    neighbors.replaceChildren();
+    for (const station of Object.keys(POS).filter(s => edgeLine(cur, s))) {
+      const button = el('button', 'btn sb-next', station);
+      button.onclick = () => tap(station);
+      neighbors.appendChild(button);
+    }
     const res = checkRoute(route);
     routeEl.innerHTML = route.map((s, i) => (i ? `<span class="sb-ln" style="background:${LINES[res.lines[i - 1]].color}"></span>` : '') + `<span class="sb-rs">${s}</span>`).join('') + `<span class="sb-tr">乗りかえ ${res.transfers}回</span>`;
   };

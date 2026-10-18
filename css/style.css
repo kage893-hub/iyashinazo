@@ -730,11 +730,10 @@ body.rpg .extra-panel .panel-title { color: var(--navy); font-weight: 900; }
 .digp { text-align: center; }
 .digp .plaque small { font-weight: 500; }
 .digp .plaque b { color: #b0401e; }
-.dg-wrap { position: relative; margin: 14px auto 4px; width: min(360px, 82vw); }
+.dg-wrap { margin: 8px auto 4px; width: 100%; max-height: 48svh; overflow: auto; overscroll-behavior: contain; border-radius: 10px; }
 .dg-n { font-weight: 900; color: #6a4a2e; font-size: 13px; margin-bottom: 2px; }
-.dg-e { position: absolute; right: -30px; top: 50%; font-weight: 900; color: #6a4a2e; font-size: 13px; }
-.dg-grid { display: grid; gap: 2px; padding: 6px; background: #4a3220; border-radius: 10px; }
-.dg-c { aspect-ratio: 1; border: none; border-radius: 3px; background: #8a6440; cursor: pointer; padding: 0; font-size: 15px; line-height: 1; }
+.dg-grid { display: grid; width: max-content; min-width: 100%; grid-auto-rows: 44px; gap: 2px; padding: 6px; background: #4a3220; border-radius: 10px; }
+.dg-c { width: 44px; height: 44px; border: none; border-radius: 3px; background: #8a6440; cursor: pointer; padding: 0; font-size: 15px; line-height: 1; }
 .dg-c:hover { background: #a07a50; }
 .dg-c.mark { background: #6a8a4a; cursor: default; }
 .dg-c.sel { background: #f0c040; box-shadow: 0 0 0 2px #fff8d0 inset; }
@@ -769,7 +768,6 @@ body.rpg .extra-panel .panel-title { color: var(--navy); font-weight: 900; }
 @media (max-width: 520px), (max-height: 700px) {
   .sh-screen { width: min(210px, 60vw); margin: 4px auto; }
   .shadowp .plaque, .digp .plaque { padding: 8px 10px; font-size: 14px; }
-  .dg-wrap { width: min(300px, 76vw); }
 }
 
 /* ---------- おもちゃの街：歯車の塔 ---------- */
@@ -786,9 +784,11 @@ body.rpg .extra-panel .panel-title { color: var(--navy); font-weight: 900; }
 .gr-stock span { margin: 0 6px; }
 .gr-stock span.over { color: #c83a2a; }
 /* ---------- おもちゃの街：オルゴール ---------- */
-.mu-grid { display: grid; grid-template-columns: 30px repeat(8, 1fr); gap: 3px; width: min(360px, 84vw); margin: 12px auto 8px; padding: 8px; background: linear-gradient(#e8c25a, #c89a3a); border-radius: 10px; }
-.mu-lbl { font-weight: 900; font-size: 13px; color: #5a3a14; display: flex; align-items: center; justify-content: center; }
-.mu-c { aspect-ratio: 1.3; border: none; border-radius: 4px; background: rgba(255, 248, 220, 0.55); cursor: pointer; padding: 0; }
+.music-scroll { width: 100%; overflow-x: auto; overscroll-behavior: contain; border-radius: 10px; }
+.mu-grid { display: grid; grid-template-columns: 30px repeat(8, 44px); gap: 3px; width: max-content; margin: 12px auto 8px; padding: 8px; background: linear-gradient(#e8c25a, #c89a3a); border-radius: 10px; }
+.mu-lbl { position: sticky; left: 0; background: #e8c25a; font-weight: 900; font-size: 13px; color: #5a3a14; display: flex; align-items: center; justify-content: center; }
+.mu-col { text-align: center; font-size: 13px; font-weight: 900; color: #5a3a14; line-height: 22px; }
+.mu-c { width: 44px; height: 44px; border: none; border-radius: 4px; background: rgba(255, 248, 220, 0.55); cursor: pointer; padding: 0; }
 .mu-c:hover { background: rgba(255, 255, 255, 0.85); }
 .mu-c.pin { background: radial-gradient(circle, #5a5a6a 0 30%, #fff8e0 34%); }
 .musicp.solved .mu-grid { box-shadow: 0 0 18px 4px rgba(255, 220, 120, 0.8); }
@@ -830,7 +830,12 @@ body.rpg .extra-panel .panel-title { color: var(--navy); font-weight: 900; }
 .tn-foot { font-size: 12px; text-align: center; margin-top: 8px; }
 @media (max-width: 520px) { .tn-grid { grid-template-columns: repeat(4, 1fr); } }
 /* ---------- とうきょう：路線図 ---------- */
-.sb-map { width: min(420px, 86vw); height: auto; display: block; margin: 8px auto 4px; background: #fbfaf6; border-radius: 10px; border: 2px solid #e0dccf; }
+.sb-mapwrap { width: 100%; overflow: auto; overscroll-behavior: contain; margin: 8px auto; }
+.sb-mapwrap.zoomed { max-height: 46svh; }
+.sb-mapwrap.zoomed .sb-map { width: 660px; max-width: none; }
+.sb-neighbors { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 6px 0 12px; }
+.sb-next { min-height: 44px; min-width: 76px; }
+.sb-map { width: 100%; max-width: 420px; height: auto; display: block; margin: 8px auto 4px; background: #fbfaf6; border-radius: 10px; border: 2px solid #e0dccf; }
 .sb-st { cursor: default; }
 .sb-st.adj { cursor: pointer; }
 .sb-st.adj circle { stroke: #e8603a; stroke-width: 3.5; }

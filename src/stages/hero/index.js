@@ -863,6 +863,8 @@ export class HeroStage {
     const g = this.g;
     let pending = false;
     mixPanel(g.ui, g.audio, {
+      draft: g.flags.mixDraft,
+      onChange: draft => g.flag('mixDraft', draft),
       onSolved: async (panel) => { pending = true; panel.close(); await this.potionsReady(); pending = false; },
     });
     return this.waitPanel(() => pending);

@@ -151,25 +151,31 @@ export const NOTE_NAMES = ['ド', 'レ', 'ミ', 'ソ', 'ラ'];
 export const NOTE_MIDI = [72, 74, 76, 79, 81];
 export const SONG = [...SCORE[0], ...SCORE[1]];
 
-export function musicPanel(ui, audio, { onSolved, play }) {
-  const pins = Array(8).fill(null);
+export function musicPanel(ui, audio, { onSolved, play, draft = {}, onChange = () => {} }) {
+  const pins = Array.from({ length: 8 }, (_, i) => Number.isInteger(draft?.pins?.[i]) && draft.pins[i] >= 0 && draft.pins[i] < 5 ? draft.pins[i] : null);
+  const remember = () => onChange({ pins: [...pins] });
   let done = false;
   const body = el('div', 'musicp');
   body.innerHTML = `
     <div class="plaque">オルゴールの太鼓<br><small>8つの音に、ピンを打とう。ひとつの列に、ピンはひとつ。</small></div>
-    <div class="mu-grid"></div>
-    <div class="ml-foot"><button class="btn small-btn mu-play">♪ 鳴らしてみる</button> <button class="btn primary mu-go">これで決める</button></div>
+    <p class="panel-note small">盤面は左右にスクロールできます。入力は閉じても残ります。</p>
+    <div class="music-scroll" tabindex="0" aria-label="オルゴールの盤面・左右にスクロール"><div class="mu-grid"></div></div>
+    <div class="ml-foot"><button class="btn small-btn mu-reset">ピンをすべて抜く</button> <button class="btn small-btn mu-play">♪ 鳴らしてみる</button> <button class="btn primary mu-go">これで決める</button></div>
     <p class="panel-note small mu-msg">楽譜は、積み木の色の並び。どの色がどの音かは……？</p>`;
   const grid = body.querySelector('.mu-grid');
   const msg = body.querySelector('.mu-msg');
   const cells = [];
+  grid.appendChild(el('div', 'mu-lbl', '音'));
+  for (let col = 0; col < 8; col++) grid.appendChild(el('div', 'mu-col', String(col + 1)));
   for (let row = 4; row >= 0; row--) {
     grid.appendChild(el('div', 'mu-lbl', NOTE_NAMES[row]));
     for (let col = 0; col < 8; col++) {
       const b = el('button', 'mu-c');
+      b.setAttribute('aria-label', `${col + 1}音目：${NOTE_NAMES[row]}`);
       b.onclick = () => {
         if (done) return;
         pins[col] = pins[col] === row ? null : row;
+        remember();
         if (pins[col] != null) play([NOTE_MIDI[row]]);
         paint();
       };
@@ -178,6 +184,7 @@ export function musicPanel(ui, audio, { onSolved, play }) {
     }
   }
   const paint = () => cells.forEach(({ b, row, col }) => b.classList.toggle('pin', pins[col] === row));
+  body.querySelector('.mu-reset').onclick = () => { if (done) return; pins.fill(null); remember(); paint(); audio.play('click'); };
   body.querySelector('.mu-play').onclick = () => { play(pins.map((p) => (p == null ? null : NOTE_MIDI[p]))); };
   body.querySelector('.mu-go').onclick = () => {
     if (done) return;

@@ -396,6 +396,13 @@ function makeGarden(R, root) {
     const a = i * Math.PI * 2 / 7;
     add(R.gardenBloom, G.sphere(0.045, 8, 6), glow('#fff1b9', 0.6), Math.cos(a) * 0.14, 0.34, Math.sin(a) * 0.14, { cast: false });
   }
+  // 露の花は月の花より小さく、池の右手で一緒に咲く。
+  rod(pond, [1.6, 0.3, 0.5], [1.6, 1.1, 0.5], 0.04, mat(C.leaf));
+  add(pond, G.sphere(0.17, 14, 10), mat('#bbd8cf'), 1.6, 1.1, 0.5, { scale: [0.7, 1.2, 0.7] });
+  R.gardenDewBloom = R.gardenBloom.clone(true);
+  R.gardenDewBloom.position.set(1.6, 1.1, 0.5);
+  R.gardenDewBloom.scale.setScalar(0.65);
+  pond.add(R.gardenDewBloom);
   // 小さな反り橋。中央の月の花を隠さないよう、池の左手に渡す。
   const bridge = group(g, -2.65, 0.37, 0.0, Math.PI / 2);
   for (let i = 0; i < 12; i++) {
@@ -427,7 +434,7 @@ function makeGarden(R, root) {
     }
   }
   progressLamp(R, g, 4.7, 2.7, '花');
-  R.gardenClue = board(root, 23.0, 9.6, '月の温室', ['花に必要な水は4リットル', '5Lじょうろと3Lバケツ']);
+  R.gardenClue = board(root, 23.0, 9.6, '月の温室', ['雨水6Lを、露の花2Lと月の花4Lへ', '5Lじょうろと3Lバケツ']);
 }
 
 function makeLightBench(R, root) {

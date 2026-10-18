@@ -624,6 +624,8 @@ export class ToyStage {
     if (!f.rabbitAwake) return this.say(['大きなオルゴール。ふたが開いていて、中の金色の太鼓が見える。', '太鼓のピンが、ぜんぶぬけている。上には、止まったウサギの人形。']);
     let pending = false;
     musicPanel(g.ui, g.audio, {
+      draft: f.musicDraft,
+      onChange: draft => g.flag('musicDraft', draft),
       play: (list) => this.playNotes(list),
       onSolved: async (panel) => {
         pending = true;

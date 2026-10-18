@@ -34,18 +34,21 @@ export function digPanel(ui, audio, { dug = [], onDig, onSolved }) {
   const body = el('div', 'digp');
   body.innerHTML = `
     <div class="plaque">ふかふかの土の広場<br><small>${MAP_TEXT}</small></div>
-    <div class="dg-wrap"><div class="dg-n">北 ▲</div><div class="dg-grid"></div><div class="dg-e">東 ▶</div></div>
+    <div class="dg-n">北 ▲　／　東 ▶</div>
+    <p class="panel-note small">盤面は縦横にスクロールできます。</p>
+    <div class="dg-wrap" tabindex="0" aria-label="宝さがしの盤面・縦横にスクロール"><div class="dg-grid"></div></div>
     <div class="dg-legend">1マス ＝ 🐜アリ 1ぴき</div>
     <div class="ml-foot"><button class="btn primary dg-go">ここを掘る</button></div>
     <p class="panel-note small dg-msg">掘る場所をえらんでね。</p>`;
   const grid = body.querySelector('.dg-grid');
-  grid.style.gridTemplateColumns = `repeat(${MAP.cols}, 1fr)`;
+  grid.style.gridTemplateColumns = `repeat(${MAP.cols}, 44px)`;
   const msg = body.querySelector('.dg-msg');
   const marks = { [`${MAP.stump[0]},${MAP.stump[1]}`]: '🪵' };
   const cells = [];
   for (let r = 0; r < MAP.rows; r++) {
     for (let c = 0; c < MAP.cols; c++) {
       const b = el('button', 'dg-c', marks[`${c},${r}`] || '');
+      b.setAttribute('aria-label', `西から${c + 1}、北から${r + 1}マス目${marks[`${c},${r}`] ? '・切り株' : ''}`);
       if (marks[`${c},${r}`]) b.classList.add('mark');
       if (dug.includes(`${c},${r}`)) b.classList.add('dug');
       b.onclick = () => {
@@ -81,6 +84,7 @@ export function digPanel(ui, audio, { dug = [], onDig, onSolved }) {
     msg.textContent = near ? 'カエル「なんだか、近い気がするケロ……！」' : list[(c + r) % list.length];
   };
   const panel = ui.openPanel({ title: '宝さがし', body });
+  requestAnimationFrame(() => { body.querySelector('.dg-wrap').scrollTop = Math.max(0, MAP.stump[1] * 46 - 220); });
   return panel;
 }
 

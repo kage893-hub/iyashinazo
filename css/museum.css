@@ -165,3 +165,9 @@ body.museum .banner-main { font-size: clamp(26px, 6.8vw, 66px); letter-spacing: 
   .mu-map-node.shelf { min-width: 55px; }
   .mu-mirror { width: 42px; height: 42px; }
 }
+
+/* 限られた雨水をふたつの花へ分ける温室。 */
+.mu-reserve { text-align: center; padding: 10px; border: 1px solid #a6b7ad; border-radius: 10px; font-weight: 700; background: #edf3ec; }
+.mu-flowers { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 12px 0; }
+.mu-flowers .btn { min-height: 52px; white-space: normal; padding: 10px; }
+.mu-flower.watered { background: #d9ebd7; color: #325c42; opacity: 1; }

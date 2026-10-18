@@ -184,9 +184,16 @@ export class MuseumStage {
 
   applyState() {
     const f = this.g.flags, R = this.R;
+    // 以前に読んだメモも、新しい温室のルールと食い違わないように更新する。
+    const gardenNote = this.g.state.notes?.find(note => note.id === 'mu-clue-garden');
+    if (gardenNote && gardenNote.html !== gardenClueHTML()) {
+      gardenNote.html = gardenClueHTML();
+      this.g.save();
+    }
     R.fossilRestored.visible = !!f.muFossilDone;
     R.archiveLamp.visible = !!f.muArchiveDone;
     R.gardenBloom.visible = !!f.muGardenDone;
+    R.gardenDewBloom.visible = !!f.muGardenDone;
     R.lightBeam.visible = !!f.muPrismDone;
     R.starCanopy.visible = !!f.muOrreryDone;
     const flags = ['muFossilDone', 'muArchiveDone', 'muGardenDone', 'muPrismDone'];
@@ -238,7 +245,7 @@ export class MuseumStage {
     const id = f.muActiveRoom && ROOMS[f.muActiveRoom] && !f[ROOMS[f.muActiveRoom].flag] ? f.muActiveRoom : Object.keys(ROOMS).find(k => !f[ROOMS[k].flag]);
     if (id === 'fossil') return H('mu-fossil', '左手前の化石展示。地層の案内は、下が古く、上が新しい。', '魚は貝と葉のあいだ。羽は葉のすぐ次。足跡は、いちばん新しい。', '古い順に「貝 → 魚 → 葉 → 羽 → 足跡」。下から並べて、確かめよう。');
     if (id === 'archive') return H('mu-archive', '左奥の書庫。台車は階段を通れない。貝・羽・葉、3つの棚に本を返そう。', 'まず北側の2つの棚、それから南東の棚へ。外周を回ると、階段を使わずに進める。', '受付 → 西通路 → 貝の棚 → 丸窓 → 羽の棚 → 東通路 → 葉の棚 → 搬出口。');
-    if (id === 'garden') return H('mu-garden', '右手前の庭。5Lのじょうろと3Lのバケツで、じょうろに4Lぴったり作ろう。', '5Lをいっぱいにして3Lへ注ぐと、2L残る。バケツを空にして、その2Lを移そう。', 'じょうろをもう一度5Lに満たす。2L入ったバケツへあと1L注ぐと、じょうろに4L残る。');
+    if (id === 'garden') return H('mu-garden', '右手前の庭。6Lの雨水を、露の花に2L、月の花に4L。花へは、じょうろから一度ずつ注ごう。', '先に小さな花を考えよう。じょうろを満たしてバケツへ移すと、どちらに何L残るかな？ タンクに残る量も数えてみよう。', '5L汲んで3Lをバケツへ。じょうろの2Lを露の花へ届けよう。バケツの3Lをじょうろに戻し、タンクに残った1Lを足すと、月の花の4Lになる。');
     if (id === 'prism') return H('mu-prism', '右奥の光の回廊。鏡を回し、5枚全部を通って、出口へ光を届けよう。', '光は最初、中央から上へ。上の列を右へ進み、右端から下、下の列を左へと回る。', '光が通る順の鏡は「／、／、＼、／、＼」。最後は左から2列めを上がって出口へ。');
     return H('mu-orrery', '4つの印がそろった。中央奥の天球儀を調べよう。', '目盛は北から時計回りに0〜7。印に書かれた出発の方位から、指定の向きへ数えよう。', '貝は西（6）、羽は北東（1）、葉は北（0）、星は南東（3）に合わせよう。');
   }
@@ -279,7 +286,7 @@ export class MuseumStage {
     const lines = {
       fox: ['この骨、こわくないよ。ずっと昔、海を眺めていた生き物なんだ。', '標本の札が入れかわってしまってね。地層の記録を頼りに、古い順に並べてほしい。'],
       otter: ['夜の書庫へようこそ。本は眠っていないよ。読んでもらう順番を待っているんだ。', '貝・羽・葉の棚へ、返却本を届けたい。台車で階段は通れないから、通路の地図をよく見てね。'],
-      tortoise: ['この月の花は、水をちょうど4Lもらうと開くんじゃ。多くても少なくても、まだ夢の中。', 'じょうろは5L、バケツは3L。目分量でなく、いっぱいか空になるまで注ぐ。ゆっくり考えればよい。'],
+      tortoise: ['露の花には2L、月の花には4L。タンクの雨水6Lを、ふたつの花に分けてほしいんじゃ。', 'じょうろは5L、バケツは3L。タンクが空ならそれ以上は汲めん。花へはじょうろから、一度ずつ注ぐんじゃ。'],
       momonga: ['光ってね、曲がり角でも迷わないんだ。鏡が道を教えてあげれば。', '5枚の鏡を全部通して、星形の出口まで光をつないで。鏡は押すたびに向きが変わるよ。'],
     };
     const thanks = {
@@ -341,7 +348,7 @@ export class MuseumStage {
     const text = {
       fossil: '地層の札がそろうと、キツネが最後の骨をそっとつないだ。琥珀の灯りに、長い尾が浮かびあがる。',
       archive: 'ことこと……。返却本が棚に収まり、丸窓の読書灯がひとつずつともった。',
-      garden: '4Lの水が根にしみこむと、月の花が静かにひらいた。花びらの内側に、星のような光がまたたく。',
+      garden: '2Lと4Lの雨水が、ふたつの根にしみこんだ。露の花と月の花が静かにひらき、花びらの内側に星のような光がまたたく。',
       prism: '鏡から鏡へ、細い光が渡っていく。最後の出口に届いた瞬間、回廊が淡い金色に輝いた。',
     };
     await this.say([text[id], `【${seal.name}】を手帳に写した。そこには「${seal.clue}」と刻まれている。`]);

@@ -35,8 +35,10 @@ export class UI {
     this.questsEl.addEventListener('pointerdown', (e) => {
       e.stopPropagation();
       this.questsCollapsed = !this.questsCollapsed;
-      this.questsEl.classList.toggle('collapsed', this.questsCollapsed);
+      this._syncQuestFold();
     });
+
+    window.addEventListener('resize', () => this._syncQuestFold());
 
     this.dlg.addEventListener('pointerdown', (e) => {
       e.stopPropagation();
@@ -73,6 +75,7 @@ export class UI {
       this._idx = -1;
       this.dialogueActive = true;
       document.body.classList.add('dialogue-active');
+      this._syncQuestFold();
       this.dlg.classList.remove('hidden');
       requestAnimationFrame(() => this.dlg.classList.add('show'));
       this._next();
@@ -83,6 +86,7 @@ export class UI {
     this._idx++;
     if (this._idx >= this._queue.length) {
       this.dialogueActive = false;
+      this._syncQuestFold();
       this.dlg.classList.remove('show');
       clearInterval(this._typer);
       setTimeout(() => {
@@ -221,6 +225,11 @@ export class UI {
     setTimeout(() => { pop.classList.remove('show'); setTimeout(() => pop.remove(), 500); }, 1900);
   }
 
+  _syncQuestFold() {
+    const portraitTalk = this.dialogueActive && window.innerWidth < window.innerHeight;
+    this.questsEl.classList.toggle('collapsed', this.questsCollapsed || portraitTalk);
+  }
+
   // ---------------- 目的 ----------------
   renderQuests(title, quests) {
     if (!quests || !quests.length) {
@@ -228,7 +237,7 @@ export class UI {
       return;
     }
     this.questsEl.classList.remove('hidden');
-    this.questsEl.classList.toggle('collapsed', this.questsCollapsed);
+    this._syncQuestFold();
     const main = quests.filter((q) => !q.sub);
     const done = main.filter((q) => q.done).length;
     this.questsEl.innerHTML = `<div class="q-title">${title}<span class="q-count">${done}/${main.length}</span><span class="q-toggle">▾</span></div>` +

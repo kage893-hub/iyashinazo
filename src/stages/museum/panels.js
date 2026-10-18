@@ -87,8 +87,8 @@ export function archiveClueHTML() {
 }
 
 export function gardenClueHTML() {
-  return `<section class="museum-clue"><h3>月の花の育てかた</h3><p>花に必要な水は、<b>ぴったり4リットル</b>。多くても少なくても、つぼみは開かない。</p>
-    <ul><li>使える容器は<b>5Lのじょうろ</b>と<b>3Lのバケツ</b>。</li><li>蛇口でいっぱいにする、空にする、もう片方へ移す、の3つができる。</li><li>移すときは、<b>移す側が空になるか、受ける側がいっぱいになるまで</b>止められない。</li><li>じょうろに4L作れたら、花に水をやろう。時間制限はない。</li></ul></section>`;
+  return `<section class="museum-clue"><h3>ふたつの花の育てかた</h3><p>露の花には<b>2L</b>、月の花には<b>4L</b>。雨水タンクの<b>6Lだけ</b>を、ふたつの花に分けよう。</p>
+    <ul><li>使える容器は<b>5Lのじょうろ</b>と<b>3Lのバケツ</b>。花に注げるのは、じょうろからだけ。</li><li>タンクから汲むと、容器が満杯になるか、タンクが空になるまで入る。</li><li>容器同士では、移す側が空になるか、受ける側が満杯になるまで注ぐ。</li><li>花には必要な量を<b>一度で</b>届ける。目分量や、少しずつの継ぎ足しはできない。</li><li>水は捨てずにタンクへ戻せる。失敗しても何度でもやり直せる。時間制限はない。</li></ul></section>`;
 }
 
 export function orreryClueHTML() {
@@ -290,45 +290,66 @@ export function archivePanel(ui, audio, { onSolved, draft = {}, onChange = () =>
   paint(); return panel;
 }
 
+const gardenFresh = () => ({ version: 2, a: 0, b: 0, reserve: 6, watered: [false, false] });
+export function restoreGarden(draft) {
+  const a = draft?.a, b = draft?.b;
+  if (![a, b].every(Number.isInteger) || a < 0 || a > 5 || b < 0 || b > 3) return gardenFresh();
+  if (draft.version !== 2) {
+    // 旧版の量りかけも、6L以内なら容器の水を引き継ぐ。達成済みの展示フラグは変更しない。
+    return a + b <= 6 ? { ...gardenFresh(), a, b, reserve: 6 - a - b } : gardenFresh();
+  }
+  if (!Array.isArray(draft.watered) || draft.watered.length !== 2 || !draft.watered.every(v => typeof v === 'boolean')) return gardenFresh();
+  const { reserve, watered } = draft;
+  if (!Number.isInteger(reserve) || reserve < 0 || reserve > 6 || a + b + reserve + (watered[0] ? 2 : 0) + (watered[1] ? 4 : 0) !== 6) return gardenFresh();
+  return { version: 2, a, b, reserve, watered: [...watered] };
+}
+
 export function gardenStep(amounts, action) {
-  let a = Number.isInteger(amounts?.a) && amounts.a >= 0 && amounts.a <= 5 ? amounts.a : 0;
-  let b = Number.isInteger(amounts?.b) && amounts.b >= 0 && amounts.b <= 3 ? amounts.b : 0;
-  if (action === 'fill5') a = 5;
-  else if (action === 'fill3') b = 3;
-  else if (action === 'empty5') a = 0;
-  else if (action === 'empty3') b = 0;
+  const next = restoreGarden(amounts);
+  let { a, b, reserve, watered } = next;
+  if (action === 'fill5') { const n = Math.min(5 - a, reserve); a += n; reserve -= n; }
+  else if (action === 'fill3') { const n = Math.min(3 - b, reserve); b += n; reserve -= n; }
+  else if (action === 'empty5') { reserve += a; a = 0; }
+  else if (action === 'empty3') { reserve += b; b = 0; }
   else if (action === 'pour5to3') { const n = Math.min(a, 3 - b); a -= n; b += n; }
   else if (action === 'pour3to5') { const n = Math.min(b, 5 - a); b -= n; a += n; }
-  return { a, b };
+  else if (action === 'waterDew' && !watered[0] && a === 2) { a = 0; watered[0] = true; }
+  else if (action === 'waterMoon' && !watered[1] && a === 4) { a = 0; watered[1] = true; }
+  return { version: 2, a, b, reserve, watered };
 }
 
 /** ④ 水量：操作はすべて離散的。端数やタイミングを要求しない。 */
 export function gardenPanel(ui, audio, { onSolved, draft = {}, onChange = () => {} } = {}) {
-  let amounts = gardenStep(draft, 'restore');
+  let amounts = restoreGarden(draft);
   let moves = Number.isInteger(draft.moves) && draft.moves >= 0 ? draft.moves : 0;
   const state = { done: false };
-  const body = puzzleBody('garden', '04', '月の花が、水を待っている。5Lのじょうろに、ぴったり4Lを量りとろう。', gardenClueHTML());
+  const body = puzzleBody('garden', '04', '雨水は6Lだけ。露の花に2L、月の花に4Lを、一度ずつ届けよう。', gardenClueHTML());
   const id = `mu-water-${++waterId}`;
   const vessels = el('div', 'mu-vessels');
   vessels.innerHTML = `<svg viewBox="0 0 360 230" role="img" aria-label="じょうろとバケツの水量"><defs><clipPath id="${id}-a"><path d="M27 48h104v143H27z"/></clipPath><clipPath id="${id}-b"><path d="M227 86h105l-13 105h-79Z"/></clipPath></defs><path d="M28 47h104v145H28Zm104 24 32-22 10 12-42 54M28 71C-2 62-2 129 28 125" class="mu-vessel-outline"/><path d="M227 86h105l-13 106h-79Zm9-2c0-72 87-72 87 0" class="mu-vessel-outline"/><rect class="mu-water-a" x="27" y="191" width="105" height="0" clip-path="url(#${id}-a)"/><rect class="mu-water-b" x="225" y="191" width="110" height="0" clip-path="url(#${id}-b)"/>
     ${Array.from({ length: 6 }, (_, i) => `<path d="M31 ${191 - i * 28.4}h12" class="mu-volume-tick"/><text x="48" y="${195 - i * 28.4}" class="mu-volume-label">${i}</text>`).join('')}
     ${Array.from({ length: 4 }, (_, i) => `<path d="M244 ${191 - i * 35}h12" class="mu-volume-tick"/><text x="260" y="${195 - i * 35}" class="mu-volume-label">${i}</text>`).join('')}
     <text x="80" y="219" text-anchor="middle" class="mu-vessel-name">5L じょうろ</text><text x="280" y="219" text-anchor="middle" class="mu-vessel-name">3L バケツ</text></svg><div class="mu-water-readings"><b class="mu-water-reading-a"></b><b class="mu-water-reading-b"></b></div>`;
-  const workspace = body.querySelector('.mu-workspace'); workspace.appendChild(vessels);
+  const workspace = body.querySelector('.mu-workspace');
+  const reserve = el('p', 'mu-reserve'); workspace.appendChild(reserve);
+  workspace.appendChild(vessels);
+  const flowers = el('div', 'mu-flowers');
+  flowers.innerHTML = '<button class="btn mu-flower" data-action="waterDew">✿ 露の花へ 2L</button><button class="btn mu-flower" data-action="waterMoon">☾ 月の花へ 4L</button>';
+  workspace.appendChild(flowers);
   const controls = el('div', 'mu-water-controls');
-  const operations = [['fill5', 'じょうろを満たす'], ['fill3', 'バケツを満たす'], ['empty5', 'じょうろを空にする'], ['empty3', 'バケツを空にする'], ['pour5to3', 'じょうろ → バケツ'], ['pour3to5', 'バケツ → じょうろ']];
+  const operations = [['fill5', 'タンク → じょうろ'], ['fill3', 'タンク → バケツ'], ['empty5', 'じょうろ → タンク'], ['empty3', 'バケツ → タンク'], ['pour5to3', 'じょうろ → バケツ'], ['pour3to5', 'バケツ → じょうろ']];
   const buttons = operations.map(([action, label]) => {
     const button = el('button', 'btn', label); button.dataset.action = action;
     button.onclick = () => {
       if (state.done) return;
       const next = gardenStep(amounts, action);
-      if (next.a === amounts.a && next.b === amounts.b) return;
+      if (JSON.stringify(next) === JSON.stringify(amounts)) return;
       amounts = next; moves++; audio.play('water'); onChange({ ...amounts, moves }); paint();
     };
     controls.appendChild(button); return button;
   });
   workspace.appendChild(controls);
-  const actions = panelActions(body, '<button class="btn mu-reset">水を空にしてやり直す</button><button class="btn primary mu-check">花に水をやる</button>');
+  const actions = panelActions(body, '<button class="btn mu-reset">水やりを最初から</button><button class="btn primary mu-check">花のようすを見る</button>');
   const paint = () => {
     const a = vessels.querySelector('.mu-water-a'), b = vessels.querySelector('.mu-water-b');
     a.setAttribute('height', amounts.a * 28.4); a.setAttribute('y', 191 - amounts.a * 28.4);
@@ -336,16 +357,30 @@ export function gardenPanel(ui, audio, { onSolved, draft = {}, onChange = () => 
     vessels.querySelector('svg').setAttribute('aria-label', `5Lじょうろに${amounts.a}L、3Lバケツに${amounts.b}L`);
     vessels.querySelector('.mu-water-reading-a').textContent = `${amounts.a} / 5 L`;
     vessels.querySelector('.mu-water-reading-b').textContent = `${amounts.b} / 3 L`;
-    buttons.forEach((button, i) => { const next = gardenStep(amounts, operations[i][0]); button.disabled = next.a === amounts.a && next.b === amounts.b; });
-    message(body, audio, amounts.a === 4 ? 'じょうろに、ぴったり4L。月の花に水を届けよう。' : `じょうろは、いま${amounts.a}L。移すときは空か満杯になるまで。`);
+    buttons.forEach((button, i) => { const next = gardenStep(amounts, operations[i][0]); button.disabled = JSON.stringify(next) === JSON.stringify(amounts); });
+    reserve.textContent = `雨水タンク　残り ${amounts.reserve} / 6 L`;
+    flowers.querySelectorAll('button').forEach((button, i) => {
+      button.classList.toggle('watered', amounts.watered[i]);
+      button.textContent = `${i ? '☾ 月' : '✿ 露'}の花　${amounts.watered[i] ? '✓ 水やり済み' : `${i ? 4 : 2}L を届ける`}`;
+      button.disabled = amounts.watered[i];
+    });
+    message(body, audio, amounts.watered.every(Boolean) ? 'ふたつの花に、雨水がぴったり届いた。花のようすを見てみよう。' : 'タンクの6Lを、ふたつの花へ。一度に注ぐ量を考えよう。');
   };
-  actions.querySelector('.mu-reset').onclick = () => { if (state.done) return; amounts = { a: 0, b: 0 }; moves = 0; audio.play('click'); onChange({ ...amounts, moves }); paint(); };
+  actions.querySelector('.mu-reset').onclick = () => { if (state.done) return; amounts = gardenFresh(); moves = 0; audio.play('click'); onChange({ ...amounts, moves }); paint(); };
   actions.querySelector('.mu-check').onclick = () => {
     if (state.done) return;
-    if (amounts.a !== 4) { message(body, audio, `花がほしいのは4L。じょうろは${amounts.a}Lだから、もう少し量ってみよう。`, true); return; }
+    if (!amounts.watered.every(Boolean)) { message(body, audio, '露の花に2L、月の花に4L。ふたつの花へ、じょうろから水を届けよう。', true); return; }
     finishOnce(body, audio, onSolved, panel, state);
   };
-  const panel = ui.openPanel({ title: '月の花の温室', body, cls: 'museum-panel' });
+  flowers.querySelectorAll('button').forEach((button, i) => {
+    button.onclick = () => {
+      if (state.done || amounts.watered[i]) return;
+      const target = i ? 4 : 2;
+      if (amounts.a !== target) { message(body, audio, `この花には一度で${target}L。じょうろは今${amounts.a}Lだから、量を整えよう。`, true); return; }
+      amounts = gardenStep(amounts, button.dataset.action); moves++; audio.play('water'); onChange({ ...amounts, moves }); paint();
+    };
+  });
+  const panel = ui.openPanel({ title: 'ふたつの花の温室', body, cls: 'museum-panel' });
   paint(); return panel;
 }
 
