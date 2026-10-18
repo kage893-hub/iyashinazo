@@ -162,14 +162,6 @@ function textFace(parent, title, sub, w, h, y, bg = C.white, fg = '#3b5750') {
   return f;
 }
 
-function board(parent, x, z, title, sub, { w = 2.6, h = 1.2, y = 1.5, ry = 0 } = {}) {
-  const g = group(parent, x, 0, z, ry);
-  add(g, G.box(w + 0.12, h + 0.12, 0.14), mat(C.wood), 0, y, 0);
-  for (const xx of [-w * 0.34, w * 0.34]) add(g, G.box(0.07, y + 0.3, 0.08), mat('#787d67'), xx, (y + 0.3) / 2, 0);
-  textFace(g, title, sub, w, h, y);
-  return g;
-}
-
 function tree(parent, x, z, seed, scale = 1) {
   const g = group(parent, x, 0, z), r = rng(seed), bark = mat('#7c775c');
   add(g, G.cyl(0.12, 0.19, 2.1, 8), bark, 0, 1.05, 0);
@@ -591,18 +583,13 @@ export function buildSagaDiorama(scene) {
   }
 
   R.busStop = busStop(root);
-  R.busClue = board(root,-9.5,26,'まちの臨時便','のりかえ案内',{w:2.6,h:1.1,y:1.35});
   R.marketBoard = group(root,35.4,0,41.0);
   for(const x of [-0.9,0.9])for(const z of [-0.32,0.32])add(R.marketBoard,G.box(0.07,0.9,0.07),mat(C.wood),x,0.45,z);
   add(R.marketBoard,G.box(2.3,0.12,1.0),mat('#c2ab7b'),0,0.95,0);
   const baskets=mat('#8f9471');
   for(const x of [-0.72,0,0.72]){add(R.marketBoard,G.box(0.58,0.25,0.65),baskets,x,1.12,0);for(let i=0;i<3;i++)add(R.marketBoard,G.sphere(0.12,7,5),mat(['#c18c65','#c8b775','#809d6a'][i]),x+(i-1)*0.13,1.31,0);}
-  R.shoppingClue = board(root,35.4,43.6,'よりみち市','ならべかえ案内',{w:2.6,h:1.1,y:1.35});
-  R.sluiceClue = board(root,-34,-32.6,'クリークの水門','水の道しるべ',{w:3.0,h:1.15,y:1.4});
   R.balloonPad = makeBalloonPad(root); R.balloon = makeBalloon(root);
-  R.balloonClue = board(root,-23.2,51,'気球で空へ','気球の出発案内',{w:2.8,h:1.15,y:1.4});
   const sketch = makeSketchDesk(root); R.sketchDesk=sketch.desk;R.sketchComplete=sketch.complete;
-  R.sketchClue = board(root,22.5,-27.6,'川久保の風景','旅だよりの机',{w:2.6,h:1.05,y:1.3});
   R.marketFlags = dynamic(group(root), false);
   for(const [x,z] of [[33.0,42.5],[37.5,42.0]]){
     const f=group(R.marketFlags,x,0,z);add(f,G.cyl(0.025,0.025,2.6,6),mat('#9a9d7c'),0,1.3,0);

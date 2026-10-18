@@ -20,11 +20,11 @@ import { busPanel, shoppingPanel, sluicePanel, balloonPanel, sketchPanel, busClu
 const V = THREE.Vector3;
 const RAIL_HEIGHT = 5.375 * .45, RAIL_Z = 8 + 3.2 * .45;
 const STOPS = {
-  bus: { name: '臨時便の旅じたく', icon: '🚌', flag: 'saBusDone', object: 'busStop', clue: 'busClue', who: 'cat', panel: busPanel, html: busClueHTML },
-  shopping: { name: 'おみやげのレシート', icon: '🛍', flag: 'saShoppingDone', object: 'marketBoard', clue: 'shoppingClue', who: 'rabbit', panel: shoppingPanel, html: shoppingClueHTML },
-  sluice: { name: 'クリークの水番', icon: '🌾', flag: 'saSluiceDone', object: 'sluice', clue: 'sluiceClue', who: 'crane', panel: sluicePanel, html: sluiceClueHTML },
-  balloon: { name: '空の風読み', icon: '🎈', flag: 'saBalloonDone', object: 'balloonPad', clue: 'balloonClue', who: 'momonga', panel: balloonPanel, html: balloonClueHTML },
-  sketch: { name: '川久保の街角スケッチ', icon: '✎', flag: 'saSketchDone', object: 'sketchDesk', clue: 'sketchClue', who: 'magpie', panel: sketchPanel, html: sketchClueHTML },
+  bus: { name: '臨時便の旅じたく', icon: '🚌', flag: 'saBusDone', object: 'busStop', who: 'cat', panel: busPanel, html: busClueHTML },
+  shopping: { name: 'おみやげのレシート', icon: '🛍', flag: 'saShoppingDone', object: 'marketBoard', who: 'rabbit', panel: shoppingPanel, html: shoppingClueHTML },
+  sluice: { name: 'クリークの水番', icon: '🌾', flag: 'saSluiceDone', object: 'sluice', who: 'crane', panel: sluicePanel, html: sluiceClueHTML },
+  balloon: { name: '空の風読み', icon: '🎈', flag: 'saBalloonDone', object: 'balloonPad', who: 'momonga', panel: balloonPanel, html: balloonClueHTML },
+  sketch: { name: '川久保の街角スケッチ', icon: '✎', flag: 'saSketchDone', object: 'sketchDesk', who: 'magpie', panel: sketchPanel, html: sketchClueHTML },
 };
 export const SPEAKERS = {
   magpie: { name: 'カササギの旅案内', icon: '🪶', color: '#397a8b', voice: 700 },
@@ -174,11 +174,11 @@ export class SagaStage {
     for (const [id, c] of Object.entries(this.residents)) reg(id, c.root, SPEAKERS[id].name, () => id === 'magpie' ? this.talkGuide() : id === 'frog' ? this.talkFrog() : id === 'spaHost' ? this.talkSpaHost() : id === 'chef' ? this.talkChef() : this.talkKeeper(id));
     for (const [id, stop] of Object.entries(STOPS)) {
       reg(id, R[stop.object], stop.name, () => this.openPuzzle(id));
-      reg(`${id}Clue`, R[stop.clue], `${stop.name}のメモ`, () => this.readClue(id));
     }
-    reg('sagaStation', R.station?.root, '佐賀駅', () => this.visit('station'));
-    reg('mallageSaga', R.mallage?.root, 'モラージュ佐賀', () => this.visit('mallage'));
-    reg('kawakubo', R.property?.root, '川久保の街角', () => this.showPropertyViews());
+    reg('balloonBody', R.balloon, '気球', () => this.openPuzzle('balloon'));
+    reg('sagaStation', R.station?.root, '佐賀駅', () => this.openPuzzle('bus'));
+    reg('mallageSaga', R.mallage?.root, 'モラージュ佐賀', () => this.openPuzzle('shopping'));
+    reg('kawakubo', R.property?.root, '川久保の街角', () => this.openPuzzle('sketch'));
     reg('amandi', R.amandi.root, 'アマンディ佐賀', () => this.openAmandi());
     reg('bistro', R.bistro.root, '山カフェレストランKUREHA', () => this.openBistro());
     for (const [id, name] of [['roundone', 'ラウンドワンスタジアム 佐賀店'], ['ide', '井手ちゃんぽん 大和店'], ['tadakane', '忠兼総本社']]) reg(id, R[id].root, name, () => this.openCity(id));
@@ -278,13 +278,14 @@ export class SagaStage {
 
   recordClue(id) { const s = STOPS[id]; this.g.flag(`saClue_${id}`); this.g.note(`sa-clue-${id}`, s.name, s.html()); }
   showClue(id) { const s = STOPS[id]; this.g.ui.openPanel({ title: s.name, body: el('div', 'sa-notes', s.html()), cls: 'saga-panel' }); }
-  async readClue(id) { await this.view(this.R[STOPS[id].clue], { height: 1, dist: 14 }); this.recordClue(id); this.showClue(id); }
 
   async openPuzzle(id) {
     const g = this.g, s = STOPS[id];
     if (!s) return;
     g.flag('saActivePuzzle', id);
-    if (id === 'sketch') await this.propertyView('front');
+    if (id === 'bus') await this.visit('station');
+    else if (id === 'shopping') await this.visit('mallage');
+    else if (id === 'sketch') await this.propertyView('front');
     else await this.view(this.R[s.object], { height: 1.2, dist: id === 'balloon' ? 25 : 17, polar: 1.02 });
     if (g.flags[s.flag]) return this.say([`【${s.name}】のスタンプは、旅ノートに押してある。`, id === 'sketch' ? '屋根の形も、松の影も。さっきより、少しよく見える気がする。' : 'この景色を、もう少し眺めていこう。']);
     this.recordClue(id);

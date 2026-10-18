@@ -13,7 +13,7 @@ Codex・Claude Code など、このリポジトリで作業するエージェン
 - 本編クリア後は、`museum`「星あかりの博物館」（60×44、5種類の謎）と `saga`「田舎の寄り道」（160×156、五つの寄り道）を順不同に選べる。選択画面のタイトル・説明は佐賀だと明かさず、地名との出会いは開始後に残す。内部ID・保存キーは従来の `saga` のまま。追加は `EXTRA_ROUTE` / `EXTRA_STAGES` に登録し、本編 `ROUTE` の終点は変えない。
 - saga は佐賀駅・モラージュ佐賀・指定された川久保の建物を写真・地図から再現。施設の模型は駅0.45、モール0.16、川久保0.95の異なる縮尺で配置し、地域間の距離を圧縮している。共通縮尺の市街地図ではない。資料は [docs/saga-references.md](docs/saga-references.md) と施設ごとの参照資料にある。
 - saga の住人はカササギ・ネコ・ウサギ・ツル・モモンガ・カエル・カピバラの湯案内・キツネの料理人。旅程・買物・水門・風読み・外観観察を好きな順に進め、最後は駅前のカササギへ。「旅のノート」（sagaGuide）から各施設・北西地区・川久保の6方向・全景へ移れる。カササギのセリフで川久保や泡のサラダを先に説明しない。謎の入力途中は `flags.saDrafts`、達成は `sa*Done` に保存する。
-- saga 北西には公式資料を参照したアマンディ佐賀と山カフェレストランKUREHA、街の小景がある。パン屋は嵜本ベーカリーで、おすすめはいちごミルク食パン。休憩 `saSpaRested` と料理 `saFoamTasted` は任意の記録で、必須5謎の `STOPS` に追加しない。既存セーブ・クリア条件は維持。敷地は `R.northwestLots`、街の操作対象は `R.streetScenes`。建物追加時は地表だけでなくFIELD_RECTSの稲やクリーク護岸も重なりを確認する。追加の地名・道案内看板は撤去し、店名と謎に必要な表示は残す。
+- saga 北西には公式資料を参照したアマンディ佐賀と山カフェレストランKUREHA、街の小景がある。パン屋は嵜本ベーカリーで、おすすめはいちごミルク食パン。休憩 `saSpaRested` と料理 `saFoamTasted` は任意の記録で、必須5謎の `STOPS` に追加しない。既存セーブ・クリア条件は維持。敷地は `R.northwestLots`、街の操作対象は `R.streetScenes`。建物追加時は地表だけでなくFIELD_RECTSの稲やクリーク護岸も重なりを確認する。追加の地名・道案内看板と、謎専用の独立看板は例外なく撤去。駅・モール・家・水門・気球を押すと対応する謎が直接開く。手がかりは謎のパネルと旅ノートで読む。店舗の外壁の店名は残す。
 - KUREHAは `bistro.js` の `createFoamBistro()` のAPIを維持し、木柱・クリーム壁・反り破風と緑青色の屋根を造形。嵜本は `sakimoto.js` の `buildSakimoto()` が高い切妻・斜めの木板・黒い窓枠を作る。資料は [docs/saga-shops-references.md](docs/saga-shops-references.md)。実際の写真は参考の目視だけに使い、外観はコードで構成する。
 - saga の駅北東にラウンドワン佐賀店、北側に井手ちゃんぽん大和店と忠兼総本社の写真参照模型を追加。区画は `R.cityLots`、模型は `roundone.js` / `ide-chanpon.js` / `tadakane.js`。`saBowlingPlayed`・`saBowlingBest`（0〜10）、`saChanponTasted`、`saTadakaneSeen` は任意の記録でSTOPSに入れない。新資料は [docs/saga-city-references.md](docs/saga-city-references.md)。忠兼は高木瀬町長瀬の外観で、別住所の直営店と混同しない。現在の営業や工場見学を案内しない。
 - ラウンドワン北側には `R.yoshinogari` の吉野ヶ里遺跡。`yoshinogari.js` の `buildYoshinogari()` が、環濠・木柵・物見櫓・高床倉庫・竪穴住居・鳥形の門を作る。公式写真を基に代表的な建築をまとめた縮景で、公園全体の測量再現ではない。必須5謎へは追加しない。資料は [docs/saga-yoshinogari-references.md](docs/saga-yoshinogari-references.md)。
@@ -113,6 +113,7 @@ node tools/regressions.mjs # 時間計測・パネル操作・低い画面の回
 node tools/save-regressions.mjs # ブラウザ不要：旧セーブ・本編と追加2旅の往復・再開・やり直し
 node tools/japan-layout-logic-regressions.mjs # ブラウザ不要：現代とむかし目の配置・模型寸法・道路・電線・二重変換の防止
 node tools/tokyo-visibility-regressions.mjs # 通常画質：ホーム・時計・潮見表・動物園・会話と自販機の個別確認
+node tools/saga-building-puzzles-regressions.mjs # 看板5枚の撤去・縦横の建物実クリック・手がかりと旧セーブ
 node tools/rural-refresh-regressions.mjs # 通常画質：新店舗・吉野ヶ里・作業場・不要看板と旧セーブ
 node tools/japan-city-regressions.mjs # 通常画質の実箱庭：縦横の構図・模型の非交差・旧アンカー・9地区・保存再読込（通しプレイなし）
 node tools/museum-logic-regressions.mjs # ブラウザ不要：地層の一意性・光路・配送・水量
