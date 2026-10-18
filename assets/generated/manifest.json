@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "status": "generation-in-progress",
+  "status": "all-generated-not-integrated",
   "implemented": false,
   "planned_count": 82,
   "generated": [
@@ -10,15 +10,27 @@
       "category": "items",
       "path": "items/marble.png",
       "source_file": "exec-7f0a83d0-23fd-40c8-821e-b2eeade12528.png",
-      "status": "generated-not-integrated"
+      "status": "generated-not-integrated",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "background": "transparent",
+      "sha256": "8b91cc086c323a8ecb9dc754ee1730160042cebf6ad4d3a4afa32b2185ef5477"
     },
     {
       "id": "sagaGuide",
-      "name": "佐賀の旅ノート",
+      "name": "旅のノート",
       "category": "items",
       "path": "items/sagaGuide.png",
       "source_file": "exec-d0ca0360-e3e1-4916-92a2-8f565edabfee.png",
-      "status": "generated-not-integrated"
+      "status": "generated-not-integrated",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "background": "transparent",
+      "sha256": "5435cea5bb995cec8c4a4ad8572de502100337eab9ed5430275f2ac48c9ddac7"
     },
     {
       "id": "museumGuide",
@@ -26,7 +38,13 @@
       "category": "items",
       "path": "items/museumGuide.png",
       "source_file": "exec-eb1fab94-98d6-4eca-87ec-4c905953c0fd.png",
-      "status": "generated-not-integrated"
+      "status": "generated-not-integrated",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "background": "transparent",
+      "sha256": "e9d82f7fbc0fdc2d1632645d1530f205f3516613002c6ffcbab58919abddd1d8"
     },
     {
       "id": "springKey",
@@ -34,7 +52,13 @@
       "category": "items",
       "path": "items/springKey.png",
       "source_file": "exec-278fe231-32a6-4a9f-a659-ddcaa1f0e8f2.png",
-      "status": "generated-not-integrated"
+      "status": "generated-not-integrated",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "background": "transparent",
+      "sha256": "7eaad5da0cec76db5bb065a3d2ea71a67630f407a17c5e77196d56402a5f9c0c"
     },
     {
       "id": "brooch",
@@ -42,7 +66,13 @@
       "category": "items",
       "path": "items/brooch.png",
       "source_file": "exec-a438ad06-d94b-457a-ab0f-eda921fb0453.png",
-      "status": "generated-not-integrated"
+      "status": "generated-not-integrated",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "background": "transparent",
+      "sha256": "db756ba23f189678f72a5dae97e94441f0035ec48dd6cc6877ba841f844ce551"
     },
     {
       "id": "starCoin",
@@ -55,7 +85,9 @@
         1254,
         1254
       ],
-      "sha256": "1a917576deeb826542b7f1251074cc37f4bb76991c52b3929264b6d1c8fbf5ae"
+      "sha256": "1a917576deeb826542b7f1251074cc37f4bb76991c52b3929264b6d1c8fbf5ae",
+      "background": "transparent",
+      "name": "星の硬貨"
     },
     {
       "id": "ticket",
@@ -68,7 +100,9 @@
         1254,
         1254
       ],
-      "sha256": "e58b886ab246ecbcf6d42174b41315a9c0f9d23f47e2acd6a4ccec6fed249454"
+      "sha256": "e58b886ab246ecbcf6d42174b41315a9c0f9d23f47e2acd6a4ccec6fed249454",
+      "background": "transparent",
+      "name": "天空の街ゆき切符"
     },
     {
       "id": "tongs",
@@ -81,7 +115,9 @@
         1254,
         1254
       ],
-      "sha256": "88ebcb7927fe2fd56a1311862d6468f5ba1cd347df47e2fefab8669d56fc1aa4"
+      "sha256": "88ebcb7927fe2fd56a1311862d6468f5ba1cd347df47e2fefab8669d56fc1aa4",
+      "background": "transparent",
+      "name": "火ばさみ"
     },
     {
       "id": "fireStone",
@@ -94,7 +130,9 @@
         1254,
         1254
       ],
-      "sha256": "871ec2c6c5cfbc8de853008e93955c5c4640bdcfa1638682d88f00cdf1cca0de"
+      "sha256": "871ec2c6c5cfbc8de853008e93955c5c4640bdcfa1638682d88f00cdf1cca0de",
+      "background": "transparent",
+      "name": "ほのお石"
     },
     {
       "id": "valveHandle",
@@ -107,7 +145,9 @@
         1254,
         1254
       ],
-      "sha256": "4131c13b44826a9e7142a2397b68b493622b7170f444b19dfffda308200ffc34"
+      "sha256": "4131c13b44826a9e7142a2397b68b493622b7170f444b19dfffda308200ffc34",
+      "background": "transparent",
+      "name": "バルブハンドル"
     },
     {
       "id": "signalKey",
@@ -120,7 +160,9 @@
         1254,
         1254
       ],
-      "sha256": "a3377011f2adb231ec1d4c84136719d51627ffec0981e9c039eddd1499b0bbb3"
+      "sha256": "a3377011f2adb231ec1d4c84136719d51627ffec0981e9c039eddd1499b0bbb3",
+      "background": "transparent",
+      "name": "信号所の鍵"
     },
     {
       "id": "konpeito",
@@ -133,7 +175,9 @@
         1254,
         1254
       ],
-      "sha256": "f532d9dbc825a4bc566010419a1df2a0316d8a528cb2332c90831960d31b0787"
+      "sha256": "f532d9dbc825a4bc566010419a1df2a0316d8a528cb2332c90831960d31b0787",
+      "background": "transparent",
+      "name": "星のこんぺいとう"
     },
     {
       "id": "oilCan",
@@ -146,7 +190,9 @@
         1254,
         1254
       ],
-      "sha256": "fb01626236ece89f895610a7bdefc67cbdee2b364a4f714643e36ca9cd835144"
+      "sha256": "fb01626236ece89f895610a7bdefc67cbdee2b364a4f714643e36ca9cd835144",
+      "background": "transparent",
+      "name": "油さし"
     },
     {
       "id": "cotton",
@@ -159,7 +205,9 @@
         1254,
         1254
       ],
-      "sha256": "1aa1736cccc50431a6845c01bb0e4bceee7811134bffb29bacf4c82704ec5ef2"
+      "sha256": "1aa1736cccc50431a6845c01bb0e4bceee7811134bffb29bacf4c82704ec5ef2",
+      "background": "transparent",
+      "name": "雲のわた"
     },
     {
       "id": "sail",
@@ -172,7 +220,9 @@
         1254,
         1254
       ],
-      "sha256": "e999723b970e16df38b96fd794efc86f25c6a74572cc9a77d062a42c07ba3e0f"
+      "sha256": "e999723b970e16df38b96fd794efc86f25c6a74572cc9a77d062a42c07ba3e0f",
+      "background": "transparent",
+      "name": "雲の帆"
     },
     {
       "id": "letter",
@@ -185,7 +235,9 @@
         1254,
         1254
       ],
-      "sha256": "a02a79591a3e67e260114807b2bedbacc3e9a274298e595e3925161f0dbce156"
+      "sha256": "a02a79591a3e67e260114807b2bedbacc3e9a274298e595e3925161f0dbce156",
+      "background": "transparent",
+      "name": "風に飛ばされた手紙"
     },
     {
       "id": "letterOpen",
@@ -198,7 +250,9 @@
         1254,
         1254
       ],
-      "sha256": "626ded4471d6961484d571013a3ca1d69fa6cd8825981da01a95f184dc43cd2b"
+      "sha256": "626ded4471d6961484d571013a3ca1d69fa6cd8825981da01a95f184dc43cd2b",
+      "background": "transparent",
+      "name": "孫からの手紙"
     },
     {
       "id": "gear",
@@ -211,7 +265,9 @@
         1254,
         1254
       ],
-      "sha256": "1f89aca55cb3b98bdb71279f33ff381f1fe3c7d69f37e3be3348d3e6276d8815"
+      "sha256": "1f89aca55cb3b98bdb71279f33ff381f1fe3c7d69f37e3be3348d3e6276d8815",
+      "background": "transparent",
+      "name": "風車の歯車"
     },
     {
       "id": "lantern",
@@ -224,7 +280,9 @@
         1254,
         1254
       ],
-      "sha256": "116ca9acf01a17ae43b8e3c653dac880325aefc5bb0f70ab3ba3850845dc94e4"
+      "sha256": "116ca9acf01a17ae43b8e3c653dac880325aefc5bb0f70ab3ba3850845dc94e4",
+      "background": "transparent",
+      "name": "手さげ提灯"
     },
     {
       "id": "lanternLit",
@@ -237,7 +295,9 @@
         1254,
         1254
       ],
-      "sha256": "b8fe521fadcef5b4ba6978e7d62c5f56bb0c808fba0a0b03037281bf5fa8711f"
+      "sha256": "b8fe521fadcef5b4ba6978e7d62c5f56bb0c808fba0a0b03037281bf5fa8711f",
+      "background": "transparent",
+      "name": "灯った提灯"
     },
     {
       "id": "poker",
@@ -250,7 +310,9 @@
         1254,
         1254
       ],
-      "sha256": "ac707b1d3c491c7082258b627ff37fa64e9b2f8b9c6285108c2ffe9e572595b4"
+      "sha256": "ac707b1d3c491c7082258b627ff37fa64e9b2f8b9c6285108c2ffe9e572595b4",
+      "background": "transparent",
+      "name": "火かき棒"
     },
     {
       "id": "amazake",
@@ -263,7 +325,9 @@
         1254,
         1254
       ],
-      "sha256": "5dd052ab670f6be9486519685b4bc1561799b49f2543c1ad5aec7a2572862bf5"
+      "sha256": "5dd052ab670f6be9486519685b4bc1561799b49f2543c1ad5aec7a2572862bf5",
+      "background": "transparent",
+      "name": "あったか甘酒"
     },
     {
       "id": "gateKey",
@@ -276,7 +340,9 @@
         1254,
         1254
       ],
-      "sha256": "cf5b7f63196fe60777e0930afc9050b92a6223ba846c930be8a1716acbd92fbd"
+      "sha256": "cf5b7f63196fe60777e0930afc9050b92a6223ba846c930be8a1716acbd92fbd",
+      "background": "transparent",
+      "name": "源泉の門の鍵"
     },
     {
       "id": "masu",
@@ -289,7 +355,9 @@
         1254,
         1254
       ],
-      "sha256": "f6b5c8ff4d7b7d92287bacaa38a247e56a58fbedbc6074624b7c5834add66bfa"
+      "sha256": "f6b5c8ff4d7b7d92287bacaa38a247e56a58fbedbc6074624b7c5834add66bfa",
+      "background": "transparent",
+      "name": "三合升"
     },
     {
       "id": "kawaraban",
@@ -302,7 +370,9 @@
         1254,
         1254
       ],
-      "sha256": "deceecba7f70c6a4025cc4ac278a713893860761568d575a49db893f0af381cd"
+      "sha256": "deceecba7f70c6a4025cc4ac278a713893860761568d575a49db893f0af381cd",
+      "background": "transparent",
+      "name": "瓦版"
     },
     {
       "id": "cucumber",
@@ -315,7 +385,9 @@
         1254,
         1254
       ],
-      "sha256": "ad6bff99b4b1d42a2bb8763cf39522a0198da4e7b9478ca5ea4ab2440034d45c"
+      "sha256": "ad6bff99b4b1d42a2bb8763cf39522a0198da4e7b9478ca5ea4ab2440034d45c",
+      "background": "transparent",
+      "name": "キュウリ"
     },
     {
       "id": "rope",
@@ -328,7 +400,9 @@
         1254,
         1254
       ],
-      "sha256": "a8edb3b72d6a71ecbcef70c228648741826748e29f810e1c1fcda7da8b52c2eb"
+      "sha256": "a8edb3b72d6a71ecbcef70c228648741826748e29f810e1c1fcda7da8b52c2eb",
+      "background": "transparent",
+      "name": "舫い綱"
     },
     {
       "id": "dango",
@@ -341,7 +415,9 @@
         1254,
         1254
       ],
-      "sha256": "a584eb2c7f4283cfb16d7a8b4f0256c3506e5cbb9eb8426560d41e4c45a702bd"
+      "sha256": "a584eb2c7f4283cfb16d7a8b4f0256c3506e5cbb9eb8426560d41e4c45a702bd",
+      "background": "transparent",
+      "name": "みたらし団子"
     },
     {
       "id": "jitte",
@@ -354,7 +430,9 @@
         1254,
         1254
       ],
-      "sha256": "6b3f589b8683f14b5934e33cba357824505ad6a3741e5330b4dd16951488f8c4"
+      "sha256": "6b3f589b8683f14b5934e33cba357824505ad6a3741e5330b4dd16951488f8c4",
+      "background": "transparent",
+      "name": "十手"
     },
     {
       "id": "tegata",
@@ -367,7 +445,9 @@
         1254,
         1254
       ],
-      "sha256": "cb976d7631e0a069bda0bc371d1466c278d0e2324f0446cd3f04d56635ab1a86"
+      "sha256": "cb976d7631e0a069bda0bc371d1466c278d0e2324f0446cd3f04d56635ab1a86",
+      "background": "transparent",
+      "name": "通行手形"
     },
     {
       "id": "moonGear",
@@ -385,7 +465,9 @@
       "rejected_source_files": [
         "exec-697eede6-7e92-4aba-95c1-ad877100a0a9.png",
         "exec-7a005ec2-7e33-43ac-9212-1be87fca629a.png"
-      ]
+      ],
+      "background": "transparent",
+      "name": "月の歯車"
     },
     {
       "id": "parcel",
@@ -398,7 +480,9 @@
         1254,
         1254
       ],
-      "sha256": "ec40d95f0e7d507c7c6b081fa4b5a127c8811be10030e4e0014c777f1cd25975"
+      "sha256": "ec40d95f0e7d507c7c6b081fa4b5a127c8811be10030e4e0014c777f1cd25975",
+      "background": "transparent",
+      "name": "灯台あての小包"
     },
     {
       "id": "net",
@@ -411,7 +495,9 @@
         1254,
         1254
       ],
-      "sha256": "a8e8c3f584ccb05048ee0454cb9e1ae6c734a46897d72b6f8a91a44002381c4f"
+      "sha256": "a8e8c3f584ccb05048ee0454cb9e1ae6c734a46897d72b6f8a91a44002381c4f",
+      "background": "transparent",
+      "name": "漁網"
     },
     {
       "id": "fish",
@@ -424,7 +510,9 @@
         1254,
         1254
       ],
-      "sha256": "75fef4c63aa127006d05b9691e0641e92cbe651bfb3283a4669380fecd32fa4b"
+      "sha256": "75fef4c63aa127006d05b9691e0641e92cbe651bfb3283a4669380fecd32fa4b",
+      "background": "transparent",
+      "name": "朝どれのアジ"
     },
     {
       "id": "oil",
@@ -437,7 +525,9 @@
         1254,
         1254
       ],
-      "sha256": "ae85fb94a5d21c731da0aa004a5cce1427479492cfa3e2ee4145b5db4164c289"
+      "sha256": "ae85fb94a5d21c731da0aa004a5cce1427479492cfa3e2ee4145b5db4164c289",
+      "background": "transparent",
+      "name": "灯台の油"
     },
     {
       "id": "maletter",
@@ -450,7 +540,9 @@
         1254,
         1254
       ],
-      "sha256": "eb2ac5bf27686499b9ea69f86680438705c3b13833ef81fcd41b9fd53f21fdcb"
+      "sha256": "eb2ac5bf27686499b9ea69f86680438705c3b13833ef81fcd41b9fd53f21fdcb",
+      "background": "transparent",
+      "name": "魔界の手紙"
     },
     {
       "id": "moonflower",
@@ -463,7 +555,9 @@
         1254,
         1254
       ],
-      "sha256": "6091f2417839556486cdbc44338fc5fbe4c86ed6cc8396c6cae1aff4897981b8"
+      "sha256": "6091f2417839556486cdbc44338fc5fbe4c86ed6cc8396c6cae1aff4897981b8",
+      "background": "transparent",
+      "name": "月光草"
     },
     {
       "id": "gold",
@@ -476,7 +570,9 @@
         1254,
         1254
       ],
-      "sha256": "09fc6f5cf3f1841d1a8c9f1e84ccf6322573f8ed7d63bd08b95304de27ca10f6"
+      "sha256": "09fc6f5cf3f1841d1a8c9f1e84ccf6322573f8ed7d63bd08b95304de27ca10f6",
+      "background": "transparent",
+      "name": "ゴールド袋"
     },
     {
       "id": "sword",
@@ -489,7 +585,9 @@
         1254,
         1254
       ],
-      "sha256": "a2694659aa42bc049c45c8f8cf95602df91e0d96a7a3b60505ac4bb1da0e90b5"
+      "sha256": "a2694659aa42bc049c45c8f8cf95602df91e0d96a7a3b60505ac4bb1da0e90b5",
+      "background": "transparent",
+      "name": "勇者の剣"
     },
     {
       "id": "potions-healing",
@@ -502,7 +600,9 @@
         1254,
         1254
       ],
-      "sha256": "301c239e9e901ae83244b7359be3b2ddbb60b51f5b9500ba839266e077c5b28e"
+      "sha256": "301c239e9e901ae83244b7359be3b2ddbb60b51f5b9500ba839266e077c5b28e",
+      "background": "transparent",
+      "name": "回復薬"
     },
     {
       "id": "potions-antidote",
@@ -515,7 +615,9 @@
         1254,
         1254
       ],
-      "sha256": "8b6ba9a082df2803511f720a12ee5b267c97b77dd6d4a889cd0417ec8cc4d9b8"
+      "sha256": "8b6ba9a082df2803511f720a12ee5b267c97b77dd6d4a889cd0417ec8cc4d9b8",
+      "background": "transparent",
+      "name": "解毒薬"
     },
     {
       "id": "potions-energy",
@@ -528,7 +630,9 @@
         1254,
         1254
       ],
-      "sha256": "c58ddc81ce947853449399f6af541d4842ef23994bdc3c1e19559dab1b48113e"
+      "sha256": "c58ddc81ce947853449399f6af541d4842ef23994bdc3c1e19559dab1b48113e",
+      "background": "transparent",
+      "name": "元気の薬"
     },
     {
       "id": "purpleLantern",
@@ -541,7 +645,9 @@
         1254,
         1254
       ],
-      "sha256": "d3f0a47c2f7f783693bd584a26bf41e945ea80744d21529d5376a17106098c93"
+      "sha256": "d3f0a47c2f7f783693bd584a26bf41e945ea80744d21529d5376a17106098c93",
+      "background": "transparent",
+      "name": "紫の炎のランタン"
     },
     {
       "id": "tomato",
@@ -554,7 +660,9 @@
         1254,
         1254
       ],
-      "sha256": "a5f7e51f19d439236df29377e817401edeb5484c2370040044dd01dd87b78365"
+      "sha256": "a5f7e51f19d439236df29377e817401edeb5484c2370040044dd01dd87b78365",
+      "background": "transparent",
+      "name": "溶岩トマト"
     },
     {
       "id": "mushroom",
@@ -567,7 +675,9 @@
         1254,
         1254
       ],
-      "sha256": "111586107b010d81a3382d057d91c9dd839f8c40691e0b74a9f839ca900578ef"
+      "sha256": "111586107b010d81a3382d057d91c9dd839f8c40691e0b74a9f839ca900578ef",
+      "background": "transparent",
+      "name": "かげキノコ"
     },
     {
       "id": "salt",
@@ -580,7 +690,9 @@
         1254,
         1254
       ],
-      "sha256": "ded9a7bc80c19e8de2ed9bef5daf3fce32343f2ade5847ed11dad372bd206b67"
+      "sha256": "ded9a7bc80c19e8de2ed9bef5daf3fce32343f2ade5847ed11dad372bd206b67",
+      "background": "transparent",
+      "name": "星くず塩"
     },
     {
       "id": "stew",
@@ -593,7 +705,9 @@
         1254,
         1254
       ],
-      "sha256": "443d9b79f506fbc610cf509a6fa5ad2d17b222444511f40b0ba633706147a071"
+      "sha256": "443d9b79f506fbc610cf509a6fa5ad2d17b222444511f40b0ba633706147a071",
+      "background": "transparent",
+      "name": "ほのおのシチュー"
     },
     {
       "id": "picturebook",
@@ -606,7 +720,9 @@
         1254,
         1254
       ],
-      "sha256": "75efc68a26749d4424d3785653b62fc178c182d8ebe7020982a323f34444dcd3"
+      "sha256": "75efc68a26749d4424d3785653b62fc178c182d8ebe7020982a323f34444dcd3",
+      "background": "transparent",
+      "name": "兄弟の絵本"
     },
     {
       "id": "goen",
@@ -619,7 +735,9 @@
         1254,
         1254
       ],
-      "sha256": "719c50a9933849bb1f3b7700c57112ef9fae69e02d423bb4f7210ee2756a8371"
+      "sha256": "719c50a9933849bb1f3b7700c57112ef9fae69e02d423bb4f7210ee2756a8371",
+      "background": "transparent",
+      "name": "5円玉"
     },
     {
       "id": "button",
@@ -632,7 +750,9 @@
         1254,
         1254
       ],
-      "sha256": "8cbb04460f297106823c9990c985dff0b83950e43a1d454e921b72e0897e7fcc"
+      "sha256": "8cbb04460f297106823c9990c985dff0b83950e43a1d454e921b72e0897e7fcc",
+      "background": "transparent",
+      "name": "ボタン"
     },
     {
       "id": "oldLetter",
@@ -645,7 +765,9 @@
         1254,
         1254
       ],
-      "sha256": "7c80672ecfe2a970d18c7cf4d6dbc35d2ef1ed830395478cab5f8552a9601f4f"
+      "sha256": "7c80672ecfe2a970d18c7cf4d6dbc35d2ef1ed830395478cab5f8552a9601f4f",
+      "background": "transparent",
+      "name": "百年前の手紙"
     },
     {
       "id": "antMap",
@@ -658,7 +780,9 @@
         1254,
         1254
       ],
-      "sha256": "787e46fcf5c754b35a03f2ab6fad96a1944eb7572657cb0bbda54644820cd212"
+      "sha256": "787e46fcf5c754b35a03f2ab6fad96a1944eb7572657cb0bbda54644820cd212",
+      "background": "transparent",
+      "name": "宝の地図"
     },
     {
       "id": "thimble",
@@ -671,7 +795,9 @@
         1254,
         1254
       ],
-      "sha256": "8bba1fde27db4390ff3b1fc1b43d932a03ed3dd2304b381e67ea53ec0362b372"
+      "sha256": "8bba1fde27db4390ff3b1fc1b43d932a03ed3dd2304b381e67ea53ec0362b372",
+      "background": "transparent",
+      "name": "ゆびぬき"
     },
     {
       "id": "thimbleWater",
@@ -688,7 +814,9 @@
       "rejected_source_files": [
         "exec-7f4c26a5-ac51-4296-bb2b-e7d3ef2863c8.png"
       ],
-      "review_notes": "口を上へ向けた、下へ細く丸くすぼまる指ぬきの形に修正済み。"
+      "review_notes": "口を上へ向けた、下へ細く丸くすぼまる指ぬきの形に修正済み。",
+      "background": "transparent",
+      "name": "しずく入りのゆびぬき"
     },
     {
       "id": "nectar",
@@ -701,7 +829,9 @@
         1254,
         1254
       ],
-      "sha256": "79a9308688f2afaca59552f1250010bd2d149a21fbb554515506eb19446a5ba6"
+      "sha256": "79a9308688f2afaca59552f1250010bd2d149a21fbb554515506eb19446a5ba6",
+      "background": "transparent",
+      "name": "あまつゆ草の蜜"
     },
     {
       "id": "silkRope",
@@ -714,7 +844,9 @@
         1254,
         1254
       ],
-      "sha256": "46c5cac3482a97929f597e3f71d04293e626f1c17633c53833bfd5cc88ba7aab"
+      "sha256": "46c5cac3482a97929f597e3f71d04293e626f1c17633c53833bfd5cc88ba7aab",
+      "background": "transparent",
+      "name": "クモの糸の綱"
     },
     {
       "id": "toyKey",
@@ -727,7 +859,9 @@
         1254,
         1254
       ],
-      "sha256": "713c43fdcd29910088499802394ffc7416159f05a2ef91c4017cb664290e6701"
+      "sha256": "713c43fdcd29910088499802394ffc7416159f05a2ef91c4017cb664290e6701",
+      "background": "transparent",
+      "name": "ゼンマイ鍵"
     },
     {
       "id": "gearBox",
@@ -740,10 +874,378 @@
         1254,
         1254
       ],
-      "sha256": "b3d845fe52b81f64692f45dd54ccb8cc94b6d9b38b8458e784535ed142ff11d2"
+      "sha256": "b3d845fe52b81f64692f45dd54ccb8cc94b6d9b38b8458e784535ed142ff11d2",
+      "background": "transparent",
+      "name": "歯車箱"
+    },
+    {
+      "id": "crankHandle",
+      "category": "items",
+      "path": "items/crankHandle.png",
+      "source_file": "exec-41bd4f60-f00c-454a-83ac-53645ea7aa1f.png",
+      "status": "generated-not-integrated",
+      "generated_on": "2026-10-18",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "3b9e23fede3f8979bef696292c6e27234e2bd9f801ea55dead53a886834dcd7e",
+      "background": "transparent",
+      "name": "巻きハンドル"
+    },
+    {
+      "id": "koBell",
+      "category": "items",
+      "path": "items/koBell.png",
+      "source_file": "exec-d0177a5d-e05d-4b65-b8ca-550e78f1dc26.png",
+      "status": "generated-not-integrated",
+      "generated_on": "2026-10-18",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "25e5c6f0d854e30045228f9dd75ad12cb5feaa0e86bd0c771ec020830a917530",
+      "background": "transparent",
+      "name": "狛犬の鈴"
+    },
+    {
+      "id": "ningyoyaki",
+      "category": "items",
+      "path": "items/ningyoyaki.png",
+      "source_file": "exec-924e9e0a-ff30-46f3-9269-bb2f485a0a1a.png",
+      "status": "generated-not-integrated",
+      "generated_on": "2026-10-18",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "21e18aee662b28beb9682a2ddd44eb9131e85ffe676231f04d0931495112e05e",
+      "background": "transparent",
+      "name": "人形焼の包み"
+    },
+    {
+      "id": "tenugui",
+      "category": "items",
+      "path": "items/tenugui.png",
+      "source_file": "exec-e2243f8d-d2ac-4716-a481-0e6af7770c4f.png",
+      "status": "generated-not-integrated",
+      "generated_on": "2026-10-18",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "b78e242a6a8d445a2360cf076a46aef95947de0d2fe8f3a25df619e303011f81",
+      "background": "transparent",
+      "name": "江戸の時刻の手ぬぐい"
+    },
+    {
+      "id": "ramune",
+      "category": "items",
+      "path": "items/ramune.png",
+      "source_file": "exec-e3ac5f57-97da-42ab-87a6-a911f73c1f77.png",
+      "status": "generated-not-integrated",
+      "generated_on": "2026-10-18",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "678726427c09b9db098cdefd6498819c069ca11826c3d257204b8ca8afec731d",
+      "background": "transparent",
+      "name": "キュウリ味ラムネ"
+    },
+    {
+      "id": "grass",
+      "category": "materials",
+      "path": "materials/grass.png",
+      "source_file": "exec-e1ebf84c-049f-4e03-a467-2106912c571b.png",
+      "status": "generated-not-integrated",
+      "generated_on": "2026-10-18",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "f6fd1f64b67b86768201cc14a73f70e861517efce2bf0997b93c494661ad40a1",
+      "background": "opaque",
+      "name": "草地"
+    },
+    {
+      "id": "moss",
+      "category": "materials",
+      "path": "materials/moss.png",
+      "source_file": "exec-2b13af6f-d175-4615-a993-060c27d46fca.png",
+      "status": "generated-not-integrated",
+      "generated_on": "2026-10-18",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "0ebf12fb7ff7cc742e7ad74c67eb41ecc501771f323175a84d97562914fd030c",
+      "background": "opaque",
+      "name": "苔"
+    },
+    {
+      "id": "soil",
+      "category": "materials",
+      "path": "materials/soil.png",
+      "source_file": "exec-f7f98dae-5000-4be5-bc2a-f9d898b44b89.png",
+      "status": "generated-not-integrated",
+      "generated_on": "2026-10-18",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "c1a2322d3cc7825e750242010fa8aed3456d329cce11eb2a529eff9d4e8bac72",
+      "background": "opaque",
+      "name": "土"
+    },
+    {
+      "id": "gravel",
+      "category": "materials",
+      "path": "materials/gravel.png",
+      "source_file": "exec-8a5e0aa7-ec6f-4ae9-84bd-6e632c99722f.png",
+      "status": "generated-not-integrated",
+      "generated_on": "2026-10-18",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "b2f2905b384396eedf8f5ce7eaa9ce0d7e6122ceb46d1547a0ad5a695d85cc6c",
+      "background": "opaque",
+      "name": "砂利"
+    },
+    {
+      "id": "sand",
+      "category": "materials",
+      "path": "materials/sand.png",
+      "source_file": "exec-b39e63c4-dbd9-4cdc-9862-fa94a8b82595.png",
+      "status": "generated-not-integrated",
+      "generated_on": "2026-10-18",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "b62438716755dc8f01c036f332979f7458dc4fe0876b1dbb44409737edfe7d54",
+      "background": "opaque",
+      "name": "砂"
+    },
+    {
+      "id": "cobblestone",
+      "category": "materials",
+      "path": "materials/cobblestone.png",
+      "source_file": "exec-85a2ae48-a94a-4c0c-a33a-7195589e5584.png",
+      "status": "generated-not-integrated",
+      "generated_on": "2026-10-18",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "0ad25812c551d64e4210540982a0072adc6eaef2ad6f99d1b09ef7687b1562bb",
+      "background": "opaque",
+      "name": "石畳"
+    },
+    {
+      "id": "stoneBlocks",
+      "category": "materials",
+      "path": "materials/stoneBlocks.png",
+      "source_file": "exec-19dca08a-6bf4-4646-86a1-b5b7bde0c3c3.png",
+      "status": "generated-not-integrated",
+      "generated_on": "2026-10-18",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "413e9fc8f2e879a2b8e613d995b798ba5b45d6415ae4d37cf12e83534cf8063b",
+      "background": "opaque",
+      "name": "石積み"
+    },
+    {
+      "id": "woodPlanks",
+      "category": "materials",
+      "path": "materials/woodPlanks.png",
+      "source_file": "exec-721a7d77-7bca-48d4-b979-e9985a9f9a22.png",
+      "status": "generated-not-integrated",
+      "generated_on": "2026-10-18",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "baae9a2a63537d064e75f0a8db7e9602248b03dcdb3c45ade58452d6e548d86e",
+      "background": "opaque",
+      "name": "木の床板"
+    },
+    {
+      "id": "agedBoards",
+      "category": "materials",
+      "path": "materials/agedBoards.png",
+      "source_file": "exec-7b6c1d7a-c100-4439-9be7-60a37d625b45.png",
+      "status": "generated-not-integrated",
+      "generated_on": "2026-10-18",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "609f1714d1e0735fe527d57d1012750bbe7037ba09e63dde772f8fc2168cc87a",
+      "background": "opaque",
+      "name": "古い杉板"
+    },
+    {
+      "id": "plaster",
+      "category": "materials",
+      "path": "materials/plaster.png",
+      "source_file": "exec-2b4fd4f1-9281-486b-895d-580951a07a8e.png",
+      "status": "generated-not-integrated",
+      "generated_on": "2026-10-18",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "ae0d81c8655a0d4f3c8569b9ee730c1fc2e8b81410f4871f2f58611e8abdd5f5",
+      "background": "opaque",
+      "name": "漆喰"
+    },
+    {
+      "id": "roofTiles",
+      "category": "materials",
+      "path": "materials/roofTiles.png",
+      "source_file": "exec-8cf25a9e-44eb-4676-b223-f7f6bc3a0993.png",
+      "status": "generated-not-integrated",
+      "generated_on": "2026-10-18",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "84e41540240fdbfa5af9e0b30d9a1e056fb13a824c7da690a0eac1b206ae16dc",
+      "background": "opaque",
+      "name": "青灰色の瓦"
+    },
+    {
+      "id": "indigoCloth",
+      "category": "materials",
+      "path": "materials/indigoCloth.png",
+      "source_file": "exec-30b9e133-361f-4b93-91d5-e65d0c7d3c77.png",
+      "status": "generated-not-integrated",
+      "generated_on": "2026-10-18",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "ac435200206d42cbae7bae99830adb70a975d0b3893fdadb5562538d5780a7db",
+      "background": "opaque",
+      "name": "藍染めの布"
+    },
+    {
+      "id": "washi",
+      "category": "materials",
+      "path": "materials/washi.png",
+      "source_file": "exec-09bc36d3-6a5b-4484-829d-47c676e104f2.png",
+      "status": "generated-not-integrated",
+      "generated_on": "2026-10-18",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "421d5151abe4bbf3e5a108bb72050ee2621c040ef5d7c2dd1ff20e32b0d44a70",
+      "background": "opaque",
+      "name": "和紙"
+    },
+    {
+      "id": "corrugatedMetal",
+      "category": "materials",
+      "path": "materials/corrugatedMetal.png",
+      "source_file": "exec-7bad29cd-9d55-4794-98b0-2fec0eb087e1.png",
+      "status": "generated-not-integrated",
+      "generated_on": "2026-10-18",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "3dc87127c4dfb0fe9ff7c37016646356c55ebd6f5ac946de4e1317cce834b6dd",
+      "background": "opaque",
+      "name": "トタン"
+    },
+    {
+      "id": "rustedMetal",
+      "category": "materials",
+      "path": "materials/rustedMetal.png",
+      "source_file": "exec-073a4973-30e5-48f7-80e3-5a871793448f.png",
+      "status": "generated-not-integrated",
+      "generated_on": "2026-10-18",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "d6631d2634b5c04e2e28849466c8c89827ef7b580662cc0406c3675a3d558cb8",
+      "background": "opaque",
+      "name": "錆びた金属"
+    },
+    {
+      "id": "paintedToyWood",
+      "category": "materials",
+      "path": "materials/paintedToyWood.png",
+      "source_file": "exec-df97c59d-c99b-42d9-ba2c-50de23d1ace9.png",
+      "status": "generated-not-integrated",
+      "generated_on": "2026-10-18",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "5310cd531f747a79f2a52e1e16045249ceacef16d420a90e9bc811b6f3a2bfee",
+      "background": "opaque",
+      "name": "赤い塗装の木"
+    },
+    {
+      "id": "heroPixelStone",
+      "category": "materials",
+      "path": "materials/heroPixelStone.png",
+      "source_file": "exec-093e44a9-f76b-4ea8-be1b-fea412496dd7.png",
+      "status": "generated-not-integrated",
+      "generated_on": "2026-10-18",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "d5710710b1b097ed57461bab50fa0aaba8fdc3b2ca1922a9d86c172f0b9e2187",
+      "background": "opaque",
+      "name": "勇者の城のピクセル石壁"
+    },
+    {
+      "id": "maouPixelStone",
+      "category": "materials",
+      "path": "materials/maouPixelStone.png",
+      "source_file": "exec-b5b44fdd-7b05-484a-b8b1-8f61768306c1.png",
+      "status": "generated-not-integrated",
+      "generated_on": "2026-10-18",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "352a3676cb5b879182a2f17199cf3bb66ffd68b868d6e7dc6e5add81ee1747bf",
+      "background": "opaque",
+      "name": "魔王城のピクセル石壁"
+    },
+    {
+      "id": "museumFloor",
+      "category": "materials",
+      "path": "materials/museumFloor.png",
+      "source_file": "exec-45186a17-ad91-405b-a52d-b6b237ced22e.png",
+      "status": "generated-not-integrated",
+      "generated_on": "2026-10-18",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "909747a77dd28e2c12310f732b4cef10988c9b69f3821634f839889294dedf0c",
+      "background": "opaque",
+      "name": "博物館のテラゾー床"
     }
   ],
   "interrupted_requests": [],
-  "resume_rule": "全画像を一素材一画像で生成し、すべて完成するまではゲームへ実装しない。",
-  "resumed_on": "2026-10-18"
+  "resume_rule": "82枚を生成済み。ゲームには未実装。実装時に文字・謎の記号・表示サイズ・表面素材の色と縮尺と繰り返し境界を調整する。",
+  "resumed_on": "2026-10-18",
+  "completed_on": "2026-10-18",
+  "counts": {
+    "items": 63,
+    "materials": 19,
+    "total": 82
+  }
 }
